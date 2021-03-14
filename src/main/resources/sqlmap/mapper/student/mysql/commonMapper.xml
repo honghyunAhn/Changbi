@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- SEGroup 공통 기능 SQL -->
+<mapper namespace="com.lms.student.dao.LMSCommonDAO">
+
+<select id="selectCodeName" parameterType="HashMap" resultType="String">
+	select
+		<if test="locale == 'ko_KR'">
+			cct.CODE_NM
+		</if>
+		<if test="locale == 'ja_JP'">
+			cct.CODE_NM_JA
+		</if>
+		<if test="locale == 'en_US'">
+			cct.CODE_NM_EN
+		</if>
+	from
+		COM_CODE_TB cct,	
+	COM_CODE_GROUP_TB ccgt
+	where
+		cct.GROUP_ID = ccgt.GROUP_ID 
+		and
+		ccgt.GROUP_ID = #{group_id}
+		and
+		cct.CODE = #{code}
+</select>
+
+</mapper>

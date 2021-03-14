@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+						"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="forFaith.statistics">
+
+	<!-- 일자별 가입자 현황 -->
+	<select id="newMemberList" parameterType="forFaith.dev.vo.MemberVO" resultType="hashmap">
+		SELECT REG_DATE
+			 , CAST(COUNT(*) AS CHAR) AS TOTAL_COUNT
+			 , CAST(SUM(IF(GENDER = 'M', 1, 0)) AS CHAR) AS MALE_COUNT
+			 , CAST(SUM(IF(GENDER = 'F', 1, 0)) AS CHAR) AS FEMALE_COUNT
+		FROM (	SELECT GENDER
+				<choose>
+					<when test='searchCondition == "day"'>
+						, DATE_FORMAT(REG_DATE, '%Y-%m-%d') AS REG_DATE
+					</when>
+					<when test='searchCondition == "month"'>
+						, DATE_FORMAT(REG_DATE, '%Y-%m') AS REG_DATE
+					</when>
+					<when test='searchCondition == "year"'>
+						, DATE_FORMAT(REG_DATE, '%Y') AS REG_DATE
+					</when>
+				</choose>
+				FROM JO_USER
+				WHERE REG_DATE BETWEEN CONCAT(#{sDate}, ' 00:00:00') and CONCAT(#{eDate}, ' 23:59:59')	) TBL
+		GROUP BY REG_DATE
+		ORDER BY REG_DATE
+	</select>
+	
+	<!-- 일자별 접속자 현황 -->
+	<select id="loginMemberList" parameterType="forFaith.dev.vo.MemberVO" resultType="hashmap">
+		SELECT LAST_LOGIN
+			 , CAST(COUNT(*) AS CHAR) AS TOTAL_COUNT
+			 , CAST(SUM(IF(GENDER = 'M', 1, 0)) AS CHAR) AS MALE_COUNT
+			 , CAST(SUM(IF(GENDER = 'F', 1, 0)) AS CHAR) AS FEMALE_COUNT
+		FROM (	SELECT GENDER
+				<choose>
+					<when test='searchCondition == "day"'>
+						, DATE_FORMAT(LAST_LOGIN, '%Y-%m-%d') AS LAST_LOGIN
+					</when>
+					<when test='searchCondition == "month"'>
+						, DATE_FORMAT(LAST_LOGIN, '%Y-%m') AS LAST_LOGIN
+					</when>
+					<when test='searchCondition == "year"'>
+						, DATE_FORMAT(LAST_LOGIN, '%Y') AS LAST_LOGIN
+					</when>
+				</choose>
+				FROM JO_USER
+				WHERE LAST_LOGIN BETWEEN CONCAT(#{sDate}, ' 00:00:00') and CONCAT(#{eDate}, ' 23:59:59')	) TBL
+		GROUP BY LAST_LOGIN
+		ORDER BY LAST_LOGIN
+	</select>
+</mapper>

@@ -1,0 +1,15 @@
+-- DATETIME에 DEFAULT CURRENT_TIMESTAMP 는 mysql 5.6버전 이상부터 가능
+-- AUTO_INCREMENT 와 DEFAULT 는 5버전 이상부터는 같이 사용 불가
+CREATE TABLE CB_SURVEY (
+	SEQ					INT(12)			AUTO_INCREMENT	UNIQUE		COMMENT '설문 마스터 SEQ',
+	ID					VARCHAR(14)		PRIMARY KEY					COMMENT '설문 마스터 ID(YYYYMMDDHHMISS)형태',
+	SURVEY_CODE			VARCHAR(12)									COMMENT '설문분류코드(기초관리>설문분류)',
+	TITLE				VARCHAR(255)	NOT NULL					COMMENT '설문 제목',
+	A_LEAD				VARCHAR(2000)								COMMENT '안내머리글',
+	ORDER_NUM			INT(3)			DEFAULT 1					COMMENT 'DISPLAY순서',
+	USE_YN				CHAR(1)			DEFAULT 'Y'					COMMENT '게시상태(Y : 서비스, N : 보류)',
+	REG_USER        	VARCHAR(100)                             	COMMENT '등록자 ID',
+	REG_DATE			DATETIME		DEFAULT CURRENT_TIMESTAMP()	COMMENT '등록일자',
+  	UPD_USER        	VARCHAR(100)                             	COMMENT '수정자 ID',
+	UPD_DATE		  	DATETIME		DEFAULT CURRENT_TIMESTAMP()	COMMENT '수정일자'
+) COMMENT='설문 MASTER TABLE';

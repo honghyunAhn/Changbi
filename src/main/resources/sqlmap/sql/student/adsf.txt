@@ -1,0 +1,96 @@
+-- 기수 성적 카테고리 테이블 [대분류] (gisuTestCategoryVO) -- 
+CREATE TABLE segroup_lms.STU_CAT_TB(
+	BIG_CAT_SEQ 			INT(10) 	NOT NULL,							-- 카테고리	번호 	--
+    CRC_ID 					VARCHAR(12),									-- 과정		ID 		--
+    GISU_ID 				VARCHAR(12),									-- 기수		ID		--
+    CAT_NM 					VARCHAR(50) NOT NULL,							-- 카테고리	이름		--					
+    CAT_PERCENT				FLOAT(3,2) UNSIGNED NOT NULL,				 	-- 카테고리	배율 	--
+    PRIMARY KEY(BIG_CAT_SEQ),
+    FOREIGN KEY(CRC_ID) REFERENCES CB_COURSE(ID) ON DELETE CASCADE,
+    FOREIGN KEY(GISU_ID) REFERENCES CB_CARDINAL(ID) ON DELETE CASCADE)
+    COLLATE='utf8_general_ci';
+
+
+
+-- 기수 성적 카테고리 테이블 [중분류] (gisuTestCategoryVO) -- 
+CREATE TABLE segroup_lms.STU_MID_CAT_TB(
+	MID_CAT_SEQ 			INT(10) 	NOT NULL,							-- 카테고리	번호 	--
+    BIG_CAT_SEQ 			INT(10) 	NOT NULL,	
+    CAT_NM 					VARCHAR(50) NOT NULL,							-- 카테고리	이름		--					
+    CAT_PERCENT				FLOAT(3,2) UNSIGNED NOT NULL DEFAULT 100.00, 	-- 카테고리	배율 	--
+    PRIMARY KEY(MID_CAT_SEQ),
+    FOREIGN KEY(BIG_CAT_SEQ) 	REFERENCES STU_CAT_TB(BIG_CAT_SEQ)	ON DELETE CASCADE
+    )COLLATE='utf8_general_ci';
+
+-- 기수 카테고리별 시험 배율 테이블 [소분류] (CatInnerFactorPercentVO) --
+CREATE TABLE segroup_lms.STU_SMALL_CAT_TB(
+	SMALL_CAT_SEQ			INT(10) NOT NULL,								-- 배율		번호		--
+    MID_CAT_SEQ 			INT(10) NOT NULL,								-- 카테고리	번호		--
+    TEST_PERCENT 			FLOAT(3,2) UNSIGNED NOT NULL ,					-- 시험점수	배율		--		(소숫점2자리까지)
+    PRIMARY KEY(SMALL_CAT_SEQ),
+    FOREIGN KEY(MID_CAT_SEQ) 	REFERENCES STU_MID_CAT_TB(MID_CAT_SEQ)	ON DELETE CASCADE)
+    COLLATE='utf8_general_ci';
+
+-- 시험 테이블 (TestInfoVO) -- 
+CREATE TABLE segroup_lms.STU_TEST_TB(
+	TEST_SEQ 				INT(10)		 	NOT NULL,						-- 시험		번호		--
+    SMALL_CAT_SEQ 			INT(10)		 	NOT NULL,						-- 카테고리	번호		--
+    TEST_NM 				VARCHAR(50)	 	NOT NULL,						-- 시험		이름 	--
+    TOTAL_SCORE 			INT(3) UNSIGNED NOT NULL,						-- 총합 		점수 	--
+    TEST_CONTENT 			VARCHAR(2000) 	NOT NULL, 						-- 시험		내용		--
+    RETEST_TIME 			INT(3) UNSIGNED DEFAULT 0, 						-- 재응시 	횟수 	--
+    TEST_START_DATE 		DATETIME DEFAULT CURRENT_TIMESTAMP,				-- 시험		시작날짜	--
+    TEST_END_DATE 			DATETIME DEFAULT CURRENT_TIMESTAMP,				-- 시험		종료날짜 	--
+    TEST_REGDATE 			DATETIME DEFAULT CURRENT_TIMESTAMP,				-- 시험		등록날짜	--
+    TEST_UPDATE 			DATETIME DEFAULT CURRENT_TIMESTAMP,				-- 시험		수정날짜	--
+    PRIMARY KEY(TEST_SEQ),
+    FOREIGN KEY(SMALL_CAT_SEQ) 	REFERENCES STU_SMALL_CAT_TB(SMALL_CAT_SEQ)	ON DELETE CASCADE);
+
+-- 성적 테이블 (TestScoreVO) --
+CREATE TABLE segroup_lms.STU_TEST_SCORE_TB(
+	SCORE_SEQ 				INT(10) NOT NULL,								-- 성적 		번호 	--
+    TEST_SEQ				INT(10) NOT NULL,								-- 시험		번호 	--
+    USER_ID					VARCHAR(50) NOT NULL,							-- 학생		ID		--
+    SCORE_PLUS_SEQ			INT(10) DEFAULT 0,								-- 가산점		번호		--
+    SCORE					FLOAT(3,2) UNSIGNED NOT NULL,					-- 점수				--		(소수점2자리까지)
+    RETEST_COUNT			INT(3) UNSIGNED DEFAULT 0,						-- 재응시		횟수 	--
+    SCORE_REGDATE			DATETIME DEFAULT CURRENT_TIMESTAMP,				-- 성적		등록날짜 	--
+    SCORE_UPDATE			DATETIME DEFAULT CURRENT_TIMESTAMP,				-- 성적		수정날짜 	--
+    PRIMARY KEY(SCORE_SEQ),
+    FOREIGN KEY(USER_ID) 		REFERENCES segroup_lms.com_user_tb(USER_ID)						ON DELETE CASCADE,
+    FOREIGN KEY(PLUS_SCORE_SEQ) REFERENCES segroup_lms.STU_TEST_PLUS_SCORE_TB(SCORE_PLUS_SEQ)	ON DELETE CASCADE,
+    FOREIGN KEY(TEST_SEQ) 		REFERENCES segroup_lms.STU_TEST_TB(TEST_SEQ)					ON DELETE CASCADE);
+    
+-- 성적 가산점 테이블 (TestPlusScoreVO)--
+CREATE TABLE segroup_lms.STU_TEST_SCORE_PLUS_TB(
+	SCORE_PLUS_SEQ			INT(10) NOT NULL,								-- 가산점 	번호		--
+    SCORE_SEQ				INT(10) NOT NULL,								-- 성적 		번호		--
+    SCORE_PLUS_CAT			INT(3) NOT NULL,								-- 가산점 	카테고리 	--	
+    SCORE_PLUS				FLOAT(3,2) UNSIGNED NOT NULL,					-- 가산점				--
+    SCORE_PLUS_CONTENT		VARCHAR(2000),									-- 가산점 	사유		--
+    SCORE_PLUS_REGDATE		DATETIME DEFAULT CURRENT_TIMESTAMP,				-- 가산점 	등록날짜	--
+    SCORE_PLUS_UPDATE		DATETIME DEFAULT CURRENT_TIMESTAMP,	 			-- 가산점		수정날짜	--
+    PRIMARY KEY(SCORE_PLUS_SEQ),
+    FOREIGN KEY(SCORE_SEQ) REFERENCES segroup_lms.STU_TEST_SCORE_TB(SCORE_SEQ)		ON DELETE CASCADE);
+    
+-- 과정 기수별 등급 테이블 (GradeVO) --
+CREATE TABLE segroup_lms.STU_TEST_GRADE_TB(
+	GRADE_SEQ				INT(10) NOT NULL,								-- 등급		번호		--
+    CAT_SEQ					INT(10) NOT NULL,								-- 카테고리	번호		--
+    GRADE_NM				varchar(50) NOT NULL,							-- 등급		이름 	--
+    GRADE_CUT_SCORE			FLOAT(3,2) UNSIGNED NOT NULL, 					-- 등급 		최소점수	--		(소수점2자리까지)
+    PRIMARY KEY(GRADE_SEQ),
+    FOREIGN KEY(CAT_SEQ)	REFERENCES segroup_lms.STU_TEST_CAT_TB(CAT_SEQ)			ON DELETE CASCADE);
+
+-- 과정&기수 별 성적+출석+과제 총 배율 테이블 (TotalPercentVO) -- 
+CREATE TABLE segroup_lms.STU_TOTAL_PER_TB(
+	TOTAL_PER_SEQ			INT(10) NOT NULL,								-- 충점수배율 	번호 	--
+	CRC_ID					VARCHAR(12) NOT NULL,							-- 과정 		ID 		--
+    GISU_ID					VARCHAR(12) NOT NULL,							-- 기수		ID 		--
+    CATEGORY_NM				VARCHAR(50) NOT NULL,							-- 카테고리 	이름 	--		(성적 && 출석 && 과제 등등)
+    CATEGORY_PERCENT 		FLOAT(3,2) UNSIGNED NOT NULL DEFAULT 100.00,	-- 항목		배율		--		(소숫점2자리까지)
+    PRIMARY KEY(TOTAL_PER_SEQ),
+    FOREIGN KEY(CRC_ID) 	REFERENCES CB_COURCE(ID)								ON DELETE CASCADE,
+    FOREIGN KEY(GISU_ID) 	REFERENCES CB_CARDINAL(ID)								ON DELETE CASCADE);
+    
+

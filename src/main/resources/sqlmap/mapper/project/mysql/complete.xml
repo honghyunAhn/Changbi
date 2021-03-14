@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.changbi.tt.dev.data.dao.CompleteDAO">
+	
+	<!-- 교재 resultMap -->
+	<resultMap id="learnAppMap" 			type="LearnAppVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<association property="region"		column="REGION_CODE"	javaType="forFaith.dev.vo.CodeVO"		select="forFaith.dev.dao.BaseDAO.codeInfo"  />
+		<association property="user"		javaType="UserVO">
+			<result	property="id"			column="USER_ID" />
+			<result property="name"			column="USER_NAME" />
+			<result property="birthDay"		column="BIRTH_DAY" />
+		</association>
+		<association property="cardinal"	javaType="CardinalVO">
+			<result	property="id"			column="CARDINAL_ID" />
+			<result property="name"			column="CARDINAL_NAME" />
+		</association>
+		<association property="course"		javaType="CourseVO">
+			<result	property="id"			column="COURSE_ID" />
+			<result property="name"			column="COURSE_NAME" />
+			<result property="credit"		column="CREDIT" />
+		</association>
+	</resultMap>
+	
+	<!-- 이수처리 -->
+	<select id="completeProc" statementType="CALLABLE" parameterType="LearnAppVO">
+	{
+		CALL COMPLETE_PROC3 (
+			#{cardinal.id, mode=IN, jdbcType=VARCHAR, javaType=String},
+			#{user.id, mode=IN, jdbcType=VARCHAR, javaType=String},
+			#{ids, mode=OUT, jdbcType=VARCHAR, javaType=String}
+		)
+	}
+	</select>
+	
+	<!-- 이수 처리 후 이수 내역 리스트 조회 -->
+	<!-- <select id="completeProcList" parameterType="LearnAppVO" resultMap="learnAppMap">
+		SELECT M.ID, M.SCHOOL_NAME, M.S_TYPE, M.ISSUE_YN, M.PART_SCORE, M.TOTAL_SCORE, M.ISSUE_DATE, M.ISSUE_NUM, M.REGION_CODE, M.JURISDICTION
+			 , A.ID AS USER_ID, A.NAME AS USER_NAME, A.BIRTH_DAY
+			 , B.ID AS CARDINAL_ID, B.NAME AS CARDINAL_NAME, C.ID AS COURSE_ID, C.NAME AS COURSE_NAME, C.CREDIT
+	         , IFNULL(G.ATT_SCORE, 0) AS ATT_SCORE, IFNULL(G.OBJ_SCORE, 0) AS OBJ_SCORE, IFNULL(G.SUB_SCORE, 0) AS SUB_SCORE
+	         , IFNULL(C.CHAPTER_CNT, 0) AS CHAPTER_CNT
+	         , IFNULL(F.PROG_CNT, 0) AS PROG_CNT
+	         , IFNULL(H.BOARD_CNT, 0) AS BOARD_CNT
+	         , IFNULL(I.COMMENT_CNT, 0) AS COMMENT_CNT
+		FROM CB_LEARN_APP M
+		INNER JOIN CB_MEMBER A
+		ON M.USER_ID = A.ID
+		INNER JOIN CB_CARDINAL B
+		ON M.CARDINAL_ID = B.ID
+		INNER JOIN ( SELECT A.ID, A.NAME, A.CREDIT, A.PRICE, A.MAIN_TB_ID, A.MAIN_PRICE, A.SUB_TB_ID, COUNT(B.ID) AS CHAPTER_CNT
+      				 FROM CB_COURSE A
+      				 LEFT OUTER JOIN CB_CHAPTER B
+      				 ON A.ID = B.COURSE_ID
+      				 GROUP BY A.ID ) C
+		ON M.COURSE_ID = C.ID
+		INNER JOIN ( SELECT CARDINAL_ID, COURSE_ID, COUNT(ID) AS TOTAL_PERSON
+      				 FROM CB_LEARN_APP
+      				 WHERE PAYMENT_STATE = '2'
+      				 AND ( REQ_TYPE IS NULL OR REQ_TYPE NOT IN ('3','4') )
+      				 GROUP BY CARDINAL_ID, COURSE_ID ) D
+		ON M.CARDINAL_ID = D.CARDINAL_ID
+		AND M.COURSE_ID = D.COURSE_ID
+		LEFT OUTER JOIN CB_GROUP_LEARN E
+		ON M.GROUP_ID = E.ID
+		LEFT OUTER JOIN ( SELECT A.LEARN_APP_ID, A.PROG_CNT, A.LEARN_TIME, B.ACC_CNT
+       					  FROM ( SELECT LEARN_APP_ID
+        							  , SUM(IF(PROG_YN = 'Y', 1, 0)) AS PROG_CNT
+        							  , SUM(LEARN_TIME) AS LEARN_TIME
+        						 FROM CB_ATT_LEC
+        						 GROUP BY LEARN_APP_ID ) A
+       					  INNER JOIN ( SELECT LEARN_APP_ID, COUNT(ID) AS ACC_CNT
+             						   FROM CB_ATT_LEC_HISTORY
+             						   GROUP BY LEARN_APP_ID ) B
+       					  ON A.LEARN_APP_ID = B.LEARN_APP_ID ) F
+		ON M.ID = F.LEARN_APP_ID
+		LEFT OUTER JOIN (  SELECT LEARN_APP_ID
+       							, SUM(IF(QUIZ_TYPE = '2', 1, 0)) AS OBJ_CNT
+       							, SUM(IF(QUIZ_TYPE = '3', 1, 0)) AS SUB_CNT
+       							, SUM(IF(QUIZ_TYPE = '1', SCORE, 0)) AS ATT_SCORE
+       							, SUM(IF(QUIZ_TYPE = '2', SCORE, 0)) AS OBJ_SCORE
+       							, SUM(IF(QUIZ_TYPE = '3', SCORE, 0)) AS SUB_SCORE
+       						FROM CB_REPORT 
+       						GROUP BY LEARN_APP_ID ) G
+		ON M.ID = G.LEARN_APP_ID
+		LEFT OUTER JOIN ( SELECT COURSE_ID, USER_ID, COUNT(ID) AS BOARD_CNT
+       					  FROM CB_BOARD
+       					  WHERE COURSE_ID IS NOT NULL
+       					  AND COURSE_ID != ''
+       					  AND USER_ID IS NOT NULL
+       					  AND USER_ID != ''
+       					  GROUP BY COURSE_ID, USER_ID ) H
+		ON M.COURSE_ID = H.COURSE_ID
+		AND M.USER_ID = H.USER_ID
+		LEFT OUTER JOIN ( SELECT A.COURSE_ID, B.USER_ID, COMMENT_CNT
+       					  FROM CB_BOARD A
+       					  INNER JOIN ( SELECT BOARD_ID, USER_ID, COUNT(ID) AS COMMENT_CNT
+      								   FROM CB_BOARD_COMMENT
+      								   WHERE USER_ID IS NOT NULL
+      								   AND USER_ID != ''
+      								   GROUP BY BOARD_ID, USER_ID ) B
+       					  ON A.ID = B.BOARD_ID
+       					  WHERE A.COURSE_ID IS NOT NULL
+       					  AND A.COURSE_ID != '' ) I
+		ON M.COURSE_ID = I.COURSE_ID
+		AND M.USER_ID = I.USER_ID
+		WHERE M.ID IN ( <foreach collection="learnAppList" item="learnApp" index="index" separator=",">#{learnApp.id}</foreach> )
+	</select> -->
+	
+	<!-- 연수신청 리스트 조회 -->
+	<!-- <select id="completeList" parameterType="LearnAppVO" resultMap="learnAppMap">
+		SELECT M.ID, M.SCHOOL_NAME, M.S_TYPE, M.ISSUE_YN, M.PART_SCORE, M.TOTAL_SCORE, M.ISSUE_DATE, M.ISSUE_NUM, M.REGION_CODE, M.JURISDICTION
+			 , A.ID AS USER_ID, A.NAME AS USER_NAME, A.BIRTH_DAY
+			 , B.ID AS CARDINAL_ID, B.NAME AS CARDINAL_NAME, C.ID AS COURSE_ID, C.NAME AS COURSE_NAME, C.CREDIT
+	         , IFNULL(G.ATT_SCORE, 0) AS ATT_SCORE, IFNULL(G.OBJ_SCORE, 0) AS OBJ_SCORE, IFNULL(G.SUB_SCORE, 0) AS SUB_SCORE
+	         , IFNULL(C.CHAPTER_CNT, 0) AS CHAPTER_CNT
+	         , IFNULL(F.PROG_CNT, 0) AS PROG_CNT
+	         , IFNULL(H.BOARD_CNT, 0) AS BOARD_CNT
+	         , IFNULL(I.COMMENT_CNT, 0) AS COMMENT_CNT
+		FROM CB_LEARN_APP M
+		INNER JOIN CB_MEMBER A
+		ON M.USER_ID = A.ID
+		INNER JOIN CB_CARDINAL B
+		ON M.CARDINAL_ID = B.ID
+		INNER JOIN ( SELECT A.ID, A.NAME, A.CREDIT, A.PRICE, A.MAIN_TB_ID, A.MAIN_PRICE, A.SUB_TB_ID, COUNT(B.ID) AS CHAPTER_CNT
+      				 FROM CB_COURSE A
+      				 LEFT OUTER JOIN CB_CHAPTER B
+      				 ON A.ID = B.COURSE_ID
+      				 GROUP BY A.ID ) C
+		ON M.COURSE_ID = C.ID
+		INNER JOIN ( SELECT CARDINAL_ID, COURSE_ID, COUNT(ID) AS TOTAL_PERSON
+      				 FROM CB_LEARN_APP
+      				 WHERE PAYMENT_STATE = '2'
+      				 AND ( REQ_TYPE IS NULL OR REQ_TYPE NOT IN ('3','4') )
+      				 GROUP BY CARDINAL_ID, COURSE_ID ) D
+		ON M.CARDINAL_ID = D.CARDINAL_ID
+		AND M.COURSE_ID = D.COURSE_ID
+		LEFT OUTER JOIN CB_GROUP_LEARN E
+		ON M.GROUP_ID = E.ID
+		LEFT OUTER JOIN ( SELECT A.LEARN_APP_ID, A.PROG_CNT, A.LEARN_TIME, B.ACC_CNT
+       					  FROM ( SELECT LEARN_APP_ID
+        							  , SUM(IF(PROG_YN = 'Y', 1, 0)) AS PROG_CNT
+        							  , SUM(LEARN_TIME) AS LEARN_TIME
+        						 FROM CB_ATT_LEC
+        						 GROUP BY LEARN_APP_ID ) A
+       					  INNER JOIN ( SELECT LEARN_APP_ID, COUNT(ID) AS ACC_CNT
+             						   FROM CB_ATT_LEC_HISTORY
+             						   GROUP BY LEARN_APP_ID ) B
+       					  ON A.LEARN_APP_ID = B.LEARN_APP_ID ) F
+		ON M.ID = F.LEARN_APP_ID
+		LEFT OUTER JOIN (  SELECT LEARN_APP_ID
+       							, SUM(IF(QUIZ_TYPE = '2', 1, 0)) AS OBJ_CNT
+       							, SUM(IF(QUIZ_TYPE = '3', 1, 0)) AS SUB_CNT
+       							, SUM(IF(QUIZ_TYPE = '1', SCORE, 0)) AS ATT_SCORE
+       							, SUM(IF(QUIZ_TYPE = '2', SCORE, 0)) AS OBJ_SCORE
+       							, SUM(IF(QUIZ_TYPE = '3', SCORE, 0)) AS SUB_SCORE
+       						FROM CB_REPORT 
+       						GROUP BY LEARN_APP_ID ) G
+		ON M.ID = G.LEARN_APP_ID
+		LEFT OUTER JOIN ( SELECT COURSE_ID, USER_ID, COUNT(ID) AS BOARD_CNT
+       					  FROM CB_BOARD
+       					  WHERE COURSE_ID IS NOT NULL
+       					  AND COURSE_ID != ''
+       					  AND USER_ID IS NOT NULL
+       					  AND USER_ID != ''
+       					  GROUP BY COURSE_ID, USER_ID ) H
+		ON M.COURSE_ID = H.COURSE_ID
+		AND M.USER_ID = H.USER_ID
+		LEFT OUTER JOIN ( SELECT A.COURSE_ID, B.USER_ID, COMMENT_CNT
+       					  FROM CB_BOARD A
+       					  INNER JOIN ( SELECT BOARD_ID, USER_ID, COUNT(ID) AS COMMENT_CNT
+      								   FROM CB_BOARD_COMMENT
+      								   WHERE USER_ID IS NOT NULL
+      								   AND USER_ID != ''
+      								   GROUP BY BOARD_ID, USER_ID ) B
+       					  ON A.ID = B.BOARD_ID
+       					  WHERE A.COURSE_ID IS NOT NULL
+       					  AND A.COURSE_ID != '' ) I
+		ON M.COURSE_ID = I.COURSE_ID
+		AND M.USER_ID = I.USER_ID
+		WHERE M.USE_YN = 'Y'
+		AND M.ISSUE_YN = 'Y'
+		<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+			AND M.CARDINAL_ID = #{cardinal.id}
+		</if>
+		<if test="course != null and course.id != null and course.id != ''">
+			AND M.COURSE_ID = #{course.id}
+		</if>
+		<if test="region != null and region.code != ''">
+			AND M.REGION_CODE = #{region.code}
+		</if>
+		<if test="jurisdiction != null and jurisdiction != ''">
+			AND M.JURISDICTION = #{jurisdiction}
+		</if>
+	</select> -->
+	
+	<!-- LMS -->
+	<!-- 이수 처리 후 이수 내역 리스트 조회 -->
+	<select id="completeProcList" parameterType="LearnAppVO" resultMap="learnAppMap">
+		SELECT M.ID, M.SCHOOL_NAME, M.S_TYPE, M.ISSUE_YN, M.PART_SCORE, M.TOTAL_SCORE, M.ISSUE_DATE, M.ISSUE_NUM, M.REGION_CODE, M.JURISDICTION
+			 , A.USER_ID AS USER_ID, A.USER_NM AS USER_NAME, A.USER_BIRTH AS BIRTH_DAY
+			 , B.ID AS CARDINAL_ID, B.NAME AS CARDINAL_NAME, C.ID AS COURSE_ID, C.NAME AS COURSE_NAME, C.CREDIT
+	         , IFNULL(G.ATT_SCORE, 0) AS ATT_SCORE, IFNULL(G.OBJ_SCORE, 0) AS OBJ_SCORE, IFNULL(G.SUB_SCORE, 0) AS SUB_SCORE
+	         , IFNULL(C.CHAPTER_CNT, 0) AS CHAPTER_CNT
+	         , IFNULL(F.PROG_CNT, 0) AS PROG_CNT
+	         , IFNULL(H.BOARD_CNT, 0) AS BOARD_CNT
+	         , IFNULL(I.COMMENT_CNT, 0) AS COMMENT_CNT
+		FROM CB_LEARN_APP M
+		INNER JOIN COM_USER_TB A
+		ON M.USER_ID = A.USER_ID
+		INNER JOIN CB_CARDINAL B
+		ON M.CARDINAL_ID = B.ID
+		INNER JOIN ( SELECT A.ID, A.NAME, A.CREDIT, A.PRICE, A.MAIN_TB_ID, A.MAIN_PRICE, A.SUB_TB_ID, COUNT(B.ID) AS CHAPTER_CNT
+      				 FROM CB_COURSE A
+      				 LEFT OUTER JOIN CB_CHAPTER B
+      				 ON A.ID = B.COURSE_ID
+      				 GROUP BY A.ID ) C
+		ON M.COURSE_ID = C.ID
+		INNER JOIN ( SELECT CARDINAL_ID, COURSE_ID, COUNT(ID) AS TOTAL_PERSON
+      				 FROM CB_LEARN_APP
+      				 WHERE PAYMENT_STATE = '2'
+      				 AND ( REQ_TYPE IS NULL OR REQ_TYPE NOT IN ('3','4') )
+      				 GROUP BY CARDINAL_ID, COURSE_ID ) D
+		ON M.CARDINAL_ID = D.CARDINAL_ID
+		AND M.COURSE_ID = D.COURSE_ID
+		LEFT OUTER JOIN CB_GROUP_LEARN E
+		ON M.GROUP_ID = E.ID
+		LEFT OUTER JOIN ( SELECT A.LEARN_APP_ID, A.PROG_CNT, A.LEARN_TIME, B.ACC_CNT
+       					  FROM ( SELECT LEARN_APP_ID
+        							  , SUM(IF(PROG_YN = 'Y', 1, 0)) AS PROG_CNT
+        							  , SUM(LEARN_TIME) AS LEARN_TIME
+        						 FROM CB_ATT_LEC
+        						 GROUP BY LEARN_APP_ID ) A
+       					  INNER JOIN ( SELECT LEARN_APP_ID, COUNT(ID) AS ACC_CNT
+             						   FROM CB_ATT_LEC_HISTORY
+             						   GROUP BY LEARN_APP_ID ) B
+       					  ON A.LEARN_APP_ID = B.LEARN_APP_ID ) F
+		ON M.ID = F.LEARN_APP_ID
+		LEFT OUTER JOIN (  SELECT LEARN_APP_ID
+       							, SUM(IF(QUIZ_TYPE = '2', 1, 0)) AS OBJ_CNT
+       							, SUM(IF(QUIZ_TYPE = '3', 1, 0)) AS SUB_CNT
+       							, SUM(IF(QUIZ_TYPE = '1', SCORE, 0)) AS ATT_SCORE
+       							, SUM(IF(QUIZ_TYPE = '2', SCORE, 0)) AS OBJ_SCORE
+       							, SUM(IF(QUIZ_TYPE = '3', SCORE, 0)) AS SUB_SCORE
+       						FROM CB_REPORT 
+       						GROUP BY LEARN_APP_ID ) G
+		ON M.ID = G.LEARN_APP_ID
+		LEFT OUTER JOIN ( SELECT COURSE_ID, USER_ID, COUNT(ID) AS BOARD_CNT
+       					  FROM CB_BOARD
+       					  WHERE COURSE_ID IS NOT NULL
+       					  AND COURSE_ID != ''
+       					  AND USER_ID IS NOT NULL
+       					  AND USER_ID != ''
+       					  GROUP BY COURSE_ID, USER_ID ) H
+		ON M.COURSE_ID = H.COURSE_ID
+		AND M.USER_ID = H.USER_ID
+		LEFT OUTER JOIN ( SELECT A.COURSE_ID, B.USER_ID, COMMENT_CNT
+       					  FROM CB_BOARD A
+       					  INNER JOIN ( SELECT BOARD_ID, USER_ID, COUNT(ID) AS COMMENT_CNT
+      								   FROM CB_BOARD_COMMENT
+      								   WHERE USER_ID IS NOT NULL
+      								   AND USER_ID != ''
+      								   GROUP BY BOARD_ID, USER_ID ) B
+       					  ON A.ID = B.BOARD_ID
+       					  WHERE A.COURSE_ID IS NOT NULL
+       					  AND A.COURSE_ID != '' ) I
+		ON M.COURSE_ID = I.COURSE_ID
+		AND M.USER_ID = I.USER_ID
+		WHERE M.ID IN ( <foreach collection="learnAppList" item="learnApp" index="index" separator=",">#{learnApp.id}</foreach> )
+	</select>
+	
+	<!-- 연수신청 리스트 조회 -->
+	<select id="completeList" parameterType="LearnAppVO" resultMap="learnAppMap">
+		SELECT M.ID, M.SCHOOL_NAME, M.S_TYPE, M.ISSUE_YN, M.PART_SCORE, M.TOTAL_SCORE, M.ISSUE_DATE, M.ISSUE_NUM, M.REGION_CODE, M.JURISDICTION
+			 , A.USER_ID AS USER_ID, A.USER_NM AS USER_NAME, A.USER_BIRTH AS BIRTH_DAY
+			 , B.ID AS CARDINAL_ID, B.NAME AS CARDINAL_NAME, C.ID AS COURSE_ID, C.NAME AS COURSE_NAME, C.CREDIT
+	         , IFNULL(G.ATT_SCORE, 0) AS ATT_SCORE, IFNULL(G.OBJ_SCORE, 0) AS OBJ_SCORE, IFNULL(G.SUB_SCORE, 0) AS SUB_SCORE
+	         , IFNULL(C.CHAPTER_CNT, 0) AS CHAPTER_CNT
+	         , IFNULL(F.PROG_CNT, 0) AS PROG_CNT
+	         , IFNULL(H.BOARD_CNT, 0) AS BOARD_CNT
+	         , IFNULL(I.COMMENT_CNT, 0) AS COMMENT_CNT
+		FROM CB_LEARN_APP M
+		INNER JOIN COM_USER_TB A
+		ON M.USER_ID = A.USER_ID
+		INNER JOIN CB_CARDINAL B
+		ON M.CARDINAL_ID = B.ID
+		INNER JOIN ( SELECT A.ID, A.NAME, A.CREDIT, A.PRICE, A.MAIN_TB_ID, A.MAIN_PRICE, A.SUB_TB_ID, COUNT(B.ID) AS CHAPTER_CNT
+      				 FROM CB_COURSE A
+      				 LEFT OUTER JOIN CB_CHAPTER B
+      				 ON A.ID = B.COURSE_ID
+      				 GROUP BY A.ID ) C
+		ON M.COURSE_ID = C.ID
+		INNER JOIN ( SELECT CARDINAL_ID, COURSE_ID, COUNT(ID) AS TOTAL_PERSON
+      				 FROM CB_LEARN_APP
+      				 WHERE PAYMENT_STATE = '2'
+      				 AND ( REQ_TYPE IS NULL OR REQ_TYPE NOT IN ('3','4') )
+      				 GROUP BY CARDINAL_ID, COURSE_ID ) D
+		ON M.CARDINAL_ID = D.CARDINAL_ID
+		AND M.COURSE_ID = D.COURSE_ID
+		LEFT OUTER JOIN CB_GROUP_LEARN E
+		ON M.GROUP_ID = E.ID
+		LEFT OUTER JOIN ( SELECT A.LEARN_APP_ID, A.PROG_CNT, A.LEARN_TIME, B.ACC_CNT
+       					  FROM ( SELECT LEARN_APP_ID
+        							  , SUM(IF(PROG_YN = 'Y', 1, 0)) AS PROG_CNT
+        							  , SUM(LEARN_TIME) AS LEARN_TIME
+        						 FROM CB_ATT_LEC
+        						 GROUP BY LEARN_APP_ID ) A
+       					  INNER JOIN ( SELECT LEARN_APP_ID, COUNT(ID) AS ACC_CNT
+             						   FROM CB_ATT_LEC_HISTORY
+             						   GROUP BY LEARN_APP_ID ) B
+       					  ON A.LEARN_APP_ID = B.LEARN_APP_ID ) F
+		ON M.ID = F.LEARN_APP_ID
+		LEFT OUTER JOIN (  SELECT LEARN_APP_ID
+       							, SUM(IF(QUIZ_TYPE = '2', 1, 0)) AS OBJ_CNT
+       							, SUM(IF(QUIZ_TYPE = '3', 1, 0)) AS SUB_CNT
+       							, SUM(IF(QUIZ_TYPE = '1', SCORE, 0)) AS ATT_SCORE
+       							, SUM(IF(QUIZ_TYPE = '2', SCORE, 0)) AS OBJ_SCORE
+       							, SUM(IF(QUIZ_TYPE = '3', SCORE, 0)) AS SUB_SCORE
+       						FROM CB_REPORT 
+       						GROUP BY LEARN_APP_ID ) G
+		ON M.ID = G.LEARN_APP_ID
+		LEFT OUTER JOIN ( SELECT COURSE_ID, USER_ID, COUNT(ID) AS BOARD_CNT
+       					  FROM CB_BOARD
+       					  WHERE COURSE_ID IS NOT NULL
+       					  AND COURSE_ID != ''
+       					  AND USER_ID IS NOT NULL
+       					  AND USER_ID != ''
+       					  GROUP BY COURSE_ID, USER_ID ) H
+		ON M.COURSE_ID = H.COURSE_ID
+		AND M.USER_ID = H.USER_ID
+		LEFT OUTER JOIN ( SELECT A.COURSE_ID, B.USER_ID, COMMENT_CNT
+       					  FROM CB_BOARD A
+       					  INNER JOIN ( SELECT BOARD_ID, USER_ID, COUNT(ID) AS COMMENT_CNT
+      								   FROM CB_BOARD_COMMENT
+      								   WHERE USER_ID IS NOT NULL
+      								   AND USER_ID != ''
+      								   GROUP BY BOARD_ID, USER_ID ) B
+       					  ON A.ID = B.BOARD_ID
+       					  WHERE A.COURSE_ID IS NOT NULL
+       					  AND A.COURSE_ID != '' ) I
+		ON M.COURSE_ID = I.COURSE_ID
+		AND M.USER_ID = I.USER_ID
+		WHERE M.USE_YN = 'Y'
+		AND M.ISSUE_YN = 'Y'
+		<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+			AND M.CARDINAL_ID = #{cardinal.id}
+		</if>
+		<if test="course != null and course.id != null and course.id != ''">
+			AND M.COURSE_ID = #{course.id}
+		</if>
+		<if test="region != null and region.code != ''">
+			AND M.REGION_CODE = #{region.code}
+		</if>
+		<if test="jurisdiction != null and jurisdiction != 'learnAppMap'">
+			AND M.JURISDICTION = #{jurisdiction}
+		</if>
+	</select>
+	
+	
+	<select id="completeListAll" parameterType="hashmap" resultMap="learnAppMap">
+
+		SELECT
+		A.ID,
+		A.USER_ID
+		, A.CARDINAL_ID
+		, A.COURSE_ID
+		, (SELECT NAME FROM CB_COURSE WHERE ID = A.COURSE_ID) AS COURSE_NAME
+		, (SELECT NAME FROM CB_CARDINAL WHERE ID = A.CARDINAL_ID) AS CARDINAL_NAME
+		, (SELECT USER_NM FROM COM_USER_TB WHERE USER_ID = A.USER_ID) AS USER_NAME
+		, (SELECT USER_BIRTH FROM COM_USER_TB WHERE USER_ID = A.USER_ID) AS BIRTH_DAY
+		, A.ISSUE_YN AS issueYn
+		, A.ISSUE_DATE AS issueDate
+		
+		FROM
+		CB_LEARN_APP A
+
+		WHERE
+		1=1
+		<if test="courseId != null and courseId != ''">
+		and A.COURSE_ID = #{courseId}
+		</if>
+		<if test="cardinalId != null and cardinalId != ''">
+		and A.CARDINAL_ID = #{cardinalId}
+		</if>		
+		<if test="userNm != null and userNm != ''">
+		and (SELECT USER_NM FROM COM_USER_TB WHERE USER_ID = A.USER_ID) LIKE CONCAT('%',#{userNm},'%')
+		</if>		
+		
+		ORDER BY
+		A.REG_DATE DESC
+
+	</select>
+
+	<update id="updateCompleteList" parameterType="hashmap">
+
+		UPDATE
+		CB_LEARN_APP
+		SET
+		<if test="issueY!=null and issueY!=''">
+		ISSUE_YN = 'Y',
+		ISSUE_DATE = DATE_FORMAT(NOW(), '%Y-%m-%d')
+		</if>
+		<if test="issueN!=null and issueN!=''">
+		ISSUE_YN = 'N',
+		ISSUE_DATE = ''
+		</if>
+		WHERE
+		USER_ID = #{user_id}
+		and COURSE_ID = #{course_id}
+		and CARDINAL_ID = #{cardinal_id}		
+
+	</update>
+
+
+</mapper>

@@ -1,0 +1,21 @@
+@charset "UTF-8";
+
+/***** 과정 분류관리 메뉴에서 사용하는 서식 *****/
+
+/* 테이블 여백 관련 서식 */
+#dataListBody td{
+	text-align: left;
+	padding-left: 30px;
+}
+#dataListBody .order_num{
+	border-right: 0px;
+}
+#dataListBody .code{
+	border-right: 0px;
+}
+#dataListBody .content_edit{
+	border-right: 0px;
+}
+.top{
+	border-top: 2px solid #d0d0d0;
+}

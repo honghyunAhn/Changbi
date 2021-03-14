@@ -1,0 +1,370 @@
+@charset "UTF-8";
+/* img-icon */
+.img-icon{
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-image: url('../img/img-icon.png');
+}
+/*--------------------------------------------------------------
+  >> 2019_lms_html
+----------------------------------------------------------------*/
+.times{
+    background-position: 0 0;
+}
+.search {
+    background-position: -20px 0;
+}
+.angle-left{
+background-position: -40px 0;
+}
+.angle-right{
+background-position: -60px 0;
+}
+.angle-down{
+background-position: -80px 0;
+}
+.angle-up{
+background-position: -100px 0;
+}
+.angle-left_wh{
+background-position: -120px 0;
+}
+.angle-right_wh{
+background-position: -140px 0;
+}
+.angle-down_wh{
+background-position: -160px 0;
+}
+.angle-up_wh{
+background-position: -180px 0;
+}
+.nav-menu .bars,.bars{
+    background-position: -200px 0;
+}
+.home,.page-location>.home{
+    background-position: -220px 0;
+    margin: 5px 0;
+}
+/* 20209.16 김성미 : background-position: -80px -> -60px로 수정하였습니다. */
+.page-locationWrap .chevron-right{
+    width: 15px;
+    height: 30px;
+    background-position: -140px -60px;
+}
+.pause{
+    background-position: -240px 0;
+}
+.caret-right,.play{
+    background-position: -260px 0;
+}
+.sort-down-wh {
+    background-position: -280px 0;
+}
+.sort-up {
+    background-position: -300px 0;
+}
+.user{
+    background-position: -320px 0;
+}
+.times-s{
+    background-position: -340px 0;
+}
+
+/* index.html >> .menu-btn 시작 */
+.menu-btn.button>.img-icon{
+    width: 40px;
+    height: 40px;
+}
+.certificate_wh {
+    background-position: 0 -20px;
+}
+.certificate_bk {
+    background-position: -40px -20px;
+}
+.coupon,.coupon_wh{
+    background-position: -80px -20px;
+}
+.coupon_bk{
+    background-position: -120px -20px;
+}
+.menu-btn-hover>.coupon,.coupon_gd{
+    background-position: -160px -20px;
+}
+.headset,.headset_wh{
+    background-position: -200px -20px;
+}
+.headset_bk{
+    background-position: -240px -20px;
+}
+.menu-btn-hover>.headset,.headset_gd{
+    background-position: -280px -20px;
+}
+.desktop,.desktop_wh{
+    background-position: -320px -20px;
+}
+.desktop_bk{
+    background-position: -360px -20px;
+}
+.desktop_gd,.menu-btn-hover>.desktop{
+    background-position: -400px -20px;
+}
+.users,.users_wh {
+    background-position: -440px -20px;
+}
+.users_bk{
+    background-position: -480px -20px;
+}
+.menu-btn-hover>.users,.users_gd {
+    background-position: -520px -20px;
+}
+/* index.html >> .menu-btn 끝 */
+
+/* header/footer >> sns-icon 시작 */
+.Nblog,.Nblog_gr,.Nblog:hover,.Nblog_cl,
+.Ncafe,.Ncafe_gr,.Ncafe:hover,.Ncafe_cl,
+.youtube,.youtube_gr,.youtube:hover,.youtube_cl{
+    width: 40px;
+    height: 40px;
+}
+.Nblog,.Nblog_gr{
+    background-position: -560px -20px;
+}
+.Nblog:hover,.Nblog_cl{
+    background-position: -600px -20px;
+}
+.Ncafe,.Ncafe_gr{
+    background-position: -640px -20px;
+}
+.Ncafe:hover,.Ncafe_cl{
+    background-position: -680px -20px;
+}
+.youtube,.youtube_gr{
+    background-position: -720px -20px;
+}
+.youtube:hover,.youtube_cl{
+    background-position: -760px -20px;
+}
+/* header/footer >> sns-icon 끝 */
+
+/* index.html >> .recommend-classWrap 시작 */
+.heart,.heart_gr{
+    background-position: -360px 0;
+}
+.heart:hover,.heart_wh{
+    background-position: -380px 0;
+}
+/* index.html >> .recommend-classWrap 끝 */
+
+/* index.html >> .customWrap 시작 */
+.customer .bullhorn,.bullhorn_gd,
+.customer .faq,.faq_gd{
+    width: 40px;
+    height: 40px;
+}
+.customer .bullhorn,.bullhorn_gd{
+    background-position: -800px -20px;
+}
+.customer .faq,.faq_gd{
+    background-position: -840px -20px;
+}
+/* index.html >> .customWrap 끝 */
+
+/* subPage >> .class-listWrap 시작 */
+.tv{
+    background-position: -420px 0;
+}
+.btn-wh:hover .tv,.tv_hv{
+    background-position: -440px 0;
+}
+.hand-point-up{
+    background-position: -460px 0;
+}
+.btn-bl:hover .hand-point-up,.hand-point-up_hv{
+    background-position: -480px 0;
+}
+/* subPage >> .class-listWrap 끝 */
+
+/* subPage >> .community 시작 */
+.gift{
+    background-position: -400px 0;
+}
+.bullhorn-s{
+    background-position: -560px 0;
+}
+.save{
+    background-position: -580px 0;
+}
+.print {
+    background-position: -600px 0;
+}
+.pin{
+    background-position: -620px 0;
+}
+.clock{
+    background-position: -640px 0;
+}
+/* subPage >> .community 끝 */
+
+/* subPage >> .map-wayWrap 시작 */
+.map-wayWrap .bus,.bus{
+    background-position: -500px 0;
+}
+.map-wayWrap .subway,.subway{
+    background-position: -520px 0;
+}
+.map-wayWrap .car,.car{
+    background-position: -540px 0;
+}
+/* subPage >> .map-wayWrap 끝 */
+
+/* subPage >> mypage 시작 */
+.mileageImg{
+    width: 140px;
+    height: 80px;
+    background-position: 0 -80px;
+}
+.attendanceY {
+    background-position: -660px 0;
+}
+.attendanceN {
+    background-position: -680px 0;
+}
+.check-square {
+    background-position: -700px 0;
+}
+.ballot-check {
+    background-position: -720px 0;
+}
+.edit {
+    background-position: -740px 0;
+}
+.study{
+    background-position: -780px 0;
+}
+.btn-bl:hover .study,.study_hv{
+    background-position: -760px 0;
+}
+/* subPage >> mypage 끝 */
+
+
+/*--------------------------------------------------------------
+  >> 2020_lms_html
+----------------------------------------------------------------*/
+/* user_01_resumeForm */
+.question-circle{background-position: 0 -140px;}
+.times-circle{background-position: -20px -140px;}
+.plus-circle{background-position: -40px -140px;}
+.plus-circle-gray{background-position: -60px -140px;}
+.plus-circle-navy{background-position: -80px -140px;}
+.minus-circle-gray{background-position: -100px -140px;}
+.minus-circle-navy{background-position: -120px -140px;}
+
+/* 학력사항 */
+.graduation-cap{background-position: -140px -140px;}
+
+/* 경력사항 */
+.briefcase-gray{background-position: -160px -140px;}
+.briefcase,.briefcase-navy,
+.briefcase-gray.iconHover{background-position: -180px -140px;}
+
+/* 교육이수 경력 */
+.book-open-gray{background-position:-200px -140px;}
+.book-open,.book-open-navy
+.book-open-gray.iconHover{background-position:-220px -140px;}
+
+/* 언어능력 */
+.globe-gray{background-position:-240px -140px;}
+.globe,.globe-navy,
+.globe-gray.iconHover{background-position:-260px -140px;}
+
+/* 자격증 */
+.file-certificate-gray{background-position:-280px -140px;}
+.file-certificate,.file-certificate-navy,
+.file-certificate-gray.iconHover{background-position:-300px -140px;}
+
+/* 본 과정 응시 여부 */
+.user-friends{background-position:-320px -140px;}
+
+/* K-MOVE스쿨 참여여부 */
+.atlas{background-position:-340px -140px;}
+
+/* 해외체류경험 */
+.plane-gray{background-position:-360px -140px;}
+.plane, .plane-navy,
+.plane-gray.iconHover{background-position:-380px -140px;}
+
+/* 자기소개서 */
+.pen-nib{background-position: -400px -140px;}
+
+/* 증빙자료 업로드 */
+.upload{background-position: -420px -140px;}
+
+/* user_02_myPage */
+.home-dkgr{
+    background-position: -100px -160px;
+}
+.home_blue {
+    background-position: -120px -160px;
+}
+.user-dkgr {
+    background-position: -140px -160px;
+}
+.user_blue {
+    background-position: -160px -160px;
+}
+.calendar-alt {
+    background-position: -180px -160px;
+}
+.calendar-alt_blue {
+    background-position: -200px -160px;
+}
+.calendar-alt_wh {
+    background-position: -220px -160px;
+}
+.signal-alt-3 {
+    background-position: -240px -160px;
+}
+.signal-alt-3_blue {
+    background-position: -260px -160px;
+}
+.signal-alt-3_wh {
+    background-position: -280px -160px;
+}
+.file-alt {
+    background-position: -300px -160px;
+}
+.file-alt_blue {
+    background-position: -320px -160px;
+}
+.file-alt_wh {
+    background-position: -340px -160px;
+}
+.bullhorn-dkgr {
+    background-position: -360px -160px;
+}
+.bullhorn_blue {
+    background-position: -380px -160px;
+}
+.bullhorn_wh {
+    background-position: -400px -160px;
+}
+
+/* admin_02_classManagement */
+.caret-right-gr {
+    background-position: -20px -160px;
+}
+.caret-right-nv,
+.caret-right-gr:hover {
+    background-position: -40px -160px;
+}
+.caret-left-gr {
+    background-position: -60px -160px;
+}
+.caret-left-gr:hover {
+    background-position: -80px -160px;
+}
+.sort-down-wh {
+    background-position: 0 -160px;
+}

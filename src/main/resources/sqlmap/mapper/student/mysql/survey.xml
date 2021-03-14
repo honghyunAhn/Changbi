@@ -1,0 +1,716 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lms.student.dao.SurveyDAO">
+
+	<resultMap id="SurveysVO" type="SurveysVO" autoMapping="true">
+		<id		property="survey_seq"  			column="SURVEY_SEQ"/>
+		<result property="survey_question_seq" 	column="SURVEY_QUESTION_SEQ"/>
+		<result property="survey_answer_seq" 	column="SURVEY_ANSWER_SEQ"/>
+		<result property="survey_complete_seq" 	column="SURVEY_COMPLETE_SEQ"/>
+		<result property="survey_number" 		column="SURVEY_NUMBER"/>
+		<result property="survey_type_seq" 		column="SURVEY_TYPE_SEQ"/>
+		<result property="survey_type_name" 	column="SURVEY_TYPE_NAME"/>
+		<result property="crc_id" 				column="CRC_ID"/>
+		<result property="crc_name" 			column="CRC_NAME"/>
+		<result property="gisu_id" 				column="GISU_ID"/>
+		<result property="gisu_name" 			column="GISU_NAME"/>
+		<result property="user_id" 				column="USER_ID"/>
+		<result property="user_name" 			column="USER_NAME"/>
+		<result property="survey_title"	 		column="SURVEY_TITLE"/>
+		<result property="survey_content"		column="SURVEY_CONTENT"/>
+		<result property="survey_question" 		column="SURVEY_QUESTION"/>
+		<result property="survey_answer"	 	column="SURVEY_ANSWER"/>
+		<result property="survey_answer_choice"	column="SURVEY_ANSWER_CHOICE"/>
+		<result property="survey_answer_hide"	column="SURVEY_ANSWER_HIDE"/>
+		<result property="survey_answer_sample"	column="SURVEY_ANSWER_SAMPLE"/>
+		<result property="survey_start_date"	column="SURVEY_START_DATE"/>
+		<result property="survey_end_date"	 	column="SURVEY_END_DATE"/>
+		<result property="survey_regdate"	 	column="SURVEY_REGDATE"/>
+		<result property="survey_update"	 	column="SURVEY_UPDATE"/>
+		<result property="survey_state"		 	column="SURVEY_STATE"/>
+	</resultMap>
+
+	<select id="validationSurveyTitle" parameterType="SurveysVO" resultType="int">
+		SELECT COUNT(SURVEY_TITLE)
+		FROM STU_SURVEY_INFO_TB
+		WHERE
+			CRC_ID = #{crc_id}
+			<if test='gisu_id != null and gisu_id != "" '>
+				AND GISU_ID = #{gisu_id}
+			</if>
+			<if test='survey_seq != 0'> <!-- 설문조사 수정페이지에서 사용하는 조건 -->
+				AND SURVEY_SEQ != #{survey_seq}
+			</if>
+			AND AUTO_YN = #{autoYn}
+			AND	SURVEY_TITLE = #{survey_title}
+	</select>
+	
+	<insert id="insertSurveyInfo" parameterType="SurveysVO">
+	    INSERT INTO STU_SURVEY_INFO_TB
+	    (
+	    SURVEY_SEQ,
+	    CRC_ID,
+	    <if test="autoYn == null">
+		    GISU_ID,
+		    SURVEY_START_DATE,
+		    SURVEY_END_DATE,
+	    </if>
+	    SURVEY_TITLE,
+	    SURVEY_CONTENT,
+	    <if test="autoYn != null">
+	    	AUTO_YN,
+	    	SURVEY_REGDATE,
+	    </if>
+	    SURVEY_INSDATE,
+	    SURVEY_UPDATE
+	    )
+	    VALUES(
+	    (SELECT IFNULL(MAX(SURVEY_SEQ),0)+1 FROM STU_SURVEY_INFO_TB st),
+	     #{crc_id},
+	     <if test="autoYn == null">
+		     #{gisu_id},
+		     #{survey_start_date},
+		     #{survey_end_date},
+	     </if>
+	     #{survey_title},
+	     #{survey_content},
+	     <if test="autoYn != null">
+	    	#{autoYn},
+	    	NOW(),
+	    </if>
+	     NOW(),
+	     NOW()
+	     )
+	     <selectKey resultType="java.lang.Integer" keyProperty="survey_seq" order="AFTER">
+	        SELECT MAX(SURVEY_SEQ) survey_seq FROM STU_SURVEY_INFO_TB
+	    </selectKey>
+	</insert>
+	
+	<select id="selectKey_insertSurveyInfo" parameterType="SurveysVO" resultType="int">
+		SELECT SURVEY_SEQ
+		FROM STU_SURVEY_INFO_TB
+		WHERE
+			CRC_ID				= #{crc_id}
+			<if test="autoYn == null">
+			   	AND	GISU_ID				= #{gisu_id}
+				AND SURVEY_START_DATE	= #{survey_start_date}
+				AND SURVEY_END_DATE		= #{survey_end_date}
+			</if>
+		    AND	SURVEY_TITLE		= #{survey_title}
+		    AND	SURVEY_CONTENT		= #{survey_content}
+		    <if test="autoYn != null">
+		    	AND AUTO_YN = 'Y'
+		    </if>
+	</select>
+	
+	<insert id="insertSurveyQuestion" parameterType="SurveysVO">
+	    INSERT INTO STU_SURVEY_QUESTION_TB
+	    (
+	    SURVEY_QUESTION_SEQ
+	    <if test="survey_seq != 0">
+	    	,SURVEY_SEQ
+	    </if>
+	    <if test="survey_template_seq != 0">
+	    	,SURVEY_TEMPLATE_SEQ
+	    </if>
+	    ,SURVEY_TYPE_SEQ
+	    ,SURVEY_NUMBER
+	    ,SURVEY_QUESTION
+	    ,SURVEY_ANSWER_SAMPLE
+	    )
+	    VALUES(
+	    (SELECT IFNULL(MAX(SURVEY_QUESTION_SEQ),0)+1 FROM STU_SURVEY_QUESTION_TB st)
+	    <if test="survey_seq != null and survey_seq != '' ">
+			,#{survey_seq}
+		</if>
+		<if test="survey_template_seq != 0">
+			,#{survey_template_seq}
+		</if>
+	     ,#{survey_type_seq}
+	     ,#{survey_number}
+	     ,#{survey_question}
+	     ,#{survey_answer_sample}
+	     )
+	</insert>
+	
+	<resultMap type="hashmap" id="detailBasic">
+		<id		property="survey_seq"			column="survey_seq"			javaType="int"/>
+		<result	property="crc_id"				column="crc_id"				javaType="String"/>
+		<result	property="gisu_id"				column="gisu_id"			javaType="String"/>
+		<result	property="crc_nm"				column="crc_nm"				javaType="String"/>
+		<result	property="gisu_nm"				column="gisu_nm"			javaType="String"/>
+		<result	property="survey_title"			column="survey_title"		javaType="String"/>
+		<result	property="survey_content"		column="survey_content"		javaType="String"/>
+		<result	property="survey_start_date"	column="survey_start_date"	javaType="String"/>
+		<result	property="survey_end_date"		column="survey_end_date"	javaType="String"/>
+		
+		<collection property="question" javaType="java.util.ArrayList"	resultMap="detailQuestion"></collection>
+	</resultMap>
+	
+	<resultMap type="hashmap" id="detailQuestion">
+		<id		property="survey_question_seq"		column="survey_question_seq"	javaType="int"/>
+		<result	property="survey_number"			column="survey_number"			javaType="int"/>
+		<result property="survey_question"			column="survey_question"		javaType="String"/>
+		<result property="survey_answer_sample"		column="survey_answer_sample"	javaType="String"/>
+		<result property="survey_type_seq"			column="survey_type_seq"		javaType="int"/>
+		<result property="survey_type_nm"			column="survey_type_nm"			javaType="String"/>
+	</resultMap>
+	
+	<select id="selectSurveyDetail" parameterType="int" resultMap="detailBasic">
+	SELECT
+		info.survey_seq
+	    ,info.crc_id
+	    ,info.gisu_id
+	    ,course.name crc_nm
+	    ,cardinal.name gisu_nm
+	    ,info.survey_title
+	    ,info.survey_content
+	    ,info.survey_start_date
+	    ,info.survey_end_date
+	    ,question.survey_question_seq
+	    ,question.survey_number
+	    ,question.survey_question
+	    ,question.survey_answer_sample
+	    ,type.survey_type_seq
+	    ,type.survey_type_name survey_type_nm 
+	FROM
+		stu_survey_info_tb info
+	    ,stu_survey_question_tb question
+	    ,stu_survey_type_info_tb type
+	    ,cb_course course
+	    ,cb_cardinal cardinal
+	WHERE
+		info.survey_seq = question.survey_seq
+	    AND
+	    question.survey_type_seq = type.survey_type_seq
+	    AND
+	    info.crc_id = course.id
+	    AND
+	    info.gisu_id = cardinal.id
+	    AND
+	    info.survey_seq = #{survey_seq}
+	ORDER BY survey_question_seq
+	</select>
+	
+	<update id="updateSurveyInfo" parameterType="SurveysVO">
+		UPDATE stu_survey_info_tb
+		SET
+			crc_id =#{crc_id}
+			,gisu_id =#{gisu_id}
+			,survey_title = #{survey_title}
+			,survey_content = #{survey_content}
+			,survey_start_date = #{survey_start_date}
+			,survey_end_date = #{survey_end_date}
+			,survey_update = NOW()
+		WHERE
+			survey_seq = #{survey_seq};
+	</update>
+	
+	<delete id="deleteSurveyQuestion" parameterType="SurveysVO">
+		DELETE FROM
+			stu_survey_question_tb
+		WHERE 
+			<if test="survey_seq != 0">
+				survey_seq = #{survey_seq}
+			</if>
+			<if test="survey_template_seq != 0">
+				survey_template_seq = #{survey_template_seq}
+			</if>
+	</delete>
+	
+	<delete id="deleteSurveyInfo" parameterType="int">
+		DELETE FROM
+			stu_survey_info_tb
+		WHERE 
+			survey_seq = #{survey_seq}
+	</delete>
+	
+	<!-- 일반설문 리스트 조회 -->
+	<select id="surveyList" parameterType="SurveysVO" resultMap="SurveysVO">
+		SELECT
+			SURVEY_SEQ
+			,CRC_ID
+			,GISU_ID
+			,(SELECT NAME FROM CB_COURSE WHERE ID = CRC_ID) AS CRC_NAME
+			,(SELECT NAME FROM CB_CARDINAL WHERE ID = GISU_ID) AS GISU_NAME 
+			,SURVEY_TITLE
+			,SURVEY_START_DATE
+			,SURVEY_END_DATE
+			,SURVEY_REGDATE
+			,IF(SURVEY_END_DATE >= CURDATE(), 'OPEN', 'CLOSED') SURVEY_STATE
+		FROM
+			STU_SURVEY_INFO_TB
+		WHERE 1 = 1
+            <if test='crc_id != null and crc_id != "" '>
+            	AND CRC_ID = #{crc_id}
+            </if>
+            <if test='gisu_id != null and gisu_id != "" '>
+            	AND GISU_ID = #{gisu_id}
+            </if>
+            <if test='searchKeyword != null and searchKeyword != "" '>
+            	AND SURVEY_TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+            </if>
+            	AND AUTO_YN = 'N'
+		ORDER BY SURVEY_SEQ DESC
+		<if test='pagingYn=="Y"'>
+			<include refid="forFaith.common.footer"/>
+		</if>
+	</select>
+	
+	<select id="surveyTotalCnt" parameterType="SurveysVO" resultType="int">
+		SELECT COUNT(*) FROM (
+			SELECT
+				SURVEY_SEQ
+				,CRC_ID 
+				,GISU_ID
+				,(SELECT NAME FROM CB_COURSE WHERE ID = CRC_ID) AS CRC_NAME
+				,(SELECT NAME FROM CB_CARDINAL WHERE ID = GISU_ID) AS GISU_NAME 
+				,SURVEY_TITLE
+				,SURVEY_START_DATE 
+				,SURVEY_END_DATE
+				,SURVEY_REGDATE 
+				,IF(SURVEY_END_DATE >= CURDATE(), 'OPEN', 'CLOSED') SURVEY_STATE
+			FROM
+				STU_SURVEY_INFO_TB
+			WHERE 1 = 1
+	            <if test='crc_id != null and crc_id != "" '>
+	            	AND CRC_ID = #{crc_id}
+	            </if>
+	            <if test='gisu_id != null and gisu_id != "" '>
+	            	AND GISU_ID = #{gisu_id}
+	            </if>
+	            <if test='searchKeyword != null and searchKeyword != "" '>
+	            	AND SURVEY_TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+	            </if>
+	            	AND AUTO_YN = 'N'
+			ORDER BY SURVEY_SEQ DESC ) T
+	</select>
+	
+	<update id="regSurvey" parameterType="int">
+		UPDATE stu_survey_info_tb
+		SET
+			survey_regdate = NOW()
+		WHERE
+			survey_seq = #{survey_seq}
+	</update>
+	
+	<update id="cancelSurvey" parameterType="int">
+		UPDATE stu_survey_info_tb
+		SET
+			survey_regdate = null
+		WHERE
+			survey_seq = #{survey_seq}
+	</update>
+	
+	<delete id="deleteSurveyAnswer" parameterType="int">
+		DELETE FROM STU_SURVEY_ANSWER_TB
+		WHERE
+			SURVEY_QUESTION_SEQ IN ( SELECT	SURVEY_QUESTION_SEQ 
+									 FROM	STU_SURVEY_QUESTION_TB
+									 WHERE	SURVEY_SEQ = #{survey_seq} )
+	</delete>
+	
+	<delete id="deleteSurveyComplete" parameterType="int">
+		DELETE	FROM STU_SURVEY_COMPLETE_TB
+		WHERE	SURVEY_SEQ = #{survey_seq}
+	</delete>
+	
+	<select id="selectSurveyInfo" parameterType="SurveysVO" resultType="Hashmap">
+		SELECT 
+			SURVEY_SEQ
+			,CRC_ID
+			,GISU_ID
+		    ,SURVEY_TITLE
+		    ,SURVEY_CONTENT
+		    ,DATE_FORMAT(SURVEY_START_DATE, '%Y-%m-%d') SURVEY_START_DATE
+		    ,DATE_FORMAT(SURVEY_END_DATE, '%Y-%m-%d') SURVEY_END_DATE
+		    ,DATE_FORMAT(SURVEY_UPDATE, '%Y-%m-%d') SURVEY_UPDATE
+		    ,(	SELECT COUNT(*) FROM STU_SURVEY_COMPLETE_TB 
+		    	WHERE SURVEY_SEQ = #{survey_seq} ) COMPLETE_CNT
+		    ,(	SELECT COUNT(*) FROM CB_LEARN_APP
+				WHERE COURSE_ID = #{crc_id} AND CARDINAL_ID = #{gisu_id} AND ACCEPTANCE_YN = 'Y' ) TOTAL_CNT
+		FROM 
+			STU_SURVEY_INFO_TB
+		WHERE
+			SURVEY_SEQ = #{survey_seq}
+	</select>
+	
+	<select id="selectAutoSurveyInfo" parameterType="SurveysVO" resultType="Hashmap">
+		SELECT
+			A.SURVEY_SEQ
+			,A.CRC_ID
+		    ,CRC.NAME CRC_NM
+			,SURVEY_TITLE
+		    ,SURVEY_CONTENT
+		    ,AUTO_SURVEY_START
+		    ,AUTO_SURVEY_PERIOD
+		    ,(	SELECT 	COUNT(*) FROM STU_SURVEY_COMPLETE_TB C
+				WHERE 	C.SURVEY_SEQ = #{survey_seq} ) COMPLETE_CNT
+			,(	SELECT 	COUNT(*) FROM CB_LEARN_APP
+				WHERE 	COURSE_ID = #{crc_id} AND ACCEPTANCE_YN = 'Y' ) TOTAL_CNT
+			<if test='gisu_id != null and gisu_id != "" '>
+				,CASE
+					WHEN (AUTO_SURVEY_START = 2) THEN DATE_ADD(LEARN_START_DATE, INTERVAL 30 DAY)
+					WHEN (AUTO_SURVEY_START = 3) THEN DATE_ADD(LEARN_START_DATE, INTERVAL 60 DAY)
+				 END AS SURVEY_START_DATE
+				,CASE
+					WHEN (AUTO_SURVEY_PERIOD = 1) THEN LEARN_END_DATE
+					WHEN (AUTO_SURVEY_START = 2 AND AUTO_SURVEY_PERIOD = 2) THEN DATE_ADD(LEARN_START_DATE, INTERVAL 37 DAY)
+					WHEN (AUTO_SURVEY_START = 3 AND AUTO_SURVEY_PERIOD = 2) THEN DATE_ADD(LEARN_START_DATE, INTERVAL 67 DAY)
+				 END AS SURVEY_END_DATE
+				 ,GISU.ID GISU_ID
+				 ,GISU.NAME GISU_NM
+			</if>
+		FROM
+			STU_SURVEY_INFO_TB S
+			,STU_SURVEY_AUTO_TB A
+		    ,CB_COURSE CRC
+		    <if test='gisu_id != null and gisu_id != "" '>
+		    	,CB_CARDINAL GISU
+		    </if>
+		WHERE
+			S.SURVEY_SEQ = A.SURVEY_SEQ 
+		    AND A.SURVEY_SEQ = #{survey_seq}
+		    AND CRC.ID = #{crc_id}
+		    <if test='gisu_id != null and gisu_id != "" '>
+		    	AND GISU.ID = #{gisu_id}
+		    </if>
+	</select>
+	
+	<resultMap id="surveyResult" 				type="SurveysVO" 				autoMapping="true">
+		<id property="survey_question_seq"		column="SURVEY_QUESTION_SEQ"/>
+		<result property="survey_type_seq"		column="SURVEY_TYPE_SEQ"/>
+		<result property="survey_number" 		column="SURVEY_NUMBER"/>
+		<result property="survey_question"		column="SURVEY_QUESTION"/>
+		<result property="survey_answer_sample"	column="SURVEY_ANSWER_SAMPLE"/>
+		<collection property="answerList" 		ofType="SurveyAnswerVO" 		resultMap="surveyAnswer"/>
+	</resultMap>
+	
+	<resultMap id="surveyAnswer" 				type="SurveyAnswerVO">
+		<id property="survey_answer_seq"		column="SURVEY_ANSWER_SEQ"/>
+		<result property="user_id"				column="USER_ID"/>
+		<result property="user_nm"				column="USER_NM"/>
+		<result property="survey_answer"		column="SURVEY_ANSWER"/>
+		<result property="survey_answer_choice"	column="SURVEY_ANSWER_CHOICE"/>
+	</resultMap>
+	
+	<select id="selectSurveyResult" parameterType="SurveysVO" resultMap="surveyResult">
+		SELECT 
+			Q.SURVEY_QUESTION_SEQ
+			,SURVEY_TYPE_SEQ
+			,SURVEY_NUMBER
+			,SURVEY_QUESTION
+			,SURVEY_ANSWER_SAMPLE
+    		,SURVEY_ANSWER_SEQ
+    		,A.USER_ID
+    		,USER_NM
+    		,SURVEY_ANSWER
+    		,SURVEY_ANSWER_CHOICE
+		FROM		STU_SURVEY_QUESTION_TB Q
+		LEFT JOIN 	STU_SURVEY_ANSWER_TB A
+		ON			Q.SURVEY_QUESTION_SEQ = A.SURVEY_QUESTION_SEQ
+		LEFT JOIN 	COM_USER_TB USER
+		ON			A.USER_ID = USER.USER_ID
+		<if test='autoSurveyType != null and autoSurveyType.equals("gisu")'>
+			LEFT JOIN 	CB_LEARN_APP APP
+			ON			A.USER_ID IN (SELECT USER_ID FROM CB_LEARN_APP WHERE COURSE_ID = #{crc_id} AND CARDINAL_ID = #{gisu_id})
+		</if>
+		WHERE
+			SURVEY_SEQ = #{survey_seq}
+		ORDER BY 
+			SURVEY_QUESTION_SEQ, SURVEY_ANSWER
+	</select>
+	
+	<select id="selectSurveyCompleteList" parameterType="SurveysVO" resultType="Hashmap">
+		SELECT
+			SURVEY.USER_ID
+		    ,USER_NM
+		FROM
+			STU_SURVEY_COMPLETE_TB SURVEY
+		    ,COM_USER_TB USER
+		WHERE
+			SURVEY.USER_ID = USER.USER_ID
+		    AND SURVEY_SEQ = #{survey_seq}
+		ORDER BY USER_NM
+	</select>
+	
+	<select id="selectSurveyNoAnswerList" parameterType="SurveysVO" resultType="Hashmap">
+		SELECT
+			APP.USER_ID
+		    ,USER_NM
+		FROM 
+			CB_LEARN_APP APP
+		    ,COM_USER_TB USER
+		WHERE
+			APP.USER_ID = USER.USER_ID
+		    AND COURSE_ID = #{crc_id}
+		    AND CARDINAL_ID = #{gisu_id} 
+		    AND ACCEPTANCE_YN = 'Y'
+		    AND APP.USER_ID NOT IN(	SELECT	USER_ID 
+		    						FROM	STU_SURVEY_COMPLETE_TB
+		    						WHERE	SURVEY_SEQ = #{survey_seq} )
+		ORDER BY USER_NM
+	</select>
+	
+	<insert id="insertSurveyTemplate" parameterType="SurveysVO">
+		INSERT INTO STU_SURVEY_TEMPLATE_TB
+	    (
+			SURVEY_TEMPLATE_SEQ
+		    ,SURVEY_TEMPLATE_TITLE
+		    ,SURVEY_TEMPLATE_CONTENT
+		    ,REG_USER
+		    ,REG_DATE
+		    ,UPD_USER
+		    ,UPD_DATE
+	    )VALUES(
+		    (SELECT IFNULL(MAX(SURVEY_TEMPLATE_SEQ),0)+1 FROM STU_SURVEY_TEMPLATE_TB t)
+		    ,#{survey_template_title}
+		    ,#{survey_template_content}
+		    ,#{regUser.id}
+		    ,NOW()
+		    ,#{updUser.id}
+		    ,NOW() 
+	     )
+	</insert>
+	
+	<select id="selectKey_insertSurveyTemplate" parameterType="SurveysVO" resultType="int">
+		SELECT SURVEY_TEMPLATE_SEQ
+		FROM STU_SURVEY_TEMPLATE_TB
+		WHERE
+			SURVEY_TEMPLATE_TITLE	= #{survey_template_title}
+	   	AND	SURVEY_TEMPLATE_CONTENT	= #{survey_template_content}
+	    AND	REG_USER				= #{regUser.id}
+		AND UPD_USER				= #{updUser.id}
+	</select>
+	
+	<update id="updateSurveyTemplate" parameterType="SurveysVO">
+		UPDATE 
+			STU_SURVEY_TEMPLATE_TB
+		SET
+			SURVEY_TEMPLATE_TITLE = #{survey_template_title}
+			,SURVEY_TEMPLATE_CONTENT = #{survey_template_content}
+			,UPD_USER = #{updUser.id}
+			,UPD_DATE = NOW()
+		WHERE
+			SURVEY_TEMPLATE_SEQ = #{survey_template_seq}
+	</update>
+	
+	<delete id="deleteSurveyTemplate" parameterType="SurveysVO">
+		DELETE FROM stu_survey_template_tb
+		WHERE 
+			SURVEY_TEMPLATE_SEQ = #{survey_template_seq}
+	</delete>
+	
+	<select id="selectSurveyTemplateList" resultType="Hashmap">
+		SELECT * FROM stu_survey_template_tb
+	</select>
+	
+	<select id="surveyTemplateDetail" parameterType="SurveysVO" resultType="Hashmap">
+		SELECT * FROM stu_survey_question_tb
+		WHERE
+			survey_template_seq = #{survey_template_seq}
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	<select id="selectGisuList" parameterType="SurveysVO" resultType="Hashmap">
+		SELECT
+			CARDINAL_ID GISU_ID
+		    ,NAME GISU_NM
+		FROM 
+			CB_CN_COURSE COURSE
+		    ,CB_CARDINAL GISU
+		WHERE
+			COURSE.CARDINAL_ID = GISU.ID
+			AND COURSE_ID = #{crc_id}
+	</select>
+	
+	<insert id="insertAutoSurveyQuestion" parameterType="SurveysVO">
+		INSERT INTO STU_SURVEY_QUESTION_TB(
+			SURVEY_QUESTION_SEQ
+		    ,SURVEY_SEQ
+		    ,SURVEY_TYPE_SEQ
+		    ,SURVEY_NUMBER
+		    ,SURVEY_QUESTION
+		    ,SURVEY_ANSWER_SAMPLE
+		)
+			SELECT 
+				(SELECT IFNULL(MAX(SURVEY_QUESTION_SEQ),0) FROM STU_SURVEY_QUESTION_TB ST) + (@ROWNUM := @ROWNUM + 1) SEQ
+				,#{survey_seq}
+    			,A.*
+			FROM
+				(	SELECT
+						SURVEY_TYPE_SEQ
+						,SURVEY_NUMBER
+						,SURVEY_QUESTION
+						,SURVEY_ANSWER_SAMPLE
+					FROM STU_SURVEY_QUESTION_TB, (SELECT @ROWNUM := 0 ) T
+					WHERE SURVEY_TEMPLATE_SEQ = #{survey_template_seq}	) A
+	</insert>
+	
+	<insert id="insertAutoSurveyInfo" parameterType="SurveysVO">
+		INSERT INTO STU_SURVEY_AUTO_TB(
+			SEQ
+		    ,SURVEY_SEQ
+		    ,CRC_ID
+		    ,AUTO_SURVEY_START
+		    ,AUTO_SURVEY_PERIOD
+		    ,AUTO_SURVEY_TYPE
+		    <if test='autoSurveyType != null and autoSurveyType.equals("gisu")'>
+		    	,AUTO_SURVEY_GISU
+		    </if>
+		    ,REG_USER
+		    ,REG_DATE
+		)VALUES(
+			(SELECT IFNULL(MAX(SEQ),0)+1 FROM STU_SURVEY_AUTO_TB A)
+		    ,#{survey_seq}
+		    ,#{crc_id}
+		    ,#{autoSurveyStart}
+		    ,#{autoSurveyPeriod}
+		    ,#{autoSurveyType}
+		    <if test='autoSurveyType != null and autoSurveyType.equals("gisu")'>
+		    	,#{autoSurveyGisu}
+		    </if>
+		    ,#{regUser.id}
+		    ,now()
+		)
+	</insert>
+	
+	<delete id="cancelAutoSurvey" parameterType="SurveysVO">
+		DELETE FROM STU_SURVEY_INFO_TB
+		WHERE
+			SURVEY_SEQ = #{survey_seq}
+	</delete>
+	
+	<select id="selectAutoSurveyList" parameterType="SurveysVO" resultMap="SurveysVO">
+		SELECT
+			AUTO.SURVEY_SEQ
+            ,AUTO.CRC_ID
+            ,COURSE.NAME CRC_NAME
+		    ,SURVEY_TITLE
+		    ,AUTO_SURVEY_START
+		    ,AUTO_SURVEY_PERIOD
+		    ,AUTO_SURVEY_TYPE
+		    ,AUTO_SURVEY_GISU
+            ,GISU.NAME GISU_NAME
+		FROM
+			STU_SURVEY_AUTO_TB AUTO
+        JOIN STU_SURVEY_INFO_TB INFO
+        	ON AUTO.SURVEY_SEQ = INFO.SURVEY_SEQ
+        JOIN CB_COURSE COURSE
+        	ON AUTO.CRC_ID = COURSE.ID
+        LEFT JOIN CB_CARDINAL GISU
+        ON AUTO.AUTO_SURVEY_GISU = GISU.ID
+		WHERE
+			1=1
+    		<if test='crc_id != null and crc_id != "" '>
+				AND AUTO.CRC_ID = #{crc_id}
+			</if>
+			<if test='autoSurveyType != null and autoSurveyType != "" '>
+				AND AUTO_SURVEY_TYPE = #{autoSurveyType}
+			</if>
+			<if test='searchKeyword != null and searchKeyword != "" '>
+				AND SURVEY_TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+			</if>
+		ORDER BY SURVEY_SEQ DESC
+		<if test='pagingYn=="Y"'>
+			<include refid="forFaith.common.footer"/>
+		</if>
+	</select>
+	
+	<select id="autoSurveyTotalCnt" parameterType="SurveysVO" resultType="int">
+		SELECT COUNT(*) FROM (
+			SELECT
+				AUTO.SURVEY_SEQ
+	            ,AUTO.CRC_ID
+	            ,COURSE.NAME CRC_NAME
+			    ,SURVEY_TITLE
+			    ,AUTO_SURVEY_START
+			    ,AUTO_SURVEY_PERIOD
+			    ,AUTO_SURVEY_TYPE
+			    ,AUTO_SURVEY_GISU
+	            ,GISU.NAME GISU_NAME
+			FROM
+				STU_SURVEY_AUTO_TB AUTO
+	        JOIN STU_SURVEY_INFO_TB INFO
+	        	ON AUTO.SURVEY_SEQ = INFO.SURVEY_SEQ
+	        JOIN CB_COURSE COURSE
+	        	ON AUTO.CRC_ID = COURSE.ID
+	        LEFT JOIN CB_CARDINAL GISU
+	        ON AUTO.AUTO_SURVEY_GISU = GISU.ID
+			WHERE
+				1=1
+	    		<if test='crc_id != null and crc_id != "" '>
+					AND AUTO.CRC_ID = #{crc_id}
+				</if>
+			ORDER BY SURVEY_SEQ DESC
+		) T
+	</select>
+	
+	<select id="selectGisuAutoSurveyInfo" parameterType="SurveysVO" resultMap="SurveysVO">
+		SELECT
+			SURVEY_SEQ
+			,CRC_ID
+			,AUTO_SURVEY_GISU
+		FROM
+			STU_SURVEY_AUTO_TB
+		WHERE
+			AUTO_SURVEY_TYPE = 'GISU'
+			AND CRC_ID = #{crc_id}
+			<if test="survey_seq != 0">
+			AND SURVEY_SEQ = #{survey_seq}
+			</if>
+	</select>
+	
+	<select id="selectGisuAutoSurveyList" parameterType="SurveysVO" resultMap="SurveysVO">
+		SELECT
+			A.*
+		    ,IF(SURVEY_END_DATE >= CURDATE(), 'OPEN', 'CLOSED') SURVEY_STATE
+		FROM
+			(	SELECT
+					AUTO.CRC_ID
+				    ,CRC.NAME CRC_NAME
+					,GISU.ID GISU_ID
+				    ,GISU.NAME GISU_NAME
+				    ,AUTO.SURVEY_SEQ
+				    ,SURVEY_TITLE
+				    ,CASE
+						WHEN (AUTO_SURVEY_START = 2) THEN DATE_ADD(LEARN_START_DATE, INTERVAL 30 DAY)
+				        WHEN (AUTO_SURVEY_START = 3) THEN DATE_ADD(LEARN_START_DATE, INTERVAL 60 DAY)
+					 END AS SURVEY_START_DATE
+					,CASE
+						WHEN (AUTO_SURVEY_PERIOD = 1) THEN LEARN_END_DATE
+						WHEN (AUTO_SURVEY_PERIOD = 2 AND AUTO_SURVEY_START = 2) THEN DATE_ADD(LEARN_START_DATE, INTERVAL 37 DAY)
+						WHEN (AUTO_SURVEY_PERIOD = 2 AND AUTO_SURVEY_START = 3) THEN DATE_ADD(LEARN_START_DATE, INTERVAL 67 DAY)
+					 END AS SURVEY_END_DATE
+				FROM
+					CB_CARDINAL GISU, CB_CN_COURSE CN, CB_COURSE CRC
+				    ,STU_SURVEY_INFO_TB INFO
+					,STU_SURVEY_AUTO_TB AUTO
+				WHERE
+					GISU.ID = CN.CARDINAL_ID
+				    AND CRC.ID = CN.COURSE_ID
+				    AND CN.COURSE_ID = #{crc_id}
+				    AND INFO.SURVEY_SEQ = AUTO.SURVEY_SEQ
+				    AND INFO.SURVEY_SEQ = #{survey_seq}
+				    AND GISU.SEQ >= (SELECT SEQ FROM CB_CARDINAL WHERE ID = #{autoSurveyGisu})
+				    <if test='gisu_id != null and gisu_id != "" '>
+						AND GISU.ID = #{gisu_id}
+					</if>
+					<if test='searchKeyword != null and searchKeyword != "" '>
+						AND SURVEY_TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+					</if>
+				) A
+		ORDER BY 
+			GISU_ID DESC
+		<if test='pagingYn=="Y"'>
+			<include refid="forFaith.common.footer"/>
+		</if>
+	</select>
+</mapper>

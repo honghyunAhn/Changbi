@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lms.student.dao.TestDAO">
+ 	<resultMap id="ClassMap" type="com.lms.student.vo.ClassInfoVO" autoMapping="true">
+		<id		property="class_seq"  			column="CLASS_SEQ"/>
+		<result property="class_upper_seq" 		column="CLASS_UPPER_SEQ"/>
+		<result property="class_name" 			column="CLASS_NAME"/>
+		<result property="class_upper_name" 	column="CLASS_UPPER_NAME"/>
+		<result property="crc_id" 				column="GISU_ID"/>
+		<result property="gisu_id" 				column="CRC_ID"/>
+		<result property="crc_name" 			column="CRC_NAME"/>
+		<result property="gisu_name" 			column="GISU_NAME"/>
+		<result property="user_id" 				column="USER_ID"/>
+		<result property="user_name" 			column="USER_NAME"/>
+		<result property="birth_day" 			column="BIRTH_DAY"/>
+		<result property="user_phone" 			column="USER_PHONE"/>
+		<result property="state" 				column="state"/>
+		</resultMap>
+			
+
+	
+<select id="searchCurriculumSeq" resultType="hashmap">
+	SELECT SEQ CRC_SEQ, ID CRC_CLASS, NAME CRC_NM
+	FROM CB_COURSE T
+	WHERE T.RECORD_YN = 'Y'
+	</select>	 
+
+<select id="searchGisuList" resultType="hashmap" parameterType="string">
+	SELECT CD.ID gisu_seq, CD.ID gisu_num, CD.NAME gisu_crc_nm 
+	FROM CB_CARDINAL CD, CB_COURSE CS, CB_CN_COURSE CN 
+	where CN.CARDINAL_ID = CD.ID AND CS.ID = CN.COURSE_ID AND CS.ID = #{seq}
+	AND (CS.CHECKONLINE = 'offline' OR CS.CHECKONLINE = 'blended')
+	</select>
+
+
+<select id="searchCategoryList" parameterType="com.lms.student.vo.GisuCategoryVO" resultType="hashmap">
+	SELECT t.CAT_SEQ,t.CRC_ID, t.GISU_ID,t.CAT_NM,t.CAT_PERCENT,t.BIG_CAT_SEQ, t.MID_CAT_SEQ
+	FROM STU_CAT_TB t
+	WHERE		t.crc_id 		= 	#{crc_id} 
+		AND		t.gisu_id 	= 	#{gisu_id}
+		AND		NOT(t.BIG_CAT_SEQ = 0)
+		AND		NOT(t.MID_CAT_SEQ = 0)
+</select>
+
+<select id="createUpperCategory" parameterType="com.lms.student.vo.GisuCategoryVO" resultType="hashmap">
+	SELECT  TB11.*, IFNULL(TB22.CAT_NM,'') mid_cat_nm   
+	FROM 	(SELECT TB1.*, IFNULL(TB2.CAT_NM,'') big_cat_nm  
+		 FROM STU_CAT_TB TB1
+		 LEFT JOIN STU_CAT_TB TB2
+		 ON TB1.BIG_CAT_SEQ = TB2.CAT_SEQ) TB11
+	LEFT JOIN STU_CAT_TB TB22
+	ON TB11.MID_CAT_SEQ = TB22.CAT_SEQ
+	WHERE		TB11.CRC_ID 		= 	#{crc_id}
+		AND		TB11.GISU_ID 		= 	#{gisu_id}
+	ORDER BY TB11.BIG_CAT_SEQ, TB11.MID_CAT_SEQ, TB11.CAT_SEQ
+</select>
+
+
+<select id="searchBigCategoryList" parameterType="com.lms.student.vo.GisuCategoryVO" resultType="hashmap">
+	SELECT CAT_SEQ cat_seq, CRC_ID crc_id, GISU_ID gisu_id, CAT_NM cat_nm, CAT_PERCENT cat_percent, BIG_CAT_SEQ big_cat_seq, MID_CAT_SEQ mid_cat_seq 
+	FROM STU_CAT_TB
+	WHERE 	CRC_ID = #{crc_id}
+		AND GISU_ID = #{gisu_id}
+		<if test="big_cat_seq != null and big_cat_seq != '' and big_cat_seq != 0">
+		AND BIG_CAT_SEQ = #{big_cat_seq}
+		</if>
+		<if test="mid_cat_seq != null and mid_cat_seq != '' and mid_cat_seq != 0">
+		AND MID_CAT_SEQ = #{mid_cat_seq}
+		</if>
+</select>
+
+
+
+
+<insert id="createBigCategory" parameterType="com.lms.student.vo.GisuCategoryVO">
+	INSERT INTO STU_CAT_TB
+	<if test="big_cat_seq == 0">
+	(CAT_SEQ,CRC_ID,GISU_ID,CAT_NM,CAT_PERCENT)
+	</if>
+	<if test="big_cat_seq != null and big_cat_seq != '' and big_cat_seq != 0 and (mid_cat_seq == 0 or mid_cat_seq =='' or mid_cat_seq == null)">
+	(CAT_SEQ,CRC_ID,GISU_ID,CAT_NM,CAT_PERCENT,BIG_CAT_SEQ)
+	</if>
+	<if test="mid_cat_seq != null and mid_cat_seq != '' and big_cat_seq != 0">
+	(CAT_SEQ,CRC_ID,GISU_ID,CAT_NM,CAT_PERCENT,BIG_CAT_SEQ,MID_CAT_SEQ)
+	</if>
+	VALUES
+		(
+		(SELECT	IFNULL(MAX(CAT_SEQ),0)+1 FROM STU_CAT_TB st),
+		#{crc_id},
+		#{gisu_id},
+		#{cat_nm},
+		#{cat_percent}
+		<if test="big_cat_seq != null and big_cat_seq != '' and big_cat_seq != 0 and (mid_cat_seq == 0 or mid_cat_seq =='' or mid_cat_seq == null)" >
+		,#{big_cat_seq}
+		</if>
+		<if test="mid_cat_seq != null and mid_cat_seq != '' and big_cat_seq != 0">
+		,#{big_cat_seq}
+		,#{mid_cat_seq}
+		</if>
+		)
+
+
+</insert>
+
+<insert id="insertTestInfo" parameterType="com.lms.student.vo.TestInfoVO">
+	INSERT INTO STU_TEST_TB
+		(TEST_SEQ,CAT_SEQ,TEST_NM,TOTAL_SCORE,TEST_CONTENT,RETEST_TIME,TEST_START_DATE,TEST_END_DATE)
+		VALUES(
+			(SELECT	IFNULL(MAX(TEST_SEQ),0)+1 FROM STU_TEST_TB st),
+			#{cat_seq},
+			#{test_nm},
+			#{total_score},
+			#{test_content},
+			#{retest_time},
+			#{test_start_date},
+			#{test_end_date}
+		)
+
+</insert>
+<update id="updateBigCategory" parameterType="com.lms.student.vo.GisuCategoryVO">
+	UPDATE STU_CAT_TB
+		SET	CAT_NM = #{cat_nm},
+			CAT_PERCENT = #{cat_percent}
+		WHERE CAT_SEQ = #{cat_seq}
+		<if test="big_cat_seq != null and big_cat_seq != '' and big_cat_seq != 0">
+		AND BIG_CAT_SEQ = #{big_cat_seq}
+		</if>
+		<if test="mid_cat_seq != null and mid_cat_seq != '' and big_cat_seq != 0">
+		AND MID_CAT_SEQ = #{mid_cat_seq}
+		</if>
+</update>
+
+<delete id="deleteBigCategory" parameterType="int">
+	DELETE FROM STU_CAT_TB 
+	WHERE CAT_SEQ = #{cat_seq}
+		  OR BIG_CAT_SEQ = #{cat_seq}
+		  OR MID_CAT_SEQ = #{cat_seq} 
+</delete>
+
+<select id="callSmallCategory" parameterType="com.lms.student.vo.GisuCategoryVO" resultType="hashmap">
+
+        <!-- SELECT CATTB.CAT_NM MID_CAT_NM , TTTB.*
+    	FROM (SELECT T.CAT_NM CAT_NM,T.CAT_SEQ MAIN_SEQ 
+    		  FROM STU_CAT_TB T
+              WHERE T.CRC_ID = #{crc_id}
+              AND T.GISU_ID = #{gisu_id}
+              ) CATTB
+		RIGHT JOIN (SELECT TT.*, CT.CAT_PERCENT, CT.CRC_ID, CT.GISU_ID, CT.CAT_NM
+    		  FROM STU_TEST_TB TT
+              LEFT JOIN STU_CAT_TB CT
+              ON TT.CAT_SEQ = CT.MID_CAT_SEQ   AND TT.TEST_NM = CT.CAT_NM          
+              ORDER BY TT.CAT_SEQ) TTTB
+		ON CATTB.MAIN_SEQ = TTTB.CAT_SEQ
+		WHERE TTTB.CRC_ID = #{crc_id}
+		AND TTTB.GISU_ID = #{gisu_id}
+		ORDER BY CAT_SEQ, TEST_SEQ -->
+<!-- 		SELECT T2.CAT_SEQ,T2.CAT_PERCENT, T2.CAT_NM, TTB.CAT_SEQ MID_CAT_SEQ, TTB.CRC_ID, TTB.GISU_ID, TTB.CAT_NM MID_CAT_NM,
+        TTB.CAT_PERCENT, TTB.BIG_CAT_SEQ,TTB.TEST_NM, TTB.TEST_SEQ,
+        TTB.TOTAL_SCORE,TTB.TEST_CONTENT,TTB.RETEST_TIME, TTB.TEST_YN,TTB.TEST_START_DATE, TTB.TEST_END_DATE, TTB.TEST_REGDATE,
+        T2.CAT_NM
+        FROM (SELECT TB.CRC_ID,TB.GISU_ID,TB.CAT_NM,TB.CAT_PERCENT,TB.BIG_CAT_SEQ,TB.MID_CAT_SEQ, TT.*
+        FROM (SELECT T.*
+    		  FROM STU_CAT_TB T
+              WHERE T.CRC_ID = #{crc_id}
+              AND T.GISU_ID = #{gisu_id}
+              AND T.MID_CAT_SEQ = 0
+			  AND NOT(T.BIG_CAT_SEQ = 0)) TB
+		LEFT JOIN STU_TEST_TB TT
+        ON TT.CAT_SEQ = TB.CAT_SEQ) TTB
+        LEFT JOIN STU_CAT_TB T2
+        ON T2.MID_CAT_SEQ = TTB.CAT_SEQ
+        AND T2.CAT_NM = TTB.TEST_NM -->
+SELECT T2.CAT_SEQ,T2.CAT_PERCENT, T2.CAT_NM SMALL_CAT_NM, TTB.CRC_ID, TTB.GISU_ID,
+        TTB.CAT_PERCENT, TTB.BIG_CAT_SEQ, TTB.MID_CAT_SEQ, TTB.TEST_NM, TTB.TEST_SEQ,
+        TTB.TOTAL_SCORE,TTB.TEST_CONTENT,TTB.RETEST_TIME, TTB.TEST_YN,TTB.TEST_START_DATE, TTB.TEST_END_DATE, TTB.TEST_REGDATE
+        FROM (SELECT TB.CRC_ID,TB.GISU_ID,TB.CAT_NM,TB.CAT_PERCENT,TB.BIG_CAT_SEQ,TB.MID_CAT_SEQ, TT.*
+        FROM (SELECT T.*
+    		  FROM STU_CAT_TB T
+              WHERE T.CRC_ID = #{crc_id}
+              AND T.GISU_ID = #{gisu_id}
+              AND Not(T.MID_CAT_SEQ = 0)
+			  AND NOT(T.BIG_CAT_SEQ = 0)) TB
+		LEFT JOIN STU_TEST_TB TT
+        ON TT.CAT_SEQ = TB.CAT_SEQ) TTB
+        LEFT JOIN STU_CAT_TB T2
+        ON T2.CAT_SEQ = TTB.CAT_SEQ
+</select>
+
+<select id="makeProgressInSmall" parameterType="com.lms.student.vo.GisuCategoryVO" resultType="hashmap" >
+		SELECT CT.*
+		FROM STU_CAT_TB CT
+		WHERE CT.CRC_ID = #{crc_id}
+    		  AND CT.GISU_ID = #{gisu_id}
+</select>
+
+
+	<select id="TestListAll" parameterType="com.lms.student.vo.GisuCategoryVO" resultType="hashmap">
+
+		SELECT
+		A.ID,
+		A.USER_ID
+		, A.CARDINAL_ID
+		, A.COURSE_ID
+		, (SELECT NAME FROM CB_COURSE WHERE ID = A.COURSE_ID) AS COURSE_NAME
+		, (SELECT NAME FROM CB_CARDINAL WHERE ID = A.CARDINAL_ID) AS CARDINAL_NAME
+		, (SELECT USER_NM FROM COM_USER_TB WHERE USER_ID = A.USER_ID) AS USER_NAME
+		, (SELECT USER_BIRTH FROM COM_USER_TB WHERE USER_ID = A.USER_ID) AS BIRTH_DAY
+		,(select stu_state_ck from smtp_info_basic_tb where user_id = A.user_id and gisu_id = #{gisu_id} and crc_id =#{crc_id}) as state
+		FROM
+		CB_LEARN_APP A
+		WHERE A.CARDINAL_ID = #{gisu_id}
+		AND	A.COURSE_ID = #{crc_id}
+		AND A.ACCEPTANCE_YN = 'Y'
+		ORDER BY USER_NAME ASC
+	</select>
+	
+	<select id="searchGrade" parameterType="com.lms.student.vo.GradeVO" resultType="hashmap">
+	SELECT t.*, 
+	(select name from cb_cardinal where id = t.cardinal_id) as cardinal_nm,
+	(select name from cb_course where id = t.course_id) as course_nm
+	from STU_GRADE_TB t
+	WHERE 
+		t.cardinal_id = #{cardinal_id}
+		and	t.course_id = #{course_id}
+	order by start_score desc
+	</select>
+	
+	<insert id="saveGrade" parameterType="com.lms.student.vo.GradeVO">
+	INSERT INTO STU_GRADE_TB
+	(
+		CARDINAL_ID,
+		COURSE_ID,
+		START_SCORE,
+		END_SCORE,
+		GRADE
+	)
+	VALUES(
+		#{cardinal_id},
+		#{course_id},
+		#{start_score},
+		#{end_score},
+		#{grade}
+	)
+	ON DUPLICATE KEY UPDATE
+	START_SCORE	= VALUES(START_SCORE),
+	END_SCORE	= VALUES(END_SCORE),
+	GRADE		= VALUES(GRADE)
+	</insert>
+	
+	<select id="checkGrade" resultType="int" parameterType="com.lms.student.vo.GradeVO">
+	  <![CDATA[
+	SELECT 
+		COUNT(*)
+	FROM
+		STU_GRADE_TB
+	WHERE
+		((END_SCORE < #{start_score} and END_SCORE >= #{end_score})
+        OR (START_SCORE < #{start_score} AND START_SCORE >= #{end_score})
+        OR UPPER(GRADE) = UPPER(#{grade}))
+		AND
+		(course_id = #{course_id}
+		and
+		cardinal_id = #{cardinal_id})
+		
+	]]>
+	</select>
+	
+	<delete id="deleteGrade" parameterType="String">
+	DELETE FROM STU_GRADE_TB
+	WHERE
+		GRADE_SEQ = #{seq}
+	</delete>
+	
+	<update id="updateGrade" parameterType="com.lms.student.vo.GradeVO">
+	UPDATE STU_GRADE_TB
+	SET
+		START_SCORE = #{start_score},
+		END_SCORE	= #{end_score},
+		GRADE 		= #{grade}
+	WHERE
+		GRADE_SEQ 	= #{grade_seq}
+	</update>
+	
+	<select id="checkTesting" parameterType="int" resultType="String">
+	SELECT TT.TEST_YN
+	FROM STU_TEST_TB TT
+	WHERE TEST_SEQ = #{test_seq}
+	</select>
+	
+	<select id="updateCheckTesting" parameterType="int" resultType="String">
+	UPDATE STU_TEST_TB
+	SET TEST_YN = 'TRUE'
+	WHERE TEST_SEQ = #{test_seq}
+	</select>
+	
+	<select id="ClearTesting" parameterType="int" resultType="String">
+	UPDATE STU_TEST_TB
+	SET TEST_YN = 'FALSE'
+	WHERE TEST_SEQ = #{test_seq}
+	</select>
+	
+	<delete id="deleteTestScore" parameterType="int">
+	DELETE FROM
+	STU_TEST_SCORE_TB
+	WHERE TEST_SEQ = #{test_seq}
+	</delete>
+	
+	
+	
+	<insert id="insertTestScore" parameterType="com.lms.student.vo.TestScoreVO">
+	INSERT INTO STU_TEST_SCORE_TB
+	(SCORE_SEQ,TEST_SEQ,USER_ID,PLUS_SCORE,SCORE,CONTENT)
+	VALUES
+	(
+		(SELECT	IFNULL(MAX(SCORE_SEQ),0)+1 FROM STU_TEST_SCORE_TB st),
+		#{test_seq},
+		#{user_id},
+		#{plus_score},
+		#{score},
+		#{content}
+	)
+	
+	</insert>
+	
+	<update id="updateTestScore" parameterType="com.lms.student.vo.TestScoreVO">
+	UPDATE STU_TEST_SCORE_TB
+		SET	PLUS_SCORE = #{plus_score},
+			SCORE = #{score},
+			RETEST = #{retest},
+			CONTENT = #{content},
+			SCORE_UPDATE = CURRENT_TIMESTAMP
+		WHERE 	USER_ID = #{user_id}
+		AND		TEST_SEQ = #{test_seq}
+	</update>
+	
+	<select id="searchTestScore" parameterType="int" resultType="hashmap">
+	
+	select ttt.*, ct.*
+    from (select tst.*, tt.CAT_SEQ cat_seq
+    from STU_TEST_SCORE_TB tst
+    join stu_test_tb tt
+    on tst.test_seq = tt.test_seq) ttt
+    join stu_cat_tb ct
+    on ct.cat_seq = ttt.cat_seq
+    where test_seq = #{test_seq}
+	
+	</select>
+	
+	<select id="selectTestUser" parameterType="String" resultType="String">
+	select user_id
+	from
+		STU_TEST_SCORE_TB
+	where
+		test_seq = #{test_seq}
+	
+	</select>
+	
+	<select id="checkTestName" parameterType="com.lms.student.vo.GisuCategoryVO" resultType="hashmap">
+	SELECT *
+	FROM STU_CAT_TB
+	WHERE CRC_ID = #{crc_id}
+	AND   GISU_ID = #{gisu_id}
+	AND (NOT(BIG_CAT_SEQ=0) AND NOT(MID_CAT_SEQ=0))
+	</select>
+	
+	<select id="checkTest" parameterType="com.lms.student.vo.TestInfoVO" resultType="int">
+	SELECT COUNT(*)
+	FROM STU_TEST_TB
+	WHERE CAT_SEQ = #{cat_seq}
+	AND   TEST_NM = #{test_nm}
+	</select>
+	
+	<delete id="deleteTestInfo" parameterType="com.lms.student.vo.GisuCategoryVO">
+	DELETE FROM STU_TEST_TB 
+	WHERE 	TEST_SEQ = #{test_seq}	 	
+	</delete>
+	
+	<delete id="deleteCategory" parameterType="String">
+	DELETE FROM STU_CAT_TB
+	WHERE	CAT_SEQ = #{seq}
+	</delete>
+	
+	<select id="searchtUserTestInfo" parameterType="com.lms.student.vo.UserScoreVO" resultType="hashmap">
+	SELECT ST.TEST_SEQ, ST.USER_ID, ST.SCORE, ST.PLUS_SCORE,ST.RETEST,ST.CONTENT, TB.*
+	FROM STU_TEST_SCORE_TB ST
+	RIGHT JOIN (SELECT CT.CAT_SEQ,CT.CAT_PERCENT,CT.BIG_CAT_SEQ,CT.MID_CAT_SEQ,TT.TEST_NM,TT.TEST_SEQ,TT.TOTAL_SCORE,TT.RETEST_TIME
+	FROM STU_CAT_TB CT
+	RIGHT JOIN STU_TEST_TB TT
+	<!-- ON CT.MID_CAT_SEQ = TT.CAT_SEQ
+	AND CT.CAT_NM = TT.TEST_NM -->
+	ON CT.CAT_SEQ = TT.CAT_SEQ
+	WHERE CT.CRC_ID = #{crc_id}
+	AND CT.GISU_ID = #{gisu_id}) TB
+	ON TB.TEST_SEQ = ST.TEST_SEQ
+	<if test="user_id != null and user_id != ''">
+	AND USER_ID = #{user_id}
+	</if>
+	ORDER BY ST.SCORE_REGDATE ASC, ST.TEST_SEQ ASC
+	</select>
+	
+	<select id="searchtCategoryInfo" parameterType="com.lms.student.vo.UserScoreVO" resultType="hashmap">
+	SELECT CT.*
+	FROM STU_CAT_TB CT
+	WHERE CT.CRC_ID = #{crc_id}
+	AND CT.GISU_ID = #{gisu_id}
+	</select>
+	
+	<insert id="insertClassList" parameterType="com.lms.student.vo.ClassInfoVO">
+	INSERT INTO STU_CLASS_INFO_TB
+	<if test="class_upper_seq == 0">
+	(CLASS_SEQ,CLASS_NAME,CRC_ID,GISU_ID)
+	</if>
+	<if test="class_upper_seq != 0">
+	(CLASS_SEQ,CLASS_NAME,CRC_ID,GISU_ID,CLASS_UPPER_SEQ,CLASS_UPPER_NAME)
+	</if>
+	VALUES
+	(
+	(SELECT	IFNULL(MAX(CLASS_SEQ),0)+1 FROM STU_CLASS_INFO_TB st),
+	#{class_name},
+	#{crc_id},
+	#{gisu_id}
+	<if test="class_upper_seq != 0">
+	,(SELECT T.CLASS_SEQ FROM STU_CLASS_INFO_TB T WHERE CRC_ID =#{crc_id} AND GISU_ID =#{gisu_id} AND CLASS_NAME = #{class_upper_name})
+	,#{class_upper_name}
+	</if>
+	)
+	
+	</insert>
+	<update id="updateClassList" parameterType="com.lms.student.vo.ClassInfoVO">
+	UPDATE STU_CLASS_INFO_TB TB
+		SET	TB.CLASS_NAME = #{class_name}
+			<if test="class_upper_name != null and class_upper_name != '' ">
+			,TB.CLASS_UPPER_SEQ = (	SELECT * FROM(
+								  	SELECT INFO.CLASS_SEQ 
+								 	 FROM STU_CLASS_INFO_TB INFO 
+								 	 WHERE INFO.CRC_ID =#{crc_id} 
+								  	 AND INFO.GISU_ID =#{gisu_id} 
+								  	 AND INFO.CLASS_NAME = #{class_upper_name}) ABC
+								  	 ) 
+			,TB.CLASS_UPPER_NAME = #{class_upper_name}
+			</if>
+		WHERE TB.CLASS_SEQ = #{class_seq}
+	
+	</update>
+	<delete id="deleteClassList" parameterType="com.lms.student.vo.ClassInfoVO">
+	DELETE FROM STU_CLASS_INFO_TB
+	WHERE CLASS_SEQ = #{class_seq}
+	OR	  CLASS_UPPER_SEQ = #{class_seq}
+	</delete>
+	
+	<select id="searchClassList" parameterType="com.lms.student.vo.ClassInfoVO" resultMap="ClassMap">
+	SELECT CT.CLASS_SEQ,CT.CLASS_NAME,CT.CRC_ID,CT.GISU_ID,CT.CLASS_UPPER_SEQ,CT.CLASS_UPPER_NAME,CC.NAME CRC_NAME,CA.NAME GISU_NAME
+	FROM STU_CLASS_INFO_TB CT
+	JOIN CB_COURSE CC
+	ON CC.ID = CT.CRC_ID
+	JOIN CB_CARDINAL CA
+	ON CA.ID = CT.GISU_ID
+	WHERE CT.CRC_ID = #{crc_id}
+	AND CT.GISU_ID = #{gisu_id}
+	AND (CC.CHECKONLINE = 'offline' OR CC.CHECKONLINE = 'blended')
+	</select>
+	
+	<select id="selectableUser" parameterType="com.lms.student.vo.ClassInfoVO" resultMap="ClassMap">
+	SELECT *
+FROM (SELECT 	distinct ABC.USER_ID, ABC.CARDINAL_ID GISU_ID, ABC.CARDINAL_NAME GISU_NAME, ABC.COURSE_ID CRC_ID, ABC.COURSE_NAME CRC_NAME, ABC.USER_NAME, ABC.BIRTH_DAY, ABC.USER_PHONE,
+			 CII.CLASS_UPPER_NAME, CII.CLASS_UPPER_SEQ, ABC.state
+from (SELECT
+		A.ID,
+		A.USER_ID
+		, A.CARDINAL_ID
+		, A.COURSE_ID
+		, (SELECT NAME FROM .CB_COURSE WHERE ID = A.COURSE_ID) AS COURSE_NAME
+		, (SELECT NAME FROM .CB_CARDINAL WHERE ID = A.CARDINAL_ID) AS CARDINAL_NAME
+		, (SELECT USER_NM FROM COM_USER_TB WHERE USER_ID = A.USER_ID and USER_NM IS NOT NULL) AS USER_NAME
+		, (SELECT USER_BIRTH FROM .COM_USER_TB WHERE USER_ID = A.USER_ID) AS BIRTH_DAY
+		, (SELECT USER_PHONE FROM .COM_USER_TB WHERE USER_ID = A.USER_ID) AS USER_PHONE
+		,(select stu_state_ck from smtp_info_basic_tb where user_id = A.user_id and gisu_id = #{gisu_id} and crc_id =#{crc_id}) as state
+		FROM
+		CB_LEARN_APP A
+		WHERE A.CARDINAL_ID = #{gisu_id}
+		AND	A.COURSE_ID = #{crc_id}
+		AND A.ACCEPTANCE_YN = 'Y'
+			<if test="user_id != null and user_id != '' and user_id != 'null' ">
+				AND USER_ID = #{user_id}
+			</if>
+        ) ABC LEFT JOIN (SELECT CI.CLASS_SEQ, CI.CLASS_UPPER_SEQ, CI.CLASS_UPPER_NAME, CI.CRC_ID, CI.GISU_ID
+						FROM STU_CLASS_INFO_TB CI 
+                        WHERE CI.GISU_ID = #{gisu_id}
+						AND	CI.CRC_ID = #{crc_id} 
+                        ) CII
+		ON ABC.COURSE_ID = CII.CRC_ID AND ABC.CARDINAL_ID = CII.GISU_ID AND NOT(CLASS_UPPER_SEQ = 0)
+			<if test="class_upper_seq != 0 and class_upper_seq != '' and class_upper_seq != null">
+			WHERE CLASS_UPPER_SEQ = #{class_upper_seq}
+			</if>
+        ) BBC
+        LEFT JOIN (SELECT CLS.USER_ID, CLS.CLASS_SEQ, CIT.CLASS_NAME, CIT.CLASS_UPPER_NAME, CIT.CLASS_UPPER_SEQ FROM STU_CLASS_TB CLS JOIN STU_CLASS_INFO_TB CIT ON CLS.CLASS_SEQ = CIT.CLASS_SEQ) GGG
+        ON BBC.USER_ID = GGG.USER_ID AND BBC.CLASS_UPPER_SEQ = GGG.CLASS_UPPER_SEQ
+       	ORDER BY BBC.USER_NAME ASC, BBC.USER_ID ASC, BBC.CLASS_UPPER_SEQ ASC
+	</select>
+	
+	<insert id="insertUserInClass" parameterType="com.lms.student.vo.ClassInfoVO">
+	INSERT INTO STU_CLASS_TB(USER_ID,CLASS_SEQ)
+	VALUES
+	(
+	#{user_id},
+	#{class_seq}
+	)
+	</insert>
+	
+	<delete id="deleteUserInClass" parameterType="com.lms.student.vo.ClassInfoVO">
+	DELETE FROM STU_CLASS_TB 
+	WHERE USER_ID = #{user_id}
+		  AND CLASS_SEQ = #{class_seq}
+	</delete>
+	
+		<select id="testCount" parameterType="String" resultType="int">
+	SELECT COUNT(*)
+	FROM
+		STU_TEST_TB
+	WHERE
+		CAT_SEQ = #{seq}
+	</select>
+</mapper>

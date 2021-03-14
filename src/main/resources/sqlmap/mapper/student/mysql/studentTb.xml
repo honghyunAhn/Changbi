@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lms.student.dao.StudentTbDAO">
+
+	<!-- 학적부 조회 시작 -->
+ 	<resultMap id="studentBasicMap" type="com.lms.student.vo.StudentTbVO" autoMapping="true">
+		<id		property="stu_seq"  					column="stu_seq"						javaType="int"/>
+		<result property="user_id" 						column="user_id" 						javaType="String"/>
+		<result property="gisu_id" 						column="gisu_id" 						javaType="String"/>
+		<result property="crc_id" 						column="crc_id"							javaType="String"/>
+		<result property="stu_user_nm" 					column="stu_user_nm" 					javaType="String"/>
+		<result property="stu_user_nm_en" 				column="stu_user_nm_en" 				javaType="String"/>
+		<result property="stu_user_nm_jp" 				column="stu_user_nm_jp" 				javaType="String"/>
+		<result property="stu_user_birth" 				column="stu_user_birth" 				javaType="String"/>
+		<result property="stu_user_gender" 				column="stu_user_gender" 				javaType="String"/>
+		<result property="stu_phone" 					column="stu_phone" 						javaType="String"/>
+		<result property="stu_email" 					column="stu_email" 						javaType="String"/>
+		<result property="stu_benefit_ck" 				column="stu_benefit_ck"	 				javaType="String"/>
+		<result property="stu_mou_ck" 					column="stu_mou_ck" 					javaType="String"/>
+		<result property="stu_mou_sc" 					column="stu_mou_sc" 					javaType="String"/>
+		<result property="stu_mou_sc_nm" 				column="stu_mou_sc_nm" 					javaType="String"/>
+		<result property="stu_state_ck" 				column="stu_state_ck"	 				javaType="String"/>
+		<result property="stu_quit_dt" 					column="stu_quit_dt" 					javaType="String"/>
+		<result property="stu_quit_reason" 				column="stu_quit_reason" 				javaType="String"/>
+		<result property="stu_memo" 					column="stu_memo" 						javaType="String"/>
+        <result property="stu_photo_attached" 			column="stu_photo_attached" 			javaType="String"/>
+		<result property="stu_edu_attached" 			column="stu_edu_attached" 				javaType="String"/>
+		<result property="stu_isr_attached" 			column="stu_isr_attached" 				javaType="String"/>
+		<result property="stu_imm_attached" 			column="stu_imm_attached" 				javaType="String"/>
+		<result property="stu_worknet_attached"			column="stu_worknet_attached" 			javaType="String"/>
+		<result property="stu_quit_attached"			column="stu_quit_attached" 				javaType="String"/>
+		<result property="gisu_nm" 						column="gisu_nm"						javaType="String"/>
+		
+		<association property="stu_photo_file" 		column="stu_photo_attached"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<association property="stu_edu_file" 		column="stu_edu_attached"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<association property="stu_isr_file" 		column="stu_isr_attached"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<association property="stu_imm_file" 		column="stu_imm_attached"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<association property="stu_worknet_file"	column="stu_worknet_attached"	javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<association property="stu_quit_file"		column="stu_quit_attached"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+	</resultMap>
+	
+	<select id="selectStuTable_List" parameterType="StudentTbVO" resultMap="studentBasicMap">
+		SELECT
+			form.stu_seq
+		    ,form.gisu_id
+		    ,form.crc_id
+		    ,form.user_id
+		    ,form.stu_user_nm
+		    ,form.stu_user_nm_en
+		    ,form.stu_user_nm_jp
+		    ,DATE_FORMAT(form.stu_user_birth, '%Y.%m.%d') AS stu_user_birth
+		    ,form.stu_user_gender
+		    ,form.stu_phone
+		    ,form.stu_email
+		    ,form.stu_benefit_ck
+		    ,form.stu_mou_ck
+		    ,form.stu_mou_sc
+		    ,(select code_nm from com_code_tb where group_id = 'B46' and code = form.code) stu_mou_sc_nm
+		    ,form.stu_state_ck
+		    ,DATE_FORMAT(form.stu_quit_dt, '%Y.%m.%d') AS stu_quit_dt
+		    ,form.stu_quit_reason
+		    ,form.stu_memo
+		    ,form.stu_photo_attached
+		    <if test="stu_seq != 0">
+		    ,form.stu_edu_attached
+		    ,form.stu_isr_attached
+		    ,form.stu_imm_attached
+		    ,form.stu_worknet_attached
+		    ,form.stu_quit_attached
+		    ,GISU.name gisu_nm
+		    </if>
+		FROM
+			(select *, substr(stu_mou_sc,4) code from smtp_info_basic_tb) form
+		
+		JOIN .CB_LEARN_APP APP
+        ON APP.USER_ID = form.USER_ID AND APP.ACCEPTANCE_YN = 'Y'
+        	AND APP.CARDINAL_ID = form.gisu_id
+        	AND APP.COURSE_ID = form.crc_id
+        
+		JOIN .CB_COURSE CRC
+        ON CRC.ID = APP.COURSE_ID
+        
+        JOIN .CB_CARDINAL GISU
+        ON GISU.ID = APP.CARDINAL_ID
+        
+		WHERE 1=1
+		<if test="stu_seq != 0">
+		AND form.stu_seq = #{stu_seq}
+		</if>
+		<if test="crc_id != null and crc_id != ''">
+        AND CRC.ID = #{crc_id}
+        </if>
+        <if test="gisu_id != null and gisu_id != ''">
+        AND GISU.ID = #{gisu_id}
+        </if>
+        <choose>
+        	<when test="stu_state_ck == '' || stu_state_ck == 'A1800'">
+        		AND form.stu_state_ck = 'A1800'
+        	</when> 
+        	<when test="stu_state_ck == 'A1801'">
+        		AND form.stu_state_ck = 'A1801'
+        	</when> 
+	    </choose>
+	    <if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(	info.stu_user_nm LIKE CONCAT('%',#{searchKeyword},'%')
+					OR	info.user_id LIKE CONCAT('%',#{searchKeyword},'%')
+					 )
+				</when>
+				<when test="searchCondition == 'name'">
+					info.stu_user_nm LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'id'">
+					info.user_id LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		ORDER BY form.stu_user_nm
+		<if test="stu_seq == 0">
+			<if test='pagingYn=="Y"'>
+				<include refid="forFaith.common.footer"/>
+			</if>
+		</if>
+	</select>
+	<!-- 학적부 조회 종료 -->
+	
+	<!-- 학적부 데이터 총 갯수 조회 시작-->
+	<select id="studentTotalCnt" parameterType="StudentTbVO" resultType="int">
+		SELECT COUNT(*) FROM (SELECT
+			form.stu_seq
+		    ,form.gisu_id
+		    ,form.crc_id
+		    ,form.user_id
+		    ,form.stu_user_nm
+		    ,form.stu_user_nm_en
+		    ,form.stu_user_nm_jp
+		    ,DATE_FORMAT(form.stu_user_birth, '%Y.%m.%d') AS stu_user_birth
+		    ,form.stu_user_gender
+		    ,form.stu_phone
+		    ,form.stu_email
+		    ,form.stu_benefit_ck
+		    ,form.stu_mou_ck
+		    ,form.stu_mou_sc
+		    ,(select code_nm from com_code_tb where group_id = 'B46' and code = form.code) stu_mou_sc_nm
+		    ,form.stu_state_ck
+		    ,DATE_FORMAT(form.stu_quit_dt, '%Y.%m.%d') AS stu_quit_dt
+		    ,form.stu_quit_reason
+		    ,form.stu_memo
+		    ,form.stu_photo_attached
+		    <if test="stu_seq != 0">
+		    ,form.stu_edu_attached
+		    ,form.stu_isr_attached
+		    ,form.stu_imm_attached
+		    ,form.stu_worknet_attached
+		    ,form.stu_quit_attached
+		    ,GISU.name gisu_nm
+		    </if>
+		FROM
+			(select *, substr(stu_mou_sc,4) code from smtp_info_basic_tb) form
+		
+		JOIN .CB_LEARN_APP APP
+        ON APP.USER_ID = form.USER_ID AND APP.ACCEPTANCE_YN = 'Y'
+        	AND APP.CARDINAL_ID = form.gisu_id
+        	AND APP.COURSE_ID = form.crc_id
+        
+		JOIN .CB_COURSE CRC
+        ON CRC.ID = APP.COURSE_ID
+        
+        JOIN .CB_CARDINAL GISU
+        ON GISU.ID = APP.CARDINAL_ID
+        
+		WHERE 1=1
+		<if test="stu_seq != 0">
+		AND form.stu_seq = #{stu_seq}
+		</if>
+		<if test="crc_id != null and crc_id != ''">
+        AND CRC.ID = #{crc_id}
+        </if>
+        <if test="gisu_id != null and gisu_id != ''">
+        AND GISU.ID = #{gisu_id}
+        </if>
+        <choose>
+        	<when test="stu_state_ck == '' || stu_state_ck == 'A1800'">
+        		AND form.stu_state_ck = 'A1800'
+        	</when> 
+        	<when test="stu_state_ck == 'A1801'">
+        		AND form.stu_state_ck = 'A1801'
+        	</when> 
+	    </choose>
+	    <if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(	info.stu_user_nm LIKE CONCAT('%',#{searchKeyword},'%')
+					OR	info.user_id LIKE CONCAT('%',#{searchKeyword},'%')
+					 )
+				</when>
+				<when test="searchCondition == 'name'">
+					info.stu_user_nm LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'id'">
+					info.user_id LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		ORDER BY form.stu_user_nm) T
+	</select>
+	<!-- 학적부 데이터 총 갯수 조회 종료-->
+	
+	<!-- 학적부 조회 시작 (학력사항 등 상세내용 포함)-->
+	<resultMap type="hashmap" id="studentManagerMap"> 
+		<id property="stu_seq" 						column="stu_seq" 					javaType="int"/>
+		<result property="user_id" 					column="user_id" 					javaType="String"/>
+		<result property="gisu_id" 					column="gisu_id" 					javaType="String"/>
+		<result property="stu_user_nm" 				column="stu_user_nm" 				javaType="String"/>
+		<result property="stu_user_birth_year" 		column="stu_user_birth_year" 		javaType="String"/>
+		<result property="stu_zipcode" 				column="stu_zipcode" 				javaType="String"/>
+		<result property="stu_addr" 				column="stu_addr" 					javaType="String"/>
+		<result property="stu_addr_detail" 			column="stu_addr_detail" 			javaType="String"/>
+        
+        <collection property="classList"		javaType="java.util.ArrayList"		resultMap="studentInfoClass" />
+        <collection property="eduHistoryList"	javaType="java.util.ArrayList"		resultMap="studentInfoEduHistory" />
+		<collection property="languageList"		javaType="java.util.ArrayList"		resultMap="studentInfoLanguage" />
+		<collection property="licenseList"		javaType="java.util.ArrayList"		resultMap="studentInfoLicense" />
+		<collection property="overseasList"		javaType="java.util.ArrayList"		resultMap="studentInfoOverseas" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="studentInfoClass">
+		<result property="stu_class" 	column="class_name" 	javaType="String"/>
+	</resultMap>
+	
+	<resultMap type="hashmap" id="studentInfoEduHistory">
+		<id property="stu_edu_seq" 			column="stu_edu_seq" 	javaType="int"/>
+		<result property="stu_edu_sc_nm" 	column="stu_edu_sc_nm" 	javaType="String"/>
+		<result property="stu_edu_field" 	column="stu_edu_field" 	javaType="String"/>
+		<result property="stu_edu_major" 	column="stu_edu_major" 	javaType="String"/>
+		<result property="stu_edu_gd_ck" 	column="stu_edu_gd_ck" 	javaType="String"/>
+		<result property="stu_edu_gd_dt" 	column="stu_edu_gd_dt" 	javaType="String"/>
+		<result property="stu_edu_sc_lo" 	column="stu_edu_sc_lo" 	javaType="String"/>
+	</resultMap>
+	
+	<resultMap type="hashmap" id="studentInfoLanguage">
+		<id property="stu_lang_seq" column="stu_lang_seq" />
+		<result property="stu_lang_test_nm" column="stu_lang_test_nm" />
+		<result property="stu_lang_grade" column="stu_lang_grade" />
+		<result property="stu_lang_ag" column="stu_lang_ag" />
+		<result property="stu_lang_obtain_dt" column="stu_lang_obtain_dt" javaType="String"/>
+		<result property="stu_lang_note" column="stu_lang_note" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="studentInfoLicense">
+		<id property="stu_license_seq" column="stu_license_seq" />
+		<result property="stu_license_nm" column="stu_license_nm" />
+		<result property="stu_license_ag" column="stu_license_ag" />
+		<result property="stu_license_obtain_dt" column="stu_license_obtain_dt" javaType="String"/>
+		<result property="stu_license_note" column="stu_license_note" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="studentInfoOverseas">
+		<id property="stu_overseas_seq" column="stu_overseas_seq" />
+		<result property="stu_overseas_nm" column="stu_overseas_nm" />
+		<result property="stu_overseas_st" column="stu_overseas_st" />
+		<result property="stu_overseas_et" column="stu_overseas_et" />
+		<result property="stu_overseas_purpose" column="stu_overseas_purpose" />
+	</resultMap>
+	
+	<select id="selectStudentTb_detail" parameterType="StudentTbVO" resultMap="studentManagerMap">
+		SELECT
+			form.stu_seq
+			,form.user_id
+			,form.gisu_id
+			,form.stu_user_nm
+			,YEAR(form.stu_user_birth) AS stu_user_birth_year
+			,form.stu_zipcode
+			,form.stu_addr
+			,form.stu_addr_detail
+			,eduhistory.stu_edu_seq
+			,eduhistory.stu_edu_sc_nm
+			,eduhistory.stu_edu_field
+		    ,eduhistory.stu_edu_major
+		    ,eduhistory.stu_edu_gd_ck
+		    ,DATE_FORMAT(eduhistory.stu_edu_gd_dt, '%Y-%m-%d') AS stu_edu_gd_dt
+		    ,eduhistory.stu_edu_sc_lo
+			,language.stu_lang_seq
+		    ,language.stu_lang_test_nm
+		    ,language.stu_lang_grade
+		    ,language.stu_lang_ag
+		    ,language.stu_lang_obtain_dt
+		    ,language.stu_lang_note
+		    ,license.stu_license_seq
+		    ,license.stu_license_nm
+		    ,license.stu_license_ag
+		    ,license.stu_license_obtain_dt
+		    ,license.stu_license_note
+		    ,overseas.stu_overseas_seq
+            ,overseas.stu_overseas_ck
+		    ,overseas.stu_overseas_nm
+		    ,DATE_FORMAT(overseas.stu_overseas_st, '%Y-%m-%d') AS stu_overseas_st
+		    ,DATE_FORMAT(overseas.stu_overseas_et, '%Y-%m-%d') AS stu_overseas_et
+		    ,overseas.stu_overseas_purpose
+		    ,class.class_name
+		FROM
+			smtp_info_basic_tb form 
+			
+		LEFT JOIN smtp_info_eduhistory_tb eduhistory
+		ON
+			form.stu_seq = eduhistory.stu_seq
+            
+        LEFT JOIN smtp_info_language_tb language
+		ON
+			form.stu_seq = language.stu_seq
+			
+        LEFT JOIN smtp_info_license_tb license
+		ON
+			form.stu_seq = license.stu_seq
+            
+		LEFT JOIN smtp_info_overseas_tb overseas
+		ON
+			form.stu_seq = overseas.stu_seq
+			
+		LEFT JOIN (select
+						user_id, gisu_id, class_name
+					from
+						stu_class_info_tb a
+						,stu_class_tb b
+					where
+						a.class_seq = b.CLASS_SEQ) class
+		ON
+			form.user_id = class.user_id AND
+			form.gisu_id = class.gisu_id
+			
+		<if test="stu_seq != 0">
+			WHERE form.stu_seq = #{stu_seq}
+		</if>
+		ORDER BY stu_user_nm, class_name <!-- 학생이름순, 분반정보 오름차순 -->
+	</select>
+	<!-- 학적부 조회 종료-->
+	
+	<!-- 연수생 혜택사항 항목 조회 -->
+	<select id="selectBenefitCode" resultType="hashmap">
+		SELECT 
+			CONCAT(GROUP_ID, CODE) CODE
+			,CODE_NM
+		FROM
+			COM_CODE_TB
+		WHERE 
+			GROUP_ID = 'B44'
+	</select>
+	<!-- 연수생 혜택사항 항목 조회 종료 -->
+	
+	<update id="updateStuInfoBasic" parameterType="StuInfoBasicVO">
+		UPDATE smtp_info_basic_tb
+		SET
+			stu_user_nm_en = #{stu_user_nm_en}
+		    ,stu_user_nm_jp = #{stu_user_nm_jp}
+		    ,stu_user_gender = #{stu_user_gender}
+		    ,stu_phone = #{stu_phone}
+		    ,stu_email = #{stu_email}
+		    ,stu_benefit_ck = #{stu_benefit_ck}
+		    ,stu_mou_ck = #{stu_mou_ck}
+		    ,stu_mou_sc = #{stu_mou_sc}
+		    ,stu_state_ck = #{stu_state_ck}
+		    <if test="stu_state_ck == 'A1801'">
+			    ,stu_quit_dt = #{stu_quit_dt}
+			    ,stu_quit_reason = #{stu_quit_reason}
+		    </if>
+		    ,stu_memo = #{stu_memo}
+		    ,stu_photo_attached = #{stu_photo_file.fileId}
+		    ,stu_edu_attached = #{stu_edu_file.fileId}
+			,stu_isr_attached = #{stu_isr_file.fileId}
+			,stu_imm_attached = #{stu_imm_file.fileId}
+			,stu_worknet_attached= #{stu_worknet_file.fileId}
+			,stu_quit_attached= #{stu_quit_file.fileId}
+		    ,UPD_USER = #{updUser.id}
+			,UPD_DATE = NOW()
+		WHERE
+			stu_seq = #{stu_seq}
+	</update>
+		
+	<delete id="deleteStuInfoEduHistory" parameterType="int">
+		DELETE FROM
+			smtp_info_eduhistory_tb
+		WHERE 
+			stu_seq = #{stu_seq};
+	</delete>
+		
+	<delete id="deleteStuInfoLanguage" parameterType="int">
+		DELETE FROM
+			smtp_info_language_tb
+		WHERE 
+			stu_seq = #{stu_seq};
+	</delete>
+	
+	<delete id="deleteStuInfoLicense" parameterType="int">
+		DELETE FROM
+			smtp_info_license_tb
+		WHERE 
+			stu_seq = #{stu_seq};
+	</delete>
+	
+	<delete id="deleteStuInfoOverseas" parameterType="int">
+		DELETE FROM
+			smtp_info_overseas_tb
+		WHERE 
+			stu_seq = #{stu_seq};
+	</delete>
+	
+	<insert id="insertStuInfoEduHistory" parameterType="stuInfoEduHistoryVO">
+		INSERT INTO
+			smtp_info_eduhistory_tb(
+				stu_edu_seq
+				,stu_seq
+		        ,stu_edu_sc_nm
+		        ,stu_edu_field
+		        ,stu_edu_major
+		        ,stu_edu_gd_ck
+		        ,stu_edu_gd_dt
+		        ,stu_edu_sc_lo
+		        ,stu_edu_ins_id
+		        ,stu_edu_ins_dt
+		        ,stu_edu_udt_id
+		        ,stu_edu_udt_dt
+		    )VALUES
+		    <foreach item="eduHistory" index="index" collection="eduHistoryList" open=" " separator="," close=" ">
+		    (
+		    	(SELECT IFNULL(MAX(stu_edu_seq),0)+#{index}+1 FROM smtp_info_eduHistory_tb edu)
+				,#{eduHistory.stu_seq}
+				,#{eduHistory.stu_edu_sc_nm}
+				,#{eduHistory.stu_edu_field}
+		        ,#{eduHistory.stu_edu_major}
+		        ,#{eduHistory.stu_edu_gd_ck}
+		        ,#{eduHistory.stu_edu_gd_dt}
+		        ,#{eduHistory.stu_edu_sc_lo}
+		        ,#{eduHistory.stu_edu_ins_id}
+		        ,NOW()
+		        ,#{eduHistory.stu_edu_udt_id}
+		        ,NOW()
+		    )
+		    </foreach>
+	</insert>
+	
+	<insert id="insertStuInfoLanguage" parameterType="StuInfoLanguageVO">
+		INSERT INTO
+			smtp_info_language_tb(
+				stu_lang_seq
+				,stu_seq
+		        ,stu_lang_test_nm
+		        ,stu_lang_grade
+		        ,stu_lang_ag
+		        ,stu_lang_obtain_dt
+		      	,stu_lang_note
+		        ,stu_lang_ins_id
+		        ,stu_lang_ins_dt
+		        ,stu_lang_udt_id
+		        ,stu_lang_udt_dt
+		    )VALUES
+		    <foreach item="language" index="index" collection="languageList" open=" " separator="," close=" ">
+		    (
+		    	(SELECT IFNULL(MAX(stu_lang_seq),0)+#{index}+1 FROM smtp_info_language_tb lang)
+				,#{language.stu_seq}
+		        ,#{language.stu_lang_test_nm}
+		        ,#{language.stu_lang_grade}
+		        ,#{language.stu_lang_ag}
+		        ,#{language.stu_lang_obtain_dt}
+		        ,#{language.stu_lang_note}
+		        ,#{language.stu_lang_ins_id}
+		        ,NOW()
+		        ,#{language.stu_lang_udt_id}
+		        ,NOW()
+		    )
+		    </foreach>
+	</insert>
+	
+	<insert id="insertStuInfoLicense" parameterType="StuInfoLicenseVO">
+		INSERT INTO
+			smtp_info_license_tb(
+				stu_license_seq
+				,stu_seq
+		        ,stu_license_nm
+		        ,stu_license_ag
+		        ,stu_license_obtain_dt
+		        ,stu_license_note
+		        ,stu_license_ins_id
+		        ,stu_license_ins_dt
+		        ,stu_license_udt_id
+		        ,stu_license_udt_dt
+		    )VALUES
+		    <foreach item="license" index="index" collection="licenseList" open=" " separator="," close=" ">
+		    (
+		    	(SELECT IFNULL(MAX(stu_license_seq),0)+#{index}+1 FROM smtp_info_license_tb licen)
+				,#{license.stu_seq}
+		        ,#{license.stu_license_nm}
+		        ,#{license.stu_license_ag}
+		        ,#{license.stu_license_obtain_dt}
+		        ,#{license.stu_license_note}
+		        ,#{license.stu_license_ins_id}
+		        ,NOW()
+		        ,#{license.stu_license_udt_id}
+		        ,NOW()
+		    )
+		    </foreach>
+	</insert>
+	
+	<insert id="insertStuInfoOverseas" parameterType="StuInfoOverseasVO">
+		INSERT INTO
+			smtp_info_overseas_tb(
+				stu_overseas_seq
+				,stu_seq
+		        ,stu_overseas_nm
+		        ,stu_overseas_st
+                ,stu_overseas_et
+		        ,stu_overseas_ck
+		        ,stu_overseas_purpose
+		        ,stu_overseas_ins_id
+		        ,stu_overseas_ins_dt
+		        ,stu_overseas_udt_id
+		        ,stu_overseas_udt_dt
+		    )VALUES
+		    <foreach item="overseas" index="index" collection="overseasList" open=" " separator="," close=" ">
+		    (
+		    	(SELECT IFNULL(MAX(stu_overseas_seq),0)+#{index}+1 FROM smtp_info_overseas_tb o)
+				,#{overseas.stu_seq}
+				,#{overseas.stu_overseas_nm}
+		        ,#{overseas.stu_overseas_st}
+		        ,#{overseas.stu_overseas_et}
+		        ,'B0800'
+                ,#{overseas.stu_overseas_purpose}
+                ,#{overseas.stu_overseas_ins_id}
+		        ,NOW()
+		        ,#{overseas.stu_overseas_udt_id}
+		        ,NOW()
+		    )
+		    </foreach>
+	</insert>
+	
+	<select id="selectMOU" parameterType="MouVO" resultType="hashmap">
+		SELECT
+			CONCAT(GROUP_ID, CODE) mou_code
+			,code_nm
+		FROM
+			com_code_tb
+		WHERE
+			group_id = 'B46'
+			<if test="searchKeyword != null and searchKeyword != ''">
+				AND code_nm LIKE CONCAT('%',#{searchKeyword},'%')
+			</if>
+		ORDER BY code_nm 
+	</select>
+</mapper>

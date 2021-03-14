@@ -1,0 +1,129 @@
+@charset "UTF-8";
+
+/***** 설문조사 상세페이지에서 사용하는 서식 *****/
+
+/* 주관식 설문 영역 */
+.type3-4-table tr td:nth-child(n+2){
+	display: none;
+}
+
+.type3-4-table tr th:nth-child(n+2){
+	display: none;
+}
+
+#resultBody .type3-4-table .longAnswer_th {
+	width: 330px;
+}
+
+#resultBody .type3-4-table .type3-4-td {
+	text-align: left;
+	padding-left: 15px;
+}
+
+
+/* 객관식 설문 영역 */
+.completionWrap {
+	height: auto;
+}
+
+.completionWrap>.completion {
+	overflow: hidden;
+}
+
+.completionWrap>.completion>.sub-section {
+    margin: 8px 0;
+    width: 800px;
+}
+
+.completionWrap>.completion>.surveyAnswer_div {
+    margin: 0 0 40px 0;
+    width: 800px;
+    float: left;
+}
+
+.completionWrap>.completion>.type1-2-answerDiv {
+    background-color: #f7f7f7;
+}
+
+.graphWrap {
+	width: 800px;
+}
+
+.graphWrap>.graphGroup {
+    margin: 10px 0;
+    padding: 10px 0;
+    background-color: #f7f7f7;
+}
+
+.graphWrap>.graphGroup:nth-child(1)~* {}
+
+.graphWrap>.graphGroup>.condition {
+    width: 200px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.graphWrap>.graphGroup>.graph {
+    width: 450px;
+    height: 15px;
+    background-color: #fff;
+}
+
+.graphWrap>.graphGroup>.graph>.graph {
+    height: 20px;
+    background: linear-gradient(to right, #fedabf 25%, #fcb37e 50%, #fc8e3f 75%, #fc6900 100%);
+}
+
+.graphWrap>.graphGroup>.graph>.graph1 {
+    /* width: calc((100% / 비중 배점) * 현재 점수); */
+    width: calc((100% / 50) * 35);
+}
+
+.graphWrap>.graphGroup>.graph>.graph2 {
+    width: calc((100% / 20) * 10);
+}
+
+.graphWrap>.graphGroup>.graph>.graph3 {
+    width: calc((100% / 30) * 0);
+}
+
+.graphWrap>.graphGroup>.scoreWrap {
+    width: 150px;
+    padding-left: 20px;
+}
+
+.graphWrap ul li {
+	float: left;
+/* 	margin-bottom: 0px; */
+}
+
+.completionWrap>.completion>.stuList {
+    float: left;
+    margin-left: 120px;
+}
+
+#resultBody .type-hdr {
+    margin: 0;
+    width: 800px;
+    text-align: right;
+}
+.completionWrap>.stuList>.stuWrap {
+    width: 220px;
+    background-color: #ccc;
+    padding: 20px;
+}
+.content_wraper .answer_stu_table th{
+	
+}
+.completionWrap>.stuList table th{
+	width: 120px;
+}
+#resultBody .answer_stu_table .stuList_nm{
+	width: 200px;
+}
+#resultBody .answer_stu_table .stuList_id{
+	width: 250px;
+}
+#btnArea{
+	float: none;
+}

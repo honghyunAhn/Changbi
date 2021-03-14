@@ -1,0 +1,56 @@
+.accordionjs {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background-color: #404c5b;
+  width: 250px;
+}
+.accordionjs .acc_section {  
+  position: relative;
+  z-index: 10;  
+  overflow: hidden;
+  background-color: #455262;
+  border-bottom: 1px solid #404c5b;
+}
+.accordionjs .acc_section .acc_head {
+  position: relative;
+  padding: 15px 10px;
+  display: block;
+  cursor: pointer;
+  color: #fff;
+}
+.accordionjs .acc_section .acc_head:before { content: '+'; position: absolute; right: 20px; font-size: 18px;}
+.accordionjs .acc_section.acc_active > .acc_head:before{ content:'-'; right: 22px}
+.accordionjs .acc_section .acc_head:hover{ color:#fff}
+.accordionjs .acc_section .acc_head h3 {
+  line-height: 1;
+  margin: 5px 0;
+}
+.accordionjs .acc_section .acc_content {
+  background-color: #2e3539;
+}
+.accordionjs .acc_section .acc_content > li{line-height: 30px;}
+.accordionjs .acc_section .acc_content > li a{display: inline-block; width: 100%; color: #fff; padding-left: 15px; box-sizing: border-box;padding: 5px 10px;}
+.accordionjs .acc_section .acc_content > li a:hover,.accordionjs .acc_section .acc_content > li a.active{color:#289dcc}
+
+.accordionjs .acc_section .acc_content > li > ul{ background-color: #3c4348; color: #fff; padding-left: 10px;}
+.accordionjs .acc_section .acc_content > li > ul > li{}
+
+
+.accordionjs .acc_section:first-of-type,
+.accordionjs .acc_section:first-of-type .acc_head {
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+.accordionjs .acc_section:last-of-type,
+.accordionjs .acc_section:last-of-type .acc_content {
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+.accordionjs .acc_section.acc_active > .acc_content {
+  display: block;
+}
+.accordionjs .acc_section.acc_active > .acc_head {
+  background-color: #289dcc;
+}

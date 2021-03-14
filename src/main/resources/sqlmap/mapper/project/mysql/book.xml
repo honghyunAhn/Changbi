@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.changbi.tt.dev.data.dao.BookDAO">
+	
+	<!-- 교재신청 resultMap -->
+	<resultMap id="bookAppMap" 				type="BookAppVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<association property="user"		javaType="UserVO">
+			<result property="id"			column="USER_ID" />
+			<result property="name"			column="USER_NAME" />
+		</association>
+		<association property="course"		javaType="CourseVO">
+			<result property="id"			column="COURSE_ID" />
+			<result property="name"			column="COURSE_NAME" />
+		</association>
+		<association property="learnApp"	javaType="LearnAppVO">
+			<result property="id"			column="LEARN_APP_ID" />
+		</association>
+	</resultMap>
+	
+	<!-- 교재 resultMap -->
+	<resultMap id="bookMap" 				type="BookVO">
+		<id		property="id"				column="ID" />
+		<association property="supply"		column="SUPPLY_CODE"	javaType="forFaith.dev.vo.CodeVO"		select="forFaith.dev.dao.BaseDAO.codeInfo"  />
+		<association property="img1" 		column="IMG1_FILE"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<association property="img2" 		column="IMG2_FILE"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+	</resultMap>
+
+	<!-- 교재 입출입 Map -->
+	<resultMap id="bookInoutMap" 			type="BookInoutVO">
+		<result	property="inoutDate"		column="INOUT_DATE" />
+		<result	property="input"			column="INPUT" />
+		<result	property="output"			column="OUTPUT" />
+		<association property="book"		javaType="BookVO">
+			<result property="id"			column="BOOK_ID" />
+			<result property="name"			column="NAME" />
+			<result property="stock"		column="STOCK" />
+			<association property="supply"	column="SUPPLY_CODE"	javaType="forFaith.dev.vo.CodeVO"		select="forFaith.dev.dao.BaseDAO.codeInfo"  />
+		</association>
+	</resultMap>
+	
+	<!-- 교재신청 리스트 검색조건 -->
+	<sql id="bookAppCondition">
+		<choose>
+			<when test="searchCondition == 'recName'">
+				AND M.REC_NAME LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+			<when test="searchCondition == 'userId'">
+				AND M.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+			<when test="searchCondition == 'email'">
+				AND M.EMAIL LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+		</choose>
+		<if test="delivYn != null and delivYn != ''">
+			AND M.DELIV_YN = #{delivYn}
+		</if>
+		<if test="paymentYn != null and paymentYn != ''">
+			AND M.PAYMENT_YN = #{paymentYn}
+		</if>	
+	</sql>
+	
+	<!-- 교재신청 리스트 -->
+	<select id="bookAppList" parameterType="BookAppVO" resultMap="bookAppMap">
+		SELECT
+			M.ID,
+			M.COURSE_ID,
+			M.USER_ID,
+			M.LEARN_APP_ID,
+			M.REC_NAME,
+			M.TEL,
+			M.PHONE,
+			M.EMAIL,
+			M.DELIV_TYPE,
+			M.POST_CODE,
+			M.ADDR1,
+			M.ADDR2,
+			M.REMARKS,
+			M.PAYMENT_TYPE,
+			M.AMOUNT,
+			M.PRICE,
+			M.PAYMENT_YN,
+			M.PAYMENT_DATE,
+			M.ISSUE_NUM,
+			M.DELIV_YN,
+			M.DELIV_DATE,
+			M.DELIV_NUM,
+			M.ORDER_NUM,
+			M.USE_YN,
+			M.REG_USER,
+			M.REG_DATE,
+			M.UPD_USER,
+			M.UPD_DATE,
+			A.NAME AS USER_NAME,
+			B.NAME AS COURSE_NAME
+		FROM CB_BOOK_APP M
+		INNER JOIN CB_MEMBER A
+		ON M.USER_ID = A.ID
+		INNER JOIN CB_COURSE B
+		ON M.COURSE_ID = B.ID
+		WHERE 1=1
+		<include refid="bookAppCondition"></include>
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if> 
+	</select>
+	
+	<!-- 교재신청 리스트 총 갯수 -->
+	<select id="bookAppTotalCnt" parameterType="BookAppVO" resultType="int">
+		SELECT
+			COUNT(M.ID)
+		FROM CB_BOOK_APP M
+		INNER JOIN CB_MEMBER A
+		ON M.USER_ID = A.ID
+		INNER JOIN CB_COURSE B
+		ON M.COURSE_ID = B.ID
+		WHERE 1=1
+		<include refid="bookAppCondition"></include>
+	</select>
+	
+	<!-- 교재신청 상세 조회 -->
+	<select id="bookAppInfo" parameterType="BookAppVO" resultMap="bookAppMap">
+		SELECT
+			M.ID,
+			M.COURSE_ID,
+			M.USER_ID,
+			M.LEARN_APP_ID,
+			M.REC_NAME,
+			M.TEL,
+			M.PHONE,
+			M.EMAIL,
+			M.DELIV_TYPE,
+			M.POST_CODE,
+			M.ADDR1,
+			M.ADDR2,
+			M.REMARKS,
+			M.PAYMENT_TYPE,
+			M.AMOUNT,
+			M.PRICE,
+			M.PAYMENT_YN,
+			M.PAYMENT_DATE,
+			M.ISSUE_NUM,
+			M.DELIV_YN,
+			M.DELIV_DATE,
+			M.DELIV_NUM,
+			M.ORDER_NUM,
+			M.USE_YN,
+			M.REG_USER,
+			M.REG_DATE,
+			M.UPD_USER,
+			M.UPD_DATE,
+			A.NAME AS USER_NAME,
+			B.NAME AS COURSE_NAME
+		FROM CB_BOOK_APP M
+		INNER JOIN CB_MEMBER A
+		ON M.USER_ID = A.ID
+		INNER JOIN CB_COURSE B
+		ON M.COURSE_ID = B.ID
+		WHERE M.ID = #{id}
+	</select>
+	
+	<!-- 교재신청 등록(수정) -->
+	<insert id="bookAppReg" parameterType="BookAppVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_BOOK_APP
+		(
+			ID,
+			COURSE_ID,
+			USER_ID,
+			LEARN_APP_ID,
+			REC_NAME,
+			TEL,
+			PHONE,
+			EMAIL,
+			DELIV_TYPE,
+			POST_CODE,
+			ADDR1,
+			ADDR2,
+			REMARKS,
+			PAYMENT_TYPE,
+			AMOUNT,
+			PRICE,
+			PAYMENT_YN,
+			PAYMENT_DATE,
+			ISSUE_NUM,
+			DELIV_YN,
+			DELIV_DATE,
+			DELIV_NUM,
+			ORDER_NUM,
+			USE_YN,
+			REG_DATE,
+			UPD_DATE
+		)
+		VALUES
+		( 
+			#{id},
+			#{courseId},
+			#{userId},
+			#{learnAppId},
+			#{recName},
+			#{tel},
+			#{phone},
+			#{email},
+			#{delivType},
+			#{postCode},
+			#{addr1},
+			#{addr2},
+			#{remarks},
+			#{paymentType},
+			#{amount},
+			#{price},
+			#{paymentYn},
+			#{paymentDate},
+			#{issueNum},
+			#{delivYn},
+			#{delivDate},
+			#{delivNum},
+			#{orderNum},
+			#{useYn}, 
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'), 
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s') 
+		)
+		ON DUPLICATE KEY UPDATE
+			COURSE_ID = VALUES(COURSE_ID),
+			USER_ID = VALUES(USER_ID),
+			LEARN_APP_ID = VALUES(LEARN_APP_ID),
+			REC_NAME = VALUES(REC_NAME),
+			TEL = VALUES(TEL),
+			PHONE = VALUES(PHONE),
+			EMAIL = VALUES(EMAIL),
+			DELIV_TYPE = VALUES(DELIV_TYPE),
+			POST_CODE = VALUES(POST_CODE),
+			ADDR1 = VALUES(ADDR1),
+			ADDR2 = VALUES(ADDR2),
+			REMARKS = VALUES(REMARKS),
+			PAYMENT_TYPE = VALUES(PAYMENT_TYPE),
+			AMOUNT = VALUES(AMOUNT),
+			PRICE = VALUES(PRICE),
+			PAYMENT_YN = VALUES(PAYMENT_YN),
+			PAYMENT_DATE = VALUES(PAYMENT_DATE),
+			ISSUE_NUM = VALUES(ISSUE_NUM),
+			DELIV_YN = VALUES(DELIV_YN),
+			DELIV_DATE = VALUES(DELIV_DATE),
+			DELIV_NUM = VALUES(DELIV_NUM),
+			ORDER_NUM = VALUES(ORDER_NUM),
+			USE_YN = VALUES(USE_YN),
+			UPD_DATE = VALUES(UPD_DATE)						
+	</insert>
+	
+	<delete id="bookAppDel" parameterType="bookAppVO">
+		DELETE FROM CB_BOOK_APP
+		WHERE ID = #{id}
+	</delete>
+	
+	<delete id="bookAppSelectDel" parameterType="list">
+		DELETE FROM CB_BOOK_APP
+		WHERE ID IN ( <foreach collection="list" item="bookApp" index="index" separator=" , ">#{bookApp.id}</foreach> )
+	</delete>
+	
+	<!-- 교재 리스트 조회 -->
+	<select id="bookList" parameterType="BookVO" resultMap="bookMap">
+		SELECT M.ID, M.NAME, M.SUPPLY_CODE, M.MAIN_YN, M.PRICE, M.AUTHOR, M.MEMO, M.IMG1_FILE, M.IMG2_FILE, M.STOCK
+			 , M.ORDER_NUM, M.USE_YN, M.REG_DATE, M.UPD_DATE
+		FROM CB_BOOK M
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+						SELECT M.ID
+						FROM CB_BOOK M
+						WHERE 1 = 1
+						<if test="useYn != null and useYn != ''">
+							AND M.USE_YN = #{useYn}
+						</if>
+						<if test="mainYn != null and mainYn != ''">
+							AND M.MAIN_YN = #{mainYn}
+						</if>
+						<if test="supply != null and supply.code != ''">
+							AND M.SUPPLY_CODE = #{supply.code}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'name'">
+									M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.REG_DATE DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.REG_DATE DESC
+	</select>
+	
+	<!-- 교재 총 갯수 -->
+	<select id="bookTotalCnt" parameterType="BookVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_BOOK M
+				WHERE 1 = 1
+				<if test="useYn != null and useYn != ''">
+					AND M.USE_YN = #{useYn}
+				</if>
+				<if test="supply != null and supply.code != ''">
+					AND M.SUPPLY_CODE = #{supply.code}
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'name'">
+							M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select>
+	
+	<!-- 교재 상세 정보 조회 -->
+	<select id="bookInfo" parameterType="BookVO" resultMap="bookMap">
+		SELECT M.ID, M.NAME, M.SUPPLY_CODE, M.MAIN_YN, M.PRICE, M.AUTHOR, M.MEMO, M.IMG1_FILE, M.IMG2_FILE, M.STOCK
+			 , M.ORDER_NUM, M.USE_YN, M.REG_DATE, M.UPD_DATE
+		FROM CB_BOOK M
+		WHERE M.ID = #{id}
+	</select>
+	
+	<!-- 교재 등록 -->
+	<insert id="bookReg" parameterType="BookVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_BOOK
+			( ID, NAME, SUPPLY_CODE, MAIN_YN, PRICE, AUTHOR, MEMO, IMG1_FILE, IMG2_FILE
+			, ORDER_NUM, USE_YN, REG_DATE, UPD_DATE )
+		VALUES
+			( #{id}, #{name}, #{supply.code}, #{mainYn}, #{price}, #{author}, #{memo}, #{img1.fileId}, #{img2.fileId}
+			, #{orderNum}, #{useYn}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'), DATE_FORMAT(NOW(),'%Y%m%d%H%i%s') )
+		ON DUPLICATE KEY UPDATE
+			NAME			= VALUES(NAME),
+			SUPPLY_CODE		= VALUES(SUPPLY_CODE),
+			MAIN_YN			= VALUES(MAIN_YN),
+			PRICE			= VALUES(PRICE),
+			AUTHOR			= VALUES(AUTHOR),
+			MEMO			= VALUES(MEMO),
+			IMG1_FILE		= VALUES(IMG1_FILE),
+			IMG2_FILE		= VALUES(IMG2_FILE),
+			ORDER_NUM		= VALUES(ORDER_NUM),
+			USE_YN			= VALUES(USE_YN),
+			UPD_DATE		= VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 교재 삭제 -->
+	<delete id="bookDel" parameterType="bookVO">
+		DELETE FROM CB_BOOK
+		WHERE ID = #{id}
+	</delete>
+	
+	<!-- 교재 입고 -->
+	<insert id="bookInput" parameterType="BookInoutVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_BOOK_INOUT
+			( ID, BOOK_ID, INOUT_DATE, INPUT, OUTPUT )
+		VALUES
+			( #{id}, #{book.id}, DATE_FORMAT(NOW(),'%Y-%m-%d'), #{input}, #{output} )
+	</insert>
+	
+	<!-- 교재 재고수량 변경 -->
+	<update id="bookStock" parameterType="BookInoutVO">
+		UPDATE CB_BOOK
+		SET    STOCK = STOCK + #{input} + ${output}
+		WHERE  ID = #{book.id}
+	</update>
+	
+	<!-- 교재 입출고 현황 리스트 조회 -->
+	<select id="bookInoutList" parameterType="BookInoutVO" resultMap="bookInoutMap">
+		SELECT M.ID as BOOK_ID, M.NAME, M.SUPPLY_CODE, M.STOCK
+		     , PAGING.INOUT_DATE, PAGING.INPUT, PAGING.OUTPUT
+		FROM CB_BOOK M
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+						SELECT M.ID
+						     , D.INOUT_DATE, SUM(INPUT) as INPUT, SUM(OUTPUT) as OUTPUT
+						FROM CB_BOOK M
+						INNER JOIN CB_BOOK_INOUT D
+						ON M.ID = D.BOOK_ID
+						WHERE M.MAIN_YN = 'Y'
+						<if test="book != null and book.useYn != null and book.useYn != ''">
+							AND M.USE_YN = #{book.useYn}
+						</if>
+						<if test="book != null and book.supply != null and book.supply.code != ''">
+							AND M.SUPPLY_CODE = #{book.supply.code}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'name'">
+									M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY D.INOUT_DATE, M.ID
+						ORDER BY M.ID DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.ID DESC
+	</select>
+	
+	<!-- 교재 입출고 현황 총 갯수 -->
+	<select id="bookInoutTotalCnt" parameterType="BookInoutVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				     , D.INOUT_DATE, SUM(INPUT) as INPUT, SUM(OUTPUT) as OUTPUT
+				FROM CB_BOOK M
+				INNER JOIN CB_BOOK_INOUT D
+				ON M.ID = D.BOOK_ID
+				WHERE M.MAIN_YN = 'Y'
+				<if test="book != null and book.useYn != null and book.useYn != ''">
+					AND M.USE_YN = #{book.useYn}
+				</if>
+				<if test="book != null and book.supply != null and book.supply.code != ''">
+					AND M.SUPPLY_CODE = #{book.supply.code}
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'name'">
+							M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY D.INOUT_DATE, M.ID ) PAGING
+	</select>
+</mapper>

@@ -1,0 +1,313 @@
+@charset "UTF-8";
+
+/* admin_02_classManagement_style.css */
+/*--------------------------------------------------------------
+  >> 0.0 font-face
+----------------------------------------------------------------*/
+/* nanum-gothic-regular - korean_latin */
+@font-face {
+    font-family: 'Nanum Gothic';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/nanum-gothic-v17-korean_latin-regular.eot');
+    /* IE9 Compat Modes */
+    src: local('NanumGothic'),
+        url('../fonts/nanum-gothic-v17-korean_latin-regular.eot?#iefix') format('embedded-opentype'),
+        /* IE6-IE8 */
+        url('../fonts/nanum-gothic-v17-korean_latin-regular.woff2') format('woff2'),
+        /* Super Modern Browsers */
+        url('../fonts/nanum-gothic-v17-korean_latin-regular.woff') format('woff'),
+        /* Modern Browsers */
+        url('../fonts/nanum-gothic-v17-korean_latin-regular.ttf') format('truetype'),
+        /* Safari, Android, iOS */
+        url('../fonts/nanum-gothic-v17-korean_latin-regular.svg#NanumGothic') format('svg');
+    /* Legacy iOS */
+}
+
+/* nanum-gothic-800 - korean_latin */
+@font-face {
+    font-family: 'Nanum Gothic';
+    font-style: normal;
+    font-weight: 800;
+    src: url('../fonts/nanum-gothic-v17-korean_latin-800.eot');
+    /* IE9 Compat Modes */
+    src: local('NanumGothic ExtraBold'), local('NanumGothic-ExtraBold'),
+        url('../fonts/nanum-gothic-v17-korean_latin-800.eot?#iefix') format('embedded-opentype'),
+        /* IE6-IE8 */
+        url('../fonts/nanum-gothic-v17-korean_latin-800.woff2') format('woff2'),
+        /* Super Modern Browsers */
+        url('../fonts/nanum-gothic-v17-korean_latin-800.woff') format('woff'),
+        /* Modern Browsers */
+        url('../fonts/nanum-gothic-v17-korean_latin-800.ttf') format('truetype'),
+        /* Safari, Android, iOS */
+        url('../fonts/nanum-gothic-v17-korean_latin-800.svg#NanumGothic') format('svg');
+    /* Legacy iOS */
+}
+
+/* noto-sans-kr-regular - korean_latin */
+@font-face {
+    font-family: 'Noto Sans KR';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/noto-sans-kr-v11-korean_latin-regular.eot');
+    /* IE9 Compat Modes */
+    src: local('Noto Sans KR Regular'), local('NotoSansKR-Regular'),
+        url('../fonts/noto-sans-kr-v11-korean_latin-regular.eot?#iefix') format('embedded-opentype'),
+        /* IE6-IE8 */
+        url('../fonts/noto-sans-kr-v11-korean_latin-regular.woff2') format('woff2'),
+        /* Super Modern Browsers */
+        url('../fonts/noto-sans-kr-v11-korean_latin-regular.woff') format('woff'),
+        /* Modern Browsers */
+        url('../fonts/noto-sans-kr-v11-korean_latin-regular.ttf') format('truetype'),
+        /* Safari, Android, iOS */
+        url('../fonts/noto-sans-kr-v11-korean_latin-regular.svg#NotoSansKR') format('svg');
+    /* Legacy iOS */
+}
+
+/* noto-sans-kr-700 - korean_latin */
+@font-face {
+    font-family: 'Noto Sans KR';
+    font-style: normal;
+    font-weight: 700;
+    src: url('../fonts/noto-sans-kr-v11-korean_latin-700.eot');
+    /* IE9 Compat Modes */
+    src: local('Noto Sans KR Bold'), local('NotoSansKR-Bold'),
+        url('../fonts/noto-sans-kr-v11-korean_latin-700.eot?#iefix') format('embedded-opentype'),
+        /* IE6-IE8 */
+        url('../fonts/noto-sans-kr-v11-korean_latin-700.woff2') format('woff2'),
+        /* Super Modern Browsers */
+        url('../fonts/noto-sans-kr-v11-korean_latin-700.woff') format('woff'),
+        /* Modern Browsers */
+        url('../fonts/noto-sans-kr-v11-korean_latin-700.ttf') format('truetype'),
+        /* Safari, Android, iOS */
+        url('../fonts/noto-sans-kr-v11-korean_latin-700.svg#NotoSansKR') format('svg');
+    /* Legacy iOS */
+}
+
+
+/*--------------------------------------------------------------
+  >> 2.0 Layout Desgin - Common Style
+----------------------------------------------------------------*/
+/* 2.1 content align */
+.dd-flex {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex-grow: 1;
+    justify-content: space-between;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+}
+
+/* .d-flex>*{
+    -webkit-box-flex:1;
+    -ms-flex:1;
+    flex-grow:1;
+} */
+/* 2.2 icon */
+.img-icon {
+    background-image: url('/resources/images/project/admin/img-icon2.png');
+    overflow: hidden;
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+}
+
+
+.sort-down:hover,
+.caret-right:hover,
+.caret-left:hover {
+    cursor: pointer;
+}
+
+.caret-right {
+    background-position: -20px 0;
+}
+
+.caret-right:hover {
+    background-position: -40px 0;
+}
+
+.caret-left {
+    background-position: -60px 0;
+}
+
+.caret-left:hover {
+    background-position: -80px 0;
+}
+
+.sort-down {
+    background-position: 0 0;
+}
+
+/*--------------------------------------------------------------
+  >> 3.0 Main Page Design
+----------------------------------------------------------------*/
+.ccontent {
+    width: 100%;
+}
+
+.ccontent>.ssection {
+    width: 30%;
+}
+
+.ccontent>.ssectionWrap {
+    width: 70%;
+}
+
+.ccontent>.ssectionWrap>.ssection {
+    width: 50%;
+}
+
+.ccontent>.ssection,
+.ccontent>.ssectionWrap>.ssection {
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #eee;
+}
+
+.ccontent .ssection>.hdr {
+    width: calc(100% - 1px);
+    background-color: #11283b;
+    color: #fff;
+    text-align: center;
+    line-height: 40px;
+    font-weight: bold;
+}
+.ssection{
+	min-height:500px;
+	max-height: 500px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	
+}
+.ssection>.classGroup {}
+
+.ssection>.classGroup>.classssection {
+    line-height: 30px;
+}
+
+.ssection>.classGroup>.classssection>.gnb {
+    width: calc(100% - 1px);
+    padding: 0 10px;
+    text-indent: 10px;
+    cursor: pointer;
+}
+
+.ssection>.classGroup>.classssection>.lnb {
+    text-indent: 30px;
+    border: 1px solid #eee;
+}
+
+.ssection>.classGroup>.classssection>.lnb>li:hover {
+    background-color: #eee;
+    cursor: pointer;
+}
+
+.ssection>.classGroup>.classssection>.lnb>li:nth-child(1)~* {
+    border-top: 1px solid #eee;
+}
+
+.ccontent>.ssectionWrap>.ssection>.table {
+    width: 100%;
+    text-align: center;
+    line-height: 30px;
+    cursor: default;
+}
+
+.ssection>.classGroup>.classssection>.gnb,
+.ccontent>.ssectionWrap>.ssection>.table>thead>tr>th {
+    background-color: #9B9EA0;
+    color: #fff;
+}
+
+.ccontent>.ssectionWrap>.ssection>.table>tbody>tr>td {
+    border: 1px solid #eee;
+}
+
+.ccontent>.ssectionWrap>.ssection>.table>tbody>tr:hover {
+    background-color: #eee;
+}
+
+.ccontent>.ssectionWrap>.ssection>.table>thead>tr>.sortThis {
+    justify-ccontent: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+}
+
+.ssection>.classGroup>.classssection>.gnb>.sort-down,
+.ccontent>.ssectionWrap>.ssection>.table>thead>tr>.sortThis>.sort-down {
+    margin: 5px;
+}
+
+.ccontent>.ssectionWrap>.btnWrapper {
+    width: 20px;
+    height: calc(100% - 20px);
+    display: table;
+    margin: 10px 0;
+}
+
+.ccontent>.ssectionWrap>.btnWrapper>.btnWrap {
+    display: table-cell;
+    vertical-align: middle;
+    height: 50px;
+}
+
+.ccontent>.ssectionWrap>.btnWrapper>.btnWrap>.btn:last-child {
+    margin-top: 10px;
+}
+
+/* 2020.09.25 김성미 : 상담관리 페이지 css 추가*/
+.ccontent>.counselSection{
+	margin: 0px;
+    padding: 0px;
+    border: 1px solid #eee;
+}
+
+.ccontent>.leftSection {
+	width: 30%;
+	overflow-y: auto;
+}
+
+.ccontent>.rightSection {
+	width: 70%;
+	margin: 0px 0px 0px 5px;
+}
+
+.ccontent>.infoSection {
+	width: 100%;
+	min-height: 150px;
+    max-height: 150px;
+    margin : 0px 0px 5px 0px;
+    overflow-y: auto;
+}
+
+.ccontent>.detailSection {
+	width: 100%;
+	min-height: 350px;
+    max-height: 350px;
+    overflow-y: auto;
+}
+/* 상담관리 페이지 css 끝*/
+
+/* 2020.10.19 김성미 : 설문조사 템플릿 페이지 css 추가 */
+.ccontent>.templateSection{
+	margin: 0px;
+    padding: 0px;
+    border: 1px solid #eee;
+}
+.ccontent>.templateList {
+	width: 30%;
+	overflow-y: auto;
+}
+.ccontent>.templateDetail {
+	width: 70%;
+}
+.ccontent>.templateModify {
+	width: 100%;
+	overflow-y: auto;
+	border: 0px;
+}
+/* 설문조사 템플릿 페이지 css 끝*/

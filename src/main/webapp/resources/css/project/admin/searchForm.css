@@ -1,0 +1,42 @@
+.checc:hover{
+	background-color: #93afef;
+}
+.searchTable td {
+	text-align: left;
+	vertical-align: middle;
+	padding-left: 10px;
+	padding-bottom: 10px;
+}
+.searchTable select.selector {
+	width: 400px;
+}
+.searchTable td input {
+	width: 300px;
+}
+.searchTable td.buttonTd {
+	padding-top: 5px;
+	text-align: center;
+}
+.searchTable select.searchConditionBox {
+	width: 95px;
+}
+.searchTable input.searchKeywordBox {
+	width: 300px;
+}
+.searchTable input.inputSelect {
+	width: 400px;	
+}
+.searchTable input.large {
+	width: 400px;
+}
+
+select.searchConditionBox {
+	width: 150px;
+}
+input.searchKeywordBox {
+	width: 300px;
+}
+.detailTd {
+		cursor: pointer;
+		color: blue;
+}

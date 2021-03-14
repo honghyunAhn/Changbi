@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.changbi.tt.dev.data.dao.MemberDAO">
+	
+	<!-- USER resultMap -->
+<!--   	<resultMap id="userMap" 				type="UserVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<result property="deptCode.code"	column="DEPT_CODE" />
+		<association property="photoFile" 	column="PHOTO_FILE"	javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<association property="regionCode"	column="REGION_CODE" javaType="forFaith.dev.vo.CodeVO" select="forFaith.dev.dao.BaseDAO.codeInfo"  />
+	</resultMap> -->
+	
+	<!-- 탈퇴회원 관리 -->
+	<resultMap id="WithdrawalMap" 			type="WithdrawalVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<association property="user"		javaType="UserVO">
+			<result	property="id"			column="USER_ID" />
+			<result property="name"			column="USER_NAME" />
+		</association>
+	</resultMap>
+	
+	<!-- 관리자 resultMap -->
+	<resultMap id="managerMap" 				type="ManagerVO" autoMapping="true">
+		<id		property="id"				column="ID" />
+		<result property="deptCode.code"	column="DEPT_CODE" />
+		<result property="courseCode.code"	column="COURSE_CODE" />
+		<association property="photoFile" 	column="PHOTO_FILE"	javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<collection property="courseList"	ofType="CourseVO"	javaType="list">
+			<result property="id"			column="COURSE_ID" />
+			<result property="name"			column="COURSE_NAME" />
+			<result property="completeTime"	column="COMPLETE_TIME" />
+			<result property="learnTypes"	column="LEARN_TYPES" />
+			<result property="credit"		column="CREDIT" />
+			<result property="persons"		column="PERSONS" />
+		</collection>
+		<collection property="tccList"		ofType="TccVO"	javaType="list">
+			<result property="id"			column="TCC_ID" />
+			<result property="title"		column="TCC_TITLE" />
+			<result property="url"			column="TCC_URL" />
+			<result property="useYn"		column="TCC_USE_YN" />
+			<result property="regDate"		column="TCC_REG_DATE" />
+		</collection>
+	</resultMap>
+	
+	<!-- 멤버 리스트 조회 -->
+<!--   	<select id="memberList" parameterType="UserVO" resultMap="userMap">
+ 		SELECT M.ID, M.NAME, M.LOCALE, M.SNS_CD, M.SNS_ID, M.SNS_URL, M.ACCEPT_SNS, M.ACCEPT_EMAIL, M.ACCEPT_SMS
+			 , M.TEL, M.PHONE, M.FAX, M.EMAIL, M.EMAIL_YN, M.GENDER, M.BIRTH_DAY, M.POST_CODE, M.ADDR1, M.ADDR2
+			 , M.LAST_LOGIN, M.AUTH_KEY, M.SESSION_ID, M.GRADE, M.BELONG_TO, M.PHOTO_FILE, M.PROFILE, M.DEPT_CODE
+			 , M.SCHOOL_NAME, M.S_TYPE, M.E_TYPE, M.POSITION, M.POSITION_ETC, M.APP_YEAR, M.JURISDICTION, M.SUBJECT
+			 , M.SCHOOL_TEL, M.SCHOOL_FAX, M.SCHOOL_POST_CODE, M.SCHOOL_ADDR1, M.SCHOOL_ADDR2, M.NEIS_NUM, M.REGION_CODE
+			 , M.USE_YN, M.REG_DATE, M.UPD_DATE
+		FROM CB_MEMBER M
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+						SELECT M.ID
+						FROM CB_MEMBER M
+						WHERE 1 = 1
+						<if test="grade > 0">
+							AND M.GRADE = #{grade}
+						</if>
+						<if test="useYn != null and useYn != ''">
+							AND M.USE_YN = #{useYn}
+						</if>
+						<if test="deptCode != null and deptCode.code != ''">
+							AND M.DEPT_CODE = #{deptCode.code}
+						</if>
+						<if test="regionCode != null and regionCode.code != ''">
+							AND M.REGION_CODE = #{regionCode.code}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	M.ID LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'name'">
+									M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'id'">
+									M.ID LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.SEQ DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.SEQ DESC
+	</select> -->
+	
+	<!-- 멤버 총 갯수 -->
+<!--  	<select id="memberTotalCnt" parameterType="UserVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_MEMBER M
+				WHERE 1 = 1
+				<if test="grade > 0">
+					AND M.GRADE = #{grade}
+				</if>
+				<if test="useYn != null and useYn != ''">
+					AND M.USE_YN = #{useYn}
+				</if>
+				<if test="deptCode != null and deptCode.code != ''">
+					AND M.DEPT_CODE = #{deptCode.code}
+				</if>
+				<if test="regionCode != null and regionCode.code != ''">
+					AND M.REGION_CODE = #{regionCode.code}
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	M.ID LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'name'">
+							M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'id'">
+							M.ID LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select> -->
+	
+ 	<!-- 멤버 상세 정보 조회 -->
+<!--  	<select id="memberInfo" parameterType="UserVO" resultMap="userMap">
+		SELECT M.ID, M.NAME, M.LOCALE, M.SNS_CD, M.SNS_ID, M.SNS_URL, M.ACCEPT_SNS, M.ACCEPT_EMAIL, M.ACCEPT_SMS
+			 , M.TEL, M.PHONE, M.FAX, M.EMAIL, M.EMAIL_YN, M.GENDER, M.BIRTH_DAY, M.POST_CODE, M.ADDR1, M.ADDR2
+			 , M.LAST_LOGIN, M.AUTH_KEY, M.SESSION_ID, M.GRADE, M.BELONG_TO, M.PHOTO_FILE, M.PROFILE, M.DEPT_CODE
+			 , M.SCHOOL_NAME, M.S_TYPE, M.E_TYPE, M.POSITION, M.POSITION_ETC, M.APP_YEAR, M.JURISDICTION, M.SUBJECT
+			 , M.SCHOOL_TEL, M.SCHOOL_FAX, M.SCHOOL_POST_CODE, M.SCHOOL_ADDR1, M.SCHOOL_ADDR2, M.NEIS_NUM, M.REGION_CODE
+			 , M.USE_YN, M.REG_DATE, M.UPD_DATE
+		FROM CB_MEMBER M
+		WHERE M.ID = #{id}
+	</select> -->
+	
+	<!-- 멤버 등록 
+<insert id="memberReg" parameterType="UserVO">
+		INSERT INTO CB_MEMBER
+			( ID, PW, NAME, LOCALE, SNS_CD, SNS_ID, SNS_URL, ACCEPT_SNS, ACCEPT_EMAIL, ACCEPT_SMS, TEL, PHONE, FAX, EMAIL
+			, EMAIL_YN, GENDER, BIRTH_DAY, POST_CODE, ADDR1, ADDR2, GRADE, BELONG_TO, PHOTO_FILE, PROFILE, DEPT_CODE
+			, SCHOOL_NAME, S_TYPE, E_TYPE, POSITION, POSITION_ETC, APP_YEAR, JURISDICTION, SUBJECT
+			, SCHOOL_TEL, SCHOOL_FAX, SCHOOL_POST_CODE, SCHOOL_ADDR1, SCHOOL_ADDR2, NEIS_NUM, REGION_CODE
+			, ORDER_NUM, USE_YN, REG_DATE, UPD_DATE )
+		VALUES
+			( #{id}, #{pw}, #{name}, #{locale}, #{snsCd}, #{snsId}, #{snsUrl}, #{acceptSns}, #{acceptEmail}, #{acceptSms}, #{tel}, #{phone}, #{fax}, #{email}
+			, #{emailYn}, #{gender}, #{birthDay}, #{postCode}, #{addr1}, #{addr2}, #{grade}, #{belongTo}, #{photoFile.fileId}, #{profile}, #{deptCode.code}
+			, #{schoolName}, #{sType}, #{eType}, #{position}, #{positionEtc}, #{appYear}, #{jurisdiction}, #{subject}
+			, #{schoolTel}, #{schoolFax}, #{schoolPostCode}, #{schoolAddr1}, #{schoolAddr2}, #{neisNum}, #{regionCode.code}
+			, #{orderNum}, #{useYn}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'), DATE_FORMAT(NOW(),'%Y%m%d%H%i%s') )
+		ON DUPLICATE KEY UPDATE
+			<if test='pw != null and pw != ""'>
+			PW				= VALUES(PW),
+			</if>
+			NAME			= VALUES(NAME),
+			LOCALE			= VALUES(LOCALE),
+			SNS_CD			= VALUES(SNS_CD),
+			SNS_ID			= VALUES(SNS_ID),
+			SNS_URL			= VALUES(SNS_URL),
+			ACCEPT_SNS		= VALUES(ACCEPT_SNS),
+			ACCEPT_EMAIL	= VALUES(ACCEPT_EMAIL),
+			ACCEPT_SMS		= VALUES(ACCEPT_SMS),
+			TEL				= VALUES(TEL),
+			PHONE			= VALUES(PHONE),
+			FAX				= VALUES(FAX),
+			EMAIL			= VALUES(EMAIL),
+			EMAIL_YN		= VALUES(EMAIL_YN),
+			GENDER			= VALUES(GENDER),
+			BIRTH_DAY		= VALUES(BIRTH_DAY),
+			POST_CODE		= VALUES(POST_CODE),
+			ADDR1			= VALUES(ADDR1),
+			ADDR2			= VALUES(ADDR2),
+			GRADE			= VALUES(GRADE),
+			BELONG_TO		= VALUES(BELONG_TO),
+			PHOTO_FILE		= VALUES(PHOTO_FILE),
+			PROFILE			= VALUES(PROFILE),
+			DEPT_CODE		= VALUES(DEPT_CODE),
+			SCHOOL_NAME		= VALUES(SCHOOL_NAME),
+			S_TYPE			= VALUES(S_TYPE),
+			E_TYPE			= VALUES(E_TYPE),
+			POSITION		= VALUES(POSITION),
+			POSITION_ETC	= VALUES(POSITION_ETC),
+			APP_YEAR		= VALUES(APP_YEAR),
+			JURISDICTION	= VALUES(JURISDICTION),
+			SUBJECT			= VALUES(SUBJECT),
+			SCHOOL_TEL		= VALUES(SCHOOL_TEL),
+			SCHOOL_FAX		= VALUES(SCHOOL_FAX),
+			SCHOOL_POST_CODE= VALUES(SCHOOL_POST_CODE),
+			SCHOOL_ADDR1	= VALUES(SCHOOL_ADDR1),
+			SCHOOL_ADDR2	= VALUES(SCHOOL_ADDR2),
+			NEIS_NUM		= VALUES(NEIS_NUM),
+			REGION_CODE		= VALUES(REGION_CODE),
+			ORDER_NUM		= VALUES(ORDER_NUM),
+			USE_YN			= VALUES(USE_YN),
+			UPD_DATE		= VALUES(UPD_DATE)
+	</insert> -->
+	
+	<!-- 멤버 삭제 -->
+	<update id="memberDel" parameterType="UserVO">
+		DELETE FROM CB_MEMBER
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 멤버 선택 삭제 -->
+<!-- 	<update id="memberSelectDel" parameterType="list">
+		DELETE FROM CB_MEMBER
+		WHERE ID IN ( <foreach collection="list" item="user" index="index" separator=" , ">#{user.id}</foreach> )
+	</update> -->
+	
+	<!-- 비밀번호 초기화 -->
+<!-- 	<update id="userPwInit" parameterType="UserVO">
+		UPDATE CB_MEMBER
+		SET PW = #{pw}
+		  , UPD_DATE = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		WHERE ID = #{id}
+	</update> -->
+	
+	<!-- 탈퇴 회원 리스트 조회 -->
+<!-- 	<select id="memberOutList" parameterType="WithdrawalVO" resultMap="WithdrawalMap">
+		SELECT M.ID, M.NOTE, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE
+			 , A.ID AS USER_ID, A.NAME AS USER_NAME
+		FROM CB_MEMBER_OUT M
+		INNER JOIN CB_MEMBER A
+		ON M.USER_ID = A.ID
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+						SELECT M.ID
+						FROM CB_MEMBER_OUT M
+						INNER JOIN CB_MEMBER A
+						ON M.USER_ID = A.ID
+						WHERE 1 = 1
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	A.ID LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'name'">
+									A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'id'">
+									A.ID LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.REG_DATE DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.REG_DATE DESC
+	</select> -->
+	
+	<!-- 탈퇴 회원 리스트 총 갯수 -->
+<!-- 	<select id="memberOutTotalCnt" parameterType="WithdrawalVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_MEMBER_OUT M
+				INNER JOIN CB_MEMBER A
+				ON M.USER_ID = A.ID
+				WHERE 1 = 1
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	A.ID LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'name'">
+							A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'id'">
+							A.ID LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select> -->
+	
+	<!-- 탈퇴 회원 등록 -->
+	<insert id="memberOutReg" parameterType="WithdrawalVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_MEMBER_OUT
+				( ID, USER_ID, NOTE, USER_PW,  USER_NM, USER_PHONE, USER_EMAIL, USER_BIRTH, USER_SEX, USER_FLAG, USER_STATE)
+		VALUES
+			( #{id}, #{user.id}, #{note}, #{user.pw}, #{user.name}, #{user.phone}, #{user.email}, #{user.birthDay}, #{user.gender},#{user.userFlag}, #{user.useYn}  )
+		ON DUPLICATE KEY UPDATE
+			USER_ID	= VALUES(USER_ID)
+			, NOTE	= VALUES(NOTE)
+			, USER_PW = VALUES(USER_PW)
+			, USER_NM = VALUES(USER_NM)
+			, USER_PHONE = VALUES(USER_PHONE)
+			, USER_EMAIL = VALUES(USER_EMAIL)
+			, USER_BIRTH = VALUES(USER_BIRTH)
+			, USER_SEX = VALUES(USER_SEX)
+			, USER_FLAG =VALUES(USER_FLAG)
+			, USER_STATE=VALUES(USER_STATE)
+	</insert>
+	
+	<!-- 탈퇴 회원 삭제 -->
+	<update id="memberOutDel" parameterType="UserVO">
+		DELETE FROM CB_MEMBER_OUT
+		WHERE USER_ID = #{id}
+	</update>
+	
+	<!-- 탈퇴 회원 선택 삭제 -->
+	<update id="memberOutSelectDel" parameterType="list">
+		DELETE FROM CB_MEMBER_OUT
+		WHERE USER_ID IN ( <foreach collection="list" item="user" index="index" separator=" , ">#{user.id}</foreach> )
+	</update>
+	
+	<!-- 관리자 상세 정보 조회 -->
+	<select id="managerInfo" parameterType="ManagerVO" resultMap="managerMap">
+		SELECT M.ID, M.NAME, M.LOCALE, M.COURSE_CODE, M.SNS_CD, M.SNS_ID, M.SNS_URL, M.ACCEPT_SNS, M.ACCEPT_EMAIL, M.ACCEPT_SMS
+			 , M.TEL, M.PHONE, M.FAX, M.EMAIL, M.EMAIL_YN, M.GENDER, M.BIRTH_DAY, M.POST_CODE, M.ADDR1, M.ADDR2
+			 , M.LAST_LOGIN, M.AUTH_KEY, M.SESSION_ID, M.GRADE, M.BELONG_TO, M.PHOTO_FILE, M.PROFILE, M.DEPT_CODE
+			 , M.USE_YN, M.REG_DATE, M.UPD_DATE
+			 , A.MEM_CODE
+			 , B.ID AS COURSE_ID, B.NAME AS COURSE_NAME, B.COMPLETE_TIME, B.LEARN_TYPES, B.CREDIT, B.PERSONS
+			 , C.ID AS TCC_ID, C.TITLE AS TCC_TITLE, C.URL AS TCC_URL, C.USE_YN AS TCC_USE_YN, C.REG_DATE AS TCC_REG_DATE
+		FROM FF_MEMBER M
+		LEFT OUTER JOIN FF_MEMBER_GROUP A
+		ON M.ID = A.MEM_ID
+		LEFT OUTER JOIN	(	SELECT A.ID, A.NAME, A.COMPLETE_TIME, A.LEARN_TYPES, A.CREDIT, B.MAN_ID, B.PERSONS 
+							FROM CB_COURSE A
+							INNER JOIN CB_MAN_COURSE B
+							ON A.ID = B.COURSE_ID
+							WHERE B.MAN_ID = #{id} ) B
+		ON M.ID = B.MAN_ID
+		LEFT OUTER JOIN CB_TCC C
+		ON M.ID = C.TEACHER_ID
+		WHERE M.ID = #{id}
+	</select>
+
+	<!-- 해당 관리자의 담당교과지정 삭제 -->
+	<update id="managerCourseDel" parameterType="ManagerVO">
+		DELETE FROM CB_MAN_COURSE
+		WHERE MAN_ID = #{id}
+	</update>
+	
+	<!-- 해당 관리자의 담당교과지정 저장 -->
+	<update id="managerCourseReg" parameterType="ManagerVO">
+		INSERT INTO CB_MAN_COURSE
+			( MAN_ID, COURSE_ID, PERSONS )
+		VALUES
+			<foreach collection="courseList" item="course" index="index" separator=" , ">
+			( #{id}, #{course.id}, #{course.persons} )
+			</foreach>
+	</update>
+	
+	<!-- 해당 관리자의 tcc 영상 삭제 -->
+	<update id="managerTccDel" parameterType="ManagerVO">
+		DELETE FROM CB_TCC
+		WHERE TEACHER_ID = #{id}
+	</update>
+	
+	<!-- 해당 관리자의 tcc 영상 저장 -->
+	<update id="managerTccReg" parameterType="ManagerVO">
+		INSERT INTO CB_TCC
+			( TEACHER_ID, TITLE, URL, USE_YN, REG_DATE )
+		VALUES
+			<foreach collection="tccList" item="tcc" index="index" separator=" , ">
+			( #{id}, #{tcc.title}, #{tcc.url}, #{tcc.useYn}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s') )
+			</foreach>
+	</update>
+	
+	<!-- 관리자 선택 삭제 -->
+	<update id="managerSelectDel" parameterType="list">
+		DELETE FROM FF_MEMBER
+		WHERE ID IN ( <foreach collection="list" item="manager" index="index" separator=" , ">#{manager.id}</foreach> )
+	</update>
+	
+	<!-- 관리자 담당교과지정 선택 삭제 -->
+	<update id="managerCourseSelectDel" parameterType="list">
+		DELETE FROM CB_MAN_COURSE
+		WHERE MAN_ID IN ( <foreach collection="list" item="manager" index="index" separator=" , ">#{manager.id}</foreach> )
+	</update>
+	
+	<!-- 관리자 TCC 선택 삭제 -->
+	<update id="managerTccSelectDel" parameterType="list">
+		DELETE FROM CB_TCC
+		WHERE TEACHER_ID IN ( <foreach collection="list" item="manager" index="index" separator=" , ">#{manager.id}</foreach> )
+	</update>
+	
+	<!-- LMS -->
+	<!-- USER resultMap -->
+ 	<resultMap id="userMap" type="UserVO" autoMapping="true">
+		<id		property="id"  		column="USER_ID"/>
+		<result property="name" 	column="USER_NM"/>
+		<result property="phone" 	column="USER_PHONE"/>
+		<result property="email" 	column="USER_EMAIL"/>
+		<result property="birthDay" column="USER_BIRTH"/>
+		<result property="gender" 	column="USER_SEX"/>
+		<result property="userFlag" 	column="USER_FLAG"/>
+		<result property="useYn" 	column="USER_STATE"/>
+		<result property="regDate" 	column="USER_INS_DT"/>
+		<result property="belongTo" column="USER_BELONG_TO"/>
+		<result property="tel" 		column="USER_TEL"/>
+		<result property="postCode" column="USER_ZIPCODE"/>
+		<result property="addr1" 	column="USER_ADDR1"/>
+		<result property="addr2" 	column="USER_ADDR2"/>
+	</resultMap>
+	
+	<!-- 멤버 리스트 조회 -->
+ 	<select id="memberList" parameterType="UserVO" resultMap="userMap">
+		SELECT M.USER_ID, M.USER_NM
+			 , M.USER_PHONE, M.USER_EMAIL, M.USER_BIRTH, M.USER_SEX
+			 , A.USER_BELONG_TO, A.USER_TEL, A.USER_ZIPCODE, A.USER_ADDR1, A.USER_ADDR2, M.USER_STATE, M.USER_FLAG
+			 , M.USER_INS_DT
+		FROM COM_USER_TB M
+		LEFT OUTER JOIN CB_USER_INFO A
+		ON M.USER_ID = A.USER_ID
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+						SELECT M.USER_ID
+						FROM COM_USER_TB M
+						WHERE 1 = 1
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	M.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	M.USER_ID LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'name'">
+									M.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'id'">
+									M.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.USER_ID
+						ORDER BY M.USER_INS_DT DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.USER_ID = PAGING.USER_ID
+		ORDER BY M.USER_INS_DT DESC
+	</select>
+	
+	<!-- 멤버 총 갯수 -->
+	<select id="memberTotalCnt" parameterType="UserVO" resultType="int">
+		SELECT COUNT(USER_ID)
+		FROM (	SELECT M.USER_ID
+				FROM COM_USER_TB M
+				WHERE 1 = 1
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	M.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	M.USER_ID LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'name'">
+							M.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'id'">
+							M.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.USER_ID ) PAGING
+	</select>
+	
+	<!-- 멤버 상세 정보 조회 -->
+	<select id="memberInfo" parameterType="UserVO" resultMap="userMap">
+		SELECT M.USER_ID, M.USER_NM, M.USER_PW
+			 , M.USER_PHONE, M.USER_EMAIL, M.USER_BIRTH, M.USER_SEX, M.USER_STATE, M.USER_FLAG
+			 , A.USER_BELONG_TO, A.USER_TEL, A.USER_ZIPCODE, A.USER_ADDR1, A.USER_ADDR2
+			 , M.USER_INS_DT
+		FROM COM_USER_TB M
+		LEFT OUTER JOIN CB_USER_INFO A
+		ON M.USER_ID = A.USER_ID
+		WHERE M.USER_ID = #{id}
+	</select>
+	
+	<!-- 멤버 등록  	 -->
+	<update id="memberReg" parameterType="UserVo">
+		UPDATE COM_USER_TB AS A
+		LEFT OUTER JOIN CB_USER_INFO AS B
+		ON A.USER_ID = B.USER_ID
+		SET A.USER_STATE = #{useYn}
+		  , A.USER_BIRTH = #{birthDay}
+		  , A.USER_NM = #{name}
+		  , A.USER_SEX = #{gender}
+		  , A.USER_PHONE = #{phone}
+		  , B.USER_TEL = #{tel}
+		  , A.USER_EMAIL = #{email}
+		  , B.USER_ZIPCODE = #{postCode}
+		  , B.USER_ADDR1 = #{addr1}
+		  , B.USER_ADDR2 = #{addr2}
+		 WHERE A.USER_ID = #{id}
+	</update>
+	
+	
+	<!-- 멤버 수정(기본) -->
+	<update id="memberUpd" parameterType="UserVo">
+			UPDATE 
+					COM_USER_TB AS A
+					LEFT OUTER JOIN 
+						CB_USER_INFO AS B
+						ON A.USER_ID = B.USER_ID
+			SET 	  A.USER_STATE = #{useYn}
+			  		, A.USER_NM = #{name}
+			  		, A.USER_PHONE = #{phone}
+			  		, A.USER_EMAIL = #{email}
+			  		, A.USER_BIRTH = #{birthDay}
+			  		, A.USER_SEX = #{gender}
+			  		, A.USER_UDT_DT = now()
+			 WHERE A.USER_ID = #{id}
+	</update>
+	
+	<!-- LMS 회원정보 수정(선택) 1: 선택정보테이블에서 정보유무 확인 -->
+	<select id="selectIfAdditionalInfoExistAdmin"  parameterType="String" resultType="int">
+			SELECT 
+					COUNT(USER_INS_DT) 
+			FROM 
+					CB_USER_INFO
+            WHERE 
+            		USER_ID = #{id}
+	</select>
+	
+
+	 <!-- LMS 회원정보 수정(선택) 2-1  -->
+ 	<update id="updateAdditionalMemberInfoAdmin"  parameterType="UserVo">
+	 		UPDATE 
+	 			     CB_USER_INFO
+	 			 SET 
+	 			 	 USER_BELONG_TO = #{belongTo}
+					, USER_TEL = #{tel}
+					, USER_ZIPCODE =  #{postCode}
+					, USER_ADDR1 = #{addr1}
+					, USER_ADDR2 = #{addr2}
+					, USER_UDT_DT = now()
+			WHERE USER_ID = #{id}
+ 	</update>
+
+ <!-- LMS 회원정보 수정(선택) 2-2 -->	
+	<insert id="insertAdditionalMemberInfoAdmin"  parameterType="UserVo">
+			INSERT INTO 
+						 CB_USER_INFO
+								(	USER_ID
+								, USER_BELONG_TO
+								, USER_TEL
+					            , USER_ZIPCODE
+					            , USER_ADDR1
+					            , USER_ADDR2
+					            , USER_UDT_ID
+					            , USER_UDT_DT 
+							)VALUES(
+							     #{id}
+							    , #{belongTo}
+								, #{tel}
+								, #{postCode}
+								, #{addr1}
+								, #{addr2}
+								, #{id}
+								, now()		        
+							)			 
+	</insert>
+	 
+		
+	
+	
+	<!-- 멤버 선택 삭제 -->
+	<update id="memberSelectDel" parameterType="list">
+		DELETE FROM COM_USER_TB
+		WHERE USER_ID IN ( <foreach collection="list" item="user" index="index" separator=" , ">#{user.id}</foreach> )
+	</update>
+	
+	<!-- 비밀번호 초기화 -->
+	<update id="userPwInit" parameterType="UserVO">
+		UPDATE COM_USER_TB
+		SET USER_PW = #{pw}
+		  , USER_UDT_DT = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		WHERE USER_ID = #{id}
+	</update>
+	
+	<!-- 탈퇴 회원 리스트 조회 -->
+	<select id="memberOutList" parameterType="WithdrawalVO" resultMap="WithdrawalMap">
+		SELECT M.ID, M.NOTE, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE
+			 , A.USER_ID AS USER_ID, A.USER_NM AS USER_NAME
+		FROM CB_MEMBER_OUT M
+		INNER JOIN COM_USER_TB A
+		ON M.USER_ID = A.USER_ID
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+						SELECT M.ID
+						FROM CB_MEMBER_OUT M
+						INNER JOIN COM_USER_TB A
+						ON M.USER_ID = A.USER_ID
+						WHERE 1 = 1
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	A.USER_ID LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'name'">
+									A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'id'">
+									A.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.REG_DATE DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.REG_DATE DESC
+	</select>
+	
+	<!-- 탈퇴 회원 리스트 총 갯수 -->
+	<select id="memberOutTotalCnt" parameterType="WithdrawalVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_MEMBER_OUT M
+				INNER JOIN COM_USER_TB A
+				ON M.USER_ID = A.USER_ID
+				WHERE 1 = 1
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	A.USER_ID LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'name'">
+							A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'id'">
+							A.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select>
+
+</mapper>

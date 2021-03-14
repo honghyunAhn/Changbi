@@ -1,0 +1,4276 @@
+@charset "UTF-8";
+
+/* ----------------------------------------------------------------
+  >> TABLE OF CONTENTS:                   담당자 : 성지민
+	0.0 font-face
+
+	1.0 reset 표준화
+    	- 1.1 HTML5 display-role reset for older browsers
+    	- 1.2 Typography
+        - 1.0 ALL Element
+    	- 1.3 Table, Link
+    	- 1.4 form element reset
+
+
+	2.0 Plugin 관련 - Swiper(슬라이드)
+        - 2.1 Main Slide Gallery
+        - 2.2 Interview & Video Slide Gallery
+
+
+    3.0 Layout Desgin - Common Style
+        - 3.1 z-index
+        - 3.2 content align
+        - 3.3 icon
+        - 3.4 text
+        - 3.5 button
+        - 3.6 color
+        - 3.7 ETC function
+
+
+    4.0 Main Page Design
+        - 4.1 header
+            - 4.1.1 top-banner
+            - 4.1.2 header
+                1) 공지사항
+                2) 로그인/로그아웃
+                3) 로고/검색창/SNS
+            - 4.1.3 nav
+                1) menu-btn 메뉴바
+                2) nav
+                3) fullNav 전체메뉴
+
+        - 4.2 footer
+            - 4.2.1 Scroll to Top
+            - 4.2.2 footer
+
+        - 4.3 main
+            - 4.3.1 main-bannerWrap 슬라이딩 배너
+            - 4.3.2 btnWrap 퀵메뉴 버튼
+            - 4.3.3 hotNewWrap 인기강좌
+            - 4.3.4 recommend-classWrap 분야별 추천 강좌
+            - 4.3.5 banner-mid 중간 배너
+            - 4.3.6 special-classWrap 특강 및 설명회
+            - 4.3.7 customWrap
+                - 1) 공지사항/이벤트 + FAQ
+                - 2) 고객센터
+            - 4.3.8 interviewWrap 홍보영상/인터뷰
+
+
+    5.0 Contents Design - common
+        - 5.1 subPage - subNav
+        - 5.2 subPage - subContent
+            - 5.2.1 pageLocation 사용자 위치 표시
+            - 5.2.2 headerBox 카테고리별 header 이미지
+            - 5.2.3 ProcessWrap 단계별 진행상황
+        - 5.3 subPage - section
+            - 5.3.1 subPage - searchWrapper 과정명 검색
+            - 5.3.2 subPage - searchWrapper 조건선택 필터
+            - 5.3.3 subPage - searchWrapper 검색조건
+                - 1) viewWrap : 10개씩 보기
+                - 2) search-filter-wrap : 제목+내용 검색
+            - 5.3.4 subPage - pagination 페이지 수
+            - 5.3.5 subPage - sectionOutBtn (섹션 최하단 우측) 버튼
+
+        -5.4 subPage - 리스트 페이지 (.eLearning)
+            -5.4.1 리스트 페이지 공통 - 페이지 공통
+            -5.4.2 리스트 페이지 공통 - 과정목록 Title
+            -5.4.3 리스트 페이지 공통 - 과정목록 Content
+
+        -5.5 subPage - 강의 리스트 페이지 (.eLearning)
+            -5.5.1 강의 리스트 - 과정목록 Title
+            -5.5.2 강의 리스트 - 과정목록 Content
+
+        -5.6 subPage - 게시판 리스트 페이지 (.container.sub0$)
+            -5.6.1 게시판 리스트 - 과정목록 Title
+            -5.6.2 게시판 리스트 - 과정목록 Content
+
+        -5.7 subPage - Tab Group 탭
+            -5.7.1 Tab Group - Tab Title
+            -5.7.2 Tab Group - Sub Group
+
+        -5.8 subPage - formStyle
+            -5.8.1 formStyle - common
+            -5.8.2 formStyle - 게시글 보기
+            -5.8.3 formStyle - writePost 글쓰기
+            -5.8.4 formStyle - userInfo 회원정보 확인
+
+        -5.9 subPage - table
+            -5.9.1 table - thead
+            -5.9.2 table - tbody
+
+
+    6.0 Contents Design for Page (페이지별 개별화 된 콘텐츠 디자인)
+        - 6.1 sub00 로그인/회원가입
+            - 6.1.1 sub00-01 로그인
+            - 6.1.2 sub00-02 회원가입
+            - 6.1.3 sub00-03 아이디찾기
+            - 6.1.4 sub00-04 비밀번호찾기
+
+        - 6.2 eLearning(sub01~sub04) 온라인 강의
+            - 6.2.1 eLearning-01 온라인 강의 목록
+            - 6.2.2 eLearning-01-01 온라인 강의 상세
+
+        - 6.3 sub05 커뮤니티
+            - 6.3.1 sub05-01 공지사항/이벤트
+            - 6.3.2 sub05-02 수강후기/인터뷰
+            - 6.3.3 sub05-03 특강/설명회
+            - 6.3.4 sub05-04 자유게시판
+
+        - 6.4 sub06 고객센터
+            - 6.4.1 sub06-01 고객지원
+            - 6.4.2 sub06-02 FAQ
+            - 6.4.3 sub06-03 단체/제휴문의
+            - 6.4.4 sub06-04 오시는길
+
+        - 6.5 sub07 나의강의실
+            - 6.5.1 sub07-01 학습현황
+            - 6.5.2 sub07-02 결제현황/환불
+            - 6.5.3 sub07-03 마일리지
+            - 6.5.4 sub07-04 개인정보수정
+            - 6.5.5 sub07-05 회원탈퇴
+
+
+    7.0 Popup Design - modal popup layer
+        - 7.1 modal popup layer - layout
+            - 7.1.1 modal popup layer - header
+            - 7.1.2 modal popup layer - Content
+                - 1) 수강신청
+                    - 01수강신청
+                    - 02환불규정
+                    - 03결제방법
+                - 2) 나의강의실
+                    - 01학습현황
+                    - 02학습하기
+                    - 03온라인 과제
+                    - 04온라인 시험
+                    - 05공지사항
+                    - 06자료실
+                - 3) 영수증출력
+
+※ 서버 적용 이후 '임시' 키워드 찾아 지울 것
+----------------------------------------------------------------*/
+/*--------------------------------------------------------------
+  >> color-set
+
+  main color: #396aa5(blue 1), #2c67b0(light blue),
+              #e7c186(gold), #11283b(navy)
+
+  danger : #c13831(deep red)
+
+  sub color : #d78b16(deep gold),
+              #6f8d9d(gray blue), #415b69(deep gray blue),
+              #80b59b(green), #c75298(pink), #e07c58(orange),
+              #485d93(deep blue)
+
+  icon color : #cf7b79(light red), #be0d34(dark red),
+               #ff5012(orange), #bea01e(brown gold),
+               #66bd2b(yellow green), #36b42d(green),
+               #007836(dark green), #0073cf(blue),
+               #be0d34(dark gray), #f6ccda(baby pink),
+               #b9e7e7(baby green), #c1ddea(baby blue)
+
+  txt color : #ccc, #000, #999, #666, #444, #333, #11283b
+
+  bg color(main) : #f6f8fa
+
+  bg color(gray) : #f0f0f0, #f9f9f9, #f4f4f4, #ddd
+
+  border color : #f9f9f9, #f6f6f6, #f4f4f4, #eee, #ccc, #aaa
+----------------------------------------------------------------*/
+/*--------------------------------------------------------------
+  >> 0.0 font-face
+----------------------------------------------------------------*/
+/* nanum-gothic-regular - korean_latin */
+@font-face {
+    font-family: 'Nanum Gothic';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/nanum-gothic-v17-korean_latin-regular.eot');
+    /* IE9 Compat Modes */
+    src: local('NanumGothic'),
+        url('../fonts/nanum-gothic-v17-korean_latin-regular.eot?#iefix') format('embedded-opentype'),
+        /* IE6-IE8 */
+        url('../fonts/nanum-gothic-v17-korean_latin-regular.woff2') format('woff2'),
+        /* Super Modern Browsers */
+        url('../fonts/nanum-gothic-v17-korean_latin-regular.woff') format('woff'),
+        /* Modern Browsers */
+        url('../fonts/nanum-gothic-v17-korean_latin-regular.ttf') format('truetype'),
+        /* Safari, Android, iOS */
+        url('../fonts/nanum-gothic-v17-korean_latin-regular.svg#NanumGothic') format('svg');
+    /* Legacy iOS */
+}
+
+/* nanum-gothic-800 - korean_latin */
+@font-face {
+    font-family: 'Nanum Gothic';
+    font-style: normal;
+    font-weight: 800;
+    src: url('../fonts/nanum-gothic-v17-korean_latin-800.eot');
+    /* IE9 Compat Modes */
+    src: local('NanumGothic ExtraBold'), local('NanumGothic-ExtraBold'),
+        url('../fonts/nanum-gothic-v17-korean_latin-800.eot?#iefix') format('embedded-opentype'),
+        /* IE6-IE8 */
+        url('../fonts/nanum-gothic-v17-korean_latin-800.woff2') format('woff2'),
+        /* Super Modern Browsers */
+        url('../fonts/nanum-gothic-v17-korean_latin-800.woff') format('woff'),
+        /* Modern Browsers */
+        url('../fonts/nanum-gothic-v17-korean_latin-800.ttf') format('truetype'),
+        /* Safari, Android, iOS */
+        url('../fonts/nanum-gothic-v17-korean_latin-800.svg#NanumGothic') format('svg');
+    /* Legacy iOS */
+}
+
+/* noto-sans-kr-regular - korean_latin */
+@font-face {
+    font-family: 'Noto Sans KR';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/noto-sans-kr-v11-korean_latin-regular.eot');
+    /* IE9 Compat Modes */
+    src: local('Noto Sans KR Regular'), local('NotoSansKR-Regular'),
+        url('../fonts/noto-sans-kr-v11-korean_latin-regular.eot?#iefix') format('embedded-opentype'),
+        /* IE6-IE8 */
+        url('../fonts/noto-sans-kr-v11-korean_latin-regular.woff2') format('woff2'),
+        /* Super Modern Browsers */
+        url('../fonts/noto-sans-kr-v11-korean_latin-regular.woff') format('woff'),
+        /* Modern Browsers */
+        url('../fonts/noto-sans-kr-v11-korean_latin-regular.ttf') format('truetype'),
+        /* Safari, Android, iOS */
+        url('../fonts/noto-sans-kr-v11-korean_latin-regular.svg#NotoSansKR') format('svg');
+    /* Legacy iOS */
+}
+
+/* noto-sans-kr-700 - korean_latin */
+@font-face {
+    font-family: 'Noto Sans KR';
+    font-style: normal;
+    font-weight: 700;
+    src: url('../fonts/noto-sans-kr-v11-korean_latin-700.eot');
+    /* IE9 Compat Modes */
+    src: local('Noto Sans KR Bold'), local('NotoSansKR-Bold'),
+        url('../fonts/noto-sans-kr-v11-korean_latin-700.eot?#iefix') format('embedded-opentype'),
+        /* IE6-IE8 */
+        url('../fonts/noto-sans-kr-v11-korean_latin-700.woff2') format('woff2'),
+        /* Super Modern Browsers */
+        url('../fonts/noto-sans-kr-v11-korean_latin-700.woff') format('woff'),
+        /* Modern Browsers */
+        url('../fonts/noto-sans-kr-v11-korean_latin-700.ttf') format('truetype'),
+        /* Safari, Android, iOS */
+        url('../fonts/noto-sans-kr-v11-korean_latin-700.svg#NotoSansKR') format('svg');
+    /* Legacy iOS */
+}
+
+/*--------------------------------------------------------------
+  >> 1.0 reset 표준화
+----------------------------------------------------------------*/
+/* http://meyerweb.com/eric/tools/css/reset/
+       v2.0 | 20110126 License: none (public domain) */
+/* 1.0 ALL Element */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    box-sizing: border-box;
+}
+
+/* 1.1 HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+    box-sizing: border-box;
+}
+
+/* 1.2 Typography */
+html {
+    font-size: 14px;
+}
+
+body {
+    font-family: "Noto Sans KR", "Nanum Gothic", "Malgun Gothic", "Apple SD Gothic Neo", "AppleSDGothic", "dotum", "sans-serif";
+    line-height: 20px;
+    color: #444;
+    word-break: keep-all;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: 1em;
+    font-weight: normal;
+}
+
+ol, ul {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    /* selected width */
+    display: block;
+    width: 100%;
+}
+
+blockquote, q {
+    quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+
+/* 1.3 Table, Link */
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* 1.4 form element reset*/
+input, texrarea, button, select, option {
+    box-sizing: border-box;
+}
+
+form, label {
+    display: block;
+}
+
+*:focus {
+    outline: 0;
+}
+
+/*--------------------------------------------------------------
+  >> 2.0 Plugin 관련 - Swiper(슬라이드)
+----------------------------------------------------------------*/
+/* 2.1 Main Slide Gallery */
+.swiper1.swiper-container-horizontal>.swiper-pagination-bullets,
+.swiper1 .swiper-pagination-custom,
+.swiper1 .swiper-pagination-fraction {
+    bottom: 20px;
+}
+
+/* 2.2 Interview & Video Slide Gallery */
+.swiper2 .swiper-slide {
+    height: 300px;
+}
+
+.swiper2 .swiper-button-next,
+.swiper2 .swiper-button-prev {
+    top: 41%;
+}
+
+.swiper2.swiper-container-horizontal>.swiper-pagination-bullets,
+.swiper2 .swiper-pagination-custom,
+.swiper2 .swiper-pagination-fraction {
+    bottom: 0;
+}
+
+/*--------------------------------------------------------------
+  >> 3.0 Layout Desgin - Common Style
+----------------------------------------------------------------*/
+/* 3.1 z-index */
+.positionImg {
+    /* 2020-01-28 positionImg 도장 이미지 수정 */
+    z-index: 2;
+}
+
+.rv-itv-wrap>.btnWrap {
+    z-index: 10;
+}
+
+.class-card .heart {
+    z-index: 20;
+}
+
+.navWrap>.nav {
+    z-index: 1000;
+}
+
+/* 20-08-18 .top-bannerWrap>.toggle-tab 삭제  */
+/* .top-bannerWrap>.toggle-tab {
+    z-index: 2000;
+} */
+.fullWrapper {
+    z-index: 3000;
+}
+
+.top-btn {
+    z-index: 4000;
+}
+
+.mobile-headerWrap {
+    z-index: 4500;
+}
+
+.m-navBg {
+    z-index: 4550;
+}
+
+.m-navGroup {
+    z-index: 4600;
+}
+
+.modal-layer {
+    z-index: 5000;
+}
+
+.modal-content {
+    z-index: 6000;
+}
+
+/* 3.2 content align */
+.floatL {
+    float: left;
+}
+
+.floatR {
+    float: right;
+}
+
+.d-flex {
+    display: flex;
+    -ms-display: flexbox;
+    /* display: flexbox; */
+}
+
+.d-inline {
+    display: inline;
+}
+
+/* 3.3 icon */
+/* 20-08-31 .img-icon{...} 삭제 */
+/* .img-icon {
+    background-image: url('../img/icon-img.png');
+    overflow: hidden;
+    background-repeat: no-repeat;
+} */
+.close, .times {
+    /* 20-08-31
+    width, height 삭제 */
+    /* width: 18px; */
+    /* height: 30px; */
+    cursor: pointer;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+}
+
+/* 20-08-31
+.times{...} 삭제
+.search{...} 삭제
+.certificate{...}삭제
+.coupon{...}삭제
+.menu-btn-hover>.coupon{...} 삭제
+.headset{...} 삭제
+.menu-btn-hover>.headset{...} 삭제
+.desktop{...} 삭제
+.menu-btn-hover>.desktop{...} 삭제
+.users{...} 삭제
+.menu-btn-hover>.users{...} 삭제
+.heart{...} 삭제
+.heart:hover{...} 삭제
+.listStyle-star{...} 삭제
+.angle-left{...}삭제
+.angle-right{...}삭제
+.angle-down{...}삭제
+.Nblog{...} 삭제
+.Nblog:hover{...} 삭제
+.Ncafe{...} 삭제
+.Ncafe:hover{...} 삭제
+.youtube{...} 삭제
+.youtube:hover{...} 삭제
+.sub-nav>.sub-navGroup>.lnb>.active>.angle-right{...} 삭제
+.sub-nav>.sub-navGroup>.lnb>a>.angle-right{...} 삭제
+.sub-nav>.sub-navGroup>.lnb:hover>a>.angle-down{...} 삭제
+.nav-menu .bars{...} 삭제
+.page-location>.home{...} 삭제
+.customer .bullhorn{...} 삭제
+.customer .faq{...} 삭제
+.gift{...} 삭제
+.save:hover{...} 삭제
+.bullhorn-s{...} 삭제
+.print-icon:hover{...} 삭제
+.clock{...} 삭제
+.tv{...} 삭제
+.btn-wh:hover .tv{...} 삭제
+.study{...} 삭제
+.btn-bl:hover .study{...} 삭제
+.map-wayWrap .bus{...} 삭제
+.map-wayWrap .subway{...} 삭제
+.map-wayWrap .car{...} 삭제
+.sort-up{...} 삭제
+.sort-down{...} 삭제
+.hand-point-up{...} 삭제
+.btn-pColor:hover .hand-point-up{...} 삭제
+*/
+/* .times {
+    background-position: -459px 0;
+}
+.search {
+    width: 27px;
+    height: 30px;
+    background-position: -81px -95px;
+}
+.certificate {
+    background-position: -189px 0;
+}
+.coupon {
+    background-position: -249px 0;
+}
+.menu-btn-hover>.coupon {
+    background-position: 0 -140px;
+}
+.headset {
+    background-position: -309px 0;
+}
+.menu-btn-hover>.headset {
+    background-position: -30px -140px;
+}
+.desktop {
+    background-position: -369px 0;
+}
+.menu-btn-hover>.desktop {
+    background-position: -60px -140px;
+}
+.users {
+    background-position: -429px 0;
+}
+.menu-btn-hover>.users {
+    background-position: -90px -140px;
+}
+.heart {
+    background-position: -759px 0px;
+}
+.heart:hover {
+    background-position: -784px 0px;
+}
+.listStyle-star {
+    display: inline-table;
+    vertical-align: middle;
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: 0.857rem;
+}
+.angle-left {
+    width: 20px;
+    height: 20px;
+    background-position: -90px -1px;
+}
+.angle-right {
+    width: 20px;
+    height: 20px;
+    background-position: -110px -1px;
+}
+.angle-down {
+    width: 20px;
+    height: 20px;
+    background-position: -10px -59px;
+}
+.sort-up {
+    background-position: -45px -80px;
+}
+.sort-down {
+    background-position: -60px -80px;
+}
+.Nblog {
+    background-position: -210px -40px
+}
+
+.Ncafe {
+    background-position: -240px -40px
+}
+
+.youtube {
+    background-position: -270px -40px
+}
+
+.Nblog:hover {
+    background-position: -300px -40px
+}
+
+.Ncafe:hover {
+    background-position: -330px -40px
+}
+
+.youtube:hover {
+    background-position: -360px -40px
+}
+
+.sub-nav>.sub-navGroup>.lnb>.active>.angle-right {
+    background-position: 0 -59px;
+}
+
+.sub-nav>.sub-navGroup>.lnb>a>.angle-right {
+    background-position: 0 -30px;
+}
+
+.sub-nav>.sub-navGroup>.lnb:hover>a>.angle-down {
+    background-position: 0 -59px;
+}
+.nav-menu .bars {
+    width: 17px;
+    height: 40px;
+    background-position: -142px 0;
+    margin: 0 auto;
+}
+.page-location>.home {
+    width: 17px;
+    height: 30px;
+    background-position: -125px -30px;
+}
+.customer .bullhorn {
+    background-position: -824px 0;
+}
+.customer .faq {
+    background-position: -864px 0;
+}
+.gift {
+    width: 20px;
+    height: 20px;
+    background-position: -60px -94px;
+}
+.save:hover {
+    background-color: rgba(44, 103, 176, 0.1);
+}
+.bullhorn-s {
+    width: 20px;
+    height: 20px;
+    background-position: -20px -95px;
+}
+
+.print-icon:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+.clock {
+    width: 20px;
+    height: 20px;
+    background-position: -230px -95px;
+    margin-right: 5px;
+}
+.tv {
+    background-position: -130px -60px;
+}
+.btn-wh:hover .tv {
+    background-position: -150px -60px;
+}
+.study {
+    background-position: -170px -95px;
+    margin: 5px 0;
+}
+.btn-bl:hover .study {
+    background-position: -190px -95px
+}
+.map-wayWrap .bus {
+    background-position: -557px 0;
+}
+.map-wayWrap .subway {
+    background-position: -597px 0;
+}
+.map-wayWrap .car {
+    background-position: -637px 0;
+}
+.hand-point-up {
+background-position: -170px -60px;
+}
+
+.btn-pColor:hover .hand-point-up {
+background-position: -190px -60px;
+}
+*/
+.pin {
+    /* 20-08-31
+    width, height, background-position 삭제
+    opacity : 0.5 > 0.7로 수정
+    margin : 0 10px > 0 auto로 수정 */
+    /* width: 20px; */
+    /* height: 20px; */
+    /* background-position: -210px -95px; */
+    opacity: 0.7;
+    margin: 0 auto;
+}
+.save {
+    /* 20-08-31 width, height, background-position 삭제 */
+    /* width: 20px; */
+    /* height: 20px; */
+    /* background-position: 0 -95px; */
+    margin: 0 auto;
+}
+.print {
+    /* 20-08-31 width, height, background-position 삭제 */
+    /* width: 20px; */
+    /* height: 20px; */
+    margin: 0 auto;
+    /* background-position: -40px -95px; */
+}
+/* icon - fill background color */
+/* .modal-subGroup .class-list .img-icon, */
+.customer>.hdr>.img-icon {
+    position: relative;
+}
+
+/* .modal-subGroup .class-list .img-icon::before, */
+.customer>.hdr>.img-icon::before {
+    content: '';
+    width: 30%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    background-color: rgba(215, 139, 22, 0.2);
+}
+
+/* 3.4 text */
+.text-over {
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    white-space: nowrap;
+}
+
+.txt-ov-2 {
+    white-space: normal;
+    -webkit-line-clamp: 2;
+}
+
+.d-none-msg>p {
+    display: none;
+}
+
+.h1 {
+    /* font-size: 60px; */
+    font-size: 4.286rem;
+    line-height: 80px;
+    font-weight: bold;
+}
+
+.fz34 {
+    font-size: 2.429rem;
+}
+
+.h2 {
+    /* font-size: 30px; */
+    font-size: 2.143rem;
+    line-height: 40px;
+    font-weight: bold;
+}
+
+.fz24 {
+    /* font-size: 24px; */
+    font-size: 1.714rem;
+}
+
+.h3 {
+    /* font-size: 20px; */
+    font-size: 1.429rem;
+    line-height: 40px;
+    font-weight: bold;
+}
+
+.h4, .fz18 {
+    /* font-size: 18px; */
+    font-size: 1.286rem;
+}
+
+.fz16 {
+    /* font-size: 16px; */
+    font-size: 1.143rem;
+}
+
+.fz14 {
+    /* font-size: 14px; */
+    font-size: 1rem;
+}
+
+.fz13 {
+    /* font-size: 13px; */
+    font-size: 0.9286rem;
+}
+
+.h5 {
+    /* font-size: 12px; */
+    font-size: 0.857rem;
+}
+
+/* main - Section Title */
+.titleWrap {
+    width: calc(100% - 20px);
+    margin: 0 auto;
+}
+
+.titleWrap .title {
+    width: 100%;
+    text-align: center;
+    color: #11283b;
+}
+
+.titleBar,
+.titleBar-hdr {
+    padding-left: 10px;
+    border-left: 5px solid #333;
+}
+
+.titleBar {
+    margin: 10px;
+    line-height: 20px;
+}
+
+/* sub - Segment Title */
+.article-title {
+    padding: 10px 0;
+}
+
+.titleBar-hdr {
+    height: 14px;
+    line-height: 14px;
+    font-weight: bold;
+    margin: 3px 0;
+    margin-right: 20px;
+}
+
+/* 3.5 button */
+.button {
+    border: none;
+    background-color: inherit;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+}
+
+.btn,
+.button {
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn-bk {
+    background-color: #444;
+    color: #fff;
+}
+
+.btn-wh {
+    background-color: #fff;
+    border: 1px solid #444;
+}
+
+.btn-bl {
+    border: 1px solid #2c67b0;
+    color: #2c67b0;
+}
+
+.btn-bl:hover,
+.btn-myClass {
+    background-color: #2c67b0;
+    color: #fff;
+    padding: 0 10px;
+}
+
+.btn-myClass:hover {
+    background-color: #11283b;
+}
+
+.btn-not,
+.btn-not2 {
+    padding: 0 10px;
+    cursor: default;
+    box-shadow: none;
+}
+
+.btn-not {
+    border: 1px solid #11283b;
+    color: #11283b;
+}
+
+.btn-not2 {
+    background-color: #666;
+    color: #fff;
+}
+
+.btn-pColor {
+    background-color: #d78b16;
+    color: #fff;
+}
+
+.btn-gd {
+    background-color: #fff;
+    border: 1px solid #d78b16;
+    color: #d78b16;
+}
+
+.btn-gd:hover {
+    background-color: #d78b16;
+    color: #fff;
+}
+
+.btn-subBlue1,
+.btn-subBlue2,
+.btn-subBlue3 {
+    color: #fff;
+    opacity: .7;
+}
+
+.btn-subBlue1 {
+    background-color: #6f8d9d;
+}
+
+.btn-subBlue2 {
+    background-color: #415b69;
+}
+
+.btn-subBlue3 {
+    background-color: #11283b;
+}
+
+.btn-subBlue1:hover,
+.btn-subBlue2:hover,
+.btn-subBlue3:hover {
+    opacity: 1;
+}
+
+/* main - 분야별 추천 강좌 - 더보기 버튼 */
+.more-btn {
+    width: 120px;
+    border-radius: 20px;
+    padding: 5px;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    font-size: 0.857rem;
+}
+
+.button-wrap {
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.button-wrap>* {
+    padding: 0 10px;
+    line-height: 30px;
+    margin-left: 10px;
+}
+
+/* enter-btn : 인증하기 버튼 */
+.enter-btn {
+    width: 100px;
+    height: 30px;
+    line-height: 30px;
+    margin: 20px auto 40px;
+}
+
+.enter-btn:hover {
+    font-weight: bold;
+}
+
+/* 3.6 color */
+.cMain,
+.true-msg {
+    color: #2c67b0;
+}
+
+.cDanger,
+.false-msg {
+    color: #c13831;
+}
+
+.c999 {
+    color: #999;
+}
+
+.c666 {
+    color: #666;
+}
+
+.c333 {
+    color: #333;
+}
+
+.cccc {
+    color: #ccc;
+}
+
+.bgcCCC {
+    background-color: #ccc;
+}
+
+.bgcEEE {
+    background-color: #eee;
+}
+
+.bgcF9 {
+    background-color: #f9f9f9;
+}
+
+/* 3.7 ETC function */
+/* - modal popup layer 활성화시 바디 스크롤 없애기 */
+.not-scroll {
+    position: fixed;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+/* content align */
+/*--------------------------------------------------------------
+  >> 4.0 Main Page Design
+----------------------------------------------------------------*/
+/* 4.1 Header */
+.skip-navigation .goToMain {
+    display: none;
+}
+
+/* 4.1.1 top-banner */
+/* 20-08-18 .top-banner 관련 css 모두 삭제 */
+/* .top-bannerWrap {
+    width: 100%;
+    border: 1px solid #fff;
+    position: relative;
+    overflow: hidden;
+    height: 120px;
+}
+
+.top-banner {
+    width: 100%;
+    height: 940px;
+    background-image: url('../img/top-banner-1920x940.png');
+    background-position: top, center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.top-bannerWrap>.btn-down {
+    width: 45px;
+    height: 30px;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    border-radius: 5px;
+    background-color: #fff;
+    opacity: 0.6;
+}
+
+.top-bannerWrap>.btn-down:hover {
+    opacity: 1;
+}
+
+.top-bannerWrap>.btn-down>.angle-down {
+    width: 45px;
+    height: 30px;
+    background-position: 0px 0px;
+}
+
+.top-bannerWrap>.btn-down>.close {
+    display: none;
+    left: 0;
+    top: 0;
+    margin: 0 13.5px;
+}
+*/
+/* 4.1.2 header */
+.mobile-hdr-searchWrap,
+.mobile-headerWrap {
+    display: none !important;
+}
+
+.hdrWrap>.header,
+.navWrap {
+    display: block !important;
+}
+
+.hdrWrap {
+    width: 100%;
+}
+
+.hdrWrap>.header {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+.hdrWrap.topMenu-wrapper {
+    background-color: #f6f8fa;
+}
+
+.hdrWrap>.header>.header-topMenu-wrap {
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+/* 4.1.2 header - 1) 공지사항 슬라이드 */
+.header-topMenu-wrap .topMenu-notice-wrap {
+    width: 260px;
+    justify-content: flex-start;
+    margin: 2px 0;
+}
+
+.topMenu-notice-wrap>.listWrap {
+    height: 20px;
+    overflow: hidden;
+}
+
+.topMenu-notice .text-over {
+    height: 20px;
+}
+
+.topMenu-notice-wrap>.button-wrap {
+    margin-left: 10px;
+    overflow: hidden;
+}
+
+.topMenu-notice-wrap>.button-wrap>div {
+    margin-left: 5px;
+    border-radius: 2px;
+    border: 1px solid #eee;
+}
+
+/* 4.1.2 header - 2) 회원가입/로그인/로그아웃/나의강의실 버튼 */
+.header-topMenu-wrap .user-menu {
+    justify-content: flex-end;
+}
+
+.user-menu>.logon, .join {
+    display: none;
+}
+
+.user-menu>.menu-list:not(.welcome) {
+    height: 25px;
+    margin-left: 10px;
+    padding: 0 10px;
+    border-radius: 2px;
+    border: 1px solid #ccc;
+    line-height: 20px;
+    background-color: #fff;
+}
+
+.user-menu>.menu-list.myclass {
+    background-color: #2c67b0;
+    color: #fff;
+}
+
+.user-menu>.menu-list.myclass:hover {
+    background-color: #11283b;
+}
+
+.user-menu>.menu-list:not(.welcome):hover {
+    background-color: #444;
+    color: #fff;
+}
+
+/* 4.1.2 header - 3) 로고/검색창/SNS */
+.header-wrap {
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid #eee;
+}
+
+.header-wrap>.header-logo {
+    float: left;
+}
+
+.header-wrap>.header-logo * {
+    width: 225px;
+    height: 60px;
+}
+
+.header-search {
+    width: 250px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 13px auto;
+    justify-content: space-between;
+    border-bottom: 2px solid #444;
+}
+
+/* 20-08-31 .header-search>.search 추가  */
+.header-search>.search {
+    margin: 5px;
+    padding: 0;
+}
+
+.header-search>.search:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.cusPlaceHolder {
+    line-height: 30px;
+}
+
+.header-search .cusPHIn {
+    text-indent: 10px;
+    width: 250px;
+    border: none;
+}
+
+.header-search>.search {
+    box-shadow: none;
+    /* IE */
+    background-color: #fff;
+}
+
+.header-sns {
+    justify-content: flex-end;
+    /* 20-08-31 margin : 15px 0 > 10px 0으로 변경 */
+    margin: 10px 0;
+}
+
+.header-sns>li {
+    /* 20-08-31
+width : 30px > 40px로 수정
+height : 30px > 40px로 수정
+margin-left 삭제 */
+    width: 40px;
+    height: 40px;
+    /* margin-left: 10px; */
+}
+
+.header-sns>li * {
+    /* 20-08-31 height : 20px > 100%로 수정 */
+    height: 100%;
+    border-radius: 2px;
+}
+
+/* 4.1.3 Nav */
+.navWrap {
+    height: 60px;
+}
+
+.navWrap>.nav {
+    width: 1200px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.gnb {
+    font-weight: bold;
+    text-align: center;
+}
+
+/* 4.1.3 Nav - 1) menu-btn */
+.navWrap>.nav>.nav-menu {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+
+.nav-menu>.btn-toggle {
+    margin: 10px 0;
+    padding-right: 20px;
+    width: 140px;
+    height: 40px;
+    border-right: 1px solid #eee;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+}
+
+.nav-menu>.btn-toggle>.fz14 {
+    color: #444;
+    line-height: 40px;
+}
+
+/* 20-08-31
+.nav-menu .bars,.nav-menu .times{...} 추가 */
+.nav-menu .bars,
+.nav-menu .times {
+    margin: 10px 0;
+}
+
+/* 20-08-31 .nav-menu .times{...}삭제 */
+/* .nav-menu .times {
+    width: 18px;
+    height: 30px;
+    margin: 10px auto;
+} */
+.nav-menu>.navGroup {
+    width: 1060px;
+    justify-content: space-between;
+}
+
+/* 4.1.3 Nav - 2) nav */
+.navGroup>.gnb {
+    width: 176px;
+}
+
+.navGroup>.gnb>a {
+    line-height: 60px;
+    height: 60px;
+    color: #444;
+}
+
+.navGroup>.gnb>.active {
+    border-bottom: 5px solid #444;
+}
+
+.navGroup>.gnb:hover .lnb {
+    border-top: 5px solid #e7c186;
+}
+
+.navGroup>.gnb>.lnb {
+    width: 176px;
+    line-height: 40px;
+    background-color: #fff;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+    display: none;
+}
+
+.lnb>li {
+    border-bottom: 1px solid #eee;
+}
+
+.navGroup .lnb>li:hover {
+    background-color: #444;
+    color: #fff;
+}
+
+/* 4.1.3 Nav - 3) fullNav */
+.fullWrapper {
+    display: none;
+    width: 100%;
+    position: absolute;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5);
+}
+
+.fullWrapper .full-background {
+    background-color: rgba(0, 0, 0, 0.8);
+    height: 100vh;
+}
+
+.fullWrapper .full-navGroup {
+    display: flex;
+    justify-content: space-between;
+    width: 1060px;
+    margin-left: calc((100% - 1200px) / 2 + 140px);
+    padding: 0 0 20px;
+    background-color: #fff;
+}
+
+.full-navGroup>.menu-title-division {
+    width: 176px;
+    border-right: 1px solid #f9f9f9;
+    border-top: 1px solid #f9f9f9;
+}
+
+.menu-title-division>.gnb {
+    display: none;
+}
+
+.menu-title-division>.lnb>a {
+    font-weight: bold;
+}
+
+.menu-title-division>.lnb {
+    min-width: 130px;
+    text-align: left;
+    text-indent: 20px;
+    line-height: 30px;
+    color: #11283b;
+}
+
+.menu-title-division>.lnb:not(:nth-child(2)) {
+    margin-top: 10px;
+}
+
+.lnb-hover2 {
+    background-color: rgba(17, 40, 59, .05);
+}
+
+.mobile-navGroup .menu-title-division>.lnb:hover,
+.menu-title-division>.lnb>.lnb-hover,
+.menu-title-division>.lnb>a:hover {
+    background-color: #11283b;
+    color: #fff;
+}
+
+.menu-title-division>.lnb>.menu-sub li:hover {
+    color: #fff;
+    background-color: rgba(231, 193, 134, 1);
+}
+
+.mobile-hdr-searchWrap {
+    display: none;
+}
+
+/* 4.2 footer */
+/* 4.2.1 Scroll to Top */
+.top-btn {
+    display: none;
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    opacity: 0.6;
+}
+
+.top-btn:hover {
+    opacity: 1;
+}
+
+/* 4.2.2 footer */
+.footer {
+    padding: 40px 0 0;
+    background-color: #11283b;
+    color: #f6f8fa;
+}
+
+.footer>.footer_wrap {
+    width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+}
+
+.footer_logoWrap .header-sns {
+    margin: 20px;
+    justify-content: flex-start;
+}
+
+.footer_wrap>.footer_contents {
+    width: calc(100% - 200px);
+    margin-left: 20px;
+}
+
+.footer_contents>.footer_textWrap {
+    display: flex;
+    justify-content: center;
+}
+
+.footer_textWrap>.footer_left {
+    width: 330px;
+}
+
+.footer_textWrap>.footer_right {
+    width: 480px;
+}
+
+.footer_textWrap>.footer_right>.footer-menu {
+    margin: 25px 0;
+    overflow: hidden;
+}
+
+.footer_contents>.footer_textWrap>.footer_right>.footer-menu>li {
+    float: left;
+    color: #f6f8fa;
+    opacity: 0.6;
+}
+
+.footer_textWrap>.footer_right>.footer-menu>li:hover {
+    opacity: 1;
+}
+
+.footer_textWrap>.footer_right .menu-divBar {
+    margin: 0 10px;
+}
+
+.footer_wrap>.footer_contents .corp-name {
+    margin: 20px 0;
+    line-height: 40px;
+}
+
+.footer_contents>.footer_textWrap .lh30>li {
+    line-height: 30px;
+    color: #6f8d9d;
+}
+
+.footer>.copyright {
+    text-align: center;
+    margin-top: 60px;
+    padding: 20px 0;
+    background-color: #0d1f2d;
+    color: #415b69;
+}
+
+.footer>*:not(.footer-menu) {
+    cursor: default;
+}
+
+/* 4.3 main */
+/* 20-08-18
+ 추가 : 메인_컨테이너 width값(공통) 변경  */
+.content>.btnWrap,
+/* .btnWrap>.btn-menu, */
+.hotNewWrap>.hn-cardWrap,
+.recommend-classWrap>.recommend-class,
+.customWrap {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+/* 20-08-18
+ 추가 : 메인_섹션별 padding값(공통) 변경  */
+.content>.hotNewWrap,
+.recommend-classWrap,
+.customWrap {
+    padding: 40px 0;
+}
+
+/* 4.3.1 main-bannerWrap 슬라이딩 배너 */
+.main-bannerWrap {
+    /* 20-08-18
+    1) width : 100% > 1200px로 수정
+    2) height 추가 */
+    width: 1200px;
+    height: 400px;
+    overflow: hidden;
+}
+
+.main-bannerWrap>.main-banner-imgWrap {
+    /* 20-08-18
+    width : 400% > calc(1200px * 4)로 수정 */
+    width: calc(1200px * 4);
+}
+
+.main-banner-imgWrap>.main-banner-img {
+    /* 20-08-18
+    height : 500px > 400px로 수정 */
+    width: 100%;
+    height: 400px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.main-banner-imgWrap>.main-banner-img>a {
+    /* 20-08-18
+    height : 500px > 400px로 수정 */
+    height: 400px;
+}
+
+.main-bannerWrap>.main-banner-imgWrap>.mb-img01 {
+    background-image: url('../img/main-banner03-1920x500.jpg');
+}
+
+.main-bannerWrap>.main-banner-imgWrap>.mb-img02 {
+    background-image: url('../img/main-banner02-1920x500.jpg');
+}
+
+.main-bannerWrap>.main-banner-imgWrap>.mb-img03 {
+    background-image: url('../img/main-banner03.jpg');
+}
+
+.main-bannerWrap>.main-banner-imgWrap>.mb-img04 {
+    background-image: url('../img/main-banner04.jpg');
+}
+
+/* 4.3.2 btnWrap 퀵메뉴 버튼 */
+.content>.btnWrap {
+    /* 20-08-18 width 삭제 */
+    padding: 15px 0;
+    background-color: #11283b;
+    border-top: 10px solid #e7c186;
+    /* width: 100%; */
+}
+
+.btnWrap>.btn-menu {
+    /* 20-08-18
+    1) width 삭제
+    2) margin 삭제
+    3) justify-content: space-between > center로 변경
+    */
+    justify-content: center;
+}
+
+.menu-btn {
+    width: 150px;
+    box-shadow: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    color: #fff;
+    /* 20-08-18 opacity값 삭제 */
+    display: flex;
+    justify-content: center;
+}
+
+.menu-btn-hover {
+    color: #e7c186;
+}
+
+.menu-btn:hover {
+    /* 20-08-18 opacity값 삭제 */
+}
+
+.menu-btn>.menu-txt {
+    /* 20-08-18
+    margin-left : 20px > 10px로 수정
+    line-height : 30px > 40px로 수정 */
+    text-align: center;
+    line-height: 40px;
+    margin-left: 10px;
+}
+
+.menu-btn>.img-icon {
+    width: 30px;
+    height: 30px;
+}
+
+/* 4.3.3 hotNewWrap 인기강좌 */
+.content>.hotNewWrap {
+    /* 20-08-18
+    1) padding 삭제
+    2) background-color 삭제 */
+    position: relative;
+    width: 100%;
+}
+
+.hotNewWrap>.hn-cardWrap {
+    /* 20-08-18
+    1) width, margin 삭제
+    2) justify-content : center > justify_between으로 변경 */
+    justify-content: space-between;
+}
+
+.hn-cardWrap .hn-card {
+    /* 20-08-18
+    1) width : 33% > 100%; 수정
+    2) margin : 40px 10px 0 > 40px 0 0; 수정
+    3) overflow 삭제
+    4) margin-right 추가 */
+    width: 100%;
+    margin: 40px 0 0;
+    margin-right: 20px;
+}
+
+/* 20-08-18 .hn-cardWrap .hn-card:last-child 추가 */
+.hn-cardWrap .hn-card:last-child {
+    margin-right: 0;
+}
+
+.hn-cardWrap .hn-card .hn-img {
+    /* 20-08-18 overflow, height 삭제 */
+}
+
+.hn-cardWrap .hn-card .hn-img>img {
+    width: 100%;
+    /* 20-08-18 height 삭제 */
+}
+
+.hn-card:hover .hn-img>img {
+    transition: 0.5s;
+    transform: scale(1.05);
+}
+
+/* 4.3.4 recommend-classWrap 분야별 추천 강좌 */
+.recommend-classWrap {
+    /* 20-08-18
+    1) padding 삭제
+    2) background-color 추가 */
+    background-color: #eee;
+}
+
+.recommend-classWrap>.recommend-class {
+    /* 20-08-18 width, margin 삭제 */
+}
+
+/* 20-08-18 .recommend-class>.field-wrap:not(:first-child) 삭제*/
+/* .recommend-class>.field-wrap:not(:first-child) {
+    margin: 40px 0;
+} */
+/* 20-08-18 .recommend-class>.field-wrap:nth-child(1)~* 추가 */
+.recommend-class>.field-wrap:nth-child(1)~* {
+    margin-top: 40px;
+}
+
+.field-wrap>.field-hdr {
+    /* 20-08-18 width 삭제 */
+    position: relative;
+    margin: 10px 0;
+    padding-left: 5px;
+    color: #11283b;
+}
+
+.field-wrap>.class-cardWrap {
+    /* 20-08-18 width 삭제 */
+    justify-content: space-between;
+}
+
+.class-cardWrap>.class-card {
+    /* 20-08-18
+    1) width: 250px; >280px로 변경
+    2) position 삭제 */
+    width: 280px;
+    /* position: relative; */
+}
+
+.class-card>* {
+    width: 100%;
+}
+
+.class-card .class-img {
+    width: 100%;
+    height: 0;
+    padding-top: calc(166 / 250 * 100%);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.class-card .class-seg {
+    /* 20-08-18
+    1) display 삭제
+    2) position 삭제
+    3) top 삭제
+    4) background-color 삭제
+    5) color 삭제
+    6) padding 식제
+    7) text-align 삭제 */
+    width: 100%;
+    height: 100%;
+    /* text-align: center; */
+    /* display: none; */
+    /* padding: 10px; */
+    /* position: absolute; */
+    /* top: 0; */
+    /* background-color: rgba(13, 31, 45, 0.9); */
+    /* color: #fff; */
+}
+
+/* 찜하기 UI 삭제 (19-12-09)
+.class-card .heart {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+} */
+.class-seg .class-title {
+    /* 20-08-18
+    1) width : 70% > 100%로 수정
+    2) margin 삭제
+    3) height 삭제
+    4) width 삭제
+    */
+    /* width: 100%; */
+    /* height: calc(100% - 15px); */
+    /* margin: 0 auto; */
+}
+
+/* 20-08-18
+ .class-seg .class-title>.h5
+ .class-seg .class-title>.eLearning
+ .class-seg .class-title>.offline 추가 */
+.class-seg .class-title>.h5 {
+    background-color: #333;
+    color: #fff;
+    line-height: 30px;
+    text-align: center;
+    /* display: none; */
+}
+
+.class-seg .class-title>.eLearning {
+    background-color: #11283b;
+}
+
+.class-seg .class-title>.offline {
+    background-color: #485D93;
+}
+
+.class-seg .class-title>.h4 {
+    /* 20-08-18
+    1) margin-top 삭제
+    2) width 추가
+    3) padding 추가
+    2줄이상일 때 줄임말(…)처리
+    4) white-space 추가
+    5) -webkit-line-clamp 추가 */
+    width: 100%;
+    padding: 5px;
+    white-space: normal;
+    -webkit-line-clamp: 2;
+    /* margin-top: 10px; */
+}
+
+.class-seg .class-info>.term {
+    /* 20-08-18
+    1) color : #e7c186 > #999로 수정
+    2) padding 추가 */
+    color: #999;
+    padding: 0 5px;
+}
+
+.field-1st .classCard01 .class-img {
+    background-image: url('../img/1st-card01.jpg');
+}
+
+.field-1st .classCard02 .class-img {
+    background-image: url('../img/1st-card02.jpg');
+}
+
+.field-1st .classCard03 .class-img {
+    background-image: url('../img/1st-card03.jpg');
+}
+
+.field-1st .classCard04 .class-img {
+    background-image: url('../img/1st-card04.jpg');
+}
+
+.field-2nd .classCard01 .class-img {
+    background-image: url('../img/2nd-card01.jpg');
+}
+
+.field-2nd .classCard02 .class-img {
+    background-image: url('../img/2nd-card02.jpg');
+}
+
+.field-2nd .classCard03 .class-img {
+    background-image: url('../img/2nd-card03.jpg');
+}
+
+.field-2nd .classCard04 .class-img {
+    background-image: url('../img/2nd-card04.jpg');
+}
+
+.field-3th .classCard01 .class-img {
+    background-image: url('../img/3th-card01.jpg');
+}
+
+.field-3th .classCard02 .class-img {
+    background-image: url('../img/3th-card02.jpg');
+}
+
+.field-3th .classCard03 .class-img {
+    background-image: url('../img/3th-card03.jpg');
+}
+
+.field-3th .classCard04 .class-img {
+    background-image: url('../img/3th-card04.jpg');
+}
+
+.field-4th .classCard01 .class-img {
+    background-image: url('../img/4th-card01.jpg');
+}
+
+.field-4th .classCard02 .class-img {
+    background-image: url('../img/4th-card02.jpg');
+}
+
+.field-4th .classCard03 .class-img {
+    background-image: url('../img/4th-card03.jpg');
+}
+
+.field-4th .classCard04 .class-img {
+    background-image: url('../img/4th-card04.jpg');
+}
+
+/* 4.3.5 banner-mid 중간 배너 */
+/* .banner-mid {
+    width: 100%;
+    height: 0;
+    padding-top: calc(160 / 1920 * 100%);
+    background-image: url('../img/middle-banner-1920x160.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+} */
+/* 4.3.6 special-classWrap 특강 및 설명회 */
+/* .content>.special-classWrap {
+    padding: 120px 0 80px;
+    background-color: #f6f8fa;
+}
+
+.special-classWrap>.titleWrap {
+    position: relative;
+    width: 540px;
+    margin-left: calc((100% - 1080px) / 2);
+}
+
+.special-classWrap>.titleWrap .title {
+    text-align: left;
+}
+
+.special-class-bg {
+    width: 1080px;
+    margin: 40px auto 0;
+    position: relative;
+}
+
+.special-class-bg>a {
+    width: 50%;
+}
+
+.special-class-bg>a>.special-class-banner {
+    width: 100%;
+    height: 0;
+    padding-top: calc(350 / 600 * 100%);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url('../img/special-class-banner.jpg');
+}
+
+.special-class-bg>.special-class-video {
+    width: calc(100% - 560px);
+    margin-left: 20px;
+    background-color: #000;
+    height: 350px;
+    position: absolute;
+    top: -120px;
+    right: 0;
+}
+
+.special-class-bg>.special-class-video>.iframe {
+    width: 100%;
+    height: 100%;
+} */
+/* 4.3.7 customWrap 공지사항/이벤트/FAQ/고객센터 */
+/* 4.3.7 customWrap - 1) 공지사항/이벤트 + FAQ */
+.customWrap {
+    /* 20-08-18
+    1) width, margin 삭제
+    2) padding 삭제 */
+    justify-content: space-between;
+}
+
+.customWrap .listWrap {
+    margin-top: 10px;
+}
+
+.customWrap .listWrap .text-over {
+    width: 100%;
+    line-height: 30px;
+    height: 30px;
+    opacity: 0.6;
+}
+
+.customWrap .listWrap .text-over:hover {
+    opacity: 1;
+}
+
+.customWrap>.customer {
+    /* 20-08-18 width: 385px; >590px로 변경 */
+    width: 590px;
+    padding: 20px;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+    border-top: 10px solid #e7c186;
+}
+
+.customer>.hdr {
+    overflow: hidden;
+    position: relative;
+}
+
+.customer>.hdr>.img-icon {
+    /* 20-08-31
+    height : 30px > 40px로 수정
+    margin-top, margin-left 삭제
+    margin 추가 */
+    width: 40px;
+    height: 40px;
+    /* margin-top: 15px; */
+    /* margin-right: 10px; */
+    margin: 10px 10px 10px 0;
+    float: left;
+    position: relative;
+}
+
+.customer>.hdr>.h3 {
+    float: left;
+    line-height: 60px;
+    color: #11283b;
+}
+
+.customer>.hdr>.more-btn {
+    top: 16px;
+}
+
+/* 4.3.7 customWrap - 2) 고객센터 */
+/* .customerWrap {
+    width: 270px;
+    padding: 10px;
+    text-align: center;
+    background-color: rgba(17, 40, 59, 0.8);
+}
+
+.customerWrap>.costomer-bg {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    border: 2px solid #e7c186;
+}
+
+.costomer-bg>.h3 {
+    color: #f6f8fa;
+    line-height: 30px;
+}
+
+.costomer-bg>.h5 {
+    color: #e7c186;
+}
+
+.costomer-bg>.customer-info {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+    background-color: #f6f8fa;
+} */
+/* 2020-03-30 .fz34 > .h2로 클래스 변경 */
+/* .customer-info>.h2 {
+    font-weight: bold;
+    color: #11283b;
+    line-height: 40px;
+    padding-top: 10px;
+}
+
+.customer-info>ul>.fax-num {
+    line-height: 30px;
+    font-size: 1.429rem;
+    padding-bottom: 10px;
+}
+
+.customer-info>.h5 {
+    line-height: 40px;
+    color: #6f8d9d;
+} */
+/* 4.3.8 interviewWrap 홍보영상/인터뷰 */
+/* .interviewWrap {
+    background-color: #f6f8fa;
+    padding: 80px 0 60px;
+}
+
+.interviewWrap>.video-view {
+    width: 1080px;
+    margin: 40px auto;
+    padding: 0 0 40px;
+} */
+/*--------------------------------------------------------------
+  >> 5.0 Contents Design - common
+----------------------------------------------------------------*/
+/* 5.1 subPage */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* - 5.1 subPage - subNav */
+.sub-nav {
+    width: 200px;
+    margin: 0 0 40px;
+}
+
+.sub-nav>.sub-navGroup {
+    border: 1px solid #f6f6f6;
+}
+
+.sub-nav>.sub-navGroup>.gnb>a {
+    height: 60px;
+    line-height: 60px;
+    color: #fff;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.sub-nav>.sub-navGroup>.lnb {
+    font-weight: bold;
+}
+
+.sub-nav>.sub-navGroup>.lnb>a {
+    overflow: hidden;
+    height: 40px;
+    line-height: 40px;
+    text-indent: 10px;
+    border-top: 1px solid #f6f6f6;
+    opacity: 0.6;
+}
+
+.sub-nav>.sub-navGroup>.lnb:hover>a,
+.sub-nav>.sub-navGroup>.lnb>a.active {
+    width: 100%;
+    background-color: #f6f6f6;
+    opacity: 1;
+}
+/* 20-08-31 .sub-nav>.sub-navGroup>.lnb:hover>a>.angle-down,
+.sub-nav>.sub-navGroup>.lnb>.active>.angle-right,
+.sub-nav>.sub-navGroup>.lnb>a>.angle-right,
+.angle-down{...} 추가 */
+.sub-nav>.sub-navGroup>.lnb:hover>a>.angle-down,
+.sub-nav>.sub-navGroup>.lnb>.active>.angle-right,
+.sub-nav>.sub-navGroup>.lnb>a>.angle-right {
+    background-position: -80px 0;
+}
+
+.sub-nav>.sub-navGroup>.lnb .img-icon {
+    /* 20-08-31
+    width, height 삭제
+    margin : 7.5px 0 > 10px로 수정 */
+    /* width: 45px; */
+    /* height: 25px; */
+    float: right;
+    margin: 10px;
+}
+
+/* 5.1 subPage - subNav - 선택 되었을 때 */
+/* 20-08-31 .sub-nav>.sub-navGroup>.lnb>a.active>div{...} 삭제  */
+/* .sub-nav>.sub-navGroup>.lnb>a.active>div {
+    background-position: -45px -55px;
+} */
+.sub-nav>.sub-navGroup>.lnb>.menu-sub {
+    display: none;
+}
+
+.sub-nav>.sub-navGroup>.lnb>.menu-sub>li>a {
+    position: relative;
+    line-height: 30px;
+    text-indent: 20px;
+    font-weight: normal;
+    opacity: 0.6;
+    /* IE에서 border 잘리는 부분 보완 */
+    width: calc(100% - 0.5px);
+    margin-left: 0.5px;
+}
+/* 20-08-31 .sub-nav>.sub-navGroup>.lnb>a.active>div,
+.sub-nav>.sub-navGroup>.lnb>.menu-sub>li>a>.caret-right{...} 추가 */
+.sub-nav>.sub-navGroup>.lnb>a.active>div,
+.sub-nav>.sub-navGroup>.lnb>.menu-sub>li>a>.caret-right{
+    background-position: -260px 0;
+}
+.sub-nav>.sub-navGroup>.lnb>.menu-sub>li>a>.caret-right {
+    /* 20-08-31
+    width, height, background-position 삭제
+    margin: 2.5px 0 > 5px 0으로 수정 */
+    /* width: 10px;
+    height: 25px; */
+    /* background-position: -98px -30px; */
+    margin: 5px 0;
+    position: absolute;
+    left: 0;
+    display: none;
+}
+
+.sub-navGroup>.lnb>.menu-sub>li>a:hover,
+.sub-nav>.sub-navGroup>.lnb>.menu-sub>li>a.active {
+    opacity: 1;
+}
+
+.sub-nav>.sub-navGroup>.lnb>.menu-sub>li>a>.active,
+.sub-nav>.sub-navGroup>.lnb>.menu-sub>li:hover>a>.img-icon,
+.sub-nav>.sub-navGroup>.lnb>.now>li>a>.active {
+    display: block;
+}
+
+/* 5.1 ssubPage - subNav - color customizing */
+.sub00 .sub-nav>.sub-navGroup>.gnb>a {
+    background-color: #444;
+}
+
+.sub00 .sub-nav>.sub-navGroup>.lnb:hover>a,
+.sub00 .sub-nav>.sub-navGroup>.lnb>a.active {
+    background-color: #e7c186;
+}
+
+.sub01 .sub-nav>.sub-navGroup>.gnb>a {
+    background: rgba(128, 181, 155, .5);
+}
+
+.eLearning .sub-nav>.sub-navGroup>.gnb>a {
+    background: rgba(199, 82, 152, .5);
+}
+
+.sub03 .sub-nav>.sub-navGroup>.gnb>a {
+    background: rgba(224, 124, 88, .5);
+}
+
+.sub04 .sub-nav>.sub-navGroup>.gnb>a {
+    background: rgba(72, 93, 147, .5);
+}
+
+.sub05 .sub-nav>.sub-navGroup>.gnb>a {
+    background: rgba(111, 141, 157, .5);
+}
+
+.sub06 .sub-nav>.sub-navGroup>.gnb>a {
+    background: rgba(215, 139, 22, .5);
+}
+
+.sub07 .sub-nav>.sub-navGroup>.gnb>a {
+    background: rgba(44, 103, 176, .5);
+}
+
+/* - 5.2 subPage - subContent */
+.sub-content {
+    width: 980px;
+    margin: 0 0 0 20px;
+}
+
+/* - 5.2.1 pageLocation 사용자 위치 표시 */
+.sub-content .page-locationWrap {
+    width: 100%;
+    overflow: hidden;
+}
+
+.page-location {
+    height: 30px;
+    overflow: hidden;
+    float: left;
+    padding: 0 10px;
+}
+
+.page-location:not(:last-child) {
+    border: 1px solid #ccc;
+    border-right: none;
+}
+
+.page-location>li {
+    color: #ccc;
+    float: left;
+    line-height: 27px;
+}
+
+.page-location>li:last-child {
+    color: #666;
+    font-weight: bold;
+}
+
+.page-locationWrap .chevron-right {
+    /* 20-08-31
+width, height, background-position 삭제 */
+    /* width: 15px; */
+    /* height: 30px; */
+    /* background-position: -110px -30px; */
+    margin: 0 10px;
+}
+
+.page-locationWrap>.chevron-right {
+    float: left;
+    margin: 0;
+}
+
+/* - 5.2.2 headerBox 카테고리별 header 이미지 */
+.sub-content .header-box {
+    width: 100%;
+    height: 0;
+    padding-top: calc(130 / 980 * 100%);
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-top: 10px;
+}
+
+.sub01>.header-box {
+    background-image: url('../img/category-bannerImg-01.png');
+}
+
+.sub02>.header-box {
+    background-image: url('../img/category-bannerImg-02.png');
+}
+
+.sub03>.header-box {
+    background-image: url('../img/category-bannerImg-03.png');
+}
+
+.sub04>.header-box {
+    background-image: url('../img/category-bannerImg-04.png');
+}
+
+.sub05-01>.header-box {
+    background-image: url('../img/category-bannerImg-05-01.png');
+}
+
+.sub05-02>.header-box {
+    background-image: url('../img/category-bannerImg-05-02.png');
+}
+
+.sub05-03>.header-box {
+    background-image: url('../img/category-bannerImg-05-03.png');
+}
+
+.sub05-04>.header-box {
+    background-image: url('../img/category-bannerImg-05-04.png');
+}
+
+.sub06 .sub06-01-01.header-box {
+    background-image: url('../img/category-bannerImg-06-01-01.png');
+}
+
+.sub06 .sub06-01-02.header-box {
+    background-image: url('../img/category-bannerImg-06-01-02.png');
+}
+
+.sub06-02>.header-box {
+    background-image: url('../img/category-bannerImg-06-02.png');
+}
+
+.sub06-04>.header-box {
+    background-image: url('../img/category-bannerImg-06-04.png');
+}
+
+/* sub00, sub02 modal, sub07, sub07 modal의 header-box는 title로 대체됩니다. */
+.sub-content .header {
+    padding: 20px 0;
+}
+
+/* - 5.2.3 ProcessWrap 단계별 진행상황 */
+.sub-content .processWrap {
+    background-color: #f9f9f9;
+}
+
+.processWrap>.process {
+    width: 33.3%;
+    border-bottom: 5px solid #ccc;
+    line-height: 54px;
+    text-indent: 20px;
+    color: #999;
+}
+
+.processWrap>.process>.mr10 {
+    margin-right: 10px;
+}
+
+/* 현재 진행 단계(활성화) */
+.processWrap>.active {
+    color: #333;
+    font-weight: bold;
+    border-bottom: 5px solid #e7c186;
+}
+
+.processWrap>.active>.mr10 {
+    color: #e7c186;
+}
+
+/* - 5.3 subPage - section */
+.sub-content .section {
+    margin: 30px 0 40px;
+    overflow: hidden;
+}
+
+/* - 5.3.1 subPage - searchWrapper 과정명 검색 */
+.searchWrapper {
+    margin: 10px 0;
+}
+
+.searchWrapper::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.class-searchWrap {
+    float: right;
+}
+
+.class-searchWrap .class-search-down {
+    width: 355px;
+    justify-content: space-between;
+}
+
+.class-searchWrap .class-search-down .cusPHIn.input {
+    width: 320px;
+    /* 2020-01-28 height : 30px로 변경 */
+    height: 30px;
+    line-height: 29px;
+    text-indent: 10px;
+    margin-right: 5px;
+}
+
+.class-searchWrap .class-search-down .button {
+    /* 20-08-31
+    margin : 0 > 5px 10px 5px 0으로 수정
+    border : 1px solid #aaa > none으로 수정 */
+    box-shadow: none;
+    border: none;
+    margin: 5px 10px 5px 0;
+}
+
+/* 20-08-31 .class-searchWrap .class-search-down .button:hover{...} 삭제  */
+/* .class-searchWrap .class-search-down .button:hover {
+    background-color: rgba(0, 0, 0, .1);
+} */
+/* - 5.3.2 subPage - searchWrapper 조건선택 필터 */
+.filter-view-wrap {
+    width: 100%;
+    justify-content: space-between;
+}
+
+.filter-view-wrap>.filterWrap {
+    padding: 5px 0;
+    overflow: hidden;
+}
+
+.filterWrap>.h5 {
+    float: left;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.filterWrap>.filters {
+    float: left;
+}
+
+.filterWrap>.filters>li>* {
+    float: left;
+}
+
+.filterWrap .label {
+    cursor: pointer;
+}
+
+.filterWrap .label,
+.filterWrap>div {
+    width: 40px;
+    height: 20px;
+    line-height: 19px;
+    text-align: center;
+    font-size: 0.857rem;
+    color: #fff;
+    /* 2020-01-28 margin-right 추가 */
+    margin-right: 10px;
+}
+
+.bgc-red,
+.filterWrap .new {
+    background-color: rgba(207, 123, 121, .7);
+}
+
+.filterWrap .recommend {
+    background-color: rgba(96, 157, 211, .7);
+}
+
+.bgc-grn,
+.filterWrap .popular {
+    /* 2020-01-28 bgc-grn 추가 */
+    background-color: rgba(96, 175, 96, .7);
+}
+
+.filterWrap .book {
+    background-color: rgba(120, 135, 182, .7);
+}
+
+.filterWrap .sale {
+    background-color: rgba(96, 157, 211, .7);
+}
+
+/* - 5.3.3 subPage - searchWrapper 검색조건 */
+/* viewWrap : 10개씩 보기 / search-filter-wrap : 제목+내용 검색*/
+.viewWrap>.view-class,
+.search-filter-wrap>.search-filter {
+    width: 100px;
+    line-height: 30px;
+    text-indent: 5px;
+    /* 2020-01-28 height : 30px로 변경 */
+    height: 30px;
+}
+
+.search-filter-wrap {
+    margin-right: 10px;
+}
+
+/* - 5.3.4 subPage - pagination 페이지 수 */
+.page>.pagination {
+    width: 300px;
+    margin: 40px auto;
+    justify-content: space-between;
+}
+
+.page>.pagination .num {
+    opacity: 0.6;
+    font-weight: bold;
+}
+
+.page>.pagination>li>.prev,
+.page>.pagination>li>.next {
+    overflow: hidden;
+    font-weight: bold;
+    line-height: 18px;
+}
+
+.page>.pagination a.active,
+.page>.pagination a:hover {
+    opacity: 1;
+}
+
+/* - 5.3.5 subPage - sectionOutBtn (섹션 최하단 우측) 버튼 */
+/* section-out-btn : sub05-04/sub06-01-02 */
+.section-out-btn {
+    float: right;
+    line-height: 30px;
+    text-align: center;
+    padding: 0 10px;
+    min-width: 100px;
+}
+
+/* -5.4 subPage - 리스트 페이지 (.eLearning) */
+/* -5.4.1 리스트 페이지 공통 */
+.class-list-title,
+.class-list {
+    justify-content: space-between;
+    text-align: center;
+    border-left: 1px solid #eee;
+    border-right: 1px solid #eee;
+    padding: 0 10px;
+}
+
+.class-list-title .c-name,
+.class-list>.c-ttl {
+    width: calc(100% - 380px);
+}
+
+/* -5.4.2 리스트 페이지 공통 - 과정목록 Title */
+.class-list-title {
+    line-height: 40px;
+    font-weight: bold;
+    border-top: 2px solid #666;
+    border-bottom: 2px solid #666;
+}
+
+.class-list-title>li.c-ctt {
+    width: 95px;
+}
+
+/* -5.4.3 리스트 페이지 공통  - 과정목록 Content */
+.class-list-wrap .class-list {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.board-list:hover,
+.class-list-wrap>.class-list:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+    cursor: pointer;
+}
+
+.highlight {
+    cursor: pointer;
+    background-color: rgba(44, 103, 176, 0.05);
+    color: #11283b;
+}
+
+.class-list .button {
+    height: 30px;
+    line-height: 30px;
+    padding: 0 5px;
+}
+
+/* -5.5 subPage - 강의 리스트 페이지 (.eLearning) */
+/* -5.5.1 강의 리스트 - 과정목록 Title */
+.eLearning .class-list>.c-ttl>a {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.eLearning .class-list img {
+    width: 100px;
+    height: 70px;
+    overflow: hidden;
+}
+
+.eLearning .class-list>.c-ttl>a>.class-title-wrap {
+    width: calc(100% - 120px);
+    text-align: left;
+    margin-left: 10px;
+}
+
+.eLearning .class-list>.c-ttl>a>.class-title-wrap>.fz16 {
+    margin-top: 5px;
+    max-height: 40px;
+    line-height: 20px;
+}
+
+/* -5.5.2 강의 리스트 - 과정목록 Content */
+.eLearning .class-list>.c-ctt {
+    width: 95px;
+    height: 70px;
+    display: table;
+}
+
+.eLearning .class-list .mobile-show-ttl {
+    display: none;
+    margin-right: 5px;
+    color: #999;
+}
+
+.eLearning .c-price>.tableWrap,
+.eLearning .c-ctt>.term {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.eLearning .c-price>.tableWrap>.del {
+    display: block;
+    text-decoration: line-through;
+}
+
+.eLearning .class-list .button {
+    width: 70px;
+    margin: 20px auto;
+}
+
+.eLearning .class-list .button .img-icon {
+    /* 20-08-31
+    width, height 삭제
+    margin: 5px 5px 5px 0 > 5px 0으로 수정 */
+    /* width: 20px; */
+    /* height: 20px; */
+    float: left;
+    margin: 5px 0;
+}
+
+.eLearning .class-list .button .h5 {
+    width: calc(100% - 25px);
+    float: left;
+}
+
+.container.sub01 .class-list .button.btn-pColor {
+    background-color: #80b59b;
+}
+
+.container.eLearning .class-list .button.btn-pColor {
+    background-color: #c75298;
+}
+
+.container.sub03 .class-list .button.btn-pColor {
+    background-color: #e07c58;
+}
+
+.container.sub04 .class-list .button.btn-pColor {
+    background-color: #485d93;
+}
+
+.container.sub05 .button.btn-pColor {
+    background-color: #6f8d9d;
+}
+
+.container.sub06 .button.btn-pColor {
+    background-color: #d78b16;
+}
+
+.container.sub07 .button.btn-pColor {
+    background-color: #2c67b0;
+}
+
+/* -5.6 subPage - 게시판 리스트 페이지 (.container.sub0$) */
+/* -5.6.1 게시판 리스트 - 과정목록 Title */
+/* -5.6.2 게시판 리스트 - 과정목록 Content */
+.c-table-num {
+    /* width: 50px; */
+    width: 5.31%;
+}
+
+.c-table-name {
+    /* width: 440px; */
+    width: 46.80%;
+}
+
+.c-table-name-w {
+    /* width: 490px; */
+    width: 52.12%;
+}
+
+.c-table-name-wide {
+    /* width: 690px; */
+    width: 73.40%;
+}
+
+.c-table-04 {
+    /* width: 400px; */
+    width: 42.55%;
+}
+
+.c-table-03 {
+    /* width: 300px; */
+    width: 31.91%;
+}
+
+.c-table-02 {
+    /* width: 200px; */
+    width: 21.27%;
+}
+
+.c-table-01 {
+    /* width: 100px; */
+    width: 10.63%;
+}
+
+/* 2020-01-28 .numberSt 추가 */
+.class-list .c-table-num.numberSt {
+    line-height: 40px;
+    height: 40px;
+    background-color: rgba(175, 187, 196, .15);
+}
+
+.class-list .text-over-lh20 {
+    text-align: left;
+}
+
+.class-tabMenu .class-list .button {
+    width: 50px;
+    margin: 0 auto;
+}
+
+/* 아이콘 정렬 */
+.bgc-red,
+.bgc-grn {
+    height: 20px;
+    padding: 0 5px;
+    color: #fff;
+}
+
+.c-table-02>.icon-align {
+    justify-content: center;
+}
+
+.class-list-wrap .icon-align>div:first-child {
+    /* 20-08-31 margin-right : 10px > 5px로 수정 */
+    margin-right: 5px;
+}
+
+/* open-asw / open-ctt */
+.open-ctt,
+.open-asw {
+    display: none;
+    border: 1px solid #eee;
+    border-top: none;
+    background-color: #f9f9f9;
+}
+
+.open-asw .aswr-box {
+    padding: 10px;
+}
+
+.open-asw .Amark {
+    margin-left: 5.31%;
+}
+
+.open-ctt .class-list-title {
+    border: none;
+    background-color: #f0f0f0;
+}
+
+/* open-class (sub07)상세보기/닫기 */
+.open-class {
+    justify-content: flex-end;
+}
+
+.open-class:hover {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.open-class>.img-icon {
+    width: 15px;
+    height: 15px;
+    margin: 2.5px 5px;
+}
+
+/* -5.7 subPage - Tab Group 탭 */
+/* -5.7.1 Tab Group - Tab Title */
+.class-tabMenu>.tabGroup>li {
+    width: 50%;
+    line-height: 40px;
+    background-color: #ddd;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+}
+
+.class-tabMenu>.tabGroup>li.active,
+.class-tabMenu>.tabGroup>li:hover {
+    background-color: #444;
+    color: #fff;
+    cursor: pointer;
+}
+
+.container.sub01 .class-tabMenu>.tabGroup>li {
+    background-color: rgba(128, 181, 155, 0.2);
+    color: #80b59b;
+}
+
+.container.sub01 .class-tabMenu>.tabGroup>li.active,
+.container.sub01 .class-tabMenu>.tabGroup>li:hover {
+    background-color: #80b59b;
+    color: #fff;
+}
+
+.container.eLearning .class-tabMenu>.tabGroup>li {
+    background-color: rgba(199, 82, 152, 0.2);
+    color: #c75298;
+}
+
+.container.eLearning .class-tabMenu>.tabGroup>li.active,
+.container.eLearning .class-tabMenu>.tabGroup>li:hover {
+    background-color: #c75298;
+    color: #fff;
+}
+
+.container.sub03 .class-tabMenu>.tabGroup>li {
+    background-color: rgba(224, 124, 88, 0.2);
+    color: #e07c58;
+}
+
+.container.sub03 .class-tabMenu>.tabGroup>li.active,
+.container.sub03 .class-tabMenu>.tabGroup>li:hover {
+    background-color: #e07c58;
+    color: #fff;
+}
+
+.container.sub04 .class-tabMenu>.tabGroup>li {
+    background-color: rgba(72, 93, 147, 0.2);
+    color: #485d93;
+}
+
+.container.sub04 .class-tabMenu>.tabGroup>li.active,
+.container.sub04 .class-tabMenu>.tabGroup>li:hover {
+    background-color: #485d93;
+    color: #fff;
+}
+
+.container.sub05 .class-tabMenu>.tabGroup>li {
+    background-color: rgba(111, 141, 157, 0.2);
+    color: #6f8d9d;
+}
+
+.container.sub05 .class-tabMenu>.tabGroup>li.active,
+.container.sub05 .class-tabMenu>.tabGroup>li:hover {
+    background-color: #6f8d9d;
+    color: #fff;
+}
+
+.container.sub06 .class-tabMenu>.tabGroup>li {
+    background-color: rgba(215, 139, 22, 0.2);
+    color: #d78b16;
+}
+
+.container.sub06 .class-tabMenu>.tabGroup>li.active,
+.container.sub06 .class-tabMenu>.tabGroup>li:hover {
+    background-color: #d78b16;
+    color: #fff;
+}
+
+.myClass .class-tabMenu>.tabGroup>li,
+.sub07 .class-tabMenu>.tabGroup>li {
+    background-color: rgba(175, 187, 196, .5);
+    color: #396aa5;
+}
+
+.myClass .class-tabMenu>.tabGroup>li.active,
+.myClass .class-tabMenu>.tabGroup>li:hover,
+.sub07 .class-tabMenu>.tabGroup>li.active,
+.sub07 .class-tabMenu>.tabGroup>li:hover {
+    background-color: #396aa5;
+    color: #fff;
+}
+
+/* (sub06-02) plus-tabGroup : 관리자 탭 추가시 정렬*/
+.class-tabMenu>.plus-tabGroup {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.class-tabMenu>.plus-tabGroup>li:nth-child(6n),
+.class-tabMenu>.plus-tabGroup>li:last-child {
+    margin-right: 0;
+}
+
+.class-tabMenu>.plus-tabGroup>li:nth-child(6n)~* {
+    margin-top: 10px;
+}
+
+.class-tabMenu>.plus-tabGroup>li {
+    width: 155px;
+    padding: 0 10px;
+    border-radius: 0;
+    margin-right: 10px;
+}
+
+/* -5.7.2 Tab Group - Sub Group */
+.class-tabMenu>.subGroup>.hideTab {
+    display: none;
+}
+
+.class-tabMenu>.subGroup>.tab-sub {
+    border: 1px solid #eee;
+}
+
+.class-tabMenu>.subGroup>.tab-sub .sub-segment {
+    width: 100%;
+}
+
+.class-tabMenu>.subGroup>.tab-sub>.sub-section {
+    margin: 20px;
+}
+
+/* -5.8 subPage - formStyle */
+/* -5.8.1 formStyle - common */
+.formStyle {
+    width: 730px;
+    margin: 0 auto;
+}
+
+.formStyle>div {
+    line-height: 40px;
+}
+
+.formStyle>.d-flex .label {
+    width: 130px;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.formStyle .input,
+.formStyle .select,
+.formStyle .input-btn {
+    height: 30px;
+    line-height: 30px;
+    margin: 5px 0;
+}
+
+.formStyle .input,
+.formStyle .select {
+    text-indent: 10px;
+}
+
+.formStyle>.d-flex .select {
+    width: 100px;
+}
+
+.formStyle .input-btn,
+.formStyle>.d-flex .select.ml10 {
+    margin-left: 10px;
+}
+
+.formStyle .w100 {
+    width: 100px;
+}
+
+.formStyle .w355 {
+    width: 355px;
+}
+
+.checkWrap {
+    margin: 20px 0;
+    padding: 20px;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+/* -5.8.2 formStyle - 게시글 보기 (19.12.20 수정됨) */
+.view-post .section {
+    margin: 0 0 40px;
+}
+
+.view-post .formStyle {
+    width: 100%;
+    margin: 20px auto 40px;
+    border: 1px solid #ccc;
+}
+
+.view-post .formStyle .d-flex:nth-child(1)~*,
+.view-post .post-content {
+    border-top: 1px solid #ccc;
+}
+
+.view-post .formStyle>div>* {
+    line-height: 25px;
+    padding: 10px;
+    cursor: default;
+}
+
+.view-post .d-flex>.label {
+    text-align: center;
+    margin-right: 0;
+    background-color: rgba(111, 141, 157, .2);
+    border-right: 1px solid #ccc;
+}
+
+.view-post .d-flex>div {
+    width: calc(100% - 130px);
+}
+
+.view-post .post-content {
+    padding: 10px;
+}
+
+/* -5.8.3 formStyle - writePost 글쓰기 */
+.write-post .section {
+    margin: 0;
+}
+
+.write-post .formStyle {
+    padding: 10px 20px 20px;
+    background-color: #f9f9f9;
+}
+
+.write-post .formStyle>.d-flex .label {
+    width: 100px;
+}
+
+.write-post .formStyle .input {
+    margin: 10px 0;
+}
+
+.write-post .formStyle,
+.write-post .post-title,
+.write-post .post-content,
+.write-post .d-flex>div {
+    width: 100%;
+}
+
+.write-post .post-content {
+    max-height: 400px;
+}
+
+.write-post .button-wrap>* {
+    width: 100px;
+    margin: 20px 10px;
+}
+
+/* -5.8.4 formStyle - userInfo 회원정보 확인 */
+.sub-content .userInfo {
+    border: 1px solid #eee;
+    margin: 0 0 40px;
+    padding: 20px 0 40px;
+}
+
+.userInfo>.header {
+    text-align: center;
+}
+
+.userInfo>.header>.fz14 {
+    margin-top: 20px;
+}
+
+.userInfo>.enterWrap,
+.userInfo>.enterWrap>.form {
+    width: 300px;
+    margin: 0 auto;
+}
+
+.enterWrap>.form .input:not(.check) {
+    display: block;
+    width: 100%;
+    height: 40px;
+    margin: 10px 0;
+}
+
+.userInfo .checkWrap {
+    margin: 10px 0;
+    padding: 0;
+    text-align: left;
+    background-color: inherit;
+}
+
+.userInfo .checkWrap .input {
+    width: 14px;
+    height: 14px;
+}
+
+.enterWrap>.form .button {
+    margin: 20px 0;
+    width: 300px;
+    height: 40px;
+    background-color: #444;
+    color: #eee;
+}
+
+.enterWrap>.form .button:hover {
+    font-weight: bold;
+    color: #fff;
+}
+
+/* -5.9 subPage - table */
+.sub-segment .table {
+    width: 100%;
+    text-align: center;
+    line-height: 30px;
+}
+
+/* -5.9.1 table - thead */
+.sub-segment .table>thead,
+.sub-segment .table th {
+    background-color: #f9f9f9;
+    color: #666;
+}
+
+/* -5.9.2 table - tbody */
+.sub-segment .table tr,
+.sub-segment .table td {
+    border: 1px solid #eee;
+}
+
+.sub-segment .table td {
+    vertical-align: middle;
+    display: table-cell;
+}
+
+/*--------------------------------------------------------------
+  >> 6.0 Contents Design for Page 페이지별 개별화 된 콘텐츠 디자인
+----------------------------------------------------------------*/
+/* - 6.1 sub00 로그인/회원가입 */
+/* - 6.1.1 sub00-01 로그인 */
+.enterWrap>.division-menuWrap {
+    justify-content: center;
+}
+
+.enterWrap>.division-menuWrap>.divBar {
+    margin: 0 10px;
+}
+
+.enterWrap>.division-menuWrap>li:not(.divBar):hover {
+    font-weight: bold;
+}
+
+/* - 6.1.2 sub00-02 회원가입 */
+.section .signUp-agree:nth-child(2)>.article-title {
+    margin-top: 40px;
+}
+
+.signUp-agree>.text-box {
+    height: 200px;
+    overflow-y: scroll;
+    border: 1px solid #eee;
+    padding: 10px;
+}
+
+.signUp-agree .checkWrap {
+    margin: 10px 0;
+    padding: 0;
+    text-align: left;
+    background-color: inherit;
+}
+
+.all-check {
+    background-color: #e7c186;
+    padding: 20px 0;
+    font-weight: bold;
+}
+
+/* certification 인증 */
+.certification>.article-title {
+    display: flex;
+}
+
+.certification>.certificationWrap {
+    margin-top: 20px;
+}
+
+.certificationWrap>.certif-boxWrap {
+    margin: 0 auto;
+    justify-content: center;
+}
+
+.certif-boxWrap>.certif {
+    width: 360px;
+    margin: 0 10px;
+    text-align: center;
+    padding-top: 20px;
+    border: 1px solid #ccc;
+}
+
+.certif-boxWrap>.certif>.h3 {
+    font-weight: normal;
+    color: #d78b16;
+}
+
+.certificationWrap>.certification-notice {
+    width: 740px;
+    margin: 20px auto 0;
+}
+
+.sub00 .section>.button-wrap {
+    margin: 40px 0 1px;
+}
+
+.sub00 .section>.button-wrap>.button {
+    width: 120px;
+}
+
+.sub00-02>.button {
+    display: block;
+    width: 120px;
+    height: 30px;
+    padding: 5px 10px;
+    margin: 40px auto;
+}
+
+/* 임시 버튼 → 인증 후 다음 페이지로 전환되므로 버튼 필요 없다. */
+.sub00-02>.btn-next {
+    margin-right: 0;
+}
+
+/* - 6.1.3 sub00-03 아이디찾기 */
+.section.sub00-03,
+.section.sub00-04 {
+    border: 1px solid #eee;
+    margin: 0 0 40px;
+    padding: 10px 20px 40px;
+}
+
+.section.sub00-03>.sub-segment {
+    width: 300px;
+    margin: 0 auto;
+}
+
+/* - 6.1.4 sub00-04 비밀번호찾기 */
+/* - 6.2 eLearning(sub01~sub04) 온라인 강의 */
+/* - 6.2.1 eLearning-01 온라인 강의 목록 */
+/* - 6.2.2 eLearning-01-01 온라인 강의 상세 */
+.eLearning .section-class-detail {
+    margin: 0 0 40px;
+}
+
+.eLearning .class-detail {
+    width: 730px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #eee;
+    overflow: hidden;
+}
+
+.eLearning .class-detail>.c-ttl {
+    width: 100%;
+    height: 40px;
+    border-bottom: 1px solid #eee;
+}
+
+.eLearning .class-detail>.c-ttl>.class-title-wrap>.filterWrap {
+    /* 2020-01-28 너비값 삭제 */
+    /* width: 240px; */
+}
+
+.eLearning .class-detail>.c-ttl>.class-title-wrap>.fz16 {
+    /* 2020-01-28 margin-left 삭제 */
+    /* margin-left: 20px; */
+}
+
+.eLearning .class-detail>.c-img {
+    width: 280px;
+    height: 200px;
+    margin: 0;
+    margin-top: 20px;
+    float: left;
+}
+
+.eLearning .class-detail>.c-info {
+    width: calc(100% - 320px);
+    float: left;
+    margin: 20px;
+    overflow: hidden;
+}
+
+.eLearning .class-detail>.c-info>* {
+    line-height: 30px;
+    text-align: left;
+}
+
+.eLearning .class-detail>.c-info>.info-ttl {
+    margin-right: 20px;
+    font-weight: bold;
+}
+
+.eLearning .class-detail>.c-info>.info-ctt {
+    color: #999;
+}
+
+.eLearning .class-detail>.info-btnWrap {
+    width: calc(100% - 280px);
+    justify-content: flex-end;
+}
+
+.eLearning .class-detail>.info-btnWrap>* {
+    margin: 0;
+    margin-left: 10px;
+}
+
+.eLearning .section-class-detail>.class-tabMenu {
+    margin-top: 40px;
+}
+
+/* - 6.3 sub05 커뮤니티 */
+/* - 6.3.1 sub05-01 공지사항/이벤트 */
+/* 2020-01-28 (고정)공지사항 추가 */
+.class-list.fixed-list {
+    background-color: rgba(111, 141, 157, 0.1);
+}
+
+.class-list-wrap>.class-list.fixed-list:hover {
+    background-color: rgba(111, 141, 157, 0.25);
+}
+
+/* - 6.3.2 sub05-02 수강후기/인터뷰 */
+/* - 6.3.3 sub05-03 특강/설명회 */
+/* - 6.3.4 sub05-04 자유게시판 */
+/* - 6.4 sub06 고객센터 */
+.sub-content .section.sub06-01-01,
+.sub-content .section.sub06-01-02 {
+    height: 0;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* - 6.4.1 sub06-01 고객지원 */
+.sub-content .section.sub06-01-01 {
+    padding-top: calc(1911 / 980 * 100%);
+    background-image: url('../img/sub06-01-01.png');
+}
+
+.sub-content .section.sub06-01-02 {
+    padding-top: calc(570 / 980 * 100%);
+    background-image: url('../img/sub06-03-02.jpg');
+    /* 원격지원버튼 위치 조정 */
+    padding-bottom: 50px;
+}
+
+.sub06-01-02 .section-out-btn {
+    margin-top: 20px;
+}
+
+/* - 6.4.2 sub06-02 FAQ */
+/* - 6.4.3 sub06-03 단체/제휴문의 */
+.sub06-03>img {
+    margin: 20px 0 40px;
+}
+
+/* - 6.4.4 sub06-04 오시는길 */
+.map {
+    width: 65%;
+}
+
+.map a {
+    width: auto;
+}
+
+.map-wayWrap {
+    padding: 0 10px;
+    cursor: default;
+}
+
+.map-wayWrap .map-way:nth-child(1)~* {
+    margin-top: 20px;
+}
+
+.map-way-hdr .img-icon {
+    /* 20-08-31
+    width,height 삭제
+    margin 추가 */
+    /* width: 40px; */
+    /* height: 40px; */
+    margin: 10px 5px 10px 0;
+}
+
+.map-way-hdr>* {
+    line-height: 40px;
+}
+
+.map-wayWrap .way>li {
+    line-height: 25px;
+    text-indent: 10px;
+}
+
+.map-way-hdr>strong:not(.cMain),
+.map-wayWrap .way>li>span {
+    margin-left: 10px;
+}
+
+.c-blue {
+    color: #0073cf;
+}
+
+.c-dred {
+    color: #be0d34;
+}
+
+.c-dgreen {
+    color: #007836;
+}
+
+.c-orange {
+    color: #ff5012;
+}
+
+.c-green {
+    color: #66bd2b;
+}
+
+.c-line2 {
+    color: #36b42d;
+}
+
+.c-line9 {
+    color: #bea01e;
+}
+
+/* - 6.5 sub07 나의강의실 */
+/* - 6.5.1 sub07-01 학습현황 */
+.sub07 .section {
+    margin: 0 0 40px;
+}
+
+.btn-certificate {
+    border: 1px solid #2c67b0;
+    color: #2c67b0;
+}
+
+.btn-certificate:hover {
+    background-color: #2c67b0;
+    color: #fff;
+}
+
+/* - 6.5.2 sub07-02 결제현황/환불 */
+.payment-wait
+/* 결제 대기  */
+,
+.refund-N
+
+/* 환불 불가 */
+    {
+    color: #999;
+}
+
+.payment-complete
+
+/* 결제 완료 */
+    {
+    color: #396aa5;
+    font-weight: bold;
+}
+
+.refundBox {
+    width: 50px;
+    height: 30px;
+    margin: 0 auto;
+    line-height: 30px;
+    font-weight: bold;
+}
+
+.refund-complete
+
+/* 환불완료 */
+    {
+    color: #396aa5;
+    border: 1px solid #396aa5;
+}
+
+.refund-Y
+
+/* 환불가능 */
+    {
+    color: #c13831;
+    border: 1px solid #c13831;
+}
+
+.refund-Y:hover {
+    background-color: #c13831;
+    color: #fff;
+}
+
+.refund-N
+
+/* 환불 불가 */
+    {
+    border: 1px solid #999;
+}
+
+.sub07-02 .text-over-lh20 {
+    /* 2020-01-28 추가 */
+    padding: 0 5px;
+}
+
+/* - 6.5.3 sub07-03 마일리지 */
+.my-mileageWrap {
+    width: 300px;
+    padding: 20px;
+}
+
+.my-mileageWrap>.my-mileage {
+    padding: 10px 0;
+}
+
+.my-mileageWrap>.my-mileage>.h2 {
+    color: #396aa5;
+}
+
+/* 20-08-31 .mileageImg{...} 삭제 */
+/* .mileageImg {
+    width: 140px;
+    height: 80px;
+    background-position: -400px -40px;
+} */
+.mileage-list {
+    width: calc(100% - 320px);
+}
+
+.mile-plus,
+.mile-minus {
+    font-weight: bold;
+}
+
+.sub07-03 .sub-section:nth-child(1)~* {
+    margin-top: 40px;
+}
+
+.sub07-03 .sub-segment.c999 li:nth-child(1)~* {
+    margin-top: 10px;
+}
+
+/* - 6.5.4 sub07-04 개인정보수정 */
+.btn-save {
+    width: 115px;
+    margin: 20px 40px 0;
+}
+
+/* - 6.5.5 sub07-05 회원탈퇴 */
+.sub07-05 .checkWrap {
+    justify-content: space-between;
+    line-height: 20px;
+    height: 30px;
+    border-bottom: 1px solid #f9f9f9;
+}
+
+.sub07-05 .checkWrap .label {
+    width: auto;
+}
+
+.sub07-05 .checkWrap .input.check {
+    margin: 4px 0;
+}
+
+.sub07-05>.button-wrap {
+    justify-content: center;
+    margin-top: 40px;
+}
+
+/*--------------------------------------------------------------
+  >> 7.0 Popup Design - modal popup layer
+----------------------------------------------------------------*/
+/* - 7.1 modal popup layer - layout */
+.modal {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: none;
+}
+
+.modal-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    width: 1000px;
+    height: 730px;
+    margin: auto;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background-color: #fff;
+}
+
+.modal-content .sub-content {
+    width: calc(100% - 40px);
+    height: 100%;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* - 7.1.1 modal popup layer - header */
+.modal-content .sub-content>.header {
+    position: relative;
+}
+
+.modal-content .sub-content .close-modal {
+    position: absolute;
+    right: 10px;
+    /* 20-08-31 top : 24px > 30px로 수정 */
+    top: 30px;
+}
+
+/* - 7.1.2 modal popup layer - Content */
+.modal .sub-content .section {
+    margin: 0;
+}
+
+.modal-content .sub-content>.modal-sectionWrap {
+    width: 100%;
+    height: calc(100% - 210px);
+    position: absolute;
+    overflow-y: scroll;
+}
+
+.modal .section .titleBar-hdr {
+    width: 120px;
+}
+
+.modal .sub-segment {
+    width: 100%;
+}
+
+.modal-ovflowY {
+    overflow-y: scroll;
+}
+
+.modal .button-wrap {
+    position: absolute;
+    bottom: 0;
+}
+
+.modal .button-wrap>* {
+    margin: 20px 10px;
+    margin-right: 0;
+    min-width: 100px;
+}
+
+/* - 7.1.2 modal popup layer - Content 1) 수강신청 */
+.eLearning .modal-sectionWrap {
+    padding: 20px;
+}
+
+.eLearning .modal-sectionWrap .section:nth-child(1)~* {
+    margin-top: 20px;
+}
+
+/* modal popup layer 수강신청 - 01 수강신청 */
+.modal .article-title {
+    justify-content: space-between;
+}
+
+.modal .article-title .btn-bk {
+    padding: 0 20px;
+    line-height: 30px;
+}
+
+.modal-sectionWrap .sub-segment>.formStyle {
+    width: 100%;
+}
+
+/* modal popup layer 수강신청 - 02 환불규정 */
+.modal .cancel-rule {
+    display: flex;
+    line-height: 30px;
+    margin: 20px 10px;
+}
+
+.modal .cancel-rule .rule-ttl {
+    width: 120px;
+    font-weight: bold;
+}
+
+/* modal popup layer 수강신청 - 03 결제방법 */
+.modal .text-box {
+    line-height: 30px;
+}
+
+.modal .signWrap {
+    justify-content: center;
+}
+
+.modal .input-ctt {
+    display: none;
+    width: 100%;
+    padding: 20px;
+    background-color: #f4f4f4;
+    justify-content: flex-start;
+}
+
+.modal .bill-date>.txt {
+    margin: 5px 10px;
+    line-height: 15px;
+}
+
+/* modal popup layer 수강신청 - 04 결제 */
+.section.modal-sub02-01-04>.header {
+    text-align: center;
+}
+
+.section.modal-sub02-01-04>.header>.fz14 {
+    margin-top: 20px;
+}
+
+.modal-sub02-01-04 .button-wrap {
+    justify-content: center;
+    position: inherit;
+}
+
+/* - 7.1.2 modal popup layer - Content 2) 나의강의실 */
+.myClass {
+    border: 10px solid #396aa5;
+}
+
+.myClass>.sub-content {}
+
+.myClass .modal-subGroup.modal-ovflowY {
+    width: 100%;
+    height: calc(100% - 200px);
+    position: absolute;
+    border-left: 3px solid #f4f4f4;
+    border-bottom: 3px solid #f4f4f4;
+}
+
+.myClass .class-tabMenu>.subGroup>.tab-sub {
+    border: none;
+}
+
+.myClass .button-wrap>.btn-myClass {
+    padding: 5px 40px;
+    font-weight: bold;
+    font-size: 1.143rem;
+    border-radius: 5px;
+    background-color: #11283b;
+}
+
+.myClass .button-wrap>.btn-myClass:hover {
+    background-color: #2c67b0;
+}
+
+.class-list-wrap.modal-ovflowY {
+    border: 1px solid #eee;
+}
+
+/* modal popup layer 나의강의실 - 01 학습현황 */
+/* 2020-03-25 학습현황 추가 */
+.modal-sub07-01 .modal-subGroup>.sub01 {
+    background-color: #f7f7f7;
+    padding: 20px;
+}
+
+.statusWrap,
+.completionWrap {
+    padding: 20px;
+    background-color: #fff;
+}
+
+.chart {
+    width: 160px;
+    height: 160px;
+    border-radius: 80px;
+    position: relative;
+    overflow: hidden;
+    margin-right: 20px;
+}
+
+.chart>.floatL {
+    width: 80px;
+    background-color: #d8dde1;
+    overflow: hidden;
+}
+
+.chart>.floatL>li {
+    width: 100%;
+    height: 160px;
+    background-color: #2c67b0;
+    overflow: hidden;
+    transform-origin: right;
+}
+
+.chart>.left {}
+
+.chart>.left>li {
+    transform: rotate(180deg);
+    background: linear-gradient(to bottom, #3a6ca1 20%, #6ea2ce 70%, #6ea2ce 99%);
+}
+
+.chart>.right {}
+
+.chart>.right>li {
+    margin-left: -80px;
+    transform: rotate(0deg);
+    background: linear-gradient(to top, #a4d9fc 50%, #9bd0f4 70%, #6ea2ce 100%);
+}
+
+.chart>.pannel {
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background-color: #fff;
+}
+
+.chart>.pannel>.cMain {
+    text-align: center;
+    line-height: 130px;
+    font-weight: bold;
+}
+
+.statusWrap>.sub-sectionWrap>.sub-section:nth-child(1)~* {
+    margin-top: 15px;
+}
+
+.statusWrap>.sub-sectionWrap>.sub-section>.titleBar-hdr {
+    margin: 10px 0;
+}
+
+/* 수료조건 */
+.completionWrap {
+    margin-top: 20px;
+}
+
+.completionWrap>.completion {}
+
+.completionWrap>.completion>.sub-section {
+    margin: 8px 0;
+}
+
+.graphWrap {}
+
+.graphWrap>.graphGroup {
+    margin: 10px 0;
+    padding: 10px 0;
+    background-color: #f7f7f7;
+}
+
+.graphWrap>.graphGroup:nth-child(1)~* {}
+
+.graphWrap>.graphGroup>.condition {
+    width: 60px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.graphWrap>.graphGroup>.graph {
+    width: 440px;
+    height: 20px;
+    background-color: #d8dde1;
+}
+
+.graphWrap>.graphGroup>.graph>.graph {
+    height: 20px;
+    background: linear-gradient(to right, #a4d9fc 25%, #9bd0f4 50%, #6ea2ce 75%, #3a6ca1 100%);
+}
+
+.graphWrap>.graphGroup>.graph>.graph1 {
+    /* width: calc((100% / 비중 배점) * 현재 점수); */
+    width: calc((100% / 50) * 35);
+}
+
+.graphWrap>.graphGroup>.graph>.graph2 {
+    width: calc((100% / 20) * 10);
+}
+
+.graphWrap>.graphGroup>.graph>.graph3 {
+    width: calc((100% / 30) * 0);
+}
+
+.graphWrap>.graphGroup>.scoreWrap {
+    width: 100px;
+    padding-left: 20px;
+}
+
+/* 점수합계 */
+.completionWrap>.scoreSum {
+    margin-left: 20px;
+}
+
+.completionWrap>.scoreSum>.titleBar-hdr {
+    margin: 13px 0;
+}
+
+.completionWrap>.scoreSum>.scoreWrap {
+    width: 240px;
+    background-color: #3a6ca1;
+    padding: 20px;
+}
+
+.completionWrap>.scoreSum>.scoreWrap>.score {
+    color: #fff;
+}
+
+.completionWrap>.scoreSum>.scoreWrap>.score>.sumCondition {
+    line-height: 40px;
+    text-align: center;
+}
+
+.completionWrap>.scoreSum>.scoreWrap>.score>.totalScore {
+    text-align: right;
+}
+
+.completionWrap>.scoreSum>.scoreWrap>.showTxt {
+    margin-top: 20px;
+    background-color: #fff;
+    text-align: center;
+    font-weight: bold;
+}
+
+.completionWrap>.scoreSum>.scoreWrap>.showTxt>.cDanger {}
+
+.completionWrap>.scoreSum>.scoreWrap>.showTxt>.cMain {
+    display: none;
+}
+
+/* 2020-03-25 학습현황 끝 */
+/* modal popup layer 나의강의실 - 02 학습하기 */
+.modal-sub07-01 .class-list-title {
+    padding-right: 20px;
+}
+
+.tab-sub.sub02 .class-list-wrap.modal-ovflowY {
+    height: 400px;
+}
+
+.attendanceN, .attendanceY {
+    /* 20-08-31 width, height 삭제 */
+    /* width: 15px; */
+    /* height: 15px; */
+    margin: 7.5px auto;
+}
+/* 20-08-31
+.attendanceN{...} 삭제
+.attendanceY{...} 삭제  */
+/*.attendanceN {
+    background-position: -75px -80px;
+
+.attendanceY {
+    background-position: -90px -80px;
+} */
+.class-tabMenu .class-list .btn-study {
+    width: 80px;
+    padding: 0 10px;
+}
+
+/* 설문조사 */
+.surveyWrap {
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #d7dde1;
+}
+
+.modal .surveyWrap .titleBar-hdr {
+    width: 135px;
+}
+
+.surveyWrap .buttonWrapper {
+    margin-top: 10px;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.surveyWrap .buttonWrapper>.button:first-child~* {
+    margin-left: 10px;
+}
+
+.surveyWrap .button {
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+/* 20-08-31
+.class-list .study,.surveyWrap .button .img-icon{...} 삭제 */
+/* .class-list .study,
+.surveyWrap .button .img-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+} */
+/* 20-08-31 .class-list .study{...} 추가 */
+.class-list .study{
+    margin: 5px 5px 5px 0;
+}
+/* 20-08-31 .surveyWrap .button .img-icon{...} 추가 */
+.surveyWrap .button .img-icon{
+    margin-right: 5px;
+}
+
+/* 20-08-31
+.check-square{...} 삭제
+.ballot-check{...} 삭제
+.edit{...} 삭제 */
+/* .check-square {
+    background-position: -107px -95px
+}
+
+.ballot-check {
+    background-position: -127px -95px
+}
+
+.edit {
+    background-position: -147px -95px
+} */
+/* modal popup layer 나의강의실 - 03 온라인 과제 */
+.tab-sub.sub03 .modal-ovflowY,
+.tab-sub.sub04 .modal-ovflowY {
+    height: 550px;
+}
+
+.tab-sub.sub03 .class-list-wrap>.class-list:hover {
+    cursor: default;
+}
+
+/* modal popup layer 나의강의실 - 04 온라인 시험 */
+.table-standard {
+    margin: 20px 0;
+    width: calc(100% - 1px);
+    text-align: center;
+}
+
+.table-standard .thead {
+    line-height: 40px;
+    border-right: 1px solid #ccc;
+}
+
+.table-standard .tbody * {
+    border: 1px solid #ccc;
+    vertical-align: middle;
+    line-height: 30px;
+}
+
+.table-standard .tbody td {
+    padding: 10px;
+}
+
+.table-standard .highlight {
+    border: 2px solid #2c67b0;
+    color: #2c67b0;
+    font-weight: bold;
+}
+
+/* 2020-03-10 시험 응시 페이지 */
+.sub07-testWrapper {
+    display: block;
+}
+
+.test-header {
+    background-color: rgba(44, 103, 176, .7);
+    color: #fff;
+    padding: 10px 20px;
+    justify-content: space-between;
+}
+
+.test-header .titleWrap {}
+
+.test-header .titleWrap .testTitle {
+    line-height: 30px;
+}
+
+.test-header .titleWrap .infoWrap {
+    margin-top: 5px;
+}
+
+.test-header .titleWrap .infoWrap .testInfo {
+    margin-right: 10px;
+}
+
+.test-header .timerWrap {
+    text-align: center;
+}
+
+.sub07 .sub07-01-01-test {
+    overflow-y: scroll;
+    height: calc(100vh - 80px);
+    margin: 0;
+}
+
+.testForm {
+    overflow: hidden;
+}
+
+.testForm .testSet {
+    margin: 40px 0;
+}
+
+.testForm .testSet .testQ {
+    padding: 10px;
+    background-color: #f7f7f7;
+}
+
+.testForm .testSet .testQ .qNumber {
+    width: 90px;
+    background-color: rgba(44, 103, 176, .7);
+    padding: 5px 10px;
+    color: #fff;
+    text-align: center;
+}
+
+.testForm .testSet .testQ .qScore {
+    line-height: 30px;
+    margin-left: 10px;
+}
+
+.testForm .testSet .testQ .question {
+    margin: 5px;
+}
+
+.testForm .testSet .testA,
+.testForm .testSet .aBox {
+    margin-top: 10px;
+}
+
+.testForm .testSet .testA {}
+
+.testForm .testSet .testA .answer {
+    margin: 20px 0;
+}
+
+.testForm .testSet .testA .answer>label {
+    margin-left: 5px;
+}
+
+/* 시험제출버튼 */
+.testForm .submitBtn {
+    padding: 10px;
+    width: 150px;
+    margin: 20px;
+    float: right;
+}
+
+.testForm .btn-pColor:hover {
+    font-weight: bold;
+}
+
+/* 과제제출버튼 */
+.open-ctt .testForm.d-flex {
+    justify-content: space-between;
+}
+
+.open-ctt .testForm.d-flex>.fileC {
+    padding: 10px;
+}
+
+.open-ctt .testForm .submitBtn {
+    margin: 0;
+}
+
+/* modal popup layer 나의강의실 - 05 공지사항 */
+.tab-sub.sub05 .modal-ovflowY,
+.tab-sub.sub06 .modal-ovflowY {
+    height: 500px;
+}
+
+/* modal popup layer 나의강의실 - 06 자료실 */
+/* - 7.1.2 modal popup layer - Content 3) 영수증 출력 */
+.modal-sub07-02 {
+    /* 2020-01-28 positionImg 도장 이미지 수정 */
+    position: relative;
+}
+
+.modal-content.printReceipt {
+    /* 2020-01-28 품목 삭제 후 높이값 조절 */
+    height: 550px;
+}
+
+.table-receipt {
+    width: 100%;
+    border-right: 1px solid #ccc;
+}
+
+.table-receipt .thead {
+    line-height: 40px;
+    text-align: center;
+}
+
+.table-receipt .tbody * {
+    border: 1px solid #ccc;
+    vertical-align: middle;
+}
+
+.table-receipt .tbody th {
+    line-height: 30px;
+}
+
+.table-receipt .tbody td {
+    padding: 10px;
+}
+
+.table-receipt .receiptTo {
+    padding: 0 10px;
+}
+
+.table-receipt .receiptDate,
+.table-receipt .receiptItemAmount {
+    text-align: center;
+}
+
+.table-receipt .receiptTo,
+.table-receipt .receiptValue,
+.table-receipt .receiptTax,
+.table-receipt .receiptItemPrice,
+.table-receipt .receiptItemValue,
+.table-receipt .receiptTotal {
+    text-align: right;
+}
+
+.table-receipt .receiptTotal {
+    font-weight: bold;
+}
+
+.table-receipt .receiptItemList {
+    width: 40%;
+}
+
+.table-receipt .receiptItemPrice,
+.table-receipt .receiptItemValue,
+.table-receipt .receiptItemAmount {
+    width: 10%;
+}
+
+.positionImg {
+    /* 2020-01-28 positionImg 도장 이미지 수정 */
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    width: 80px;
+    height: 80px;
+    background-image: url('../img/stamp.png');
+    background-size: cover;
+    opacity: 0.3;
+}
+
+.table-receipt th.lh50 {
+    line-height: 50px;
+}
+
+/* 임시 이미지 - 개발 적용 후 지울 것 */
+.sub-content {
+    background-repeat: no-repeat;
+}
+
+.section.sub01-01,
+.section.sub01-02,
+.section.sub01-03,
+.section.sub01-04,
+.section.sub03-01,
+.sub03-02,
+.sub03-03,
+.sub03-04,
+.sub-content .sub04-01,
+.sub-content .sub04-02 {
+    height: 0;
+    background-repeat: no-repeat;
+    background-size: contain;
+    border: none;
+    padding-top: calc(1040 / 900 * 100%);
+}
+
+.section.sub01-01,
+.section.sub01-02,
+.section.sub01-03,
+.section.sub01-04 {
+    background-image: url('../img/sub01-01.jpg');
+}
+
+.section.sub03-01,
+.sub03-02,
+.sub03-03,
+.sub03-04 {
+    background-image: url('../img/sub03-01.jpg');
+}
+
+.sub-content .sub04-01,
+.sub-content .sub04-02 {
+    background-image: url('../img/sub04-01.jpg');
+}
+
+.sub05-02-02,
+.sub05-03-02 {
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 0;
+}
+
+.sub05-02-02 {
+    padding-top: calc(720 / 900 * 100%);
+    background-image: url('../img/sub05-02-02.jpg');
+}
+
+.sub05-03-02 {
+    padding-top: calc(880 / 900 * 100%);
+    background-image: url('../img/sub05-03-02.jpg');
+}

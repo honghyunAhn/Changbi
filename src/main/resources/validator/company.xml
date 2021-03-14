@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+<!-- 업소관리 -->
+<form-validation>
+
+    <formset>
+
+        <form name="company">
+			<field property="compGbn" depends="required">
+        		<arg0 key="업소구분" resource="false" />
+			</field>
+			<field property="catCd" depends="required">
+        		<arg0 key="카테고리" resource="false" />
+			</field>
+			<field property="compNm" depends="required, maxlength">
+        		<arg0 key="이름" resource="false" />
+        		<arg1 key="60" resource="false"/>
+			</field>
+			<field property="tel" depends="maxlength">
+        		<arg0 key="연락처" resource="false" />
+        		<arg1 key="50" resource="false"/>
+			</field>
+			<field property="resrvPhone" depends="maxlength, digit">
+        		<arg0 key="예약알림휴대폰번호" resource="false" />
+        		<arg1 key="11" resource="false"/>
+			</field>
+			<field property="mapAddr" depends="maxlength">
+        		<arg0 key="위치검색용주소" resource="false" />
+        		<arg1 key="200" resource="false"/>
+			</field>
+			<field property="useYn" depends="required">
+        		<arg0 key="사용여부" resource="false" />
+			</field>
+		</form>
+
+        <form name="companyLang">
+			<field property="compId" depends="required">
+        		<arg0 key="업소ID" resource="false" />
+			</field>
+			<field property="lang" depends="required">
+        		<arg0 key="언어구분" resource="false" />
+			</field>
+			<field property="compNm" depends="maxlength">
+        		<arg0 key="이름" resource="false" />
+        		<arg1 key="60" resource="false"/>
+			</field>
+			<field property="addr" depends="maxlength">
+        		<arg0 key="주소" resource="false" />
+        		<arg1 key="500" resource="false"/>
+			</field>
+			<field property="open" depends="maxlength">
+        		<arg0 key="영업시간" resource="false" />
+        		<arg1 key="100" resource="false"/>
+			</field>
+			<field property="cupnTxt" depends="maxlength">
+        		<arg0 key="쿠폰이름" resource="false" />
+        		<arg1 key="20" resource="false"/>
+			</field>
+			<field property="tag" depends="maxlength">
+        		<arg0 key="태그" resource="false" />
+        		<arg1 key="500" resource="false"/>
+			</field>
+		</form>
+    </formset>
+
+</form-validation>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="forFaith.dev.dao.AttachFileDAO">
+
+	<!-- 파일 resultMap -->
+	<resultMap id="attachFileMap" 			type="forFaith.dev.vo.AttachFileVO">
+		<id		property="fileId"			column="FILE_ID" />
+		<association property="regUser" 	column="REG_USER"	jdbcType="VARCHAR"	javaType="forFaith.dev.vo.MemberVO"	select="forFaith.dev.dao.BaseDAO.memberInfo" />
+		<association property="updUser" 	column="UPD_USER"	jdbcType="VARCHAR"	javaType="forFaith.dev.vo.MemberVO"	select="forFaith.dev.dao.BaseDAO.memberInfo" />
+		<collection property="detailList"	ofType="forFaith.dev.vo.AttachFileDetailVO"		javaType="list">
+			<result property="fileId"		column="FILE_ID" />
+			<result property="fileName"		column="FILE_NAME" />
+			<result property="originFileName"	column="ORIGIN_FILE_NAME" />
+			<result property="filePath"		column="FILE_PATH" />
+			<result property="fileExt"		column="FILE_EXT" />
+			<result property="fileSize"		column="FILE_SIZE" />
+			<result property="urlPath"		column="URL_PATH" />
+			<result property="orderNum"		column="ORDER_NUM" />
+		</collection>
+	</resultMap>
+	
+	<!-- 파일 리스트 조회 -->
+	<select id="attachFileList"	parameterType="forFaith.dev.vo.AttachFileVO" resultMap="attachFileMap">
+		SELECT D.FILE_ID, D.FILE_NAME, D.FILE_EXT, D.FILE_PATH, D.ORIGIN_FILE_NAME, D.FILE_SIZE, D.URL_PATH, D.ORDER_NUM
+			 , M.USE_YN, M.REG_DATE, M.UPD_DATE
+		FROM FF_ATTACH_FILE M
+		INNER JOIN ON FF_ATTACH_FILE_DETAIL D
+		ON M.FILE_ID = D.FILE_ID
+		WHERE M.USE_YN = 'Y'
+		<if test="fileId != null and fileId != ''">
+			AND M.FILE_ID = #{fileId}
+		</if>
+		ORDER BY M.FILE_ID, D.ORDER_NUM
+	</select>
+	
+	<!-- fileId에 해당 하는 파일 정보 조회(useYn = 'Y' 인 경우만 조회) -->
+	<select id="attachFileInfo" parameterType="forFaith.dev.vo.AttachFileVO" resultMap="attachFileMap">
+		SELECT D.FILE_ID, D.FILE_NAME, D.FILE_EXT, D.FILE_PATH, D.ORIGIN_FILE_NAME, D.FILE_SIZE, D.URL_PATH, D.ORDER_NUM
+			 , M.USE_YN, M.REG_DATE, M.UPD_DATE
+		FROM FF_ATTACH_FILE M
+		INNER JOIN FF_ATTACH_FILE_DETAIL D
+		ON M.FILE_ID = D.FILE_ID
+		WHERE M.FILE_ID = #{fileId}
+		AND M.USE_YN = 'Y'
+		ORDER BY D.ORDER_NUM
+	</select>
+	
+	<!-- // 파일 마스터 저장 default useYN = N -->
+	<insert id="attachFileReg" parameterType="forFaith.dev.vo.AttachFileVO">
+		INSERT INTO FF_ATTACH_FILE
+			(FILE_ID, REG_USER, REG_DATE, UPD_USER, UPD_DATE)
+		VALUES
+			( #{fileId}, #{regUser.id}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'), #{updUser.id}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s') )
+		ON DUPLICATE KEY UPDATE
+			UPD_USER	= VALUES(UPD_USER),
+			UPD_DATE	= VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 파일 상세 저장 order_num을 증가 -->
+	<update id="attachFileDetailReg" parameterType="forFaith.dev.vo.AttachFileVO">
+		INSERT INTO FF_ATTACH_FILE_DETAIL
+		(FILE_ID, FILE_NAME, FILE_EXT, FILE_PATH, ORIGIN_FILE_NAME, FILE_SIZE, URL_PATH, ORDER_NUM)
+		<foreach collection="detailList" item="detail" separator="UNION ALL" index="index">
+		SELECT #{fileId}, #{detail.fileName}, #{detail.fileExt}, #{detail.filePath}
+			 , #{detail.originFileName}, #{detail.fileSize}, #{detail.urlPath}
+			 , IFNULL(MAX(ORDER_NUM), 0)+(#{index}+1)
+		FROM FF_ATTACH_FILE_DETAIL 
+		WHERE FILE_ID = #{fileId}
+		</foreach>
+	</update>
+	
+	<!-- 파일 상세 정보 삭제  -->
+	<update id="attachFileDetailDel" parameterType="forFaith.dev.vo.AttachFileVO">
+		DELETE FROM FF_ATTACH_FILE_DETAIL
+		WHERE FILE_ID = #{fileId}
+		AND FILE_NAME IN ( <foreach collection="detailList" item="detail" index="index" separator=",">#{detail.fileName}</foreach> )
+	</update>
+	
+	<!-- 파일 사용 가능으로 변경 -->
+	<update id="attachFileUse" parameterType="list">
+		UPDATE FF_ATTACH_FILE
+		SET USE_YN = 'Y'
+		  , UPD_USER = #{list[0].updUser.id}
+		  , UPD_DATE = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		WHERE FILE_ID IN ( <foreach collection="list" item="attachFile" index="index" separator=",">#{attachFile.fileId}</foreach> )
+	</update>
+	
+	<!-- 파일 사용 여부 변경 -->
+	<update id="attachFileUseChange" parameterType="list">
+		UPDATE FF_ATTACH_FILE
+		SET USE_YN = IF(USE_YN = 'N', 'Y', 'N')
+		  , UPD_USER = #{list[0].updUser.id}
+		  , UPD_DATE = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		WHERE FILE_ID IN ( <foreach collection="list" item="attachFile" index="index" separator=" , ">#{attachFile.fileId}</foreach> )
+	</update>
+</mapper>

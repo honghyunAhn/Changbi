@@ -1,0 +1,1424 @@
+@charset "UTF-8";
+/* style_responsive.css */
+/* ----------------------------------------------------------------
+  >> TABLE OF CONTENTS:                   담당자 : 성지민
+	[1] pc 1024px - 1920px >> 기준 1200px
+
+	[2] 태블릿 768px - 1023px >> 기준 730px
+
+    [3] 모바일  320px - 767px >> 기준 300px
+
+        0.0 font-face
+
+        1.0 reset 표준화
+
+    	2.0 Plugin 관련 - Swiper(슬라이드)
+
+        3.0 Layout Desgin - Common Style
+            - 3.1 z-index
+            - 3.2 content align
+            - 3.3 icon
+            - 3.4 text
+            - 3.5 button
+            - 3.6 color
+            - 3.7 ETC function
+
+        4.0 Main Page Design
+            - 4.1 header
+                - 4.1.1 top-banner
+                - 4.1.2 header
+                    1) 공지사항
+                    2) 로그인/로그아웃
+                    3) 로고/검색창/SNS
+                - 4.1.3 nav
+                    1) menu-btn 메뉴바
+                    2) nav
+
+            - 4.2 footer
+                - 4.2.1 Scroll to Top
+                - 4.2.2 footer
+
+            - 4.3 main
+                - 4.3.1 main-bannerWrap 슬라이딩 배너
+                - 4.3.2 btnWrap 퀵메뉴 버튼
+                - 4.3.3 hotNewWrap 인기강좌
+                - 4.3.4 recommend-classWrap 분야별 추천 강좌
+                - 4.3.5 banner-mid 중간 배너
+                - 4.3.6 special-classWrap 특강 및 설명회
+                - 4.3.7 customWrap
+                    - 1) 공지사항/이벤트 + FAQ
+                    - 2) 고객센터
+                - 4.3.8 interviewWrap 홍보영상/인터뷰
+
+        5.0 Contents Design - common
+            - 5.1 subPage - subNav
+            - 5.2 subPage - subContent
+                - 5.2.1 pageLocation 사용자 위치 표시
+                - 5.2.2 headerBox 카테고리별 header 이미지
+                - 5.2.3 ProcessWrap 단계별 진행상황
+            - 5.3 subPage - section
+                - 5.3.1 subPage - searchWrapper 과정명 검색
+                - 5.3.2 subPage - searchWrapper 조건선택 필터
+                - 5.3.3 subPage - searchWrapper 검색조건
+                    - 1) viewWrap : 10개씩 보기
+                    - 2) search-filter-wrap : 제목+내용 검색
+                - 5.3.4 subPage - pagination 페이지 수
+                - 5.3.5 subPage - sectionOutBtn (섹션 최하단 우측) 버튼
+
+            -5.4 subPage - 리스트 페이지 (.eLearning)
+                -5.4.1 리스트 페이지 공통 - 페이지 공통
+                -5.4.2 리스트 페이지 공통 - 과정목록 Title
+                -5.4.3 리스트 페이지 공통 - 과정목록 Content
+
+            -5.5 subPage - 강의 리스트 페이지 (.eLearning)
+                -5.5.1 강의 리스트 - 과정목록 Title
+                -5.5.2 강의 리스트 - 과정목록 Content
+
+            -5.6 subPage - 게시판 리스트 페이지 (.container.sub0$)
+                -5.6.1 게시판 리스트 - 과정목록 Title
+                -5.6.2 게시판 리스트 - 과정목록 Content
+
+            -5.7 subPage - Tab Group 탭
+                -5.7.1 Tab Group - Tab Title
+                -5.7.2 Tab Group - Sub Group
+
+            -5.8 subPage - formStyle
+                -5.8.1 formStyle - common
+                -5.8.2 formStyle - 게시글 보기
+                -5.8.3 formStyle - writePost 글쓰기
+                -5.8.4 formStyle - userInfo 회원정보 확인
+
+            -5.9 subPage - table
+                -5.9.1 table - thead
+                -5.9.2 table - tbody
+
+        6.0 Contents Design for Page (페이지별 개별화 된 콘텐츠 디자인)
+            - 6.1 sub00 로그인/회원가입
+                - 6.1.1 sub00-01 로그인
+                - 6.1.2 sub00-02 회원가입
+                - 6.1.3 sub00-03 아이디찾기
+                - 6.1.4 sub00-04 비밀번호찾기
+
+            - 6.2 eLearning(sub01~sub04) 온라인 강의
+                - 6.2.1 eLearning-01 온라인 강의 목록
+                - 6.2.2 eLearning-01-01 온라인 강의 상세
+
+            - 6.3 sub05 커뮤니티
+                - 6.3.1 sub05-01 공지사항/이벤트
+                - 6.3.2 sub05-02 수강후기/인터뷰
+                - 6.3.3 sub05-03 특강/설명회
+                - 6.3.4 sub05-04 자유게시판
+
+            - 6.4 sub06 고객센터
+                - 6.4.1 sub06-01 고객지원
+                - 6.4.2 sub06-02 FAQ
+                - 6.4.3 sub06-03 단체/제휴문의
+                - 6.4.4 sub06-04 오시는길
+
+            - 6.5 sub07 나의강의실
+                - 6.5.1 sub07-01 학습현황
+                - 6.5.2 sub07-02 결제현황/환불
+                - 6.5.3 sub07-03 마일리지
+                - 6.5.4 sub07-04 개인정보수정
+                - 6.5.5 sub07-05 회원탈퇴
+
+        7.0 Popup Design - modal popup layer
+            - 7.1 modal popup layer - layout
+                - 7.1.1 modal popup layer - header
+                - 7.1.2 modal popup layer - Content
+                    - 1) 수강신청
+                        - 01수강신청
+                        - 02환불규정
+                        - 03결제방법
+                    - 2) 나의강의실
+                        - 01학습현황
+                        - 02과목자료실
+                        - 03과목공지사항
+                        - 04과목Q&A
+                        - 05설문/과제/토론
+
+    ※ 서버 적용 이후 '임시' 키워드 찾아 지울 것
+----------------------------------------------------------------*/
+/*--------------------------------------------------------------
+  [1] pc 1024px - 1920px >> 기준 1200px
+----------------------------------------------------------------*/
+@media(max-width:1600px){
+/*--------------------------------------------------------------
+  >> 4.0 Main Page Design
+----------------------------------------------------------------*/
+/* 4.1 Header */
+/* 4.1.1 top-banner */
+
+/* 20-08-18 .top-bannerWrap 삭제 */
+/* .top-bannerWrap {
+    height: 100px;
+} */
+
+}
+/*--------------------------------------------------------------
+  [2] 태블릿 768px - 1023px >> 기준 730px
+----------------------------------------------------------------*/
+@media(max-width:1024px){
+/*--------------------------------------------------------------
+  >> 1.0 1.0 reset 표준화
+----------------------------------------------------------------*/
+/* 1.2 Typography */
+html {
+    font-size: 13px;
+}
+/*--------------------------------------------------------------
+  >> 2.0 Plugin 관련 - Swiper(슬라이드)
+----------------------------------------------------------------*/
+/* 2.2 Interview & Video Slide Gallery */
+.swiper2 .swiper-slide{
+    height: 200px;
+}
+/*--------------------------------------------------------------
+  >> 3.0 Layout Desgin - Common Style
+----------------------------------------------------------------*/
+/* 3.3 icon */
+.nav-menu .bars {
+    /* 20-08-31 margin:10px > 20px 10px로 수정 */
+    margin: 20px 10px;
+}
+
+/*--------------------------------------------------------------
+  >> 4.0 Main Page Design
+----------------------------------------------------------------*/
+/* 4.1 Header */
+/* 4.1.1 top-banner */
+/* 4.1.2 header */
+.hdrWrap>.header, .navWrap {
+    display: none !important;
+}
+
+.mobile-headerWrap {
+    display: block !important;
+    width: 100%;
+    position: relative;
+}
+
+.mobile-headerWrap-fixed {
+    position: fixed;
+    top: 0;
+    background-color: rgba(255, 255, 255, .9);
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+.mobile-headerWrap>.mobile-header {
+    width: calc(100% - 20px);
+    height: 60px;
+    margin: 0 auto;
+    justify-content: space-between;
+    position: relative;
+}
+/* 20-08-31 .mobile-header>.img-icon{...}삭제 */
+/* .mobile-header>.img-icon {
+    width: 17px;
+    height: 30px;
+    margin: 10px 0;
+} */
+
+/* 4.1.2 header - 2) 회원가입/로그인/로그아웃/나의강의실 버튼 */
+.mobile-headerWrap div.user {
+    /* 20-08-31
+    width, height, background-position 삭제*/
+    /* background-position: -159px -40px; */
+    /* width: 20px; */
+    /* height: 20px; */
+    margin: 20px 10px;
+}
+
+.mobile-headerWrap .mobile-hdr-loginWrap {
+    display: none;
+    padding: 10px;
+}
+
+.mobile-headerWrap .mobile-hdr-loginWrap>.user-menu {
+    justify-content: flex-end;
+}
+
+/* 4.1.2 header - 3) 로고/검색창/SNS */
+.mobile-header>.header-logo * {
+    width: 225px;
+    height: 60px;
+}
+
+.mobile-hdr-searchWrap {
+    display: block !important;
+    width: 100%;
+    height: 60px;
+    padding: 10px 0;
+    background-color: #fff;
+    border-top: 1px solid #eee;
+}
+
+.header-search {
+    position: inherit;
+    margin: 0 auto;
+}
+/* 4.1.3 Nav */
+/* 4.1.3 Nav - 1) menu-btn 메뉴바 */
+.nav-menu .times {
+    /* 20-08-31 margin : 15px 10px > 20px 10px로 변경 */
+    margin: 20px 10px;
+}
+/* 4.1.3 Nav - 2) nav */
+.mobile-headerWrap>.m-navBg {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.mobile-headerWrap>.m-navBg>.m-navGroup {
+    width: 70%;
+    height: 80%;
+    background-color: #fff;
+    overflow-y: scroll;
+}
+
+.mobile-user>.user-msg {
+    padding: 30px 10px 10px;
+    color: #fff;
+    background-color: #11283b;
+    border-top: 10px solid #e7c186;
+}
+
+.mobile-user>.user-menu {
+    padding: 10px 0;
+}
+
+.mobile-navGroup .gnb {
+    display: block;
+    height: 40px;
+    line-height: 40px;
+    text-indent: 10px;
+    text-align: left;
+    background-color: #7a99ab;
+    color: #f6f8fa;
+}
+
+.mobile-navGroup .lnb {
+    font-weight: bold;
+    line-height: 40px;
+    text-indent: 15px;
+    color: #444;
+    border-top: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.menu-title-division>.lnb:not(:nth-child(2)){
+    margin-top: 0;
+}
+
+.mobile-navGroup .lnb>.img-icon{
+    float: right;
+    margin: 10px;
+}
+/* 20-08-31 .mobile-navGroup .menu-title-division>.lnb:hover{...} 추가 */
+.mobile-navGroup .menu-title-division>.lnb:hover{
+    background: inherit;
+    color:inherit;
+}
+
+.mobile-navGroup .menu-title-division>.lnb:hover .angle-down{
+    /* 20-08-31 background-position:-57px -32px; > -80px 0;로 수정 */
+    background-position: -80px 0;
+}
+
+.mobile-navGroup .menu-title-division>.lnb>.menu-sub{
+    display: none;
+    padding: 10px 0;
+    opacity: 1;
+    background-color: #f6f8fa;
+}
+
+.mobile-navGroup .menu-title-division>.lnb>.menu-sub>li{
+    color: #11283b;
+}
+
+.m-navGroup>.mobile-navGroup>.menu-title-division>.lnb>.menu-sub>li>a{
+    background-color: #f6f8fa;
+}
+
+
+/* 4.2 footer */
+/* 4.2.2 footer */
+.footer {
+    padding: 20px 0 0;
+}
+
+.footer>.footer_wrap {
+    width: 730px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.footer_logoWrap {
+    display: flex;
+    justify-content: space-between;
+    width: 430px;
+}
+
+.footer_logoWrap .header-sns {
+    margin: 50px 20px 10px;
+}
+
+.footer_logoWrap .header-sns>li:first-child{
+    margin-left: 0;
+}
+.footer_wrap>.footer_contents {
+    width: 100%;
+}
+
+.footer_contents>.footer_textWrap {}
+
+.footer_textWrap>.footer_left {
+    width: 40%;
+}
+
+.footer_wrap>.footer_contents .corp-name {
+    margin: 0;
+}
+
+.footer_textWrap>.footer_right {
+    width: 60%;
+}
+
+.footer_textWrap>.footer_right>.footer-menu {
+    margin: 5px 0;
+}
+
+.footer>.copyright {
+    margin-top: 20px;
+}
+
+/* 4.3 main */
+.content>.hotNewWrap,
+.content>.special-classWrap,
+.recommend-classWrap,
+.customWrap,
+.interviewWrap{
+    padding: 60px 0;
+}
+
+/* 4.3.1 main-bannerWrap 슬라이딩 배너 */
+/* 20-08-18 .main-bannerWrap 추가 */
+.main-bannerWrap{
+    width: 100%;
+}
+/* 20-08-18 .main-bannerWrap>.main-banner-imgWrap 추가 */
+.main-bannerWrap>.main-banner-imgWrap{
+    width: 400%;
+}
+.main-banner-imgWrap>.main-banner-img {
+    /* 20-08-18
+    height : 450px > 400px로 수정 */
+    height: 400px;
+}
+.main-bannerWrap>.main-banner-imgWrap>.mb-img01{
+    background-image: url('../img/main-banner01-1024x450.jpg');
+}
+.main-bannerWrap>.main-banner-imgWrap>.mb-img02{
+    background-image: url('../img/main-banner02-1024x450.jpg');
+}
+
+/* 4.3.2 btnWrap 퀵메뉴 버튼 */
+.quickMenuWrap {
+    display: none;
+}
+
+/* 4.3.3 hotNewWrap 인기강좌 */
+
+.hotNewWrap>.hn-cardWrap {
+    width: 730px;
+}
+.hn-cardWrap .hn-card .hn-img>img {
+    height: auto;
+}
+
+/* 4.3.4 recommend-classWrap 분야별 추천 강좌 */
+.recommend-classWrap>.recommend-class {
+    width: 730px;
+}
+
+.field-wrap>.field-hdr {
+    width: 730px;
+    margin: 0 auto;
+}
+
+.field-wrap>.class-cardWrap {
+    width: 730px;
+}
+
+.class-cardWrap>.class-card {
+    width: 170px;
+}
+/* 20-08-18 .class-card .class-seg 삭제  */
+/* .class-card .class-seg {
+    display: block !important;
+    position: inherit;
+    background-color: inherit;
+    color: #444;
+} */
+
+.class-card a {
+    position: relative;
+}
+
+.class-seg .class-title {
+    width: 100%;
+    height: auto;
+}
+
+/* 4.3.5 banner-mid 중간 배너 */
+/* 4.3.6 special-classWrap 특강 및 설명회 */
+.special-classWrap>.titleWrap,
+.special-class-bg {
+    width: 730px;
+    margin: 0 auto;
+}
+.special-class-bg{
+    padding-top: 20px;
+    display: flex;
+}
+
+.special-class-bg>a {
+    width: calc(100% - 342px);
+}
+
+.special-class-bg>.special-class-video {
+    width: 322px;
+    /* height: 210px; */
+    position: inherit;
+    top: 0;
+    height: 226px;
+}
+
+/* 4.3.7 customWrap 공지사항/이벤트/FAQ/고객센터 */
+/* 4.3.7 customWrap - 1) 공지사항/이벤트 + FAQ */
+.customWrap {
+    width: 730px;
+    flex-wrap: wrap;
+}
+
+.customWrap>.customer {
+    /* 20-08-18
+    width : 34% > calc(50% - 10px)로 변경  */
+    width: calc(50% - 10px);
+}
+
+.customerWrap {
+    width: 210px;
+    padding: 0;
+    border: none;
+}
+.customerWrap>.costomer-bg{
+    border: 5px solid #e7c186;
+}
+/* 2020-03-30 스타일 추가 */
+.customer-info>.h2{
+    /* font-size: 24px; */
+    font-size: 1.714rem;
+}
+.customWrap>.customer {
+    padding: 0 10px;
+}
+
+.customer>.hdr>.img-icon {
+    margin-top: 10px;
+}
+
+.customer>.hdr>.h3 {
+    line-height: 50px;
+}
+
+.customWrap .listWrap {
+    margin: 10px 0;
+}
+
+.customWrap .listWrap .text-over {
+    height: 27px;
+    line-height: 25px;
+}
+
+.listStyle-star {
+    margin-right: 5px;
+}
+
+/* 4.3.7 customWrap - 3) 고객센터 */
+
+.customer>.hdr>.more-btn {
+    display: none;
+}
+
+.customer-info>.fz34 {
+    line-height: 40px;
+    font-size: 2.143rem;
+    padding: 0;
+}
+
+.customer-info>ul>li:first-child {
+    line-height: 20px;
+}
+
+.customer-info>.h5 {
+    line-height: 30px;
+}
+
+/* 4.3.8 interviewWrap 홍보영상/인터뷰 */
+.interviewWrap>.video-view {
+    width: calc(100% - 40px);
+    margin: 40px auto 0;
+}
+
+/*--------------------------------------------------------------
+  >> 5.0 Contents Design - common
+----------------------------------------------------------------*/
+/* 5.1 subPage */
+.container {
+    width: 100%;
+}
+.sub-content {
+    width: calc(100% - 20px);
+    margin: 0 auto;
+    background-size: contain;
+}
+/* - 5.1 subPage - subNav */
+.sub-nav {
+    display: none;
+}
+
+/* -5.8 subPage - formStyle */
+/* -5.8.1 formStyle - common */
+.formStyle {
+    width: 100%;
+}
+
+/*--------------------------------------------------------------
+  >> 6.0 Contents Design for Page 페이지별 개별화 된 콘텐츠 디자인
+----------------------------------------------------------------*/
+/* - 6.1 sub00 로그인/회원가입 */
+/* - 6.1.2 sub00-02 회원가입 */
+/* certification 인증 */
+.certification>.article-title{
+    display: block;
+}
+.certification .titleBar-hdr{
+    margin: 10px 0;
+}
+/* - 6.4 sub06 고객센터 */
+/* - 6.4.4 sub06-04 오시는길 */
+.section.sub06-04 {
+    flex-wrap: wrap;
+}
+
+.map {
+    width: 100%;
+}
+
+.map-wayWrap {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 0;
+}
+
+.map-wayWrap .map-way:nth-child(1)~*{
+    margin: 0;
+}
+/* - 6.5 sub07 나의강의실 */
+/* - 6.5.3 sub07-03 마일리지 */
+.sub07-03 .sub-segment {
+    flex-wrap: wrap;
+}
+.mileage-list {
+    width: 100%;
+}
+
+/*--------------------------------------------------------------
+  >> 7.0 Popup Design - modal popup layer
+----------------------------------------------------------------*/
+/* - 7.1 modal popup layer - layout */
+.modal-content{
+    width: calc(100% - 60px);
+    height: calc(100% - 200px);
+}
+
+/* - 7.1.1 modal popup layer - header */
+/* - 7.1.2 modal popup layer - Content 1) 수강신청 */
+.eLearning .modal-sectionWrap{
+    padding: 10px;
+}
+.eLearning .modal .email .input{
+    width: 100px;
+}
+
+/* modal popup layer 수강신청 - 02 환불규정 */
+.modal .cancel-rule{
+    display: block;
+    margin: 30px 0;
+}
+
+/* modal popup layer 수강신청 - 03 결제방법 */
+.modal .input-ctt {
+    padding: 10px;
+}
+
+/* - 7.1.2 modal popup layer - Content 2) 나의강의실 */
+/* 2020-03-25 학습현황 추가 */
+.completionWrap{
+    flex-wrap : wrap;
+}
+.graphWrap>.graphGroup>.graph{
+    width: 408px;
+}
+
+.completionWrap>.scoreSum{
+    margin-left: 0;
+}
+/* 2020-03-25 학습현황 끝 */
+
+
+/* modal popup layer 나의강의실 - 03 과목공지사항 */
+ .modal .myClass .class-list .icon-align>.text-over-lh20{
+    width: calc(100% - 30px);
+}
+
+/* 2020-03-10 시험 응시 페이지 */
+.sub07-testWrapper{
+    width: calc(100% - 20px);
+}
+.test-header .titleWrap .infoWrap{
+    display: block;
+}
+.sub07 .sub07-01-01-test{
+    height: calc(100vh - 95px);
+}
+
+}
+/*--------------------------------------------------------------
+  [3] 모바일  320px - 767px >> 기준 300px
+----------------------------------------------------------------*/
+@media(max-width:767px){
+/*--------------------------------------------------------------
+  >> 1.0 1.0 reset 표준화
+----------------------------------------------------------------*/
+/* 1.2 Typography */
+html {
+    font-size: 12px;
+}
+/*--------------------------------------------------------------
+  >> 2.0 Plugin 관련 - Swiper(슬라이드)
+----------------------------------------------------------------*/
+/* 2.1 Main Slide Gallery */
+.swiper1.swiper-container-horizontal>.swiper-pagination-bullets,
+.swiper1 .swiper-pagination-custom,
+.swiper1 .swiper-pagination-fraction {
+    bottom: 5px;
+}
+
+/* 2.2 Interview & Video Slide Gallery */
+.swiper2 .swiper-button-next,
+.swiper2 .swiper-button-prev{
+    width: 15px;
+    height: 30px;
+    top: 45%;
+}
+/*--------------------------------------------------------------
+  >> 3.0 Layout Desgin - Common Style
+----------------------------------------------------------------*/
+/* 3.1 z-index */
+/* 3.2 content align */
+/* 3.3 icon */
+/* 3.4 text */
+.titleBar-hdr{
+    margin: 5px 0;
+}
+/* 3.5 button */
+.more-btn{
+    top: 8px;
+}
+/* 3.6 color */
+/* 3.7 ETC function */
+
+/*--------------------------------------------------------------
+  >> 4.0 Main Page Design
+----------------------------------------------------------------*/
+/* 4.1 Header */
+/* 4.1.1 top-banner */
+/* 20-08-18 .top-bannerWrap 삭제 */
+/* .top-bannerWrap {
+    display: none;
+} */
+/* 4.1.2 header */
+/* 4.1.2 header - 1) 공지사항 슬라이드 */
+/* 4.1.2 header - 2) 회원가입/로그인/로그아웃/나의강의실 버튼 */
+/* 4.1.2 header - 3) 로고/검색창/SNS */
+.mobile-header>.header-logo * {
+    width: 150px;
+    height: 40px;
+}
+
+.mobile-header>.header-logo img {
+    margin: 10px 0;
+}
+
+.header-search {
+    width: 230px;
+}
+
+/* 4.1.3 Nav */
+/* 4.1.3 Nav - 1) menu-btn 메뉴바 */
+.mobile-header>.times {
+    right: -10px;
+}
+/* 4.1.3 Nav - 2) nav */
+.mobile-headerWrap>.m-navBg>.m-navGroup {
+    height: 85%;
+}
+/* 4.2 footer */
+/* 4.2.1 Scroll to Top */
+/* 4.2.2 footer */
+.footer>.footer_wrap {
+    width: calc(100% - 20px);
+}
+
+.footer_logoWrap {
+    display: block;
+}
+
+.footer_logoWrap .header-sns {
+    margin: 0;
+}
+
+.footer_wrap>.footer_contents {
+    margin-left: 0;
+}
+
+.footer_contents>.footer_textWrap {
+    display: block;
+}
+
+.footer_contents>.footer_textWrap>* {
+    width: 100%;
+}
+.footer_textWrap>.footer_right>.footer-menu>li{
+    font-size: 0.9rem;
+}
+.footer_textWrap>.footer_right .menu-divBar {
+    margin: 0 7px;
+}
+
+.footer>.copyright {
+    margin: 0;
+    margin-top: 20px;
+}
+
+
+/* 4.3 main */
+.hotNewWrap>.hn-cardWrap,
+.recommend-classWrap>.recommend-class,
+.special-classWrap>.titleWrap,
+.special-class-bg,
+.customWrap {
+    width: calc(100% - 20px);
+}
+
+.hotNewWrap>.hn-cardWrap,
+.field-wrap>.class-cardWrap,
+.special-classWrap>.titleWrap,
+.special-class-bg {
+    flex-wrap: wrap;
+}
+/* 4.3.1 main-bannerWrap 슬라이딩 배너 */
+/* 20-08-18 .main-bannerWrap 추가 */
+.main-bannerWrap{
+    height: auto;
+}
+.main-banner-imgWrap>.main-banner-img {
+    height: 210px;
+}
+
+/* 4.3.2 btnWrap 퀵메뉴 버튼 */
+/* 4.3.3 hotNewWrap 인기강좌 */
+/* 20-08-18 .hotNewWrap>.hn-cardWrap 추가 */
+.hotNewWrap>.hn-cardWrap{
+    justify-content: center;
+}
+.hn-cardWrap .hn-card {
+    width: 60%;
+    margin: 20px 10px 0;
+}
+.hn-cardWrap .hn-card .hn-img{
+    height: auto;
+}
+/* 4.3.4 recommend-classWrap 분야별 추천 강좌 */
+.recommend-class>.field-wrap {
+    margin: 40px 0 0;
+}
+
+.field-wrap>.field-hdr {
+    width: 100%;
+    padding-left: 0;
+}
+
+.field-wrap>.class-cardWrap {
+    width: 100%;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.class-cardWrap>.class-card {
+    width: calc(50% - 10px);
+    margin: 0 5px;
+}
+
+.class-card .class-seg {
+    text-align: left;
+    padding: 0 0 10px;
+}
+
+.class-seg .class-title>.h4 {
+    margin-top: 0;
+}
+
+/* 4.3.5 banner-mid 중간 배너 */
+/* 4.3.6 special-classWrap 특강 및 설명회 */
+.special-class-bg>a,
+.special-class-bg>.special-class-video {
+    width: 100%;
+}
+
+.special-class-bg>.special-class-video {
+    margin-left: 0;
+    margin-top: 20px;
+}
+
+/* 4.3.7 customWrap 공지사항/이벤트/FAQ/고객센터 */
+.customWrap>.customer,
+.customerWrap {
+    width: 300px;
+    margin: 0 auto;
+}
+/* 4.3.7 customWrap - 1) 공지사항/이벤트 + FAQ */
+.customWrap>.customer.faqWrap {
+    margin: 20px auto;
+}
+/* 4.3.7 customWrap - 3) 고객센터 */
+/* 4.3.8 interviewWrap 홍보영상/인터뷰 */
+.interviewWrap>.video-view {
+    width: 300px;
+    padding: 0 0 30px;
+}
+
+.interviewWrap .btnWrap {
+    width: 300px;
+    top: 60px;
+}
+
+
+
+/*--------------------------------------------------------------
+  >> 5.0 Contents Design - common
+----------------------------------------------------------------*/
+/* 5.1 subPage */
+/* - 5.1 subPage - subNav */
+/* 5.1 subPage - subNav - 1) 선택 되었을 때 */
+/* 5.1 subPage - subNav - 2) color customizing */
+
+/* - 5.2 subPage - subContent */
+/* - 5.2.1 pageLocation 사용자 위치 표시 */
+.page-location{
+    padding: 0 5px;
+}
+
+.page-locationWrap .chevron-right{
+    margin: 0 3px;
+}
+
+.page-locationWrap>.chevron-right{
+    margin: 0;
+}
+
+/* - 5.2.2 headerBox 카테고리별 header 이미지 */
+/* sub00, sub02 modal, sub07, sub07 modal의 header-box는 title로 대체됩니다. */
+.sub-content .header {
+    padding: 10px 0;
+}
+
+/* - 5.2.3 ProcessWrap 단계별 진행상황 */
+.processWrap>.process {
+    min-width: 25%;
+    text-indent: 10px;
+}
+/* - 5.3 subPage - section */
+.sub-content .section {
+    margin: 0 0 40px;
+}
+/* - 5.3.1 subPage - searchWrapper 과정명 검색 */
+.class-searchWrap{
+    float: none;
+}
+.class-searchWrap>.d-flex {
+    flex-wrap: wrap;
+}
+.class-searchWrap .d-flex.floatR{
+    width: 100%;
+}
+.class-searchWrap .class-search-down{
+    width: 100%;
+    margin-top: 10px;
+}
+.class-searchWrap .class-search-down .cusPHIn.input{
+    width: calc(100% - 25px);
+}
+
+/* - 5.3.2 subPage - searchWrapper 조건선택 필터 */
+/* - 5.3.3 subPage - searchWrapper 검색조건 */
+/* - 5.3.3 searchWrapper 1) viewWrap : 10개씩 보기 */
+/* - 5.3.3 searchWrapper 2) search-filter-wrap : 제목+내용 검색 */
+/* - 5.3.4 subPage - pagination 페이지 수 */
+/* - 5.3.5 subPage - sectionOutBtn (섹션 최하단 우측) 버튼 */
+
+/* -5.4 subPage - 리스트 페이지 (.eLearning) */
+/* -5.4.1 리스트 페이지 공통 */
+.class-list{
+    flex-wrap: wrap;
+    padding: 10px 0;
+    border-left: none;
+    border-right: none;
+}
+.class-list-title .c-name,
+.class-list>.c-ttl {
+    width: 100%;
+}
+
+/* -5.4.2 리스트 페이지 공통 - 과정목록 Title */
+.class-list-title {
+    display: none;
+}
+/* -5.4.3 리스트 페이지 공통  - 과정목록 Content */
+.class-list-wrap .class-list:first-child {
+    border-top: 1px solid #eee;
+}
+.class-list-wrap .class-list>.c-ctt,
+.class-list-wrap .class-list>*:nth-child(2)~* {
+    margin-top: 5px;
+}
+/* -5.5 subPage - 강의 리스트 페이지 (.eLearning) */
+/* -5.5.1 강의 리스트 - 과정목록 Title */
+.eLearning .class-list>.c-ttl>a {
+    justify-content: space-between;
+}
+
+.class-list>.c-ttl>a>.class-title-wrap {
+    width: calc(100% - 110px);
+}
+.eLearning .class-list>.c-ttl>a>.class-title-wrap>.filterWrap>div {
+    margin-right: 5px;
+}
+
+/* -5.5.2 강의 리스트 - 과정목록 Content */
+.eLearning .class-list>.c-ctt{
+    display: flex;
+    width: 30%;
+    height: 30px;
+    line-height: 30px;
+}
+.eLearning .class-list>.c-ctt:nth-child(3)~* {
+    width: 20%;
+}
+
+.eLearning .class-list .mobile-show-ttl {
+    display: block;
+}
+
+.eLearning .class-list>.c-ctt p {
+    font-size: 0.857rem;
+}
+
+.eLearning .c-price>.tableWrap {
+    display: flex;
+}
+
+.eLearning .c-price>.tableWrap>.del,
+.eLearning .class-list .button .img-icon{
+    display: none;
+}
+
+.eLearning .class-list .button {
+    width: 40px;
+    margin: 0 auto;
+}
+.eLearning .class-list .button .h5{
+    width: 100%;
+}
+
+/* -5.6 subPage - 게시판 리스트 페이지 (.container.sub0$) */
+/* -5.6.1 게시판 리스트 - 과정목록 Title */
+/* -5.6.2 게시판 리스트 - 과정목록 Content */
+.class-list-wrap .class-list{
+    padding: 10px 0;
+}
+.class-list>.c-table-01,
+.class-list>.c-table-num {
+    width: 10%;
+}
+
+.class-list>div:nth-child(2){
+    width: calc(100% - 10%);
+}
+
+
+/* open-asw / open-ctt */
+.open-asw .aswr-box{
+    padding: 5px;
+}
+.open-asw .Amark {}
+
+/* open-class (sub07)상세보기/닫기 */
+.open-class {}
+.open-class:hover{}
+.open-class>.img-icon {}
+
+/* -5.7 subPage - Tab Group 탭 */
+
+/* -5.7.1 Tab Group - Tab Title */
+.class-tabMenu>.tabGroup>li {
+    padding: 0 5px;
+    height: 40px;
+    /* 2줄이상 초과시 */
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -webkit-box-orient:vertical;
+    white-space: nowrap;
+}
+
+/* (sub06-02) plus-tabGroup : 관리자 탭 추가시 정렬*/
+.class-tabMenu>.plus-tabGroup {}
+.class-tabMenu>.plus-tabGroup>li:nth-child(2n),
+.class-tabMenu>.plus-tabGroup>li:nth-child(4n) {
+    margin-right: 0;
+}
+
+.class-tabMenu>.plus-tabGroup>li:nth-child(4n)~* {
+    margin-top: 0;
+}
+
+.class-tabMenu>.plus-tabGroup>li:nth-child(2n)~* {
+    margin-top: 10px;
+}
+
+/* -5.7.2 Tab Group - Sub Group */
+.class-tabMenu>.subGroup>.tab-sub>.sub-section {
+    flex-wrap: wrap;
+    margin: 10px 5px 20px;
+}
+.class-tabMenu .class-list-wrap .class-list:first-child{
+    border-top: none;
+}
+/* -5.8 subPage - formStyle */
+/* -5.8.1 formStyle - common */
+.formStyle {
+    width: 100%;
+}
+.formStyle>.d-flex {
+    flex-wrap: wrap;
+    padding: 0 5px;
+    border: 1px solid #f9f9f9;
+}
+.formStyle>.d-flex:nth-child(1)~* {
+    margin-top: 5px;
+}
+.formStyle>.d-flex .label {
+    line-height: 30px;
+}
+.formStyle>.d-flex>div {
+    width: 100%;
+}
+.formStyle .w100,
+.container .formStyle .email .input{width: 75px;}
+.formStyle .w355{width: 100%;}
+
+/* -5.8.2 formStyle - viewPost 게시글 보기 */
+.view-post .formStyle>.d-flex{
+    flex-wrap: nowrap;
+    padding: 0;
+}
+.view-post .d-flex>.label{
+    width: 60px;
+}
+.view-post .formStyle .d-flex{
+    border: none;
+}
+.view-post .formStyle .d-flex:nth-child(1)~*{
+    margin-top: 0;
+}
+.view-post .button-wrap{
+    justify-content:center;
+}
+/* -5.8.3 formStyle - writePost 글쓰기 */
+.write-post .formStyle{
+    padding: 5px 5px 10px;
+}
+.write-post .formStyle>.d-flex .label{
+    width: 50px;
+    line-height: 40px;
+}
+.write-post .formStyle>.d-flex>div{
+    width: auto;
+}
+.write-post .post-content {
+    height: 300px;
+}
+/* -5.8.4 formStyle - userInfo 회원정보 확인 */
+.userInfo>.enterWrap,
+.userInfo>.enterWrap>.form {
+    width: calc(100% - 20px);
+}
+
+.enterWrap>.form .button {
+    width: 100%;
+}
+
+/* -5.9 subPage - table */
+/* -5.9.1 table - thead */
+/* -5.9.2 table - tbody */
+
+/*--------------------------------------------------------------
+  >> 6.0 Contents Design for Page 페이지별 개별화 된 콘텐츠 디자인
+----------------------------------------------------------------*/
+/* - 6.1 sub00 로그인/회원가입 */
+/* - 6.1.1 sub00-01 로그인 */
+/* - 6.1.2 sub00-02 회원가입 */
+/* certification 인증 */
+.certificationWrap>.certif-boxWrap {
+    flex-wrap: wrap;
+}
+.certif-boxWrap>.certif:nth-child(1)~* {
+    margin-top: 20px;
+}
+.certificationWrap>.certification-notice{
+    width: 100%;
+}
+
+/* - 6.1.3 sub00-03 아이디찾기 */
+/* - 6.1.4 sub00-04 비밀번호찾기 */
+
+/* - 6.2 eLearning(sub01~sub04) 온라인 강의 */
+/* - 6.2.1 eLearning-01 온라인 강의 목록 */
+.eLearning .class-detail{
+    width: 100%;
+    padding: 10px;
+}
+
+.eLearning .class-detail>.c-ttl {
+    height: auto;
+    min-height: 50px;
+}
+.eLearning .class-detail>.c-ttl>.class-title-wrap{
+    flex-wrap: wrap;
+}
+.eLearning .class-detail>.c-ttl>.class-title-wrap>.fz16{
+    margin: 5px 0;
+    text-align: left;
+}
+.eLearning .class-detail>.c-img,
+.eLearning .class-detail>.c-info{
+    width: 100%;
+    height: auto;
+    float: none;
+    margin: 0;
+}
+.eLearning .class-list.class-detail>.info-btnWrap{
+    width: 100%;
+    padding-right: 5px;
+}
+.eLearning .class-detail>.info-btnWrap>*{
+    margin: 0 0 0 10px;
+}
+/* - 6.2.2 eLearning-01-01 온라인 강의 상세 */
+/* - 6.3 sub05 커뮤니티 */
+/* - 6.3.1 sub05-01 공지사항/이벤트 */
+.sub05-01 .class-tabMenu{
+    margin: 20px 0 0;
+}
+.sub05 .class-list .c-table-iconAlign{
+    width: 35%;
+}
+
+/* - 6.3.2 sub05-02 수강후기/인터뷰 */
+/* - 6.3.3 sub05-03 특강/설명회 */
+/* - 6.3.4 sub05-04 자유게시판 */
+
+/* - 6.4 sub06 고객센터 */
+/* - 6.4.1 sub06-01 고객지원 */
+/* - 6.4.2 sub06-02 FAQ */
+.sub06-02 .listAndwrap .class-list>*:last-child{
+    width: 90%;
+    text-align: left;
+    margin-left: 10%;
+    opacity: .5;
+}
+/* - 6.4.3 sub06-03 단체/제휴문의 */
+/* - 6.4.4 sub06-04 오시는길 */
+
+/* - 6.5 sub07 나의강의실 */
+
+.sub07 .sub-segment .class-list,
+.myClass .sub-segment .class-list{
+    justify-content: flex-start;
+    text-align: left;
+    padding: 10px 5px;
+
+}
+
+/* - 6.5.1 sub07-01 학습현황 */
+.class-list .open-class{
+    width: 100%;
+}
+.sub07-01 .class-list>div:nth-child(4){
+    width: 70%;
+}
+.sub07-01 .open-ctt .class-list>.c-table-01 {
+    width: 20%;
+    text-align: center;
+}
+.sub07-01 .open-ctt .class-list>.c-table-btn,
+.sub07-01 .tab-sub.sub03 .class-list>div:nth-child(5),
+.sub07-01 .class-list>.c-table-btn {
+    width: 20%;
+}
+.sub07-01 .open-ctt .class-list>div:last-child{
+    margin-left: 5%;
+}
+/* 2020-03-25 학습현황 추가 */
+
+.modal-sub07-01 .modal-subGroup>.sub01{
+    height: 345px;
+    overflow-y: scroll;
+}
+.modal-sub07-01 .modal-subGroup>.sub01,
+.statusWrap, .completionWrap{
+    padding: 10px;
+}
+.statusWrap{
+    flex-wrap: wrap;
+}
+.chart{
+    margin: 0 auto;
+}
+.statusWrap>.sub-sectionWrap{
+    margin-top: 10px;
+}
+/* 수료조건 */
+.completionWrap>.completion>.sub-section{
+    margin: 0;
+}
+.graphWrap{
+    width: calc(100vw - 70px);
+}
+.graphWrap>.graphGroup{
+    flex-wrap: wrap;
+}
+.graphWrap>.graphGroup>.condition,
+.graphWrap>.graphGroup>.graph,
+.graphWrap>.graphGroup>.scoreWrap{
+    /* width: 260px; */
+    width: 100%;
+}
+.graphWrap>.graphGroup>.scoreWrap{
+    padding-left: 0;
+    text-align: center;
+}
+.completionWrap>.scoreSum>.scoreWrap{
+    width: 250px;
+}
+/* 2020-03-25 학습현황 끝 */
+
+/* - 6.5.2 sub07-02 결제현황/환불 */
+.sub07-02 .class-list>div:nth-child(2)~*{
+    width: 25%;
+    text-align: center;
+    line-height: 30px;
+}
+/* - 6.5.3 sub07-03 마일리지 */
+
+.sub07-03 .class-list-wrap>.class-list .c-table-name-w {
+    width: calc(100% - 25%);
+}
+
+.sub07-03 .sub-section {
+    flex-wrap: wrap;
+}
+
+/* - 6.5.4 sub07-04 개인정보수정 */
+/* - 6.5.5 sub07-05 회원탈퇴 */
+.sub07-05 .checkWrap{
+    height: 50px;
+}
+.sub07-05 .checkWrap .input.check{
+    margin: 8px 0;
+}
+/*--------------------------------------------------------------
+  >> 7.0 Popup Design - modal popup layer
+----------------------------------------------------------------*/
+/* - 7.1 modal popup layer - layout */
+.modal-content {
+    width: 100%;
+    height: calc(100% - 100px);
+}
+.modal-content .sub-content {
+    width: calc(100% - 10px);
+}
+/* - 7.1.1 modal popup layer - header */
+/* - 7.1.2 modal popup layer - Content */
+.modal .sub-content .section>.d-flex{
+    flex-wrap: wrap;
+}
+.modal-content .sub-content>.modal-sectionWrap{
+    padding: 0;
+}
+/* - 7.1.2 modal popup layer - Content 1) 수강신청 */
+.eLearning .modal .formStyle .user-birth{
+    display: flex;
+    justify-content: space-between;
+}
+.eLearning .modal .formStyle .user-birth>.h5{
+    width: 70%;
+    line-height: 20px;
+}
+/* modal popup layer 수강신청 - 02 환불규정 */
+.eLearning .modal .d-inline{
+    display: block;
+}
+/* modal popup layer 수강신청 - 03 결제방법 */
+.modal .input-ctt{
+    padding: 5px;
+}
+.modal .input-ctt .check-bro{
+    line-height: 20px;
+    margin: 10px 0;
+}
+.modal .bill-date{
+    flex-wrap:wrap;
+}
+.modal .bill-date>.txt{
+    margin: 0;
+}
+/* modal popup layer 수강신청 - 04 결제 */
+
+/* - 7.1.2 modal popup layer - Content 2) 나의강의실 */
+/* modal popup layer 나의강의실 - 01 학습현황 */
+/* modal popup layer 나의강의실 - 02 과목자료실 */
+/* modal popup layer 나의강의실 - 03 과목공지사항 */
+/* modal popup layer 나의강의실 - 04 과목Q&A */
+/* modal popup layer 나의강의실 - 05 설문/과제/토론 */
+}

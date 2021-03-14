@@ -1,0 +1,38 @@
+@charset "UTF-8";
+
+/***** 공통코드관리 메뉴에서 사용하는 서식 *****/
+
+#dataListBody td{
+	text-align: left;
+	padding-left: 10px;
+}
+#dataListBody .order_num{
+	border-right: 0px;
+}
+#dataListBody .code{
+	border-right: 0px;
+}
+#dataListBody .content_edit{
+	border-right: 0px;
+}
+#dataListBody .groupWidth{
+	width:70px;
+}
+#dataListBody .codeWidth{
+	width:70px;
+}
+#dataListBody .engWidth{
+	width:50px;
+}
+.top{
+	border-top: 2px solid #d0d0d0;
+}
+.codeTable select, .codeTable input[type=text]{
+	vertical-align: middle;
+}
+.codeTable button[type=button]{
+	vertical-align: middle;
+	float: left;
+	border: 0;
+	outline: 0;
+}

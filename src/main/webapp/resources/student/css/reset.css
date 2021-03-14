@@ -1,0 +1,313 @@
+@charset "UTF-8";
+/* reset.css */
+
+/* ----------------------------------------------------------------
+>> TABLE OF CONTENTS:                   담당자 : 성지민
+  0.0 font-face
+      - Noto Sans KR, Nanum Gothic, Malgun Gothic, Apple SD Gothic Neo, AppleSDGothic, dotum, sans-serif
+
+  1.0 reset 표준화
+      - 1.1 HTML5 display-role reset for older browsers
+      - 1.2 Typography
+      - 1.0 ALL Element
+      - 1.3 Table, Link
+      - 1.4 form element reset
+
+  2.0 custom style
+      - 2.1 content align
+      - 2.2 text
+      - 2.3 button
+----------------------------------------------------------------*/
+
+/*--------------------------------------------------------------
+  >> 0.0 font-face
+----------------------------------------------------------------*/
+/* nanum-gothic-regular - korean_latin */
+@font-face {
+    font-family: 'Nanum Gothic';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/nanum-gothic-v17-korean_latin-regular.eot');
+    /* IE9 Compat Modes */
+    src: local('NanumGothic'),
+        url('../fonts/nanum-gothic-v17-korean_latin-regular.eot?#iefix') format('embedded-opentype'),
+        /* IE6-IE8 */
+        url('../fonts/nanum-gothic-v17-korean_latin-regular.woff2') format('woff2'),
+        /* Super Modern Browsers */
+        url('../fonts/nanum-gothic-v17-korean_latin-regular.woff') format('woff'),
+        /* Modern Browsers */
+        url('../fonts/nanum-gothic-v17-korean_latin-regular.ttf') format('truetype'),
+        /* Safari, Android, iOS */
+        url('../fonts/nanum-gothic-v17-korean_latin-regular.svg#NanumGothic') format('svg');
+    /* Legacy iOS */
+}
+
+/* nanum-gothic-800 - korean_latin */
+@font-face {
+    font-family: 'Nanum Gothic';
+    font-style: normal;
+    font-weight: 800;
+    src: url('../fonts/nanum-gothic-v17-korean_latin-800.eot');
+    /* IE9 Compat Modes */
+    src: local('NanumGothic ExtraBold'), local('NanumGothic-ExtraBold'),
+        url('../fonts/nanum-gothic-v17-korean_latin-800.eot?#iefix') format('embedded-opentype'),
+        /* IE6-IE8 */
+        url('../fonts/nanum-gothic-v17-korean_latin-800.woff2') format('woff2'),
+        /* Super Modern Browsers */
+        url('../fonts/nanum-gothic-v17-korean_latin-800.woff') format('woff'),
+        /* Modern Browsers */
+        url('../fonts/nanum-gothic-v17-korean_latin-800.ttf') format('truetype'),
+        /* Safari, Android, iOS */
+        url('../fonts/nanum-gothic-v17-korean_latin-800.svg#NanumGothic') format('svg');
+    /* Legacy iOS */
+}
+
+/* noto-sans-kr-regular - korean_latin */
+@font-face {
+    font-family: 'Noto Sans KR';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/noto-sans-kr-v11-korean_latin-regular.eot');
+    /* IE9 Compat Modes */
+    src: local('Noto Sans KR Regular'), local('NotoSansKR-Regular'),
+        url('../fonts/noto-sans-kr-v11-korean_latin-regular.eot?#iefix') format('embedded-opentype'),
+        /* IE6-IE8 */
+        url('../fonts/noto-sans-kr-v11-korean_latin-regular.woff2') format('woff2'),
+        /* Super Modern Browsers */
+        url('../fonts/noto-sans-kr-v11-korean_latin-regular.woff') format('woff'),
+        /* Modern Browsers */
+        url('../fonts/noto-sans-kr-v11-korean_latin-regular.ttf') format('truetype'),
+        /* Safari, Android, iOS */
+        url('../fonts/noto-sans-kr-v11-korean_latin-regular.svg#NotoSansKR') format('svg');
+    /* Legacy iOS */
+}
+
+/* noto-sans-kr-700 - korean_latin */
+@font-face {
+    font-family: 'Noto Sans KR';
+    font-style: normal;
+    font-weight: 700;
+    src: url('../fonts/noto-sans-kr-v11-korean_latin-700.eot');
+    /* IE9 Compat Modes */
+    src: local('Noto Sans KR Bold'), local('NotoSansKR-Bold'),
+        url('../fonts/noto-sans-kr-v11-korean_latin-700.eot?#iefix') format('embedded-opentype'),
+        /* IE6-IE8 */
+        url('../fonts/noto-sans-kr-v11-korean_latin-700.woff2') format('woff2'),
+        /* Super Modern Browsers */
+        url('../fonts/noto-sans-kr-v11-korean_latin-700.woff') format('woff'),
+        /* Modern Browsers */
+        url('../fonts/noto-sans-kr-v11-korean_latin-700.ttf') format('truetype'),
+        /* Safari, Android, iOS */
+        url('../fonts/noto-sans-kr-v11-korean_latin-700.svg#NotoSansKR') format('svg');
+    /* Legacy iOS */
+}
+
+/*--------------------------------------------------------------
+  >> 1.0 reset 표준화
+----------------------------------------------------------------*/
+/* http://meyerweb.com/eric/tools/css/reset/
+       v2.0 | 20110126 License: none (public domain) */
+/* 1.0 ALL Element */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    box-sizing: border-box;
+}
+
+/* 1.1 HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+    box-sizing: border-box;
+}
+
+/* 1.2 Typography */
+html {
+    font-size: 14px;
+}
+
+body {
+    font-family: "Noto Sans KR", "Nanum Gothic", "Malgun Gothic", "Apple SD Gothic Neo", "AppleSDGothic", "dotum", "sans-serif";
+    line-height: 20px;
+    color: #444;
+    word-break: keep-all;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: 1em;
+    font-weight: normal;
+}
+
+ol, ul {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+blockquote, q {
+    quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+
+/* 1.3 Table, Link */
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* 1.4 form element reset*/
+input, texrarea, button, select, option {
+    box-sizing: border-box;
+}
+
+form, label {
+    display: block;
+}
+
+*:focus {
+    outline: 0;
+}
+
+/*--------------------------------------------------------------
+  >> 2.0 custom style
+----------------------------------------------------------------*/
+/* 2.1 content align */
+.floatL {
+    float: left;
+}
+.floatR {
+    float: right;
+}
+
+.d-flex {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.flexWrap {
+    -webkit-box-lines: multiple;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+.justify_between {
+    justify-content: space-between;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+}
+
+.justify_around {
+    justify-content: space-around;
+}
+
+.justify_start {
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+}
+
+.justify_end {
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+}
+
+.justify_center {
+    justify-content: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+}
+
+.d-inline {
+    display: inline;
+}
+
+/* 2.2 text */
+.text-over {
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    white-space: nowrap;
+}
+
+.txt-ov-2 {
+    white-space: normal;
+    -webkit-line-clamp: 2;
+}
+
+.h1 {
+    /* font-size: 60px; */
+    font-size: 4.286rem;
+    line-height: 80px;
+    font-weight: bold;
+}
+
+.fz34 {
+    font-size: 2.429rem;
+}
+
+.h2 {
+    /* font-size: 30px; */
+    font-size: 2.143rem;
+    line-height: 40px;
+    font-weight: bold;
+}
+
+.fz24 {
+    /* font-size: 24px; */
+    font-size: 1.714rem;
+}
+
+.h3 {
+    /* font-size: 20px; */
+    font-size: 1.429rem;
+    line-height: 40px;
+    font-weight: bold;
+}
+
+.h4, .fz18 {
+    /* font-size: 18px; */
+    font-size: 1.286rem;
+}
+
+.fz16 {
+    /* font-size: 16px; */
+    font-size: 1.143rem;
+}
+
+.fz14 {
+    /* font-size: 14px; */
+    font-size: 1rem;
+}
+
+.fz13 {
+    /* font-size: 13px; */
+    font-size: 0.9286rem;
+}
+
+.h5 {
+    /* font-size: 12px; */
+    font-size: 0.857rem;
+}
+
+/* 2.3 button */
+.button {
+    border: none;
+    background-color: inherit;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    text-align: center;
+}

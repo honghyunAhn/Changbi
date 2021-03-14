@@ -1,0 +1,12 @@
+@charset "UTF-8";
+
+/***** 공통코드관리 수정 팝업에서 사용하는 서식 *****/
+
+.tables_wrapper button[type=button]{
+	vertical-align: middle;
+	border: 0;
+	outline: 0;
+}
+.tables_wrapper input[type=text]{
+	vertical-align: middle;
+}

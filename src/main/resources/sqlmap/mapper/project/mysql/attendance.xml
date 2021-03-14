@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.changbi.tt.dev.data.dao.AttendanceDAO">
+
+	<resultMap id="InfoAttendanceMap" type="com.changbi.tt.dev.data.vo.InfoAttendanceVO" autoMapping="true">
+		<id		property="attInfoTimeSeq"  				column="ATT_INFO_TIME_SEQ"				javaType="int"/>
+		<result property="attDtSeq" 					column="ATT_DT_SEQ" 					javaType="int"/>
+		<result property="userId" 						column="USER_ID" 						javaType="String"/>
+		<result property="inTime" 						column="IN_TIME"						javaType="String"/>
+		<result property="outTime" 						column="OUT_TIME" 						javaType="String"/>
+		<result property="memo" 						column="MEMO" 							javaType="String"/>
+		<result property="attFinalGubun" 				column="ATT_FINAL_GUBUN" 				javaType="String"/>
+		<result property="regOriginFile" 				column="REG_ORIGIN_FILE" 				javaType="String"/>
+		<result property="regSavedFile" 				column="REG_SAVED_FILE" 				javaType="String"/>
+		<result property="userMemo" 					column="USER_MEMO" 						javaType="String"/>
+		<association property="certiAttachFile" 	column="CERTIFICATION_ATTACHED"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+	</resultMap>
+	
+	<!-- 출석일수 결정 -->
+    <insert id="insertDate" parameterType="AttendanceVO">
+    	INSERT INTO COM_ATTENDANCE_DATE
+		(COURSE_ID,CARDINAL_ID,START,END)
+		VALUES
+		(#{courseId},#{cardinalId},#{start},#{end})
+		ON DUPLICATE KEY UPDATE
+		START=#{start},
+		END=#{end}
+	</insert>
+	<!-- 출석일수 검색 (현재 미사용)-->
+	<select id="selectDate" parameterType="AttendanceVO" resultType="AttendanceVO">
+		SELECT 
+			COURSE_ID,CARDINAL_ID,MIN(ATT_DATE) AS START, MAX(ATT_DATE) AS END
+		FROM
+			SMTP_ATTENDANCE_DATE
+		WHERE
+			COURSE_ID=#{courseId}
+		AND
+			CARDINAL_ID=#{cardinalId}
+	</select>
+	<!-- 출석일수 삭제 -->
+	<delete id="deleteDate"  parameterType="AttendanceVO">
+		DELETE COM_ATTENDANCE_DATE 
+		WHERE
+		COURSE_ID=#{courseId} AND CARDINAL_ID=#{cardinalId}
+	</delete>
+	<!-- 출석처리 -->
+	<insert id="insertAttendance" parameterType="java.util.Map">
+		INSERT INTO COM_ATTENDANCE_CHECK
+		(COURSE_ID,CARDINAL_ID,USER_ID,PRESENT_DATE,STATUS,ISGONE,MEMO)
+		VALUES
+		
+		<foreach collection="datelist" item="item" separator=" , ">
+            (#{item.courseId}, #{item.cardinalId},#{item.userId},#{item.presentDate},#{item.status},#{item.isGone},#{item.memo})
+        </foreach>
+		
+		ON DUPLICATE KEY UPDATE
+		STATUS=VALUES(STATUS),
+		ISGONE=VALUES(ISGONE),
+		MEMO=VALUES(MEMO)
+		
+	</insert>
+	
+	<select id="selectAttendance" parameterType="AttendanceVO" resultType="AttendanceVO">
+		SELECT COURSE_ID,CARDINAL_ID,USER_ID,PRESENT_DATE,STATUS
+		FROM COM_ATTENDANCE_CHECK
+		WHERE 
+		COURSE_ID=#{courseId} AND CARDINAL_ID=#{cardinalId} AND PRESENT_DATE=#{presentDate}
+	</select>
+	
+	<select id="selectAttendanceById" parameterType="AttendanceVO" resultType="AttendanceVO">
+		SELECT  COURSE_ID,CARDINAL_ID,USER_ID,PRESENT_DATE,STATUS
+		FROM COM_ATTENDANCE_CHECK
+		WHERE USER_ID=#{userId} AND COURSE_ID=#{courseId} AND CARDINAL_ID=#{cardinalId} 
+	</select>
+	
+	<select id="selectAttendanceByDate" parameterType="AttendanceVO" resultType="AttendanceVO">
+		SELECT  COURSE_ID,CARDINAL_ID,USER_ID,PRESENT_DATE,STATUS,ISGONE,MEMO
+		FROM COM_ATTENDANCE_CHECK
+		WHERE
+		USER_ID=#{userId} AND CARDINAL_ID=#{cardinalId} AND PRESENT_DATE=#{presentDate}
+	</select>
+	
+	<select id="selectDates" parameterType="hashmap" resultType="DateAttendanceVO">
+		SELECT
+			DATE_FORMAT(d.ATT_DATE, '%Y-%m-%d') AS ATT_DATE,
+			DATE_FORMAT(s.STAND_IN_TIME, '%H:%i') AS STAND_IN_TIME,
+			DATE_FORMAT(s.STAND_OUT_TIME, '%H:%i') AS STAND_OUT_TIME,
+			s.SISU,
+			s.ATT_SISU_SEQ
+		FROM
+			SMTP_ATTENDANCE_SISU s
+		INNER JOIN
+			SMTP_ATTENDANCE_DATE d
+		WHERE
+			s.ATT_DT_SEQ = d.ATT_DT_SEQ
+		AND
+			d.COURSE_ID = #{course_id}
+		AND
+			d.CARDINAL_ID = #{cardinal_id}
+		<if test="startDate != null">
+			<![CDATA[
+				AND
+					DATE_FORMAT(d.ATT_DATE, '%Y-%m-%d') >= #{startDate}
+				AND	
+					DATE_FORMAT(d.ATT_DATE, '%Y-%m-%d') <= #{endDate}
+			]]>
+		</if>
+		ORDER BY 
+			DATE_FORMAT(d.ATT_DATE, '%Y-%m-%d'),
+			DATE_FORMAT(s.STAND_IN_TIME, '%H:%i')		
+	</select>
+	
+	<delete id="deleteSmtpDate" parameterType="hashmap">
+		DELETE 
+			FROM
+		SMTP_ATTENDANCE_SISU
+			WHERE
+		<!-- COURSE_ID = #{course_id}
+			AND 
+		CARDINAL_ID = #{cardinal_id}
+			AND
+		ATT_DATE = #{att_date}
+			AND
+		STAND_IN_TIME = #{stand_in_time}
+			AND
+		STAND_OUT_TIME = #{stand_out_time} -->
+		ATT_SISU_SEQ = #{seq}
+	</delete>
+	
+	<select id="selectedDate" parameterType="hashmap" resultType="hashmap">
+		SELECT 
+			I.ATT_INFO_TIME_SEQ
+	        , I.ATT_DT_SEQ
+	        , I.USER_ID
+	        , U.USER_NM
+	        , DATE_FORMAT(U.USER_BIRTH, '%Y-%m-%d') as USER_BIRTH
+	        , DATE_FORMAT(I.IN_TIME, "%H:%i") AS IN_TIME
+	        , DATE_FORMAT(I.OUT_TIME, "%H:%i") AS OUT_TIME
+	        , I.ATT_FINAL_GUBUN
+	        , I.MEMO
+	        , I.USER_MEMO
+	        , D.ATT_DATE
+	     	, I.CERTIFICATION_ATTACHED as certiAttachedFile
+	        , I.REG_ORIGIN_FILE
+	        , I.REG_SAVED_FILE
+	     FROM
+	        SMTP_ATTENDANCE_DATE D
+	     join
+	        SMTP_ATTENDANCE_INFO_TIME I
+	     on
+	        D.ATT_DT_SEQ = I.ATT_DT_SEQ
+	     join
+	     	COM_USER_TB U
+	     on
+	     	I.user_id = U.user_id
+	     WHERE
+	        D.COURSE_ID = #{course_id}
+	     AND
+	        D.CARDINAL_ID = #{cardinal_id}
+	     <choose>
+	     	<when test="end_date == null">
+	     		AND 
+					DATE_FORMAT(D.ATT_DATE, '%Y-%m-%d') = #{att_date}
+	     	</when>
+	     	<when test="end_date != null">
+				<![CDATA[
+			    	AND
+			     		DATE_FORMAT(D.ATT_DATE, '%Y-%m-%d') >= #{att_date}
+			     	AND
+			     		DATE_FORMAT(D.ATT_DATE, '%Y-%m-%d') <= #{end_date}
+			     	]]>
+	     	</when>
+	     </choose>
+	     ORDER BY 
+	     	U.USER_NM,
+	     	D.ATT_DATE
+	</select>
+	
+	<update id="attendanceUpdate" parameterType="InfoAttendanceVO">
+		<!-- <foreach collection="list" item="item"> -->
+		UPDATE 
+			SMTP_ATTENDANCE_INFO 
+		SET
+			IN_TIME = #{inTime}
+			, OUT_TIME = #{outTime}
+			, MEMO = #{memo}
+		WHERE
+			ATT_DT_SEQ = #{attDtSeq}
+		AND 
+			USER_ID = #{userId}
+		<!-- </foreach> -->
+	</update>
+	
+<!-- 	<insert id="newDatesAdd" parameterType="java.util.List">
+		INSERT INTO SMTP_ATTENDANCE_SISU
+		(ATT_DT_SEQ_GROUP, COURSE_ID, CARDINAL_ID, ATT_DATE, STAND_IN_TIME, STAND_OUT_TIME)
+		VALUES
+		<foreach collection="list" item="item" separator=" , ">
+			(#{item.attDtSeqGroup}, #{item.courseId}, #{item.cardinalId}, 
+			#{item.attDate}, #{item.standInTime}, #{item.standOutTime})
+		</foreach>
+	</insert> -->
+	
+	<select id="stuAttendanceUpdate" parameterType="hashmap" resultMap="InfoAttendanceMap">
+		SELECT 
+			ATT_INFO_TIME_SEQ, ATT_DT_SEQ, USER_ID, DATE_FORMAT(IN_TIME, '%H:%i') AS IN_TIME,
+			DATE_FORMAT(OUT_TIME, '%H:%i') AS OUT_TIME, ATT_FINAL_GUBUN, REG_ORIGIN_FILE, REG_SAVED_FILE,
+			MEMO, CERTIFICATION_ATTACHED, USER_MEMO
+		FROM
+			SMTP_ATTENDANCE_INFO_TIME
+		WHERE
+			ATT_INFO_TIME_SEQ = #{ATT_INFO_TIME_SEQ}
+	</select>
+	
+	<select id="stuName" parameterType="string" resultType="string">
+		SELECT 
+			USER_NM
+		FROM
+			COM_USER_TB
+		WHERE
+			USER_ID = #{userName}
+	</select>
+	
+	<update id="stuUpdate" parameterType="InfoAttendanceVO">
+		UPDATE
+			SMTP_ATTENDANCE_INFO_TIME
+		SET
+		<if test='!attFinalGubun.equals("B4702")'>
+			IN_TIME = #{inTime},
+			OUT_TIME = #{outTime},
+		</if>
+			ATT_FINAL_GUBUN = #{attFinalGubun},
+		<if test='memo != "" and memo != null'>
+			MEMO = #{memo},
+		</if>
+			CERTIFICATION_ATTACHED = #{certiAttachFile.fileId},
+			UPD_DATE = now()
+		WHERE
+			ATT_INFO_TIME_SEQ = #{attInfoTimeSeq}
+	</update>
+	
+	<insert id="addDates" parameterType="java.util.List">
+		INSERT INTO SMTP_ATTENDANCE_DATE
+			(COURSE_ID, CARDINAL_ID, ATT_DATE)
+		VALUES
+			<foreach collection="list" item="item" separator=", ">
+				(
+					#{item.course_id}, #{item.cardinal_id}, #{item.att_date}
+				)
+			</foreach>
+	</insert>
+	
+	<select id="compareDates" parameterType="hashmap" resultType="hashmap">
+		SELECT
+			COURSE_ID, CARDINAL_ID, DATE_FORMAT(ATT_DATE, '%Y-%m-%d') AS ATT_DATE
+		FROM
+			SMTP_ATTENDANCE_DATE
+		WHERE
+			COURSE_ID = #{course_id}
+		AND
+			CARDINAL_ID = #{cardinal_id}
+		ORDER BY
+			ATT_DATE
+	</select>
+	
+	<delete id="compareDeleted" parameterType="hashmap">
+		DELETE FROM
+			SMTP_ATTENDANCE_DATE
+		WHERE
+			COURSE_ID = #{course_id}
+		AND
+			CARDINAL_ID = #{cardinal_id}
+		<choose>
+			<when test="start_date != null and end_date != null">
+				<![CDATA[
+					AND
+						DATE_FORMAT(ATT_DATE, '%Y-%m-%d') < #{start_date}
+					OR
+						DATE_FORMAT(ATT_DATE, '%Y-%m-%d') > #{end_date}
+				]]>
+			</when>
+			<when test="start_date != null and !start_date.equals('')">
+				<![CDATA[
+					AND
+						DATE_FORMAT(ATT_DATE, '%Y-%m-%d') < #{start_date}
+				]]>
+			</when>
+			<when test="end_date != null and !end_date.equals('')">
+				<![CDATA[
+					AND
+						DATE_FORMAT(ATT_DATE, '%Y-%m-%d') > #{end_date}
+				]]>
+			</when>
+		</choose>
+	</delete>
+	
+	<select id="registeredList" parameterType="hashmap" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM
+			SMTP_ATTENDANCE_INFO_TIME
+		WHERE
+			ATT_DT_SEQ
+		IN
+			(
+				SELECT
+					ATT_DT_SEQ
+				FROM
+					SMTP_ATTENDANCE_DATE
+				WHERE
+					COURSE_ID = #{course_id}
+				AND
+					CARDINAL_ID = #{cardinal_id}
+				AND
+					DATE_FORMAT(ATT_DATE, '%Y-%m-%d') = #{att_date}
+				AND
+					USER_ID = #{user_id}
+			)
+	</select>
+	
+	<insert id="addSisu" parameterType="java.util.List">
+		INSERT INTO SMTP_ATTENDANCE_SISU
+			(ATT_DT_SEQ, STAND_IN_TIME, STAND_OUT_TIME, SISU)
+		VALUES
+			<foreach collection="list" item="item" separator=", ">
+				(
+					(SELECT ATT_DT_SEQ FROM SMTP_ATTENDANCE_DATE WHERE COURSE_ID = #{item.course_id} AND CARDINAL_ID = #{item.cardinal_id} AND ATT_DATE = #{item.att_date}),
+					#{item.stand_in_time},
+					#{item.stand_out_time},
+					#{item.sisu}
+				)
+			</foreach>
+	</insert>
+	
+	<select id="stuListDownload" parameterType="hashmap" resultType="hashmap">
+		SELECT 
+			C.USER_NM, D.USER_ID, DATE_FORMAT(C.USER_BIRTH, '%Y-%m-%d') as USER_BIRTH
+		FROM
+			CB_LEARN_APP D 
+		INNER JOIN 
+			COM_USER_TB C 
+		ON
+			D.USER_ID = C.USER_ID
+		WHERE
+			D.ACCEPTANCE_YN = 'Y'
+		AND
+			D.CARDINAL_ID = #{cardinal_id}
+		AND 
+			D.COURSE_ID = #{course_id}
+		AND
+			D.USER_ID
+		NOT IN
+			(
+				SELECT
+					O.USER_ID
+				FROM
+					SMTP_INFO_BASIC_TB O
+				WHERE
+					O.GISU_ID = #{cardinal_id}
+				AND
+					O.CRC_ID = #{course_id}
+				AND 
+					STU_STATE_CK = 'A1701'
+			)
+	</select>
+	
+	<insert id="attendInputUserInfo" parameterType="java.util.List">
+		INSERT INTO
+			SMTP_ATTENDANCE_INFO_TIME 
+		    (
+				ATT_DT_SEQ,
+		        USER_ID,
+		        IN_TIME,
+		        OUT_TIME,
+		        ATT_FINAL_GUBUN,
+		        REG_DATE
+		    )
+		VALUES 
+		<foreach collection="list" item="item" separator=", ">
+		    (
+				(SELECT ATT_DT_SEQ FROM SMTP_ATTENDANCE_DATE WHERE COURSE_ID = #{item.course_id} AND CARDINAL_ID = #{item.cardinal_id} AND DATE_FORMAT(ATT_DATE, '%Y-%m-%d') = DATE_FORMAT(#{item.att_date}, '%Y-%m-%d')),
+		        #{item.user_id},
+		        #{item.in_time},
+		        #{item.out_time},
+		        #{item.att_final_gubun},
+		        now()
+		    )
+		</foreach>
+	</insert>
+	
+	<insert id="emptyInputUserInfo" parameterType="java.util.List">
+		INSERT INTO
+			SMTP_ATTENDANCE_INFO_TIME 
+		    (
+				ATT_DT_SEQ,
+		        USER_ID,
+		        ATT_FINAL_GUBUN,
+		        REG_DATE
+		    )
+		VALUES 
+		<foreach collection="list" item="item" separator=", ">
+		    (
+				(SELECT ATT_DT_SEQ FROM SMTP_ATTENDANCE_DATE WHERE COURSE_ID = #{item.course_id} AND CARDINAL_ID = #{item.cardinal_id} AND DATE_FORMAT(ATT_DATE, '%Y-%m-%d') = DATE_FORMAT(#{item.att_date}, '%Y-%m-%d')),
+		        #{item.user_id},
+		        #{item.att_final_gubun},
+		        now()
+		    )
+		</foreach>
+	</insert>
+	
+	<select id="selectAttendanceInfo" parameterType="hashmap" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM
+			SMTP_ATTENDANCE_INFO
+		WHERE
+		<choose>
+			<when test="att_date != null and att_date != ''">
+				USER_ID = #{user_id}
+			AND
+				ATT_SISU_SEQ 
+			IN (
+				SELECT 
+					ATT_SISU_SEQ 
+				FROM 
+					SMTP_ATTENDANCE_SISU 
+				WHERE 
+					ATT_DT_SEQ = (
+					SELECT 
+						ATT_DT_SEQ 
+					FROM 
+						SMTP_ATTENDANCE_DATE
+					WHERE
+						DATE_FORMAT(ATT_DATE, '%Y-%m-%d') = DATE_FORMAT(#{att_date}, '%Y-%m-%d')
+					and
+						COURSE_ID = #{course_id}
+					and
+						CARDINAL_ID = #{cardinal_id}
+					)
+				)
+			</when>
+			<otherwise>
+			USER_ID = #{USER_ID}
+			and
+				ATT_SISU_SEQ 
+			IN (
+				SELECT 
+					ATT_SISU_SEQ 
+				FROM 
+					SMTP_ATTENDANCE_SISU 
+				WHERE 
+					ATT_DT_SEQ = #{ATT_DT_SEQ}
+				)
+			</otherwise>
+		</choose>
+			
+	</select>
+	
+	<select id="selectAttendanceSisu" parameterType="hashmap" resultType="hashmap">
+		SELECT
+			*
+		fROM
+			SMTP_ATTENDANCE_SISU
+		WHERE
+		<choose>
+			<when test="att_date != null and att_date != '' and course_id != null and course_id != '' and cardinal_id != null and cardinal_id != ''">
+				ATT_DT_SEQ = (
+				SELECT 
+					ATT_DT_SEQ 
+				FROM 
+					SMTP_ATTENDANCE_DATE
+				WHERE
+					DATE_FORMAT(ATT_DATE, '%Y-%m-%d') = DATE_FORMAT(#{att_date}, '%Y-%m-%d')
+				AND
+					COURSE_ID = #{course_id}
+				AND
+					CARDINAL_ID = #{cardinal_id}
+              	)
+			</when>
+			<otherwise>
+				ATT_DT_SEQ = (
+				SELECT 
+					ATT_DT_SEQ 
+				FROM 
+					SMTP_ATTENDANCE_DATE
+				WHERE
+					ATT_DT_SEQ = #{ATT_DT_SEQ}
+              	)
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insertAttendanceSisu" parameterType="java.util.List">
+		INSERT INTO
+			SMTP_ATTENDANCE_INFO 
+			(
+				ATT_SISU_SEQ,
+				USER_ID,
+				ATT_INFO_GUBUN,
+				REG_DATE
+			) 
+		VALUES 
+			<foreach collection="list" item="item" separator=", ">
+		    (
+				#{item.att_sisu_seq},
+		        #{item.user_id},
+		        #{item.att_info_gubun},
+		        now()
+		    )
+		</foreach>
+	</insert>
+	
+	<select id="selectAttendanceTime" resultType="hashmap">
+		SELECT
+			*
+		FROM
+			SMTP_ATTENDANCE_INFO_TIME
+		order by
+			ATT_DT_SEQ
+	</select>
+		
+	<select id="selectUserSisu" parameterType="hashmap" resultType="hashMap">
+	SELECT
+		I.ATT_INFO_SEQ, D.att_date, I.user_id, i.att_info_gubun, S.SISU, DATE_FORMAT(S.STAND_IN_TIME, '%H:%i') as STAND_IN_TIME, DATE_FORMAT(S.STAND_OUT_TIME, '%H:%i') as STAND_OUT_TIME
+		FROM
+			SMTP_ATTENDANCE_INFO I
+		join
+			smtp_attendance_sisu S
+		on
+			I.ATT_SISU_SEQ = S.ATT_SISU_SEQ
+		join
+			SMTP_ATTENDANCE_DATE D
+		on
+			S.ATT_DT_SEQ = D.ATT_DT_SEQ
+		WHERE
+			I.USER_ID = #{USER_ID}
+		and		
+			D.ATT_DT_SEQ = #{ATT_DT_SEQ}
+	</select>
+	
+	<update id="stuSisuUpdate" parameterType="hashmap">
+			UPDATE
+			SMTP_ATTENDANCE_INFO
+		SET
+			ATT_INFO_GUBUN = #{attInfoGubun}
+			<!-- UPD_USER = #{UPD_USER},
+			UPD_DATE = now() -->
+		WHERE
+			ATT_INFO_SEQ = #{attInfoSeq}
+	</update>
+	
+	<update id="deleteRegFile" parameterType="int">
+		UPDATE
+			SMTP_ATTENDANCE_INFO_TIME
+		SET
+			REG_SAVED_FILE = null,
+			REG_ORIGIN_FILE = null
+		WHERE
+			ATT_INFO_TIME_SEQ = #{attInfoTimeSeq}
+	</update>
+	<select id="selectPersonalInfo" parameterType="hashmap" resultType="hashmap">
+		SELECT 
+			*
+		from (
+		select 
+			date_format(d.att_date, '%Y-%m-%d') as att_date, 
+			date_format(min(s.STAND_IN_TIME), '%H:%i') as start_time,
+			date_format(max(s.STAND_OUT_TIME), '%H:%i') as end_time,
+ 			(
+ 			case 
+ 				when t.ATT_FINAL_GUBUN = 'B4701'then '출석'
+             	when t.ATT_FINAL_GUBUN = 'B4702'then '결석'
+            	when t.ATT_FINAL_GUBUN = 'B4703'then '지각/조퇴'
+             	when t.ATT_FINAL_GUBUN = 'B4704'then '공결' 
+ 			end
+ 			) as final_gubun,
+			date_format(t.in_time, '%H:%i') as in_time,
+        	date_format(t.out_time, '%H:%i') as out_time,
+        	t.user_id
+		FROM
+			SMTP_ATTENDANCE_DATE d
+		left join
+			SMTP_ATTENDANCE_info_time t
+		on
+			d.att_dt_seq = t.att_dt_seq
+ 		left join
+ 			smtp_attendance_sisu s
+ 		on
+ 			d.att_dt_seq = s.att_dt_seq
+		WHERE
+			d.COURSE_ID=#{courseId}
+		AND
+			d.CARDINAL_ID=#{cardinalId}
+		and
+ 			d.att_date between #{start_date} and #{end_date}
+		group by
+			d.att_date) print
+		where
+			start_time is not null
+ 		and 
+			user_id = #{userId}
+		order by
+			att_date
+	</select>
+</mapper>

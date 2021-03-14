@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="forFaith.common">
+	
+	<!-- 공통 include -->
+	<sql id="oracle_header">
+	  	SELECT PAGING.* 
+	  	FROM ( SELECT ROWNUM NUM, DATA.*
+	  	       FROM (
+  	</sql>
+  	<sql id="oracle_footer">
+					) DATA
+				WHERE ROWNUM &lt;= #{numOfRows}*#{pageNo}
+			) PAGING
+		WHERE NUM &gt; (#{pageNo}-1)*#{numOfRows}
+	</sql>
+	<sql id="mysql_header"></sql>
+	<sql id="mysql_footer">
+		LIMIT #{numOfRows} OFFSET #{firstIndex}
+	</sql>
+	
+	<sql id="header"></sql>
+	<sql id="footer">
+		LIMIT #{numOfRows} OFFSET #{firstIndex}
+	</sql>
+	
+</mapper>

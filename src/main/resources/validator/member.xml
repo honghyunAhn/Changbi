@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+<!-- 회원관리 -->
+<form-validation>
+
+    <formset>
+
+        <form name="member1">
+        	<field property="memId" depends="required, maxlength">
+        		<arg0 key="아이디" resource="false" />
+        		<arg1 key="20" resource="false"/>
+			</field>
+			<field property="memNm" depends="required, maxlength">
+        		<arg0 key="이름" resource="false" />
+        		<arg1 key="60" resource="false"/>
+			</field>
+			<field property="tel" depends="maxlength">
+        		<arg0 key="전화번호" resource="false" />
+        		<arg1 key="20" resource="false"/>
+			</field>
+			<field property="phone" depends="maxlength">
+        		<arg0 key="휴대폰번호" resource="false" />
+        		<arg1 key="20" resource="false"/>
+			</field>
+			<field property="authTp" depends="required">
+        		<arg0 key="권한" resource="false" />
+			</field>
+			<field property="useYn" depends="required">
+        		<arg0 key="사용여부" resource="false" />
+			</field>
+		</form>
+
+        <form name="member2">
+			<field property="memId" depends="required, maxlength">
+        		<arg0 key="아이디" resource="false" />
+        		<arg1 key="20" resource="false"/>
+			</field>
+			<field property="memNm" depends="required, maxlength">
+        		<arg0 key="이름" resource="false" />
+        		<arg1 key="60" resource="false"/>
+			</field>
+			<field property="cpasswd" depends="required">
+        		<arg0 key="현재비밀번호" resource="false" />
+			</field>
+			<field property="passwd" depends="required">
+        		<arg0 key="비밀번호" resource="false" />
+			</field>
+			<field property="tel" depends="maxlength">
+        		<arg0 key="전화번호" resource="false" />
+        		<arg1 key="20" resource="false"/>
+			</field>
+			<field property="phone" depends="maxlength">
+        		<arg0 key="휴대폰번호" resource="false" />
+        		<arg1 key="20" resource="false"/>
+			</field>
+		</form>
+    </formset>
+
+</form-validation>

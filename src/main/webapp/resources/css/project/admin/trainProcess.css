@@ -1,0 +1,23 @@
+@charset "UTF-8";
+
+/***** 연수과정관리 > 학습과정관리(상세) 페이지에서 사용하는 서식 *****/
+
+/* 분납정보 테이블 서식 */
+.pmt_table table{
+	border: 0px;
+}
+.pmt_table table td{
+	border: 0px;
+}
+.pmt_table input[type=text]{
+	vertical-align: middle;
+}
+.pmt_table .input-group.datetimepicker{
+	vertical-align: middle;
+}
+.pmt_table .datepicker_td{
+	width: 170px;
+}
+.pmt_table .divAmt_td input[type=text]{
+	text-align: right;
+}

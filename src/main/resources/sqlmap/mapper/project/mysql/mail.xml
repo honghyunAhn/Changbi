@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.changbi.tt.dev.data.dao.MailDAO">
+
+	<insert id="insertMail" parameterType="hashmap" keyProperty="MAIL_SEQ" useGeneratedKeys="true">
+		<selectKey resultType="int" keyProperty="MAIL_SEQ" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO COM_MAILHISTORY_TB(
+			ADMIN_ID
+			,SEND_NAME
+			,SEND_TITLE
+			,SEND_CONTENT
+			,MAIL_INS_DATE
+		) VALUES (
+			#{admin_id}
+			,#{send_name}
+			,#{subject}
+			,#{content}
+			,now()
+		)
+	</insert>
+	<insert id="insertMailList" parameterType="java.util.List">
+		INSERT INTO COM_MAIL_LIST_TB(
+			MAIL_SEQ
+			,USER_ID
+			,USER_NM
+			,USER_EMAIL
+		) 
+		VALUES
+		<foreach collection="list" item="item" separator=" , ">
+		(	#{item.mail_seq}
+			,#{item.user_id}
+			,#{item.user_nm}
+			,#{item.user_email}
+		)
+		</foreach>
+	</insert>
+	<select id="selectMailList" parameterType="com.changbi.tt.dev.data.vo.MailVO" resultType="hashmap">
+		SELECT
+			MAIL_SEQ
+			,ADMIN_ID
+			,SEND_NAME
+			,SEND_TITLE
+			,SEND_CONTENT
+			,DATE_FORMAT(MAIL_INS_DATE, '%Y-%m-%d %H:%i:%s') MAIL_INS_DATE
+		FROM COM_MAILHISTORY_TB
+		WHERE 1=1
+		<if test="mail_seq != null and mail_seq != 0">
+			AND MAIL_SEQ = #{mail_seq}
+		</if>
+		<if test="(start_date != null and start_date !='') and (end_date != null and end_date !='')">
+			AND MAIL_INS_DATE BETWEEN #{start_date} AND #{end_date}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 0">
+					((SEND_NAME LIKE CONCAT('%',#{searchKeyword},'%'))
+					OR (SEND_TITLE LIKE CONCAT('%',#{searchKeyword},'%'))
+					OR (SEND_CONTENT LIKE CONCAT('%',#{searchKeyword},'%')))
+				</when>
+				<when test="searchCondition == 1">
+					SEND_NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 2">
+					SEND_TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 3">
+					SEND_CONTENT LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		ORDER BY MAIL_INS_DATE DESC
+		<if test='pagingYn=="Y"'>
+			<include refid="forFaith.common.footer"/>
+		</if>
+	</select>
+	
+	<resultMap type="com.changbi.tt.dev.data.vo.MailVO" id="mailList" autoMapping="true">
+		<collection property="list" javaType="java.util.ArrayList"	resultMap="userList"></collection>
+	</resultMap>
+	
+	<resultMap type="hashmap" id="userList" autoMapping="true">
+		<id property="MAIL_LIST_SEQ" column="MAIL_LIST_SEQ" javaType="int"/>
+		<result property="MAIL_SEQ" column="MAIL_SEQ" javaType="int"/>
+		<result property="USER_ID" column="USER_ID" />
+		<result property="USER_NM" column="USER_NM" />
+		<result property="USER_EMAIL" column="USER_EMAIL" />
+	</resultMap>
+	
+	<select id="selectReceiverList" parameterType="int" resultMap="mailList">
+		SELECT
+			MAIL_LIST_SEQ
+			,MAIL_SEQ
+			,USER_ID
+			,USER_NM
+			,USER_EMAIL
+		FROM COM_MAIL_LIST_TB
+		WHERE 
+			MAIL_SEQ = #{mail_seq}
+		ORDER BY
+			MAIL_LIST_SEQ
+	</select>
+		
+	<select id="mailListTotalCnt" parameterType="com.changbi.tt.dev.data.vo.MailVO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM COM_MAILHISTORY_TB
+		WHERE 1=1
+		<if test="(start_date != null and start_date !='') and (end_date != null and end_date !='')">
+			AND MAIL_INS_DATE BETWEEN #{start_date} AND #{end_date}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 0">
+					((SEND_NAME LIKE CONCAT('%',#{searchKeyword},'%'))
+					OR (SEND_TITLE LIKE CONCAT('%',#{searchKeyword},'%'))
+					OR (SEND_CONTENT LIKE CONCAT('%',#{searchKeyword},'%')))
+				</when>
+				<when test="searchCondition == 1">
+					SEND_NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 2">
+					SEND_TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 3">
+					SEND_CONTENT LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+	</select>
+</mapper>

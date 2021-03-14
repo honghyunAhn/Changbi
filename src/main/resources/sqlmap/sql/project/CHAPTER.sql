@@ -1,0 +1,15 @@
+-- DATETIME에 DEFAULT CURRENT_TIMESTAMP 는 mysql 5.6버전 이상부터 가능
+-- AUTO_INCREMENT 와 DEFAULT 는 5버전 이상부터는 같이 사용 불가
+CREATE TABLE CB_CHAPTER (
+	ID					INT(12)			AUTO_INCREMENT	UNIQUE		COMMENT '연수과정 차시 ID',
+	COURSE_ID			VARCHAR(12)									COMMENT '연수과정 ID',
+	NAME				VARCHAR(100)								COMMENT '챕터명',
+	STUDY				INT(2)			DEFAULT 0					COMMENT '교육시간(분)',
+	CHK					INT(2)			DEFAULT 0					COMMENT '체크(분)',
+	MAIN_URL			VARCHAR(500)								COMMENT 'PC URL',
+	MOBILE_URL			VARCHAR(500)								COMMENT '모바일 URL',
+	TEACHER				VARCHAR(50)									COMMENT '강사명',
+	FILE_INFO			VARCHAR(500)								COMMENT '강사파일',
+	SERVICE_TYPE		CHAR(1)			DEFAULT 'P'					COMMENT 'PC 모바일 구분(P : PC, M : MOBILE)',
+	ORDER_NUM			INT(3)			DEFAULT 1					COMMENT '순서(필요없음)'
+) COMMENT='연수과정 차시 관리 테이블';

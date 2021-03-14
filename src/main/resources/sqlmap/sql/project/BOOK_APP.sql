@@ -1,0 +1,33 @@
+-- DATETIME에 DEFAULT CURRENT_TIMESTAMP 는 mysql 5.6버전 이상부터 가능
+-- AUTO_INCREMENT 와 DEFAULT 는 5버전 이상부터는 같이 사용 불가
+CREATE TABLE CB_BOOK_APP (
+	ID					INT(12)			AUTO_INCREMENT	PRIMARY KEY	COMMENT '교재신청ID',
+	COURSE_ID			VARCHAR(12)		NOT NULL					COMMENT '과정ID',
+	USER_ID				VARCHAR(100)	NOT NULL					COMMENT '멤버 ID',
+	LEARN_APP_ID		INT(12)										COMMENT '연수신청ID',
+	REC_NAME			VARCHAR(50)									COMMENT '수령자',
+	TEL					VARCHAR(50)									COMMENT '일반전화',
+	PHONE				VARCHAR(50)									COMMENT '핸드폰',
+	EMAIL				VARCHAR(100)								COMMENT '이메일',
+	DELIV_TYPE			CHAR(1)			DEFAULT 'O'					COMMENT '배송지 타입(H : 집, O : 사무실)',
+	POST_CODE 			VARCHAR(8) 									COMMENT '우편번호(신:5자리, 구:6자리)',
+  	ADDR1 				VARCHAR(200)								COMMENT '주소1: 우편번호에 연결된 주소',
+  	ADDR2 				VARCHAR(200) 								COMMENT '주소2: 상세주소 (사용자 입력)',
+	REMARKS				VARCHAR(1000)								COMMENT '요청사항',
+	ORDER_IDX			VARCHAR(20)									COMMENT '주문번호(결제내역의 ORDER_IDXX와 동일)',
+	PAYMENT_TYPE		CHAR(1)			DEFAULT 'C'					COMMENT '지불형태(C : 신용카드, A : 계좌이체)',
+	AMOUNT				INT(3)			DEFAULT 0					COMMENT '구매수량',
+	PRICE				INT(10)			DEFAULT 0					COMMENT '교재가격',
+	PAYMENT_YN			CHAR(1)			DEFAULT 'N'					COMMENT '결제유무(Y/N)',
+	PAYMENT_DATE		VARCHAR(14)									COMMENT '결제확인일시',
+	ISSUE_NUM			VARCHAR(100)								COMMENT '결제발급번호',
+	DELIV_YN			CHAR(1)			DEFAULT 'N'					COMMENT '배송유무',
+	DELIV_DATE			VARCHAR(10)									COMMENT '배송일',
+	DELIV_NUM			VARCHAR(100)								COMMENT '배송번호',
+	ORDER_NUM			INT(3)			DEFAULT 1					COMMENT '순서(필요없음)',
+	USE_YN				CHAR(1)			DEFAULT 'Y'					COMMENT '사용여부(Y : 사용, N : 미사용)',
+	REG_USER        	VARCHAR(100)                             	COMMENT '등록자 ID',
+	REG_DATE			VARCHAR(14)									COMMENT '등록일자',
+  	UPD_USER        	VARCHAR(100)                             	COMMENT '수정자 ID',
+	UPD_DATE		  	VARCHAR(14)									COMMENT '수정일자'
+) COMMENT='교재 신청 관리 테이블';

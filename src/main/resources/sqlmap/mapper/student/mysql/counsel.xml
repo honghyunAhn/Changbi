@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lms.student.dao.CounselDAO">
+ 	
+  	<resultMap id="counselMap" type="com.lms.student.vo.CounselVO" autoMapping="true">
+		<id		property="counsel_seq"  		column="COUNSEL_SEQ"/>
+		<result property="user_id" 				column="USER_ID"/>
+		<result property="user_nm" 				column="USER_NM"/>
+		<result property="user_phone" 			column="USER_PHONE"/>
+		<result property="crc_id" 				column="GISU_ID"/>
+		<result property="gisu_id" 				column="CRC_ID"/>
+		<result property="crc_name" 			column="CRC_NAME"/>
+		<result property="gisu_name" 			column="GISU_NAME"/>
+		<result property="counsel_type" 		column="COUNSEL_TYPE"/>
+		<result property="counsel_title" 		column="COUNSEL_TITLE"/>
+		<result property="counsel_teacher"	 	column="COUNSEL_TEACHER"/>
+		<result property="counsel_teacher_name"	column="COUNSEL_TEACHER_NAME"/>
+		<result property="counsel_content" 		column="COUNSEL_CONTENT"/>
+		<result property="counsel_regdate"	 	column="COUNSEL_REGDATE"/>
+	</resultMap>
+
+	<select id="searchCurriculumSurvey" resultType="hashmap">
+		SELECT SEQ CRC_SEQ, ID CRC_CLASS, NAME CRC_NM
+		FROM CB_COURSE T
+		ORDER BY CRC_NM
+	</select>
+		
+	<select id="searchCurriculum" parameterType="String" resultType="hashmap">
+		SELECT
+			id crc_id
+			, name crc_nm
+		FROM 
+			CB_COURSE
+		WHERE
+			id = #{crc_id}
+	</select>
+		
+	<select id="searchGisuListSurvey" resultType="hashmap" parameterType="string">
+		SELECT CD.ID gisu_seq, CD.ID gisu_num, CD.NAME gisu_crc_nm
+		FROM CB_CARDINAL CD, CB_COURSE CS, CB_CN_COURSE CN 
+		where CN.CARDINAL_ID = CD.ID AND CS.ID = CN.COURSE_ID AND CS.ID = #{seq}
+	</select>
+	
+	<select id="CounselList" parameterType="com.lms.student.vo.CounselVO" resultMap="counselMap">
+		SELECT AST.COUNSEL_SEQ,
+			   AST.USER_ID,
+			   AST.COUNSEL_TYPE,
+			   AST.COUNSEL_TITLE,
+			   AST.COUNSEL_TEACHER,
+			   AST.COUNSEL_CONTENT,
+			   AST.COUNSEL_REGDATE,
+			   US.USER_NM, 
+			   US.USER_PHONE,
+               GISU.ID GISU_ID,
+               GISU.NAME GISU_NAME,
+               CRC.ID CRC_ID,
+               CRC.NAME CRC_NAME,
+			   UT.USER_NM COUNSEL_TEACHER_NAME
+		FROM .STU_COUNSEL_TB AST 
+		JOIN .COM_USER_TB US
+		ON AST.USER_ID = US.USER_ID
+		JOIN .COM_USER_TB UT
+		ON AST.COUNSEL_TEACHER = UT.USER_ID
+        JOIN .CB_LEARN_APP APP
+        ON APP.USER_ID = AST.USER_ID AND APP.ACCEPTANCE_YN = 'Y'
+        JOIN .CB_COURSE CRC
+        ON CRC.ID = APP.COURSE_ID
+        JOIN .CB_CARDINAL GISU
+        ON GISU.ID = APP.CARDINAL_ID
+        WHERE 1=1
+        AND AST.COURSE_ID = APP.COURSE_ID
+        AND AST.CARDINAL_ID = APP.CARDINAL_ID
+        <if test="crc_id != null and crc_id != ''">
+        	AND CRC.ID = #{crc_id}
+        </if>
+        <if test="gisu_id != null and gisu_id != ''">
+        	AND GISU.ID = #{gisu_id}
+        </if>
+        <if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(	UT.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+					OR	UT.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+					OR	M.COUNSEL_TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+					 )
+				</when>
+				<when test="searchCondition == 'name'">
+					UT.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'id'">
+					UT.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'title'">
+					M.COUNSEL_TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		ORDER BY AST.COUNSEL_SEQ DESC
+		<if test='pagingYn=="Y"'>
+			<include refid="forFaith.common.footer"/>
+		</if>
+	</select>
+	
+	<select id="CounselTotalCnt" parameterType="com.lms.student.vo.CounselVO" resultType="int">
+		SELECT COUNT(*) FROM (SELECT AST.COUNSEL_SEQ,
+			   AST.USER_ID,
+			   AST.COUNSEL_TYPE,
+			   AST.COUNSEL_TITLE,
+			   AST.COUNSEL_TEACHER,
+			   AST.COUNSEL_CONTENT,
+			   AST.COUNSEL_REGDATE,
+			   US.USER_NM, 
+			   US.USER_PHONE,
+               GISU.ID GISU_ID,
+               GISU.NAME GISU_NAME,
+               CRC.ID CRC_ID,
+               CRC.NAME CRC_NAME,
+			   UT.USER_NM COUNSEL_TEACHER_NAME
+		FROM .STU_COUNSEL_TB AST 
+		JOIN .COM_USER_TB US
+		ON AST.USER_ID = US.USER_ID
+		JOIN .COM_USER_TB UT
+		ON AST.COUNSEL_TEACHER = UT.USER_ID
+        JOIN .CB_LEARN_APP APP
+        ON APP.USER_ID = AST.USER_ID AND APP.ACCEPTANCE_YN = 'Y'
+        JOIN .CB_COURSE CRC
+        ON CRC.ID = APP.COURSE_ID
+        JOIN .CB_CARDINAL GISU
+        ON GISU.ID = APP.CARDINAL_ID
+        WHERE 1=1
+        AND AST.COURSE_ID = APP.COURSE_ID
+        AND AST.CARDINAL_ID = APP.CARDINAL_ID
+        <if test="crc_id != null and crc_id != ''">
+        	AND CRC.ID = #{crc_id}
+        </if>
+        <if test="gisu_id != null and gisu_id != ''">
+        	AND GISU.ID = #{gisu_id}
+        </if>
+        <if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(	UT.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+					OR	UT.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+					OR	M.COUNSEL_TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+					 )
+				</when>
+				<when test="searchCondition == 'name'">
+					UT.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'id'">
+					UT.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'title'">
+					M.COUNSEL_TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		ORDER BY AST.COUNSEL_SEQ DESC) T
+	</select>
+	
+	<resultMap id="counselStuMap" type="CounselVO" autoMapping="true">
+		<result	property="crc_id"  				column="crc_id"/>
+		<result property="gisu_id" 				column="gisu_id"/>
+		<result property="user_id" 				column="user_id"/>
+		<result property="user_nm" 				column="stu_user_nm"/>
+		<result property="totalCnt" 			column="totalCnt"/>
+		<result property="crc_name" 			column="crc_nm"/>
+		<result property="gisu_name" 			column="gisu_nm"/>
+		<result property="stu_photo_attached" 	column="stu_photo_attached" 		javaType="String"/>
+		
+		<association property="stu_photo_file" 	column="stu_photo_attached"			javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+	</resultMap>
+	
+	<select id="counselStudentList" parameterType="CounselVO" resultMap="counselStuMap">
+		SELECT
+			INFO.CRC_ID
+			,INFO.GISU_ID
+			,INFO.USER_ID
+			,INFO.STU_USER_NM
+			,(SELECT COUNT(*) FROM STU_COUNSEL_TB COUNSEL WHERE COUNSEL.USER_ID = INFO.USER_ID AND COUNSEL.CARDINAL_ID = INFO.GISU_ID) TOTALCNT
+			,CRC.NAME crc_nm
+			,GISU.NAME gisu_nm
+			,INFO.STU_PHOTO_ATTACHED
+		FROM
+			SMTP_INFO_BASIC_Tb INFO
+			, CB_LEARN_APP APP
+			, CB_COURSE CRC
+			, CB_CARDINAL GISU
+        WHERE
+	        APP.USER_ID = INFO.USER_ID
+	        AND APP.ACCEPTANCE_YN = 'Y'
+	        AND CRC.ID = APP.COURSE_ID
+	        AND GISU.ID = APP.CARDINAL_ID
+        	AND INFO.CRC_ID = APP.COURSE_ID
+	        AND INFO.GISU_ID = APP.CARDINAL_ID
+			<if test="crc_id != null and crc_id != ''">
+	        AND CRC.ID = #{crc_id}
+	        </if>
+	        <if test="gisu_id != null and gisu_id != ''">
+	        AND GISU.ID = #{gisu_id}
+			</if>
+			<if test="searchKeyword != null and searchKeyword != ''">
+				AND
+				<choose>
+					<when test="searchCondition == 'all'">
+						(	(INFO.STU_USER_NM LIKE CONCAT('%',#{searchKeyword},'%'))
+							OR	(INFO.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')) )
+					</when>
+					<when test="searchCondition == 'name'">
+						INFO.STU_USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+					</when>
+					<when test="searchCondition == 'id'">
+						INFO.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+					</when>
+				</choose>
+			</if>
+		ORDER BY INFO.STU_USER_NM
+	</select>
+	
+	<select id="counselStuTotalCnt" parameterType="CounselVO" resultType="int">
+		SELECT COUNT(*) FROM (SELECT
+			INFO.CRC_ID
+			,INFO.GISU_ID
+			,INFO.USER_ID
+			,INFO.STU_USER_NM
+			,(SELECT COUNT(*) FROM STU_COUNSEL_TB COUNSEL WHERE COUNSEL.USER_ID = INFO.USER_ID AND COUNSEL.CARDINAL_ID = INFO.GISU_ID) TOTALCNT
+			,CRC.NAME crc_nm
+			,GISU.NAME gisu_nm
+			,INFO.STU_PHOTO_ATTACHED
+		FROM
+			SMTP_INFO_BASIC_Tb INFO
+			, CB_LEARN_APP APP
+			, CB_COURSE CRC
+			, CB_CARDINAL GISU
+        WHERE
+	        APP.USER_ID = INFO.USER_ID
+	        AND APP.ACCEPTANCE_YN = 'Y'
+	        AND CRC.ID = APP.COURSE_ID
+	        AND GISU.ID = APP.CARDINAL_ID
+        	AND INFO.CRC_ID = APP.COURSE_ID
+	        AND INFO.GISU_ID = APP.CARDINAL_ID
+			<if test="crc_id != null and crc_id != ''">
+	        AND CRC.ID = #{crc_id}
+	        </if>
+	        <if test="gisu_id != null and gisu_id != ''">
+	        AND GISU.ID = #{gisu_id}
+			</if>
+			<if test="searchKeyword != null and searchKeyword != ''">
+				AND
+				<choose>
+					<when test="searchCondition == 'all'">
+						(	(INFO.STU_USER_NM LIKE CONCAT('%',#{searchKeyword},'%'))
+							OR	(INFO.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')) )
+					</when>
+					<when test="searchCondition == 'name'">
+						INFO.STU_USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+					</when>
+					<when test="searchCondition == 'id'">
+						INFO.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+					</when>
+				</choose>
+			</if>
+		ORDER BY INFO.STU_USER_NM) T
+	</select>
+	
+	<resultMap type="hashmap" id="stuInfoMap"> 
+		<id		property="stu_seq"				column="stu_seq"/>
+		<result property="stu_user_nm" 			column="stu_user_nm"/>
+		<result property="stu_age" 				column="stu_age"/>
+		
+        <collection property="eduHistoryList"	javaType="java.util.ArrayList"		resultMap="studentInfoEduHistory" />
+		<collection property="licenseList"		javaType="java.util.ArrayList"		resultMap="studentInfoLicense" />
+		<collection property="languageList"		javaType="java.util.ArrayList"		resultMap="studentInfoLanguage" />
+        <collection property="classList"		javaType="java.util.ArrayList"		resultMap="studentInfoClass" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="studentInfoEduHistory">
+		<result property="stu_edu_sc_nm" 	column="stu_edu_sc_nm" 	javaType="String"/>
+		<result property="stu_edu_major" 	column="stu_edu_major" 	javaType="String"/>
+	</resultMap>
+	
+	<resultMap type="hashmap" id="studentInfoLicense">
+		<result property="stu_license_nm" column="stu_license_nm" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="studentInfoLanguage">
+		<result property="stu_lang_test_nm" column="stu_lang_test_nm" />
+		<result property="stu_lang_grade" column="stu_lang_grade" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="studentInfoClass">
+		<result property="stu_class" 	column="stu_class"/>
+	</resultMap>
+	
+	<select id="counselStudentInfo" parameterType="CounselVO" resultMap="stuInfoMap">
+		SELECT
+			INFO.STU_SEQ
+			,INFO.STU_USER_NM
+			,TIMESTAMPDIFF(YEAR, STU_USER_BIRTH, DATE_FORMAT(NOW(),'%Y-%m-%d')) STU_AGE
+			,EDU.STU_EDU_SC_NM
+			,EDU.STU_EDU_MAJOR
+			,LICENSE.STU_LICENSE_NM
+			,LANG.STU_LANG_TEST_NM
+			,LANG.STU_LANG_GRADE
+			,CLASS.CLASS_NAME STU_CLASS
+		FROM
+			SMTP_INFO_BASIC_TB INFO
+		LEFT JOIN SMTP_INFO_EDUHISTORY_TB EDU
+        ON INFO.STU_SEQ = EDU.STU_SEQ
+        LEFT JOIN SMTP_INFO_LICENSE_TB LICENSE
+        ON INFO.STU_SEQ = LICENSE.STU_SEQ
+        LEFT JOIN SMTP_INFO_LANGUAGE_TB LANG
+        ON INFO.STU_SEQ = LANG.STU_SEQ
+        LEFT JOIN (select
+						user_id, gisu_id, class_name
+					from
+						stu_class_info_tb a
+						,stu_class_tb b
+					where
+						a.class_seq = b.CLASS_SEQ) class
+		ON
+			info.user_id = class.user_id AND
+			info.gisu_id = class.gisu_id
+               
+		WHERE
+			INFO.GISU_ID = #{gisu_id}
+			AND
+			INFO.CRC_ID = #{crc_id}
+			AND
+			INFO.USER_ID = #{user_id}
+		ORDER BY stu_user_nm, class_name
+	</select>
+	
+	<select id="counselDetailList" parameterType="CounselVO" resultType="hashmap">
+		SELECT
+			COUNSEL.COUNSEL_SEQ
+			,DATE_FORMAT(COUNSEL.COUNSEL_REGDATE, '%Y-%m-%d') COUNSEL_REGDATE
+			,COUNSEL.COUNSEL_TYPE
+			,COUNSEL.COUNSEL_TITLE
+			,COUNSEL.COUNSEL_TEACHER
+			,COUNSEL.COURSE_ID
+			,COUNSEL.CARDINAL_ID
+			,UT.USER_NM COUNSEL_TEACHER_NM
+		FROM
+			STU_COUNSEL_TB COUNSEL
+			,COM_USER_TB UT
+		WHERE
+			COUNSEL.COUNSEL_TEACHER = UT.USER_ID
+			AND
+			COUNSEL.USER_ID = #{user_id}
+			AND
+			COUNSEL.COURSE_ID = #{crc_id}
+			AND
+			COUNSEL.CARDINAL_ID = #{gisu_id}
+		ORDER BY COUNSEL_REGDATE
+	</select>
+	
+	<select id="searchStudent" parameterType="com.lms.student.vo.GisuCategoryVO" resultType="hashmap">
+		SELECT
+		A.ID,
+		A.USER_ID
+		, A.CARDINAL_ID
+		, A.COURSE_ID
+		, (SELECT NAME FROM .CB_COURSE WHERE ID = A.COURSE_ID) AS COURSE_NAME
+		, (SELECT NAME FROM .CB_CARDINAL WHERE ID = A.CARDINAL_ID) AS CARDINAL_NAME
+		, (SELECT USER_NM FROM .COM_USER_TB WHERE USER_ID = A.USER_ID) AS USER_NAME
+		, (SELECT USER_BIRTH FROM .COM_USER_TB WHERE USER_ID = A.USER_ID) AS BIRTH_DAY
+	
+		FROM
+		.CB_LEARN_APP A
+		WHERE CARDINAL_ID = #{gisu_id}
+		AND	COURSE_ID = #{crc_id}
+		AND A.ACCEPTANCE_YN = 'Y'
+	</select>
+	
+	<insert id="insertCounsel" parameterType="com.lms.student.vo.CounselVO">
+		INSERT INTO .STU_COUNSEL_TB
+		(COUNSEL_SEQ,USER_ID,COUNSEL_TYPE,COUNSEL_TITLE,COUNSEL_CONTENT,COUNSEL_TEACHER, COUNSEL_REGDATE, COURSE_ID, CARDINAL_ID)
+		VALUES
+		((SELECT IFNULL(MAX(COUNSEL_SEQ),0)+1 FROM .STU_COUNSEL_TB st),
+		#{user_id},
+		#{counsel_type},
+		#{counsel_title},
+		#{counsel_content},
+		#{counsel_teacher},
+		#{counsel_regdate},
+		#{crc_id},
+		#{gisu_id}
+		)
+	</insert>
+
+	<select id="searchTeacher" parameterType="com.lms.student.vo.GisuCategoryVO" resultType="hashmap">
+		SELECT US.USER_ID, US.USER_NM
+		FROM .COM_USER_TB US
+		JOIN .COM_ADMIN_TB AD
+		ON US.USER_ID = AD.ADMIN_ID
+	</select>
+	
+	<select id="selectCounsel" parameterType="String" resultType="hashmap">
+		SELECT AST.COUNSEL_SEQ,
+			   AST.USER_ID,
+			   AST.COUNSEL_TYPE,
+			   AST.COUNSEL_TITLE,
+			   AST.COUNSEL_TEACHER,
+			   AST.COUNSEL_CONTENT,
+			   AST.COUNSEL_REGDATE,
+			   US.USER_NM, 
+			   US.USER_PHONE,
+               GISU.ID GISU_ID,
+               GISU.NAME GISU_NAME,
+               CRC.ID CRC_ID,
+               CRC.NAME CRC_NAME
+		FROM .STU_COUNSEL_TB AST 
+		JOIN .COM_USER_TB US
+		ON AST.USER_ID = US.USER_ID
+        <!-- JOIN .CB_LEARN_APP APP
+        ON APP.USER_ID = AST.USER_ID AND APP.ACCEPTANCE_YN = 'Y' -->
+        JOIN .CB_COURSE CRC
+        ON CRC.ID = AST.COURSE_ID
+        JOIN .CB_CARDINAL GISU
+        ON GISU.ID = AST.CARDINAL_ID
+        WHERE 
+        	counsel_seq = #{seq}
+	</select>
+	
+	<update id="updateCounsel" parameterType="com.lms.student.vo.CounselVO">
+		UPDATE	stu_counsel_tb
+		SET
+			USER_ID=#{user_id},
+			COUNSEL_TYPE=#{counsel_type},
+			COUNSEL_TITLE=#{counsel_title},
+			COUNSEL_CONTENT=#{counsel_content},
+			COUNSEL_TEACHER=#{counsel_teacher},
+			COUNSEL_REGDATE=#{counsel_regdate},
+			COURSE_ID=#{crc_id},
+			CARDINAL_ID=#{gisu_id}
+		WHERE
+			counsel_seq = #{counsel_seq}
+	</update>
+	
+	<delete id="deleteCounsel" parameterType="com.lms.student.vo.CounselVO">
+		delete from stu_counsel_tb
+		where
+			counsel_seq = #{counsel_seq}
+	</delete>
+</mapper>

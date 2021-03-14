@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.changbi.tt.dev.data.dao.StatsDAO">
+	
+	<!-- 기수/과정 별 통계 -->
+	<!-- <select id="courseStatsList" parameterType="StatsVO" resultType="hashMap">
+		SELECT M.CARDINAL_ID, M.COURSE_ID, D.NAME AS COURSE_NAME
+			 , COUNT(M.ID) AS TOTAL_NUM
+			 , SUM(IF(M.PAYMENT_STATE = '2' AND (M.REQ_TYPE IS NULL OR M.REQ_TYPE NOT IN ('3','4')), 1, 0)) AS LEARN_NUM
+		     , SUM(IF(M.REQ_TYPE = '4', 1, 0)) AS CANCEL_NUM
+		     , SUM(IF(M.REQ_TYPE = '3', 1, 0)) AS DELAY_NUM
+		     , SUM(IF(M.ISSUE_YN = 'Y' AND M.ISSUE_NUM != '' AND M.ISSUE_NUM IS NOT NULL, 1, 0)) AS PASS_NUM
+		     , SUM(IF(M.ISSUE_YN = 'Y' AND (M.ISSUE_NUM = '' OR M.ISSUE_NUM IS NULL), 1, 0)) AS FAIL_NUM
+		     , SUM(IF(M.PAYMENT_STATE = '2' AND M.ISSUE_YN != 'Y', 1, 0)) AS NON_ISSUE_NUM
+		     , SUM(IF(M.PAYMENT_STATE = '2', IFNULL(M.PAYMENT, 0), 0)) AS PAYMENT
+		     , SUM(IF(M.PAYMENT_STATE = '2', IFNULL(M.REAL_PAYMENT, 0), 0)) AS REAL_PAYMENT
+		     , SUM(IF(M.PAYMENT_STATE = '2', IFNULL(M.DIS_COUPON, 0)+IFNULL(M.DIS_POINT, 0)+IFNULL(M.DIS_GROUP, 0), 0)) AS DISCOUNT
+		     , SUM(IF(M.PAYMENT_STATE = '4', IFNULL(M.PAYMENT, 0), 0)) AS CANCEL_PAYMENT
+		FROM CB_LEARN_APP M
+        INNER JOIN CB_MEMBER B
+        ON M.USER_ID = B.ID
+        INNER JOIN CB_CARDINAL C
+        ON M.CARDINAL_ID = C.ID
+        INNER JOIN CB_COURSE D
+        ON M.COURSE_ID = D.ID
+		WHERE 1 = 1
+		<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+			AND M.CARDINAL_ID = #{cardinal.id}
+		</if>
+		<if test="course != null and course.id != null and course.id != ''">
+			AND M.COURSE_ID = #{course.id}
+		</if>
+		GROUP BY M.CARDINAL_ID, M.COURSE_ID
+	</select> -->
+	
+	<!-- 회원가입현황 통계 -->
+	<select id="joinStatsList" parameterType="StatsVO" resultType="hashMap">
+		SELECT IF(YEAR = 0, 9999, YEAR) AS YEAR, GENDER
+			 , SUM(IF(S_TYPE = 4, 1, 0)) AS CNT1
+			 , SUM(IF(S_TYPE = 1, 1, 0)) AS CNT2
+			 , SUM(IF(S_TYPE = 2, 1, 0)) AS CNT3
+     		 , SUM(IF(S_TYPE = 3, 1, 0)) AS CNT4
+     		 , SUM(IF(S_TYPE = 5, 1, 0)) AS CNT5
+     		 , SUM(IF(S_TYPE = 6, 1, 0)) AS CNT6
+     		 , SUM(IF(S_TYPE = 0, 1, 0)) AS CNT7
+     		 , COUNT(ID) AS TOTAL_CNT
+		FROM ( SELECT ID, REG_DATE, CONCAT(IFNULL(LEFT(BIRTH_DAY, 3),''),'0') AS YEAR
+					, IFNULL(GENDER, 'M') AS GENDER
+     				, IF(GRADE = 1, IFNULL(S_TYPE, 0), 0) AS S_TYPE
+      		   FROM CB_MEMBER ) TBL
+		WHERE 1 = 1
+		<if test="year != null and year != ''">
+			AND DATE_FORMAT(REG_DATE, '%Y') = #{year}
+		</if>
+		<if test="month != null and month != ''">
+			AND DATE_FORMAT(REG_DATE, '%m') = LPAD(#{month}, 2, 0)
+		</if>
+		<if test="date != null and date != ''">
+			AND DATE_FORMAT(REG_DATE, '%d') = LPAD(#{date}, 2, 0)
+		</if>
+		GROUP BY YEAR, GENDER
+		ORDER BY YEAR, GENDER DESC
+	</select>
+	
+	<!-- 회원현황 및 게시물 통계 -->
+	<select id="userStatsList" parameterType="StatsVO" resultType="hashMap">
+		SELECT IFNULL(A.A_CNT, 0) AS A_CNT, IFNULL(A.B_CNT, 0) AS B_CNT,  IFNULL(A.C_CNT, 0) AS C_CNT
+			 , IFNULL(B.D_CNT, 0) AS D_CNT, IFNULL(B.E_CNT, 0) AS E_CNT
+			 , IFNULL(C.TOTAL_STATE, 0) AS TOTAL_STATE, IFNULL(C.STATE_1, 0) AS STATE_1
+			 , IFNULL(C.STATE_2, 0) AS STATE_2, IFNULL(C.STATE_3, 0) AS STATE_3, IFNULL(C.STATE_4, 0) AS STATE_4
+			 , IFNULL(C.PAYMENT_1, 0) AS PAYMENT_1, IFNULL(C.PAYMENT_2, 0) AS PAYMENT_2, IFNULL(C.PAYMENT_3, 0) AS PAYMENT_3
+			 , IFNULL(C.ISSUE_1, 0) AS ISSUE_1, IFNULL(C.ISSUE_2, 0) AS ISSUE_2
+			 , IFNULL(C.LEARN_1, 0) AS LEARN_1, IFNULL(C.LEARN_2, 0) AS LEARN_2, IFNULL(C.LEARN_3, 0) AS LEARN_3
+			 , IFNULL(C.TOTAL_BOOK, 0) AS TOTAL_BOOK, IFNULL(C.BOOK_1, 0) AS BOOK_1
+			 , IFNULL(D.BOARD_1, 0) AS BOARD_1, IFNULL(D.BOARD_2, 0) AS BOARD_2, IFNULL(D.BOARD_3, 0) AS BOARD_3
+		FROM ( SELECT SUM(IF(GRADE = 9, 1, 0)) AS A_CNT, SUM(IF(GRADE = 8, 1, 0)) AS B_CNT, SUM(IF(GRADE = 1, 1, 0)) AS C_CNT
+			   FROM FF_MEMBER
+			   WHERE REG_DATE BETWEEN DATE_FORMAT(#{searchStartDate},'%Y%m%d%H%i%s') 
+			   AND DATE_FORMAT(CONCAT(#{searchEndDate},' 23:59:59'),'%Y%m%d%H%i%s') ) A
+		INNER JOIN ( SELECT SUM(IF(GRADE = 1, 1, 0)) AS D_CNT, SUM(IF(GRADE = 2, 1, 0)) AS E_CNT
+              		 FROM CB_MEMBER
+              		 WHERE REG_DATE BETWEEN DATE_FORMAT(#{searchStartDate},'%Y%m%d%H%i%s') 
+              		 AND DATE_FORMAT(CONCAT(#{searchEndDate},' 23:59:59'),'%Y%m%d%H%i%s') ) B
+		INNER JOIN ( SELECT COUNT(A.ID) AS TOTAL_STATE
+		                  , SUM(IF(A.PAYMENT_STATE = '1' AND (A.REQ_TYPE IS NULL OR A.REQ_TYPE NOT IN ('3','4')), 1, 0)) AS STATE_1
+		                  , SUM(IF(A.PAYMENT_STATE = '2' AND (A.REQ_TYPE IS NULL OR A.REQ_TYPE NOT IN ('3','4')), 1, 0)) AS STATE_2
+		                  , SUM(IF(A.REQ_TYPE = '3', 1, 0)) AS STATE_3
+		                  , SUM(IF(A.REQ_TYPE = '4', 1, 0)) AS STATE_4
+		                  , SUM(IF(A.PAYMENT_STATE = '1', 1, 0)) AS PAYMENT_1
+		                  , SUM(IF(A.PAYMENT_STATE = '2', 1, 0)) AS PAYMENT_2
+		                  , SUM(IF(A.PAYMENT_STATE = '4', 1, 0)) AS PAYMENT_3
+		                  , SUM(IF(A.ISSUE_YN ='Y' AND (A.ISSUE_NUM IS NOT NULL AND A.ISSUE_NUM != ''), 1, 0)) AS ISSUE_1
+		                  , SUM(IF(A.ISSUE_YN ='Y' AND (A.ISSUE_NUM IS NULL OR A.ISSUE_NUM = ''), 1, 0)) AS ISSUE_2
+		                  , SUM(IF(C.LEARN_TYPE = 'S', 1, 0)) AS LEARN_1
+		                  , SUM(IF(C.LEARN_TYPE IN ('J','G') AND D.CREDIT IN ('1','2'), 1, 0)) AS LEARN_2
+		                  , SUM(IF(C.LEARN_TYPE IN ('J','G') AND D.CREDIT IN ('3','4'), 1, 0)) AS LEARN_3
+		                  , SUM(TOTAL_BOOK) AS TOTAL_BOOK, SUM(BOOK_1) AS BOOK_1
+	              	 FROM CB_LEARN_APP A
+		             INNER JOIN CB_MEMBER B
+		             ON A.USER_ID = B.ID
+		             INNER JOIN CB_CARDINAL C
+		             ON A.CARDINAL_ID = C.ID
+		             INNER JOIN CB_COURSE D
+		             ON A.COURSE_ID = D.ID
+		             INNER JOIN ( SELECT A.ID, COUNT(E.ID) AS TOTAL_BOOK
+	                                   , SUM(IF(E.DELIV_YN = 'Y', 1, 0)) AS BOOK_1
+		                          FROM CB_LEARN_APP A
+		                          INNER JOIN CB_MEMBER B
+		                          ON A.USER_ID = B.ID
+		                          INNER JOIN CB_CARDINAL C
+		                          ON A.CARDINAL_ID = C.ID
+		                          INNER JOIN CB_COURSE D
+		                          ON A.COURSE_ID = D.ID
+		                          LEFT OUTER JOIN CB_BOOK_APP E
+		                          ON A.ID = E.LEARN_APP_ID
+		                          GROUP BY A.ID ) E
+              		 ON A.ID = E.ID
+              		 WHERE A.REG_DATE BETWEEN DATE_FORMAT(#{searchStartDate},'%Y%m%d%H%i%s') 
+              		 AND DATE_FORMAT(CONCAT(#{searchEndDate},' 23:59:59'),'%Y%m%d%H%i%s') ) C
+		INNER JOIN ( SELECT SUM(IF(BOARD_TYPE = '1', 1, 0)) AS BOARD_1
+		                  , SUM(IF(BOARD_TYPE = '4', 1, 0)) AS BOARD_2
+		                  , SUM(IF(BOARD_TYPE = '5', 1, 0)) AS BOARD_3
+		             FROM CB_BOARD
+		             WHERE REG_DATE BETWEEN DATE_FORMAT(#{searchStartDate},'%Y%m%d%H%i%s') 
+              		 AND DATE_FORMAT(CONCAT(#{searchEndDate},' 23:59:59'),'%Y%m%d%H%i%s') ) D
+	</select>
+	
+	<!-- 수강현황통계(I) -->
+	<select id="learnStatsList" parameterType="StatsVO" resultType="hashMap">
+		SELECT IFNULL(TOTAL_CNT, 0) AS TOTAL_CNT
+			 , IFNULL(STATE_1, 0) AS STATE_1
+			 , IFNULL(STATE_2, 0) AS STATE_2
+			 , IFNULL(DELAY_CNT, 0) AS DELAY_CNT
+			 , IFNULL(CANCEL_CNT, 0) AS CANCEL_CNT
+			 , IFNULL(DELAY_APP_CNT, 0) AS DELAY_APP_CNT
+			 , IFNULL(CANCEL_APP_CNT, 0) AS CANCEL_APP_CNT
+			 , IFNULL(ISSUE_1, 0) AS ISSUE_1
+			 , IFNULL(ISSUE_2, 0) AS ISSUE_2
+			 , IFNULL(CNT1, 0) AS CNT1
+			 , IFNULL(CNT2, 0) AS CNT2
+			 , IFNULL(CNT3, 0) AS CNT3
+			 , IFNULL(CNT4, 0) AS CNT4
+			 , IFNULL(CNT5, 0) AS CNT5
+			 , IFNULL(CNT6, 0) AS CNT6
+		FROM (	SELECT COUNT(A.ID) AS TOTAL_CNT
+				     , SUM(IF(A.PAYMENT_STATE = '1' AND (A.REQ_TYPE IS NULL OR A.REQ_TYPE NOT IN ('3','4')), 1, 0)) AS STATE_1
+				     , SUM(IF(A.PAYMENT_STATE = '2' AND (A.REQ_TYPE IS NULL OR A.REQ_TYPE NOT IN ('3','4')), 1, 0)) AS STATE_2
+				     , SUM(IF(A.REQ_TYPE = '3', 1, 0)) AS DELAY_CNT
+				     , SUM(IF(A.REQ_TYPE = '4', 1, 0)) AS CANCEL_CNT
+				     , IFNULL(E.DELAY_APP_CNT, 0) AS DELAY_APP_CNT
+				     , IFNULL(F.CANCEL_APP_CNT, 0) AS CANCEL_APP_CNT
+				     , SUM(IF(A.ISSUE_YN ='Y' AND (A.ISSUE_NUM IS NOT NULL AND A.ISSUE_NUM != ''), 1, 0)) AS ISSUE_1
+				     , SUM(IF(A.ISSUE_YN ='Y' AND (A.ISSUE_NUM IS NULL OR A.ISSUE_NUM = ''), 1, 0)) AS ISSUE_2
+				     , SUM(IF(B.GRADE = 1 AND B.S_TYPE = 4, 1, 0)) AS CNT1
+					 , SUM(IF(B.GRADE = 1 AND B.S_TYPE = 1, 1, 0)) AS CNT2
+					 , SUM(IF(B.GRADE = 1 AND B.S_TYPE = 2, 1, 0)) AS CNT3
+				     , SUM(IF(B.GRADE = 1 AND B.S_TYPE = 3, 1, 0)) AS CNT4
+				     , SUM(IF(B.GRADE = 1 AND B.S_TYPE = 5, 1, 0)) AS CNT5
+				     , SUM(IF(B.GRADE = 2 OR (B.GRADE = 1 AND IFNULL(B.S_TYPE, 6) = 6), 1, 0)) AS CNT6
+				FROM CB_LEARN_APP A
+				INNER JOIN CB_MEMBER B
+				ON A.USER_ID = B.ID
+				INNER JOIN CB_CARDINAL C
+				ON A.CARDINAL_ID = C.ID
+				INNER JOIN CB_COURSE D
+				ON A.COURSE_ID = D.ID
+				LEFT OUTER JOIN ( SELECT A.ID
+				                       , SUM(IF(A.PAYMENT_STATE = '2' AND (A.REQ_TYPE IS NULL OR A.REQ_TYPE NOT IN ('3','4')) AND B.STATE = '1', 1, 0)) AS DELAY_APP_CNT
+				                  FROM CB_LEARN_APP A
+				                  INNER JOIN CB_LEARN_DELAY_APP B
+				                  ON A.ID = B.LEARN_APP_ID
+				                  GROUP BY A.ID ) E
+				ON A.ID = E.ID
+				LEFT OUTER JOIN ( SELECT A.ID
+				                       , SUM(IF(A.PAYMENT_STATE = '2' AND (A.REQ_TYPE IS NULL OR A.REQ_TYPE NOT IN ('3','4')) AND B.STATE = '1', 1, 0)) AS CANCEL_APP_CNT
+				                  FROM CB_LEARN_APP A
+				                  INNER JOIN CB_LEARN_CANCEL_APP B
+				                  ON A.ID = B.LEARN_APP_ID
+				                  GROUP BY A.ID ) F
+				ON A.ID = F.ID
+				WHERE 1 = 1
+				<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+					AND A.CARDINAL_ID = #{cardinal.id}
+				</if>
+				<if test="course != null and course.id != null and course.id != ''">
+					AND A.COURSE_ID = #{course.id}
+				</if> ) TBL
+	</select>
+	
+	<!-- 수강현황통계(II) - 월단위별 추이분석(25개월) -->
+	<select id="learnStatsGraph1" parameterType="StatsVO" resultType="hashMap">
+		SELECT A.SELECTED_DATE
+		     , IFNULL(B.STATE_1, 0) AS STATE_1
+		     , IFNULL(B.STATE_2, 0) AS STATE_2
+		     , IFNULL(B.STATE_3, 0) AS STATE_3
+		FROM (  SELECT SELECTED_DATE
+		        FROM (  SELECT DATE_FORMAT(V.SELECTED_DATE, '%Y-%m') AS SELECTED_DATE
+		                FROM (  SELECT CURDATE() - INTERVAL(A.A + (10*B.A) + (100*C.A)) DAY AS SELECTED_DATE
+		                        FROM (  SELECT 0 AS A UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+		                                			  UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS A
+		                        CROSS JOIN (  SELECT 0 AS A UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+		                                      				UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS B
+		                        CROSS JOIN (  SELECT 0 AS A UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+		                                      				UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 ) AS C ) V
+		                WHERE V.SELECTED_DATE BETWEEN DATE_FORMAT(CONCAT(PERIOD_ADD(DATE_FORMAT(NOW(), '%Y%m'), -24),'01'), '%Y-%m-%d')
+		                                      AND DATE_FORMAT(NOW(), '%Y-%m-%d') ) TBL
+		        GROUP BY SELECTED_DATE ) A
+		LEFT OUTER JOIN ( SELECT REG_DATE
+		                       , SUM(IF(PAYMENT_STATE = '1' AND (REQ_TYPE IS NULL OR REQ_TYPE NOT IN ('3','4')), 1, 0)) AS STATE_1
+		                       , SUM(IF(PAYMENT_STATE = '2' AND (REQ_TYPE IS NULL OR REQ_TYPE NOT IN ('3','4')), 1, 0)) AS STATE_2
+		                       , SUM(IF(REQ_TYPE = '4', 1, 0)) AS STATE_3
+		                  FROM (  SELECT DATE_FORMAT(M.REG_DATE, '%Y-%m') AS REG_DATE, M.PAYMENT_STATE, M.REQ_TYPE
+		                          FROM CB_LEARN_APP M
+		                          INNER JOIN CB_MEMBER A
+		                          ON M.USER_ID = A.ID
+		                          INNER JOIN CB_CARDINAL B
+		                          ON M.CARDINAL_ID = B.ID
+		                          INNER JOIN CB_COURSE C
+		                          ON M.COURSE_ID = C.ID
+		                          WHERE 1 = 1
+								  <if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+								  	AND M.CARDINAL_ID = #{cardinal.id}
+								  </if>
+								  <if test="course != null and course.id != null and course.id != ''">
+									AND M.COURSE_ID = #{course.id}
+								  </if>  ) TBL
+		                  GROUP BY REG_DATE ) B
+		ON A.SELECTED_DATE = B.REG_DATE
+	</select>
+	
+	<!-- 수강현황통계(II) - 연수형태별 분석(수강인증건) 접수유형별 -->
+	<select id="learnStatsGraph2_1" parameterType="StatsVO" resultType="hashMap">
+		SELECT A.LEARN_TYPE, IFNULL(B.CNT, 0) AS CNT
+		FROM (  SELECT 'J' AS LEARN_TYPE UNION ALL SELECT 'G' UNION ALL SELECT 'M' UNION ALL SELECT 'S' ) A
+		LEFT OUTER JOIN ( SELECT B.LEARN_TYPE, COUNT(M.ID) AS CNT
+		                  FROM CB_LEARN_APP M
+		                  INNER JOIN CB_MEMBER A
+		                  ON M.USER_ID = A.ID
+		                  INNER JOIN CB_CARDINAL B
+		                  ON M.CARDINAL_ID = B.ID
+		                  INNER JOIN CB_COURSE C
+		                  ON M.COURSE_ID = C.ID
+		                  WHERE M.PAYMENT_STATE = '2'
+		                  AND ( M.REQ_TYPE IS NULL OR M.REQ_TYPE NOT IN ('3','4') )
+		                  <if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+						  	AND M.CARDINAL_ID = #{cardinal.id}
+						  </if>
+						  <if test="course != null and course.id != null and course.id != ''">
+							AND M.COURSE_ID = #{course.id}
+						  </if>
+		                  GROUP BY B.LEARN_TYPE ) B
+		ON A.LEARN_TYPE = B.LEARN_TYPE
+	</select>
+	
+	<!-- 수강현황통계(II) - 연수형태별 분석(수강인증건) 직무연수 학점별 -->
+	<select id="learnStatsGraph2_2" parameterType="StatsVO" resultType="hashMap">
+		SELECT A.LEARN_TYPE, B.CREDIT, IFNULL(C.CNT, 0) AS CNT
+		FROM (  SELECT 'J' AS LEARN_TYPE  ) A
+		INNER JOIN ( SELECT 1 AS CREDIT UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 ) B
+		LEFT OUTER JOIN ( SELECT B.LEARN_TYPE, C.CREDIT, COUNT(M.ID) AS CNT
+		                  FROM CB_LEARN_APP M
+		                  INNER JOIN CB_MEMBER A
+		                  ON M.USER_ID = A.ID
+		                  INNER JOIN CB_CARDINAL B
+		                  ON M.CARDINAL_ID = B.ID
+		                  INNER JOIN CB_COURSE C
+		                  ON M.COURSE_ID = C.ID
+		                  WHERE M.PAYMENT_STATE = '2'
+		                  AND ( M.REQ_TYPE IS NULL OR M.REQ_TYPE NOT IN ('3','4') )
+		                  AND B.LEARN_TYPE = 'J'
+		                  <if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+						  	AND M.CARDINAL_ID = #{cardinal.id}
+						  </if>
+						  <if test="course != null and course.id != null and course.id != ''">
+							AND M.COURSE_ID = #{course.id}
+						  </if>
+		                  GROUP BY B.LEARN_TYPE, C.CREDIT ) C
+		ON A.LEARN_TYPE = C.LEARN_TYPE
+		AND B.CREDIT = C.CREDIT
+	</select>
+	
+	<!-- 수강현황통계(II) - 최다접수과정 TOP 5 -->
+	<select id="learnStatsGraph3_1" parameterType="StatsVO" resultType="hashMap">
+		SELECT C.ID AS COURSE_ID, C.NAME AS COURSE_NAME, COUNT(A.ID) AS CNT
+		FROM CB_LEARN_APP M
+		INNER JOIN CB_MEMBER A
+		ON M.USER_ID = A.ID
+		INNER JOIN CB_CARDINAL B
+		ON M.CARDINAL_ID = B.ID
+		INNER JOIN CB_COURSE C
+		ON M.COURSE_ID = C.ID
+		WHERE M.PAYMENT_STATE = '2'
+		AND ( M.REQ_TYPE IS NULL OR M.REQ_TYPE NOT IN ('3','4') )
+		<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+			AND M.CARDINAL_ID = #{cardinal.id}
+		</if>
+		<if test="course != null and course.id != null and course.id != ''">
+			AND M.COURSE_ID = #{course.id}
+		</if>
+		GROUP BY C.ID, C.NAME
+		ORDER BY CNT DESC
+		LIMIT 5 OFFSET 0
+	</select>
+	
+	<!-- 수강현황통계(II) - 교원선호과정 TOP 5 -->
+	<select id="learnStatsGraph3_2" parameterType="StatsVO" resultType="hashMap">
+		SELECT C.ID AS COURSE_ID, C.NAME AS COURSE_NAME, COUNT(A.ID) AS CNT
+		FROM CB_LEARN_APP M
+		INNER JOIN CB_MEMBER A
+		ON M.USER_ID = A.ID
+		INNER JOIN CB_CARDINAL B
+		ON M.CARDINAL_ID = B.ID
+		INNER JOIN CB_COURSE C
+		ON M.COURSE_ID = C.ID
+		WHERE M.PAYMENT_STATE = '2'
+		AND ( M.REQ_TYPE IS NULL OR M.REQ_TYPE NOT IN ('3','4') )
+		AND A.GRADE = 1
+		<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+			AND M.CARDINAL_ID = #{cardinal.id}
+		</if>
+		<if test="course != null and course.id != null and course.id != ''">
+			AND M.COURSE_ID = #{course.id}
+		</if>
+		GROUP BY C.ID, C.NAME
+		ORDER BY CNT DESC
+		LIMIT 5 OFFSET 0
+	</select>
+	
+	<!-- 수강현황통계(II) - 이수현황(인증건/무료연수제외) -->
+	<select id="learnStatsGraph4_1" parameterType="StatsVO" resultType="hashMap">
+		SELECT SUM(IF(M.ISSUE_YN != 'Y', 1, 0)) AS ISSUE_1
+		     , SUM(IF(M.ISSUE_YN = 'Y' AND (M.ISSUE_NUM IS NOT NULL AND M.ISSUE_NUM != ''), 1, 0)) AS ISSUE_2
+		     , SUM(IF(M.ISSUE_YN = 'Y' AND (M.ISSUE_NUM IS NULL OR M.ISSUE_NUM = ''), 1, 0)) AS ISSUE_3
+		FROM CB_LEARN_APP M
+		INNER JOIN CB_MEMBER A
+		ON M.USER_ID = A.ID
+		INNER JOIN CB_CARDINAL B
+		ON M.CARDINAL_ID = B.ID
+		INNER JOIN CB_COURSE C
+		ON M.COURSE_ID = C.ID
+		WHERE M.PAYMENT_STATE = '2'
+		AND ( M.REQ_TYPE IS NULL OR M.REQ_TYPE NOT IN ('3','4') )
+		<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+			AND M.CARDINAL_ID = #{cardinal.id}
+		</if>
+		<if test="course != null and course.id != null and course.id != ''">
+			AND M.COURSE_ID = #{course.id}
+		</if>
+	</select>
+	
+	<!-- 수강현황통계(II) - 결제형태(결제완료건) -->
+	<select id="learnStatsGraph4_2" parameterType="StatsVO" resultType="hashMap">
+		SELECT SUM(IF(M.PAYMENT_TYPE = '1', 1, 0)) AS PAYMENT_1
+		     , SUM(IF(M.PAYMENT_TYPE = '2', 1, 0)) AS PAYMENT_2
+		     , SUM(IF(M.PAYMENT_TYPE = '3', 1, 0)) AS PAYMENT_3
+		     , SUM(IF(M.PAYMENT_TYPE = '4', 1, 0)) AS PAYMENT_4
+		     , SUM(IF(M.PAYMENT_TYPE = '5', 1, 0)) AS PAYMENT_5
+		     , SUM(IF(M.PAYMENT_TYPE = '6', 1, 0)) AS PAYMENT_6
+		     , SUM(IF(M.PAYMENT_TYPE = '7', 1, 0)) AS PAYMENT_7
+		FROM CB_LEARN_APP M
+		INNER JOIN CB_MEMBER A
+		ON M.USER_ID = A.ID
+		INNER JOIN CB_CARDINAL B
+		ON M.CARDINAL_ID = B.ID
+		INNER JOIN CB_COURSE C
+		ON M.COURSE_ID = C.ID
+		WHERE M.PAYMENT_STATE = '2'
+		AND ( M.REQ_TYPE IS NULL OR M.REQ_TYPE NOT IN ('3','4') )
+		<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+			AND M.CARDINAL_ID = #{cardinal.id}
+		</if>
+		<if test="course != null and course.id != null and course.id != ''">
+			AND M.COURSE_ID = #{course.id}
+		</if>
+	</select>
+	
+	<!-- 학점별 이수율 분석 -->
+	<select id="learnStatsGraph5" parameterType="StatsVO" resultType="hashMap">
+		SELECT A.CREDITS, B.PASS_YN
+		     , IFNULL(C.CNT1, 0) AS CNT1, IFNULL(C.CNT2, 0) AS CNT2, IFNULL(C.CNT3, 0) AS CNT3, IFNULL(C.CNT4, 0) AS CNT4
+		     , IFNULL(C.CNT5, 0) AS CNT5, IFNULL(C.CNT6, 0) AS CNT6, IFNULL(C.CNT7, 0) AS CNT7
+		FROM ( SELECT '1,2' AS CREDITS UNION ALL SELECT '3' UNION ALL SELECT '4' ) AS A
+		INNER JOIN ( SELECT 'Y' AS PASS_YN UNION ALL SELECT 'N' ) AS B
+		LEFT OUTER JOIN ( SELECT B.CREDITS
+		                       , IF(M.ISSUE_NUM IS NOT NULL AND M.ISSUE_NUM != '', 'Y', 'N') AS PASS_YN
+		                       , SUM(IF(A.GRADE = 1 AND A.S_TYPE = 4, 1, 0)) AS CNT1
+							   , SUM(IF(A.GRADE = 1 AND A.S_TYPE = 1, 1, 0)) AS CNT2
+		                  	   , SUM(IF(A.GRADE = 1 AND A.S_TYPE = 2, 1, 0)) AS CNT3
+		                       , SUM(IF(A.GRADE = 1 AND A.S_TYPE = 3, 1, 0)) AS CNT4
+		                       , SUM(IF(A.GRADE = 1 AND A.S_TYPE = 5, 1, 0)) AS CNT5
+		                       , SUM(IF(A.GRADE = 1 AND A.S_TYPE = 6, 1, 0)) AS CNT6
+		                       , SUM(IF(A.GRADE = 2 OR A.S_TYPE IS NULL OR A.S_TYPE = '', 1, 0)) AS CNT7
+		                  FROM CB_LEARN_APP M
+		                  INNER JOIN CB_MEMBER A
+		                  ON M.USER_ID = A.ID
+		                  INNER JOIN CB_CARDINAL B
+		                  ON M.CARDINAL_ID = B.ID
+		                  INNER JOIN CB_COURSE C
+		                  ON M.COURSE_ID = C.ID
+		                  WHERE M.PAYMENT_STATE = '2'
+		                  AND ( M.REQ_TYPE IS NULL OR M.REQ_TYPE NOT IN ('3','4') )
+		                  AND M.ISSUE_YN = 'Y'
+		                  <if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+						  	AND M.CARDINAL_ID = #{cardinal.id}
+						  </if>
+						  <if test="course != null and course.id != null and course.id != ''">
+							AND M.COURSE_ID = #{course.id}
+						  </if>
+		                  GROUP BY B.CREDITS, PASS_YN ) C
+		ON A.CREDITS = C.CREDITS
+		AND B.PASS_YN = C.PASS_YN
+		ORDER BY A.CREDITS DESC, B.PASS_YN DESC
+	</select>
+
+	<!-- 연수설문통계 -->
+	<select id="surveyStatsDetailList" parameterType="StatsVO" resultType="hashmap">
+		SELECT SURVEY_ID, SURVEY_ITEM_ID, SURVEY_ITEM_TITLE, TOTAL_COUNT, 
+			EXAM1,
+			EXAM2, 
+			EXAM3, 
+			EXAM4, 
+			EXAM5, 
+			EXAM6, 
+			EXAM7,
+			ANSWER1, ANSWER2, ANSWER3, ANSWER4, ANSWER5, ANSWER6, ANSWER7, 
+			IFNULL(ROUND(ANSWER1 / TOTAL_COUNT * 100) ,0) AS ANSWER1_PER,
+			IFNULL(ROUND(ANSWER2 / TOTAL_COUNT * 100) ,0) AS ANSWER2_PER,
+			IFNULL(ROUND(ANSWER3 / TOTAL_COUNT * 100) ,0) AS ANSWER3_PER,
+			IFNULL(ROUND(ANSWER4 / TOTAL_COUNT * 100) ,0) AS ANSWER4_PER,
+			IFNULL(ROUND(ANSWER5 / TOTAL_COUNT * 100) ,0) AS ANSWER5_PER,
+			IFNULL(ROUND(ANSWER6 / TOTAL_COUNT * 100) ,0) AS ANSWER6_PER,
+			IFNULL(ROUND(ANSWER7 / TOTAL_COUNT * 100) ,0) AS ANSWER7_PER
+		FROM 
+		(
+			SELECT DISTINCT
+				CSI.SURVEY_ID,
+				CSI.ID AS SURVEY_ITEM_ID,
+				CONCAT(@rownum:=@rownum+1, '. ', CSI.TITLE) AS SURVEY_ITEM_TITLE,
+				IF(CSI.EXAM1 = '', '', CONCAT('① ', CSI.EXAM1)) AS EXAM1,		
+				IF(CSI.EXAM2 = '', '', CONCAT('② ', CSI.EXAM2)) AS EXAM2,		
+				IF(CSI.EXAM3 = '', '', CONCAT('③ ', CSI.EXAM3)) AS EXAM3,		
+				IF(CSI.EXAM4 = '', '', CONCAT('④ ', CSI.EXAM4)) AS EXAM4,		
+				IF(CSI.EXAM5 = '', '', CONCAT('⑤ ', CSI.EXAM5)) AS EXAM5,
+				IF(CSI.EXAM6 = '', '', CONCAT('⑥ ', CSI.EXAM6)) AS EXAM6,		
+				IF(CSI.EXAM7 = '', '', CONCAT('⑦ ', CSI.EXAM7)) AS EXAM7,
+				IFNULL(CSR2.TOTAL_COUNT, 0) AS TOTAL_COUNT, /* 해당 설문 답변 총인원 */
+				SUM(IF(CSR.EXAM1_YN = 'Y', 1, 0)) OVER (PARTITION BY CSI.SURVEY_ID, CSI.ID) AS ANSWER1, /* 보기1에 답변 한 인원 */
+				SUM(IF(CSR.EXAM2_YN = 'Y', 1, 0)) OVER (PARTITION BY CSI.SURVEY_ID, CSI.ID) AS ANSWER2, /* 보기2에 답변 한 인원 */
+				SUM(IF(CSR.EXAM3_YN = 'Y', 1, 0)) OVER (PARTITION BY CSI.SURVEY_ID, CSI.ID) AS ANSWER3, /* 보기3에 답변 한 인원 */
+				SUM(IF(CSR.EXAM4_YN = 'Y', 1, 0)) OVER (PARTITION BY CSI.SURVEY_ID, CSI.ID) AS ANSWER4, /* 보기4에 답변 한 인원 */
+				SUM(IF(CSR.EXAM5_YN = 'Y', 1, 0)) OVER (PARTITION BY CSI.SURVEY_ID, CSI.ID) AS ANSWER5, /* 보기5에 답변 한 인원 */
+				SUM(IF(CSR.EXAM6_YN = 'Y', 1, 0)) OVER (PARTITION BY CSI.SURVEY_ID, CSI.ID) AS ANSWER6, /* 보기6에 답변 한 인원 */
+				SUM(IF(CSR.EXAM7_YN = 'Y', 1, 0)) OVER (PARTITION BY CSI.SURVEY_ID, CSI.ID) AS ANSWER7 /* 보기7에 답변 한 인원 */
+			FROM CB_SURVEY_ITEM CSI
+			LEFT OUTER JOIN CB_SURVEY_REPLY CSR
+			ON CSI.ID = CSR.ITEM_ID
+			<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+				AND CSR.CARDINAL_ID = #{cardinal.id} /* 검색조건 */
+			</if>
+			 
+			/* 해당 설문 답변 총인원 */
+			LEFT OUTER JOIN 
+			(
+				SELECT DISTINCT SURVEY_ID, COUNT(*) OVER(PARTITION BY SURVEY_ID) AS TOTAL_COUNT 
+				FROM (SELECT DISTINCT SURVEY_ID, LEARN_APP_ID 
+				      FROM CB_SURVEY_REPLY 
+				      WHERE 1=1
+					  <if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+					  	AND CARDINAL_ID = #{cardinal.id} /* 검색조건 */
+					  </if>     
+				     ) CSR2
+			) CSR2
+			ON CSI.SURVEY_ID = CSR2.SURVEY_ID, (SELECT @rownum:=0) rn
+			
+			WHERE CSI.SURVEY_ID = #{survey.id}
+			AND CSI.ITEM_TYPE = '1'
+			ORDER BY @rownum
+		) SURVEY
+	</select>
+	
+	<!-- 연수만족도통계 > 기수의 과정 만족도 상위Top5 -->
+	<select id="satisByCourseTop5" parameterType="StatsVO" resultType="hashmap">
+		SELECT 
+			CC.ID, CC.NAME, 
+			COURSE_SATISFACTION_SCORE, 
+			RANK			
+		FROM CB_COURSE CC
+		INNER JOIN 
+		(
+			SELECT
+				COURSE_ID, 
+				SUM(ANSWER1 + ANSWER2 + ANSWER3 + ANSWER4 + ANSWER5) OVER (PARTITION BY COURSE_ID) AS COURSE_SATISFACTION_SCORE, -- 과정별 만족도 총 점수
+				(@rank := @rank + 1) AS RANK
+			FROM
+			(	/* 만족도 기초 데이터 */
+				SELECT DISTINCT
+					CSR.COURSE_ID, 
+			  		COUNT(*) OVER (PARTITION BY CSR.COURSE_ID) AS ANSWER_COUNT,
+					SUM(IF(CSR.EXAM1_YN = 'Y', 2, 0)) OVER (PARTITION BY CSR.COURSE_ID) AS ANSWER1, /* 매우만족에 답변 한 인원 */
+					SUM(IF(CSR.EXAM2_YN = 'Y', 1, 0)) OVER (PARTITION BY CSR.COURSE_ID) AS ANSWER2, /* 만족에 답변 한 인원 */
+					SUM(IF(CSR.EXAM3_YN = 'Y', 0, 0)) OVER (PARTITION BY CSR.COURSE_ID) AS ANSWER3, /* 보통에 답변 한 인원 */
+					SUM(IF(CSR.EXAM4_YN = 'Y', -1, 0)) OVER (PARTITION BY CSR.COURSE_ID) AS ANSWER4, /* 불만족에 답변 한 인원 */
+					SUM(IF(CSR.EXAM5_YN = 'Y', -2, 0)) OVER (PARTITION BY CSR.COURSE_ID) AS ANSWER5 /* 매우불만족에 답변 한 인원 */
+				FROM CB_SURVEY_ITEM CSI
+				INNER JOIN CB_SURVEY_REPLY CSR
+				ON CSI.ID = CSR.ITEM_ID 
+				-- AND CSI.SURVEY_CODE = 'survey999' /* 시스템코드 */
+				AND CSI.ORDER_NUM = '999' /* 시스템코드 */
+				<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+					AND CSR.CARDINAL_ID = #{cardinal.id} /* 검색조건 */
+				</if>
+				<if test="course != null and course.id != null and course.id != ''">
+					AND CSR.COURSE_ID = #{course.id} /* 검색조건 */
+				</if>
+			) SURVEY, (SELECT @rank := 0) AS rk
+			ORDER BY SUM(ANSWER1 + ANSWER2 + ANSWER3 + ANSWER4 + ANSWER5) OVER (PARTITION BY COURSE_ID) DESC
+			LIMIT 5
+		) SURVEY
+		ON CC.ID = SURVEY.COURSE_ID	
+	</select>
+	
+	<!-- 연수만족도통계 > 기수 만족도분포 -->
+	<select id="satisByCardinal" parameterType="StatsVO" resultType="hashmap">
+		SELECT DISTINCT CARDINAL_ID, STANDARD.SATIS_NAME, 
+		 	IFNULL(
+				CASE WHEN SATIS = '1' THEN SURVEY.ANSWER1
+				     WHEN SATIS = '2' THEN SURVEY.ANSWER2
+				     WHEN SATIS = '3' THEN SURVEY.ANSWER3
+				     WHEN SATIS = '4' THEN SURVEY.ANSWER4
+				     WHEN SATIS = '5' THEN SURVEY.ANSWER5
+				END
+			, 0) AS SATIS_ANSWER
+		FROM
+			(
+				SELECT '1' AS SATIS, '매우만족' AS SATIS_NAME UNION ALL
+				SELECT '2' AS SATIS, '만족' AS SATIS_NAME UNION ALL
+				SELECT '3' AS SATIS, '보통' AS SATIS_NAME UNION ALL
+				SELECT '4' AS SATIS, '불만족' AS SATIS_NAME UNION ALL
+				SELECT '5' AS SATIS, '매우불만족' AS SATIS_NAME
+			) STANDARD
+		LEFT OUTER JOIN
+			(SELECT DISTINCT CARDINAL_ID,
+				SUM(IF(CSR.EXAM1_YN = 'Y', 1, 0)) OVER (PARTITION BY CARDINAL_ID) AS ANSWER1,
+				SUM(IF(CSR.EXAM2_YN = 'Y', 1, 0)) OVER (PARTITION BY CARDINAL_ID) AS ANSWER2,	
+				SUM(IF(CSR.EXAM3_YN = 'Y', 1, 0)) OVER (PARTITION BY CARDINAL_ID) AS ANSWER3,	
+				SUM(IF(CSR.EXAM4_YN = 'Y', 1, 0)) OVER (PARTITION BY CARDINAL_ID) AS ANSWER4,	
+				SUM(IF(CSR.EXAM5_YN = 'Y', 1, 0)) OVER (PARTITION BY CARDINAL_ID) AS ANSWER5
+			FROM CB_SURVEY_ITEM CSI
+			INNER JOIN CB_SURVEY_REPLY CSR
+			ON CSI.ID = CSR.ITEM_ID 
+			AND CSI.ORDER_NUM = '999' /* 시스템코드 */
+			<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+				AND CSR.CARDINAL_ID = #{cardinal.id} /* 검색조건 */
+			</if>
+			<if test="course != null and course.id != null and course.id != ''">
+				AND CSR.COURSE_ID = #{course.id} /* 검색조건 */
+			</if>
+			) SURVEY
+		ON 1=1
+	</select>
+	
+	<!-- 연수만족도통계 > 설문자 연령분포 -->
+	<select id="satisByAgeGroup" parameterType="StatsVO" resultType="hashmap">
+		SELECT
+			IFNULL(SUM(IF(AGE_GROUP = '20대', 1, 0)), 0) AS AGE_20,
+			IFNULL(SUM(IF(AGE_GROUP = '30대', 1, 0)), 0) AS AGE_30,
+			IFNULL(SUM(IF(AGE_GROUP = '40대', 1, 0)), 0) AS AGE_40,
+			IFNULL(SUM(IF(AGE_GROUP = '50대', 1, 0)), 0) AS AGE_50,
+			IFNULL(SUM(IF(AGE_GROUP = '60대', 1, 0)), 0) AS AGE_60,
+			IFNULL(SUM(IF(AGE_GROUP = '기타', 1, 0)), 0) AS AGE_ETC
+		FROM
+			(
+				SELECT DISTINCT CSI.SURVEY_ID, CSR.LEARN_APP_ID, CSR.COURSE_ID, CSR.CARDINAL_ID, CSR.REG_USER
+				FROM CB_SURVEY_ITEM CSI
+				INNER JOIN CB_SURVEY_REPLY CSR
+				ON CSI.ID = CSR.ITEM_ID 
+				AND CSI.ORDER_NUM = '999' /* 시스템코드 */
+				<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+					AND CSR.CARDINAL_ID = #{cardinal.id} /* 검색조건 */
+				</if>
+				<if test="course != null and course.id != null and course.id != ''">
+					AND CSR.COURSE_ID = #{course.id} /* 검색조건 */
+				</if>
+			) SURVEY
+		INNER JOIN
+			(
+				SELECT 
+					ID, NAME, BIRTH_DAY,
+					CASE WHEN DATE_FORMAT(NOW(), '%Y') - DATE_FORMAT(STR_TO_DATE(BIRTH_DAY, '%Y-%m-%d'), '%Y') BETWEEN 20 AND 29
+						  THEN '20대'
+						  WHEN DATE_FORMAT(NOW(), '%Y') - DATE_FORMAT(STR_TO_DATE(BIRTH_DAY, '%Y-%m-%d'), '%Y') BETWEEN 30 AND 39
+						  THEN '30대'
+				  		  WHEN DATE_FORMAT(NOW(), '%Y') - DATE_FORMAT(STR_TO_DATE(BIRTH_DAY, '%Y-%m-%d'), '%Y') BETWEEN 40 AND 49
+						  THEN '40대'		  
+				  		  WHEN DATE_FORMAT(NOW(), '%Y') - DATE_FORMAT(STR_TO_DATE(BIRTH_DAY, '%Y-%m-%d'), '%Y') BETWEEN 50 AND 59
+						  THEN '50대'
+				  		  WHEN DATE_FORMAT(NOW(), '%Y') - DATE_FORMAT(STR_TO_DATE(BIRTH_DAY, '%Y-%m-%d'), '%Y') BETWEEN 60 AND 69
+						  THEN '60대'		  
+						  ELSE '기타'
+					END AS AGE_GROUP
+				FROM CB_MEMBER
+			) CM
+		ON SURVEY.REG_USER = CM.ID	
+	</select>
+	
+	<!-- 연수만족도통계 > 학교구분에 따른 만족도 통계 -->
+	<select id="satisByClassType" parameterType="StatsVO" resultType="hashmap">
+		SELECT 
+			CASE 
+				WHEN STANDARD.S_TYPE = '1' THEN '초'
+				WHEN STANDARD.S_TYPE = '2' THEN '중'
+				WHEN STANDARD.S_TYPE = '3' THEN '고'
+				WHEN STANDARD.S_TYPE = '4' THEN '유'
+				WHEN STANDARD.S_TYPE = '5' THEN '특'
+				WHEN STANDARD.S_TYPE = '6' THEN '기'
+			END AS S_TYPE_NAME,			
+			IF(STANDARD.S_TYPE = SURVEY.S_TYPE, SUM(IF(EXAM1_YN = 'Y', 1, 0)) OVER (PARTITION BY STANDARD.S_TYPE), 0) AS ANSWER1,
+			IF(STANDARD.S_TYPE = SURVEY.S_TYPE, SUM(IF(EXAM2_YN = 'Y', 1, 0)) OVER (PARTITION BY STANDARD.S_TYPE), 0) AS ANSWER2,
+			IF(STANDARD.S_TYPE = SURVEY.S_TYPE, SUM(IF(EXAM3_YN = 'Y', 1, 0)) OVER (PARTITION BY STANDARD.S_TYPE), 0) AS ANSWER3,
+			IF(STANDARD.S_TYPE = SURVEY.S_TYPE, SUM(IF(EXAM4_YN = 'Y', 1, 0)) OVER (PARTITION BY STANDARD.S_TYPE), 0) AS ANSWER4,
+			IF(STANDARD.S_TYPE = SURVEY.S_TYPE, SUM(IF(EXAM5_YN = 'Y', 1, 0)) OVER (PARTITION BY STANDARD.S_TYPE), 0) AS ANSWER5
+		FROM
+			(
+				SELECT '1' AS S_TYPE UNION ALL
+				SELECT '2' AS S_TYPE UNION ALL
+				SELECT '3' AS S_TYPE UNION ALL
+				SELECT '4' AS S_TYPE UNION ALL
+				SELECT '5' AS S_TYPE UNION ALL
+				SELECT '6' AS S_TYPE
+			) STANDARD
+		LEFT OUTER JOIN
+			(
+				SELECT 
+					SURVEY.*, CM.S_TYPE
+				FROM
+					(
+						SELECT DISTINCT 
+							CSI.SURVEY_ID, CSR.LEARN_APP_ID, CSR.COURSE_ID, CSR.CARDINAL_ID, CSR.REG_USER,
+							CSR.EXAM1_YN, CSR.EXAM2_YN, CSR.EXAM3_YN, CSR.EXAM4_YN, CSR.EXAM5_YN, CSR.EXAM6_YN, CSR.EXAM7_YN
+						FROM CB_SURVEY_ITEM CSI
+						INNER JOIN CB_SURVEY_REPLY CSR
+						ON CSI.ID = CSR.ITEM_ID 
+						AND CSI.ORDER_NUM = '999' /* 시스템코드 */
+						<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+							AND CSR.CARDINAL_ID = #{cardinal.id} /* 검색조건 */
+						</if>
+						<if test="course != null and course.id != null and course.id != ''">
+							AND CSR.COURSE_ID = #{course.id} /* 검색조건 */
+						</if>
+					) SURVEY
+				INNER JOIN CB_MEMBER CM
+				ON SURVEY.REG_USER = CM.ID
+			) SURVEY
+		ON 1 = 1
+	</select>
+	
+	<!-- SMS 발송 통계 -->
+	<select id="smsHistoryStats" parameterType="StatsVO" resultType="hashmap">
+		SELECT M.ID, M.USER_ID, M.REG_ID, M.SUBJECT, M.CONTENT, M.PHONE, DATE_FORMAT(M.REG_DATE, '%Y-%m-%d %H:%i:%s') AS REG_DATE
+		FROM CB_SMS_HISTORY M
+		WHERE M.REG_DATE BETWEEN DATE_FORMAT(#{searchStartDate},'%Y%m%d%H%i%s') 
+						 	 AND DATE_FORMAT(CONCAT(#{searchEndDate},' 23:59:59'),'%Y%m%d%H%i%s')
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					M.PHONE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'phone'">
+					M.PHONE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		ORDER BY M.REG_DATE DESC
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if>
+	</select>
+	
+	<!-- SMS 발송 총 갯수 -->
+	<select id="smsHistoryTotalCnt" parameterType="StatsVO" resultType="int">
+		SELECT COUNT(M.ID)
+		FROM CB_SMS_HISTORY M
+		WHERE M.REG_DATE BETWEEN DATE_FORMAT(#{searchStartDate},'%Y%m%d%H%i%s') 
+						 	 AND DATE_FORMAT(CONCAT(#{searchEndDate},' 23:59:59'),'%Y%m%d%H%i%s')
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					M.PHONE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'phone'">
+					M.PHONE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	<!-- LMS -->
+	<!-- 기수/과정 별 통계 -->
+	<select id="courseStatsList" parameterType="StatsVO" resultType="hashMap">
+		SELECT M.CARDINAL_ID, M.COURSE_ID, D.NAME AS COURSE_NAME
+			 , COUNT(M.ID) AS TOTAL_NUM
+			 , SUM(IF(M.PAYMENT_STATE = '2' AND (M.REQ_TYPE IS NULL OR M.REQ_TYPE NOT IN ('3','4')), 1, 0)) AS LEARN_NUM
+		     , SUM(IF(M.REQ_TYPE = '4', 1, 0)) AS CANCEL_NUM
+		     , SUM(IF(M.REQ_TYPE = '3', 1, 0)) AS DELAY_NUM
+		     , SUM(IF(M.ISSUE_YN = 'Y' AND M.ISSUE_NUM != '' AND M.ISSUE_NUM IS NOT NULL, 1, 0)) AS PASS_NUM
+		     , SUM(IF(M.ISSUE_YN = 'Y' AND (M.ISSUE_NUM = '' OR M.ISSUE_NUM IS NULL), 1, 0)) AS FAIL_NUM
+		     , SUM(IF(M.PAYMENT_STATE = '2' AND M.ISSUE_YN != 'Y', 1, 0)) AS NON_ISSUE_NUM
+		     , SUM(IF(M.PAYMENT_STATE = '2', IFNULL(M.PAYMENT, 0), 0)) AS PAYMENT
+		     , SUM(IF(M.PAYMENT_STATE = '2', IFNULL(M.REAL_PAYMENT, 0), 0)) AS REAL_PAYMENT
+		     , SUM(IF(M.PAYMENT_STATE = '2', IFNULL(M.DIS_COUPON, 0)+IFNULL(M.DIS_POINT, 0)+IFNULL(M.DIS_GROUP, 0), 0)) AS DISCOUNT
+		     , SUM(IF(M.PAYMENT_STATE = '4', IFNULL(M.PAYMENT, 0), 0)) AS CANCEL_PAYMENT
+		FROM CB_LEARN_APP M
+        INNER JOIN COM_USER_TB B
+        ON M.USER_ID = B.USER_ID
+        INNER JOIN CB_CARDINAL C
+        ON M.CARDINAL_ID = C.ID
+        INNER JOIN CB_COURSE D
+        ON M.COURSE_ID = D.ID
+		WHERE 1 = 1
+		<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+			AND M.CARDINAL_ID = #{cardinal.id}
+		</if>
+		<if test="course != null and course.id != null and course.id != ''">
+			AND M.COURSE_ID = #{course.id}
+		</if>
+		GROUP BY M.CARDINAL_ID, M.COURSE_ID
+	</select>
+	
+</mapper>

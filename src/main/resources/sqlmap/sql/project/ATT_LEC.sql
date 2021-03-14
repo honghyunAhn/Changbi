@@ -1,0 +1,15 @@
+-- DATETIME에 DEFAULT CURRENT_TIMESTAMP 는 mysql 5.6버전 이상부터 가능
+-- AUTO_INCREMENT 와 DEFAULT 는 5버전 이상부터는 같이 사용 불가
+CREATE TABLE CB_ATT_LEC (
+	ID					INT(12)			AUTO_INCREMENT	PRIMARY KEY	COMMENT '수강 이력 ID',
+	LEARN_APP_ID		INT(12)			NOT NULL					COMMENT '수강신청ID',
+	USER_ID				VARCHAR(100)	NOT NULL					COMMENT '수강자ID',
+	CARDINAL_ID			VARCHAR(12)		NOT NULL					COMMENT '기수ID',
+	COURSE_ID			VARCHAR(12)		NOT NULL					COMMENT '과정ID',
+	CHAPTER				INT(12)			NOT NULL					COMMENT '챕터ID',
+	CHASI				INT(3)			DEFAULT 1					COMMENT '차시(순서 1차시~30차시)',
+	STUDY				INT(2)			DEFAULT 0					COMMENT '교육시간(분)',
+	CHK					INT(2)			DEFAULT 0					COMMENT '체크(분)',
+	LEARN_TIME			INT(10)			DEFAULT 0					COMMENT '학습시간(초단위)',
+	PROG_YN				CHAR(1)			DEFAULT 'N'					COMMENT '차시별 체크(분)가 지나면 Y로 변경 시켜줌(진도 완료)'
+) COMMENT='수강 이력 상세 관리 테이블';

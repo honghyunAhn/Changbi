@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+<!-- 키오스크관리 -->
+<form-validation>
+
+    <formset>
+
+        <form name="kiosk">
+			<field property="kioskNm" depends="required, maxlength">
+        		<arg0 key="이름" resource="false" />
+        		<arg1 key="60" resource="false"/>
+			</field>
+			<field property="admPhone" depends="maxlength">
+        		<arg0 key="담당연락처" resource="false" />
+        		<arg1 key="100" resource="false"/>
+			</field>
+			<field property="ip" depends="maxlength">
+        		<arg0 key="아이피" resource="false" />
+        		<arg1 key="40" resource="false"/>
+			</field>
+			<field property="token" depends="maxlength">
+        		<arg0 key="인증토큰" resource="false" />
+        		<arg1 key="20" resource="false"/>
+			</field>
+			<field property="mapAddr" depends="maxlength">
+        		<arg0 key="위치검색용주소" resource="false" />
+        		<arg1 key="200" resource="false"/>
+			</field>
+			<field property="useYn" depends="required">
+        		<arg0 key="사용여부" resource="false" />
+			</field>
+		</form>
+    </formset>
+
+</form-validation>

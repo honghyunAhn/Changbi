@@ -1,0 +1,1191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lms.student.dao.ApplyDAO">
+
+	<resultMap id="applyMap" type="ApplyVO" autoMapping="true">
+		<id		property="stu_app_seq"  		column="STU_APP_SEQ"/>
+		<result property="crc_id" 				column="CRC_ID"/>
+		<result property="gisu_id" 				column="GISU_ID"/>
+		<result property="crc_nm" 				column="CRC_NM"/>
+		<result property="gisu_nm" 				column="GISU_NM"/>
+		<result property="stu_app_ins_dt" 		column="STU_APP_INS_DT"/>
+		<result property="user_id" 				column="USER_ID"/>
+		<result property="stu_app_nm" 			column="STU_APP_NM"/>
+		<result property="stu_app_phone" 		column="STU_APP_PHONE"/>
+		<result property="stu_app_email" 		column="STU_APP_EMAIL"/>
+		<result property="stu_app_rt_doc" 		column="STU_APP_RT_DOC"/>
+		<result property="stu_app_rt_doc_id" 	column="STU_APP_RT_DOC_ID"/>
+		<result property="stu_app_rt_doc_dt"	column="STU_APP_RT_DOC_DT"/>
+		<result property="stu_app_rt_itv"		column="STU_APP_RT_ITV"/>
+		<result property="stu_app_rt_itv_id" 	column="STU_APP_RT_ITV_ID"/>
+		<result property="stu_app_rt_itv_dt"	column="STU_APP_RT_ITV_DT"/>
+		<result property="confirm"				column="CONFIRM"/>
+		
+	</resultMap>
+		
+	<!-- 지원자 리스트 조회 시작 -->
+	<!-- case문	1:지원관리에서 연수인원으로 확정한 경우, 2:수강관리-입과관리에서 입과처리한 경우, 3:앞의 두 경우에 해당하지 않는 경우.연수인원이 아닐 때 -->
+	<select id="applyList" parameterType="ApplyVO" resultMap="applyMap">
+		SELECT
+			a1.stu_app_seq
+			,DATE_FORMAT(a1.stu_app_ins_dt, '%Y-%m-%d') stu_app_ins_dt
+			,a1.user_id
+			,a1.stu_app_nm
+			,a1.stu_app_phone
+			,a1.stu_app_email
+			,a1.stu_app_rt_doc
+			,a1.stu_app_rt_doc_id
+			,DATE_FORMAT(a1.stu_app_rt_doc_dt, '%Y-%m-%d') stu_app_rt_doc_dt
+			,a1.stu_app_rt_itv
+			,a1.stu_app_rt_itv_id
+			,DATE_FORMAT(a1.stu_app_rt_itv_dt, '%Y-%m-%d') stu_app_rt_itv_dt
+			,(	CASE
+					WHEN a1.stu_app_seq IN (	SELECT	apply.stu_app_seq
+												FROM	smtp_apply_form_tb apply
+			    										,cb_learn_app learn
+			    								WHERE	apply.crc_Id = learn.course_id
+														AND apply.gisu_id = learn.cardinal_id
+														AND apply.user_id = learn.user_id
+														AND learn.acceptance_yn = 'Y'
+			                                            AND learn.admin_add_yn != 'Y')
+				    THEN 1
+				    WHEN a1.stu_app_seq IN (	SELECT	apply.stu_app_seq
+												FROM	smtp_apply_form_tb apply
+			    										,cb_learn_app learn
+			    								WHERE	apply.crc_Id = learn.course_id
+														AND apply.gisu_id = learn.cardinal_id
+														AND apply.user_id = learn.user_id
+														AND learn.acceptance_yn = 'Y'
+			                                            AND learn.admin_add_yn = 'Y' )
+				    THEN 2
+				    ELSE 3
+				END	) confirm
+			,a1.crc_id
+			,a1.gisu_id
+			,gisu.name gisu_nm
+		FROM 
+			.smtp_apply_form_tb a1
+			
+		JOIN .cb_course crc
+		ON crc.id = a1.crc_id
+
+		JOIN .cb_cardinal gisu
+		ON gisu.id = a1.gisu_id
+		
+		WHERE 1=1
+		<if test="crc_id != null and crc_id != ''">
+        AND CRC.ID = #{crc_id}
+        </if>
+        <if test="gisu_id != null and gisu_id != ''">
+        AND GISU.ID = #{gisu_id}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(	(a1.stu_app_nm LIKE CONCAT('%',#{searchKeyword},'%'))
+						OR	(a1.user_id LIKE CONCAT('%',#{searchKeyword},'%')) )
+				</when>
+				<when test="searchCondition == 'name'">
+					a1.stu_app_nm LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'id'">
+					a1.user_id LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		<if test="stu_app_rt_doc != null and stu_app_rt_doc != ''">
+        AND stu_app_rt_doc = #{stu_app_rt_doc}
+		</if>
+		<if test="stu_app_rt_itv != null and stu_app_rt_itv != ''">
+        AND stu_app_rt_itv = #{stu_app_rt_itv}
+		</if>
+		ORDER BY a1.stu_app_nm
+		<if test='pagingYn=="Y"'>
+			<include refid="forFaith.common.footer"/>
+		</if>
+	</select>
+	<!-- 지원자 리스트 조회 종료 -->
+	
+	<!-- 지원자 total 조회 시작-->
+	<select id="applyTotalCnt" parameterType="ApplyVO" resultType="int">
+		SELECT COUNT(*) FROM (SELECT 
+			a1.stu_app_seq
+			,DATE_FORMAT(a1.stu_app_ins_dt, '%Y-%m-%d') stu_app_ins_dt
+			,a1.user_id
+			,a1.stu_app_nm
+			,a1.stu_app_phone
+			,a1.stu_app_email
+			,a1.stu_app_rt_doc
+			,a1.stu_app_rt_doc_id
+			,DATE_FORMAT(a1.stu_app_rt_doc_dt, '%Y-%m-%d') stu_app_rt_doc_dt
+			,a1.stu_app_rt_itv
+			,a1.stu_app_rt_itv_id
+			,DATE_FORMAT(a1.stu_app_rt_itv_dt, '%Y-%m-%d') stu_app_rt_itv_dt
+			,(	CASE
+					WHEN a1.stu_app_seq IN (	SELECT	apply.stu_app_seq
+												FROM	smtp_apply_form_tb apply
+			    										,cb_learn_app learn
+			    								WHERE	apply.crc_Id = learn.course_id
+														AND apply.gisu_id = learn.cardinal_id
+														AND apply.user_id = learn.user_id
+														AND learn.acceptance_yn = 'Y'
+			                                            AND learn.admin_add_yn != 'Y')
+				    THEN 1
+				    WHEN a1.stu_app_seq IN (	SELECT	apply.stu_app_seq
+												FROM	smtp_apply_form_tb apply
+			    										,cb_learn_app learn
+			    								WHERE	apply.crc_Id = learn.course_id
+														AND apply.gisu_id = learn.cardinal_id
+														AND apply.user_id = learn.user_id
+														AND learn.acceptance_yn = 'Y'
+			                                            AND learn.admin_add_yn = 'Y' )
+				    THEN 2
+				    ELSE 3
+				END	) confirm
+			,a1.crc_id
+			,a1.gisu_id
+			,gisu.name gisu_nm
+		FROM 
+			.smtp_apply_form_tb a1
+			
+		JOIN .cb_course crc
+		ON crc.id = a1.crc_id
+		
+		JOIN .cb_cardinal gisu
+		ON gisu.id = a1.gisu_id
+		
+		WHERE 1=1
+		<if test="crc_id != null and crc_id != ''">
+        AND CRC.ID = #{crc_id}
+        </if>
+        <if test="gisu_id != null and gisu_id != ''">
+        AND GISU.ID = #{gisu_id}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(	(a1.stu_app_nm LIKE CONCAT('%',#{searchKeyword},'%'))
+						OR	(a1.user_id LIKE CONCAT('%',#{searchKeyword},'%')) )
+				</when>
+				<when test="searchCondition == 'name'">
+					a1.stu_app_nm LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'id'">
+					a1.user_id LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		<if test="stu_app_rt_doc != null and stu_app_rt_doc != ''">
+        AND stu_app_rt_doc = #{stu_app_rt_doc}
+		</if>
+		<if test="stu_app_rt_itv != null and stu_app_rt_itv != ''">
+        AND stu_app_rt_itv = #{stu_app_rt_itv}
+		</if>
+		ORDER BY a1.stu_app_nm) T
+	</select>
+	<!-- 지원자 total 조회 종료-->
+	
+	<!-- 지원서 조회 시작 -->
+	<resultMap type="hashmap" id="stuApplyMap">
+		<id property="stu_app_seq" 						column="stu_app_seq" 					javaType="int"/>
+		<result property="user_id" 						column="user_id" 						javaType="String"/>
+		<result property="gisu_id" 						column="gisu_id" 						javaType="String"/>
+		<result property="stu_app_nm" 					column="stu_app_nm" 					javaType="String"/>
+		<result property="stu_app_birth" 				column="stu_app_birth" 					javaType="String"/>
+		<result property="stu_app_gender" 				column="stu_app_gender" 				javaType="String"/>
+		<result property="stu_app_mt_ck" 				column="stu_app_mt_ck" 					javaType="String"/>
+		<result property="stu_app_mt_etc" 				column="stu_app_mt_etc" 				javaType="String"/>
+		<result property="stu_app_zipcode" 				column="stu_app_zipcode" 				javaType="String"/>
+		<result property="stu_app_addr" 				column="stu_app_addr" 					javaType="String"/>
+		<result property="stu_app_addr_detail" 			column="stu_app_addr_detail" 			javaType="String"/>
+		<result property="stu_app_phone" 				column="stu_app_phone" 					javaType="String"/>
+		<result property="stu_app_em_phone" 			column="stu_app_em_phone" 				javaType="String"/>
+		<result property="stu_app_email" 				column="stu_app_email" 					javaType="String"/>
+		<result property="stu_app_photo_saved" 			column="stu_app_photo_saved" 			javaType="String"/>
+		<result property="stu_app_photo_origin" 		column="stu_app_photo_origin" 			javaType="String"/>
+		<result property="stu_app_edu_file_saved" 		column="stu_app_edu_file_saved" 		javaType="String"/>
+		<result property="stu_app_edu_file_origin" 		column="stu_app_edu_file_origin" 		javaType="String"/>
+		<result property="stu_app_isr_file_saved" 		column="stu_app_isr_file_saved" 		javaType="String"/>
+		<result property="stu_app_isr_file_origin" 		column="stu_app_isr_file_origin" 		javaType="String"/>
+		<result property="stu_app_imm_file_saved" 		column="stu_app_imm_file_saved" 		javaType="String"/>
+		<result property="stu_app_imm_file_origin" 		column="stu_app_imm_file_origin" 		javaType="String"/>
+        <result property="stu_app_worknet_file_saved" 	column="stu_app_worknet_file_saved" 	javaType="String"/>
+        <result property="stu_app_worknet_file_origin" 	column="stu_app_worknet_file_origin" 	javaType="String"/>
+        <result property="gisu_nm"						column="gisu_nm"						javaType="String"/>
+        
+		<collection property="eduHistoryList" javaType="java.util.ArrayList" resultMap="stuApplyEduHistory" />
+		<collection property="careerList" javaType="java.util.ArrayList" resultMap="stuApplyCareer" />
+		<collection property="studyList" javaType="java.util.ArrayList" resultMap="stuApplyStudy" />
+		<collection property="languageList" javaType="java.util.ArrayList" resultMap="stuApplyLanguage" />
+		<collection property="licenseList" javaType="java.util.ArrayList" resultMap="stuApplyLicense" />
+		<collection property="sesList" javaType="java.util.ArrayList" resultMap="stuApplySes" />
+		<collection property="kmoveList" javaType="java.util.ArrayList" resultMap="stuApplyKmove" />
+		<collection property="overseasList" javaType="java.util.ArrayList" resultMap="stuApplyOverseas" />
+		<collection property="introduceList" javaType="java.util.ArrayList" resultMap="stuApplyIntroduce" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyEduHistory">
+		<id property="stu_app_edu_seq" 			column="stu_app_edu_seq" 	javaType="int"/>
+		<result property="stu_app_edu_sc_nm" 	column="stu_app_edu_sc_nm" 	javaType="String"/>
+		<result property="stu_app_edu_field" 	column="stu_app_edu_field" 	javaType="String"/>
+		<result property="stu_app_edu_major" 	column="stu_app_edu_major" 	javaType="String"/>
+		<result property="stu_app_edu_gd_ck" 	column="stu_app_edu_gd_ck" 	javaType="String"/>
+		<result property="stu_app_edu_gd_dt" 	column="stu_app_edu_gd_dt" 	javaType="String"/>
+		<result property="stu_app_edu_sc_lo" 	column="stu_app_edu_sc_lo" 	javaType="String"/>
+		<result property="stu_app_edu_gd_rq" 	column="stu_app_edu_gd_rq" 	javaType="String"/>
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyCareer">
+		<id property="stu_app_crr_seq"				column="stu_app_crr_seq" />
+		<result property="stu_app_crr_place" 		column="stu_app_crr_place" />
+		<result property="stu_app_crr_dept" 		column="stu_app_crr_dept" />
+		<result property="stu_app_crr_position" 	column="stu_app_crr_position" />
+		<result property="stu_app_crr_phone" 		column="stu_app_crr_phone" />
+		<result property="stu_app_crr_st" 			column="stu_app_crr_st" />
+		<result property="stu_app_crr_et" 			column="stu_app_crr_et" />
+		<result property="stu_app_crr_description" 	column="stu_app_crr_description" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyStudy">
+		<id property="stu_app_study_seq" column="stu_app_study_seq" />
+		<result property="stu_app_study_nm" column="stu_app_study_nm" />
+		<result property="stu_app_study_st" column="stu_app_study_st" />
+		<result property="stu_app_study_et" column="stu_app_study_et" />
+		<result property="stu_app_study_ag" column="stu_app_study_ag" />
+		<result property="stu_app_study_detail" column="stu_app_study_detail" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyLanguage">
+		<id property="stu_app_lang_seq" column="stu_app_lang_seq" />
+		<result property="stu_app_lang_test_nm" column="stu_app_lang_test_nm" />
+		<result property="stu_app_lang_grade" column="stu_app_lang_grade" />
+		<result property="stu_app_lang_ag" column="stu_app_lang_ag" />
+		<result property="stu_app_lang_obtain_dt" column="stu_app_lang_obtain_dt" />
+		<result property="stu_app_lang_note" column="stu_app_lang_note" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyLicense">
+		<id property="app_license_seq" column="stu_app_license_seq" />
+		<result property="stu_app_license_nm" column="stu_app_license_nm" />
+		<result property="stu_app_license_ag" column="stu_app_license_ag" />
+		<result property="stu_app_license_obtain_dt" column="stu_app_license_obtain_dt" />
+		<result property="stu_app_license_note" column="stu_app_license_note" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplySes">
+		<id property="stu_app_ses_seq" column="stu_app_ses_seq" />
+		<result property="stu_app_ses_ck" column="stu_app_ses_ck" />
+		<result property="stu_app_ses_apply_dt" column="stu_app_ses_apply_dt" />
+		<result property="stu_app_ses_apply_rt" column="stu_app_ses_apply_rt" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyKmove">
+		<id property="stu_app_kmove_seq" column="stu_app_kmove_seq" />
+		<result property="stu_app_kmove_ck" column="stu_app_kmove_ck" />
+		<result property="stu_app_kmove_nm" column="stu_app_kmove_nm" />
+		<result property="stu_app_kmove_ag" column="stu_app_kmove_ag" />
+		<result property="stu_app_kmove_st" column="stu_app_kmove_st" />
+		<result property="stu_app_kmove_et" column="stu_app_kmove_et" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyOverseas">
+		<id property="stu_app_overseas_seq" column="stu_app_overseas_seq" />
+		<result property="stu_app_overseas_ck" column="stu_app_overseas_ck" />
+		<result property="stu_app_overseas_nm" column="stu_app_overseas_nm" />
+		<result property="stu_app_overseas_st" column="stu_app_overseas_st" />
+		<result property="stu_app_overseas_et" column="stu_app_overseas_et" />
+		<result property="stu_app_overseas_purpose" column="stu_app_overseas_purpose" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyIntroduce">
+		<id property="stu_app_introduce_seq" column="stu_app_introduce_seq" />
+		<result property="stu_app_introduce_title" column="stu_app_introduce_title" />
+		<result property="stu_app_introduce_detail" column="stu_app_introduce_detail" />
+	</resultMap>
+	
+	
+	<select id="selectApplyForm" parameterType="ApplyVO" resultMap="stuApplyMap">
+		select
+			form.stu_app_seq
+			,form.user_id
+			,form.gisu_id
+			,form.stu_app_nm
+			,form.stu_app_birth
+			,form.stu_app_gender
+			,form.stu_app_mt_ck
+			,form.stu_app_mt_etc
+			,form.stu_app_zipcode
+			,form.stu_app_addr
+			,form.stu_app_addr_detail
+			,form.stu_app_phone
+			,form.stu_app_em_phone
+			,form.stu_app_email
+			,form.stu_app_photo_saved
+			,form.stu_app_photo_origin
+			,form.stu_app_edu_file_saved
+			,form.stu_app_edu_file_origin
+			,form.stu_app_isr_file_saved
+			,form.stu_app_isr_file_origin
+            ,form.stu_app_imm_file_saved
+            ,form.stu_app_imm_file_origin
+            ,form.stu_app_worknet_file_saved
+            ,form.stu_app_worknet_file_origin
+            ,gisu.name gisu_nm
+            
+			,eduhistory.stu_app_edu_seq
+			,eduhistory.stu_app_edu_sc_nm
+			,eduhistory.stu_app_edu_field
+		    ,eduhistory.stu_app_edu_major
+		    ,eduhistory.stu_app_edu_gd_ck
+		    ,DATE_FORMAT(eduhistory.stu_app_edu_gd_dt, '%Y-%m-%d') as stu_app_edu_gd_dt
+		    ,eduhistory.stu_app_edu_sc_lo
+		    ,eduhistory.stu_app_edu_gd_rq
+		    
+		    ,career.stu_app_crr_seq
+		    ,career.stu_app_crr_place
+		    ,career.stu_app_crr_dept
+		    ,career.stu_app_crr_position
+		    ,career.stu_app_crr_phone
+		    ,DATE_FORMAT(career.stu_app_crr_st, '%Y-%m-%d') as stu_app_crr_st
+		    ,DATE_FORMAT(career.stu_app_crr_et, '%Y-%m-%d') as stu_app_crr_et
+		    ,career.stu_app_crr_description
+		    
+		    ,study.stu_app_study_seq
+		    ,study.stu_app_study_nm
+		    ,DATE_FORMAT(study.stu_app_study_st, '%Y-%m-%d') as stu_app_study_st
+		    ,DATE_FORMAT(study.stu_app_study_et, '%Y-%m-%d') as stu_app_study_et
+		    ,study.stu_app_study_ag
+		    ,study.stu_app_study_detail
+		    
+			,language.stu_app_lang_seq
+		    ,language.stu_app_lang_test_nm
+		    ,language.stu_app_lang_grade
+		    ,language.stu_app_lang_ag
+		    ,DATE_FORMAT(language.stu_app_lang_obtain_dt, '%Y-%m-%d') as stu_app_lang_obtain_dt
+		    ,language.stu_app_lang_note
+		    
+		    ,license.stu_app_license_seq
+		    ,license.stu_app_license_nm
+		    ,license.stu_app_license_ag
+		    ,DATE_FORMAT(license.stu_app_license_obtain_dt, '%Y-%m-%d') as stu_app_license_obtain_dt
+			,license.stu_app_license_note
+
+			,ses.stu_app_ses_seq
+		    ,ses.stu_app_ses_ck
+		    ,DATE_FORMAT(ses.stu_app_ses_apply_dt, '%Y-%m-%d') as stu_app_ses_apply_dt
+		    ,ses.stu_app_ses_apply_rt
+
+			,kmove.stu_app_kmove_seq
+		    ,kmove.stu_app_kmove_ck
+		    ,kmove.stu_app_kmove_nm
+		    ,kmove.stu_app_kmove_ag
+		    ,DATE_FORMAT(kmove.stu_app_kmove_st, '%Y-%m-%d') as stu_app_kmove_st
+		    ,DATE_FORMAT(kmove.stu_app_kmove_et, '%Y-%m-%d') as stu_app_kmove_et
+		    
+		    ,overseas.stu_app_overseas_seq
+		    ,overseas.stu_app_overseas_ck
+		    ,overseas.stu_app_overseas_nm
+		    ,DATE_FORMAT(overseas.stu_app_overseas_st, '%Y-%m-%d') as stu_app_overseas_st
+		    ,DATE_FORMAT(overseas.stu_app_overseas_et, '%Y-%m-%d') as stu_app_overseas_et
+		    ,overseas.stu_app_overseas_purpose
+		    
+		    ,introduce.stu_app_introduce_seq
+		    ,introduce.stu_app_introduce_title
+		    ,introduce.stu_app_introduce_detail
+		    
+		from
+			.SMTP_APPLY_FORM_TB form 
+			
+		LEFT JOIN .SMTP_APP_EDUHISTORY_TB eduhistory
+		ON
+			form.stu_app_seq = eduhistory.stu_app_seq
+		
+		LEFT JOIN .SMTP_APP_CAREER_TB career
+		ON
+			form.stu_app_seq = career.stu_app_seq
+			
+		LEFT JOIN .SMTP_APP_STUDY_TB study
+		ON
+			form.stu_app_seq = study.stu_app_seq
+			
+		LEFT JOIN .SMTP_APP_LANGUAGE_TB language
+		ON
+			form.stu_app_seq = language.stu_app_seq
+			
+		LEFT JOIN .SMTP_APP_LICENSE_TB license
+		ON
+			form.stu_app_seq = license.stu_app_seq
+			
+		LEFT JOIN .SMTP_APP_SES_TB ses
+		ON
+			form.stu_app_seq = ses.stu_app_seq
+			
+		LEFT JOIN .SMTP_APP_KMOVE_TB kmove
+		ON
+			form.stu_app_seq = kmove.stu_app_seq
+			
+		LEFT JOIN .SMTP_APP_OVERSEAS_TB overseas
+		ON
+			form.stu_app_seq = overseas.stu_app_seq
+			
+		LEFT JOIN .SMTP_APP_INTRODUCE_TB introduce
+		ON
+			form.stu_app_seq = introduce.stu_app_seq
+			
+		LEFT JOIN cb_cardinal gisu
+		ON
+			form.gisu_id = gisu.id
+			
+		WHERE
+			user_id = #{user_id}
+		AND
+			gisu_id = #{gisu_id}
+	</select>
+	<!-- 지원서 조회 종료 : 여기 쿼리 삭제 예정 김성미-->
+	
+	
+	
+	
+	
+	
+	
+	<!-- 
+	<resultMap type="hashmap" id="stuApplyMap">
+		<id property="stu_app_seq" 						column="stu_app_seq" 					javaType="int"/>
+		<result property="user_id" 						column="user_id" 						javaType="String"/>
+		<result property="gisu_id" 						column="gisu_id" 						javaType="String"/>
+		<result property="crc_id" 						column="crc_id" 						javaType="String"/>
+		<result property="stu_app_nm" 					column="stu_app_nm" 					javaType="String"/>
+		<result property="stu_app_birth" 				column="stu_app_birth" 					javaType="String"/>
+		<result property="stu_app_gender" 				column="stu_app_gender" 				javaType="String"/>
+		<result property="stu_app_mt_ck" 				column="stu_app_mt_ck" 					javaType="String"/>
+		<result property="stu_app_mt_etc" 				column="stu_app_mt_etc" 				javaType="String"/>
+		<result property="stu_app_zipcode" 				column="stu_app_zipcode" 				javaType="String"/>
+		<result property="stu_app_addr" 				column="stu_app_addr" 					javaType="String"/>
+		<result property="stu_app_addr_detail" 			column="stu_app_addr_detail" 			javaType="String"/>
+		<result property="stu_app_phone" 				column="stu_app_phone" 					javaType="String"/>
+		<result property="stu_app_em_phone" 			column="stu_app_em_phone" 				javaType="String"/>
+		<result property="stu_app_email" 				column="stu_app_email" 					javaType="String"/>
+		<result property="stu_app_photo_saved" 			column="stu_app_photo_saved" 			javaType="String"/>
+		<result property="stu_app_photo_origin" 		column="stu_app_photo_origin" 			javaType="String"/>
+		<result property="stu_app_edu_file_saved" 		column="stu_app_edu_file_saved" 		javaType="String"/>
+		<result property="stu_app_edu_file_origin" 		column="stu_app_edu_file_origin" 		javaType="String"/>
+		<result property="stu_app_isr_file_saved" 		column="stu_app_isr_file_saved" 		javaType="String"/>
+		<result property="stu_app_isr_file_origin" 		column="stu_app_isr_file_origin" 		javaType="String"/>
+		<result property="stu_app_imm_file_saved" 		column="stu_app_imm_file_saved" 		javaType="String"/>
+		<result property="stu_app_imm_file_origin" 		column="stu_app_imm_file_origin" 		javaType="String"/>
+        <result property="stu_app_worknet_file_saved" 	column="stu_app_worknet_file_saved" 	javaType="String"/>
+        <result property="stu_app_worknet_file_origin" 	column="stu_app_worknet_file_origin" 	javaType="String"/>
+        <result property="stu_app_ins_id" 				column="stu_app_ins_id" 				/>
+        <result property="stu_app_ins_dt" 				column="stu_app_ins_dt" 				/>
+        <result property="stu_app_udt_id" 				column="stu_app_udt_id" 				/>
+        <result property="gisu_nm"						column="gisu_nm"						javaType="String"/>
+        
+		<collection property="eduHistoryList" javaType="java.util.ArrayList" resultMap="stuApplyEduHistory" />
+		<collection property="careerList" javaType="java.util.ArrayList" resultMap="stuApplyCareer" />
+		<collection property="studyList" javaType="java.util.ArrayList" resultMap="stuApplyStudy" />
+		<collection property="languageList" javaType="java.util.ArrayList" resultMap="stuApplyLanguage" />
+		<collection property="licenseList" javaType="java.util.ArrayList" resultMap="stuApplyLicense" />
+		<collection property="sesList" javaType="java.util.ArrayList" resultMap="stuApplySes" />
+		<collection property="kmoveList" javaType="java.util.ArrayList" resultMap="stuApplyKmove" />
+		<collection property="overseasList" javaType="java.util.ArrayList" resultMap="stuApplyOverseas" />
+		<collection property="introduceList" javaType="java.util.ArrayList" resultMap="stuApplyIntroduce" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyEduHistory">
+		<id property="stu_app_edu_seq" 			column="stu_app_edu_seq" 	javaType="int"/>
+		<result property="stu_app_edu_sc_nm" 	column="stu_app_edu_sc_nm" 	javaType="String"/>
+		<result property="stu_app_edu_field" 	column="stu_app_edu_field" 	javaType="String"/>
+		<result property="stu_app_edu_major" 	column="stu_app_edu_major" 	javaType="String"/>
+		<result property="stu_app_edu_gd_ck" 	column="stu_app_edu_gd_ck" 	javaType="String"/>
+		<result property="stu_app_edu_gd_dt" 	column="stu_app_edu_gd_dt" 	javaType="String"/>
+		<result property="stu_app_edu_sc_lo" 	column="stu_app_edu_sc_lo" 	javaType="String"/>
+		<result property="stu_app_edu_gd_rq" 	column="stu_app_edu_gd_rq" 	javaType="String"/>
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyCareer">
+		<id property="stu_app_crr_seq"				column="stu_app_crr_seq" />
+		<result property="stu_app_crr_place" 		column="stu_app_crr_place" />
+		<result property="stu_app_crr_dept" 		column="stu_app_crr_dept" />
+		<result property="stu_app_crr_position" 	column="stu_app_crr_position" />
+		<result property="stu_app_crr_phone" 		column="stu_app_crr_phone" />
+		<result property="stu_app_crr_st" 			column="stu_app_crr_st" />
+		<result property="stu_app_crr_et" 			column="stu_app_crr_et" />
+		<result property="stu_app_crr_description" 	column="stu_app_crr_description" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyStudy">
+		<id property="stu_app_study_seq" column="stu_app_study_seq" />
+		<result property="stu_app_study_nm" column="stu_app_study_nm" />
+		<result property="stu_app_study_st" column="stu_app_study_st" />
+		<result property="stu_app_study_et" column="stu_app_study_et" />
+		<result property="stu_app_study_ag" column="stu_app_study_ag" />
+		<result property="stu_app_study_detail" column="stu_app_study_detail" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyLanguage">
+		<id property="stu_app_lang_seq" column="stu_app_lang_seq" />
+		<result property="stu_app_lang_test_nm" column="stu_app_lang_test_nm" />
+		<result property="stu_app_lang_grade" column="stu_app_lang_grade" />
+		<result property="stu_app_lang_ag" column="stu_app_lang_ag" />
+		<result property="stu_app_lang_note" column="stu_app_lang_note" />
+		<result property="stu_app_lang_obtain_dt" column="stu_app_lang_obtain_dt" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyLicense">
+		<id property="app_license_seq" column="stu_app_license_seq" />
+		<result property="stu_app_license_nm" column="stu_app_license_nm" />
+		<result property="stu_app_license_ag" column="stu_app_license_ag" />
+		<result property="stu_app_license_obtain_dt" column="stu_app_license_obtain_dt" />
+		<result property="stu_app_license_note" column="stu_app_license_note" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplySes">
+		<id property="stu_app_ses_seq" column="stu_app_ses_seq" />
+		<result property="stu_app_ses_ck" column="stu_app_ses_ck" />
+		<result property="stu_app_ses_apply_dt" column="stu_app_ses_apply_dt" />
+		<result property="stu_app_ses_apply_rt" column="stu_app_ses_apply_rt" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyKmove">
+		<id property="stu_app_kmove_seq" column="stu_app_kmove_seq" />
+		<result property="stu_app_kmove_ck" column="stu_app_kmove_ck" />
+		<result property="stu_app_kmove_nm" column="stu_app_kmove_nm" />
+		<result property="stu_app_kmove_ag" column="stu_app_kmove_ag" />
+		<result property="stu_app_kmove_st" column="stu_app_kmove_st" />
+		<result property="stu_app_kmove_et" column="stu_app_kmove_et" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyOverseas">
+		<id property="stu_app_overseas_seq" column="stu_app_overseas_seq" />
+		<result property="stu_app_overseas_ck" column="stu_app_overseas_ck" />
+		<result property="stu_app_overseas_nm" column="stu_app_overseas_nm" />
+		<result property="stu_app_overseas_st" column="stu_app_overseas_st" />
+		<result property="stu_app_overseas_et" column="stu_app_overseas_et" />
+		<result property="stu_app_overseas_purpose" column="stu_app_overseas_purpose" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="stuApplyIntroduce">
+		<id property="stu_app_introduce_seq" column="stu_app_introduce_seq" />
+		<result property="stu_app_introduce_title" column="stu_app_introduce_title" />
+		<result property="stu_app_introduce_detail" column="stu_app_introduce_detail" />
+	</resultMap>
+
+	<select id="selectSmtpApply" parameterType="hashmap" resultMap="stuApplyMap">
+		SELECT
+			form.stu_app_seq
+			,form.user_id
+			,form.gisu_id
+			,form.crc_id
+			,form.stu_app_nm
+			,form.stu_app_birth
+			,form.stu_app_gender
+			,form.stu_app_mt_ck
+			,form.stu_app_mt_etc
+			,form.stu_app_zipcode
+			,form.stu_app_addr
+			,form.stu_app_addr_detail
+            ,form.stu_app_phone
+			,form.stu_app_em_phone
+            ,form.stu_app_email
+			,form.stu_app_photo_saved
+			,form.stu_app_photo_origin
+			,form.stu_app_edu_file_saved
+			,form.stu_app_edu_file_origin
+			,form.stu_app_isr_file_saved
+			,form.stu_app_isr_file_origin
+            ,form.stu_app_imm_file_saved
+            ,form.stu_app_imm_file_origin
+            ,form.stu_app_worknet_file_saved
+            ,form.stu_app_worknet_file_origin
+            ,form.stu_app_ins_id
+            ,form.stu_app_ins_dt
+            ,form.stu_app_udt_id
+            ,gisu.name gisu_nm
+			,eduhistory.stu_app_edu_seq
+			,eduhistory.stu_app_edu_sc_nm
+			,eduhistory.stu_app_edu_field
+		    ,eduhistory.stu_app_edu_major
+		    ,eduhistory.stu_app_edu_gd_ck
+		    ,DATE_FORMAT(eduhistory.stu_app_edu_gd_dt, '%Y-%m-%d') as stu_app_edu_gd_dt
+		    ,eduhistory.stu_app_edu_sc_lo
+		    ,eduhistory.stu_app_edu_gd_rq
+		    ,career.stu_app_crr_seq
+		    ,career.stu_app_crr_place
+            ,career.stu_app_crr_dept
+		    ,career.stu_app_crr_position
+		    ,career.stu_app_crr_phone
+            ,DATE_FORMAT(career.stu_app_crr_st, '%Y-%m-%d') as stu_app_crr_st
+		    ,DATE_FORMAT(career.stu_app_crr_et, '%Y-%m-%d') as stu_app_crr_et
+            ,career.stu_app_crr_description
+            ,study.stu_app_study_seq
+		    ,study.stu_app_study_nm
+		    ,DATE_FORMAT(study.stu_app_study_st, '%Y-%m-%d') as stu_app_study_st
+		    ,DATE_FORMAT(study.stu_app_study_et, '%Y-%m-%d') as stu_app_study_et
+		    ,study.stu_app_study_ag
+		    ,study.stu_app_study_detail
+			,language.stu_app_lang_seq
+		    ,language.stu_app_lang_test_nm
+		    ,language.stu_app_lang_grade
+		    ,language.stu_app_lang_ag
+		    ,DATE_FORMAT(language.stu_app_lang_obtain_dt, '%Y-%m-%d') as stu_app_lang_obtain_dt
+			,language.stu_app_lang_note
+		    ,license.stu_app_license_seq
+		    ,license.stu_app_license_nm
+		    ,license.stu_app_license_ag
+		    ,DATE_FORMAT(license.stu_app_license_obtain_dt, '%Y-%m-%d') as stu_app_license_obtain_dt
+		    ,license.stu_app_license_note
+            ,ses.stu_app_ses_seq
+            ,ses.stu_app_ses_ck
+            ,DATE_FORMAT(ses.stu_app_ses_apply_dt, '%Y-%m-%d') as stu_app_ses_apply_dt
+            ,ses.stu_app_ses_apply_rt
+			,kmove.stu_app_kmove_seq
+            ,kmove.stu_app_kmove_ck
+            ,kmove.stu_app_kmove_nm
+            ,kmove.stu_app_kmove_ag
+            ,DATE_FORMAT(kmove.stu_app_kmove_st, '%Y-%m-%d') as stu_app_kmove_st
+		    ,DATE_FORMAT(kmove.stu_app_kmove_et, '%Y-%m-%d') as stu_app_kmove_et
+		    ,overseas.stu_app_overseas_seq
+            ,overseas.stu_app_overseas_ck
+		    ,overseas.stu_app_overseas_nm
+		    ,DATE_FORMAT(overseas.stu_app_overseas_st, '%Y-%m-%d') as stu_app_overseas_st
+		    ,DATE_FORMAT(overseas.stu_app_overseas_et, '%Y-%m-%d') as stu_app_overseas_et
+		    ,overseas.stu_app_overseas_purpose
+            ,introduce.stu_app_introduce_seq
+            ,introduce.stu_app_introduce_title
+            ,introduce.stu_app_introduce_detail
+		FROM
+			smtp_apply_form_tb form 
+		LEFT JOIN smtp_app_eduhistory_tb eduhistory
+		ON
+			form.stu_app_seq = eduhistory.stu_app_seq
+            
+		LEFT JOIN smtp_app_career_tb career
+		ON
+			form.stu_app_seq = career.stu_app_seq
+        
+		LEFT JOIN smtp_app_study_tb study
+		ON
+			form.stu_app_seq = study.stu_app_seq
+		
+        LEFT JOIN smtp_app_language_tb language
+		ON
+			form.stu_app_seq = language.stu_app_seq
+        LEFT JOIN smtp_app_license_tb license
+		ON
+			form.stu_app_seq = license.stu_app_seq
+        LEFT JOIN smtp_app_ses_tb ses
+		ON
+			form.stu_app_seq = ses.stu_app_seq
+		LEFT JOIN smtp_app_kmove_tb kmove
+		ON
+			form.stu_app_seq = kmove.stu_app_seq
+            
+		LEFT JOIN smtp_app_overseas_tb overseas
+		ON
+			form.stu_app_seq = overseas.stu_app_seq
+		
+		LEFT JOIN smtp_app_introduce_tb introduce
+		ON
+			form.stu_app_seq = introduce.stu_app_seq
+		
+		LEFT JOIN cb_cardinal gisu
+		ON
+			form.gisu_id = gisu.id
+			
+		WHERE
+			user_id = #{user_id}
+		AND
+			gisu_id = #{gisu_id}
+	</select>
+	지원신청서 조회 종료
+	 -->
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 지원자 전형 결과 수정 시작 -->
+	<update id="updateApplyResult" parameterType="ApplyVO">
+		update
+			SMTP_APPLY_FORM_TB
+		set
+			stu_app_seq = #{stu_app_seq}
+			<if test="stu_app_rt_doc != null">
+				,stu_app_rt_doc = #{stu_app_rt_doc}
+				,stu_app_rt_doc_id = #{stu_app_rt_doc_id}
+				,stu_app_rt_doc_dt = now()
+			</if>
+			<if test="stu_app_rt_itv != null">
+				,stu_app_rt_itv = #{stu_app_rt_itv}
+				,stu_app_rt_itv_id = #{stu_app_rt_itv_id}
+				,stu_app_rt_itv_dt = now()
+			</if>
+		where
+			stu_app_seq = #{stu_app_seq}
+	</update>
+	<!-- 지원자 전형 결과 수정 종료 -->
+	
+	<select id="checkStudent" parameterType="ApplyVO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM 
+			smtp_info_basic_tb
+		WHERE
+			user_id = #{user_id}
+		    AND gisu_id = #{gisu_id}
+		    AND crc_id = #{crc_id}
+	</select>
+	
+	<!-- 지원신청서 기본정보 복사 시작 -->
+	<insert id="insertCopyStuApplyForm" parameterType="ApplyVO">
+		INSERT INTO
+			smtp_info_basic_tb
+		(
+			stu_seq
+			,gisu_id
+		    ,crc_id
+		    ,user_id
+		    ,stu_user_nm
+		    ,stu_user_birth
+		    ,stu_user_gender
+		    ,stu_mt_ck
+		    ,stu_mt_etc
+		    ,stu_zipcode
+		    ,stu_addr
+		    ,stu_addr_detail
+		    ,stu_phone
+		    ,stu_em_phone
+		    ,stu_email
+		    ,stu_state_ck
+		    ,reg_user
+		    ,reg_date
+		    ,upd_user
+		    ,upd_date
+		) 
+		SELECT
+			(SELECT IFNULL(MAX(STU_SEQ),0)+1 FROM SMTP_INFO_BASIC_TB t)
+			,gisu_id
+			,crc_id
+			,user_id
+			,stu_app_nm
+			,stu_app_birth
+			,stu_app_gender
+			,stu_app_mt_ck
+			,stu_app_mt_etc
+			,stu_app_zipcode
+			,stu_app_addr
+			,stu_app_addr_detail
+			,stu_app_phone
+			,stu_app_em_phone
+			,stu_app_email
+			,"A1800"
+			,#{updUser.id}
+			,NOW()
+			,#{updUser.id}
+			,NOW()
+		FROM
+			smtp_apply_form_tb
+		WHERE
+			stu_app_seq = #{stu_app_seq}
+	</insert>
+	<!-- 지원신청서 기본정보 복사 종료 -->
+	
+	<!-- 지원신청서 학력사항 복사 시작 -->
+	<insert id="insertCopyStuApplyEduHistory" parameterType="ApplyVO">
+		INSERT INTO
+			smtp_info_eduhistory_tb
+		(
+			stu_seq
+		    ,stu_edu_sc_nm
+		    ,stu_edu_field
+		    ,stu_edu_major
+		    ,stu_edu_gd_ck
+		    ,stu_edu_gd_dt
+		    ,stu_edu_sc_lo
+		    ,stu_edu_gd_rq
+		    ,stu_edu_ins_id
+		    ,stu_edu_ins_dt
+		    ,stu_edu_udt_id
+		    ,stu_edu_udt_dt
+		)
+		SELECT
+			(SELECT MAX(STU_SEQ) FROM SMTP_INFO_BASIC_TB t)
+			,stu_app_edu_sc_nm
+			,stu_app_edu_field
+			,stu_app_edu_major
+			,stu_app_edu_gd_ck
+		    ,stu_app_edu_gd_dt
+		    ,stu_app_edu_sc_lo
+		    ,stu_app_edu_gd_rq
+		    ,#{updUser.id}
+			,NOW()
+			,#{updUser.id}
+			,NOW()
+		FROM
+			smtp_app_eduhistory_tb
+		WHERE
+		    stu_app_seq = #{stu_app_seq}
+	</insert>
+	<!-- 지원신청서 학력사항 복사 종료 -->
+	
+	<!-- 지원신청서 경력사항 복사 시작 -->
+	<insert id="insertCopyStuApplyCareer" parameterType="ApplyVO">
+		INSERT INTO
+			smtp_info_career_tb
+		(
+			stu_seq
+	        ,stu_crr_place
+	        ,stu_crr_dept
+	        ,stu_crr_position
+	        ,stu_crr_phone
+	        ,stu_crr_st
+	        ,stu_crr_et
+	        ,stu_crr_description
+	        ,stu_crr_ins_id
+	        ,stu_crr_ins_dt
+	        ,stu_crr_udt_id
+	        ,stu_crr_udt_dt
+	    )
+	    SELECT
+			(SELECT MAX(STU_SEQ) FROM SMTP_INFO_BASIC_TB t)
+	        ,stu_app_crr_place
+	        ,stu_app_crr_dept
+	        ,stu_app_crr_position
+	        ,stu_app_crr_phone
+	        ,stu_app_crr_st
+	        ,stu_app_crr_et
+	        ,stu_app_crr_description
+	        ,#{updUser.id}
+			,NOW()
+			,#{updUser.id}
+			,NOW()
+	    FROM
+	        smtp_app_career_tb
+	    WHERE
+			stu_app_seq = #{stu_app_seq}
+	</insert>
+	<!-- 지원신청서 경력사항 복사 종료 -->
+	
+	<!-- 지원신청서 교육이수 정보 복사 시작 -->
+	<insert id="insertCopyStuApplyStudy" parameterType="ApplyVO">
+		INSERT INTO
+			smtp_info_study_tb
+	    (
+			stu_seq
+	        ,stu_study_nm
+	        ,stu_study_st
+	        ,stu_study_et
+	        ,stu_study_ag
+	        ,stu_study_detail
+	        ,stu_study_ins_id
+	        ,stu_study_ins_dt
+	        ,stu_study_udt_id
+	        ,stu_study_udt_dt
+	    )
+	    SELECT
+			(SELECT MAX(STU_SEQ) FROM SMTP_INFO_BASIC_TB t)
+	        ,stu_app_study_nm
+	        ,stu_app_study_st
+	        ,stu_app_study_et
+	        ,stu_app_study_ag
+	        ,stu_app_study_detail
+	        ,#{updUser.id}
+			,NOW()
+			,#{updUser.id}
+			,NOW()
+	    FROM
+			smtp_app_study_tb
+	    WHERE
+			stu_app_seq = #{stu_app_seq}
+	</insert>
+	<!-- 지원신청서 교육이수 정보 복사 종료 -->
+	
+	<!-- 지원신청서 언어능력 복사 시작 -->
+	<insert id="insertCopyStuApplyLanguage" parameterType="ApplyVO">
+		INSERT INTO
+			smtp_info_language_tb
+	    (
+			stu_seq
+	        ,stu_lang_test_nm
+	        ,stu_lang_grade
+	        ,stu_lang_ag
+	        ,stu_lang_obtain_dt
+			,stu_lang_note
+	        ,stu_lang_ins_id
+	        ,stu_lang_ins_dt
+	        ,stu_lang_udt_id
+	        ,stu_lang_udt_dt
+	    )
+	    SELECT
+			(SELECT MAX(STU_SEQ) FROM SMTP_INFO_BASIC_TB t)
+	        ,stu_app_lang_test_nm
+	        ,stu_app_lang_grade
+	        ,stu_app_lang_ag
+	        ,stu_app_lang_obtain_dt
+	        ,stu_app_lang_note
+	        ,#{updUser.id}
+			,NOW()
+			,#{updUser.id}
+			,NOW()
+	    FROM
+	        smtp_app_language_tb
+	    WHERE
+			stu_app_seq = #{stu_app_seq}
+	</insert>
+	<!-- 지원신청서 언어능력 복사 종료 -->
+	
+	<!-- 지원신청서 자격증 복사 시작 -->
+	<insert id="insertCopyStuApplyLicense" parameterType="ApplyVO">
+		INSERT INTO
+			smtp_info_license_tb
+	    (
+			stu_seq
+	        ,stu_license_nm
+	        ,stu_license_ag
+	        ,stu_license_obtain_dt
+	        ,stu_license_note
+	        ,stu_license_ins_id
+	        ,stu_license_ins_dt
+	        ,stu_license_udt_id
+	        ,stu_license_udt_dt
+	    )
+	    SELECT
+			(SELECT MAX(STU_SEQ) FROM SMTP_INFO_BASIC_TB t)
+	        ,stu_app_license_nm
+	        ,stu_app_license_ag
+	        ,stu_app_license_obtain_dt
+	        ,stu_app_license_note
+	        ,#{updUser.id}
+			,NOW()
+			,#{updUser.id}
+			,NOW()
+	    FROM
+	        smtp_app_license_tb
+	    WHERE
+			stu_app_seq = #{stu_app_seq}
+	</insert>
+	<!-- 지원신청서 자격증 복사 종료 -->
+	
+	<!-- 지원신청서 본 과정 응시여부 복사 시작 -->
+	<insert id="insertCopyStuApplySes" parameterType="int">
+		INSERT INTO
+			smtp_info_ses_tb
+	    (
+			stu_seq
+	        ,stu_ses_ck
+	        ,stu_ses_apply_dt
+	        ,stu_ses_apply_rt
+	        ,stu_ses_ins_id
+	        ,stu_ses_ins_dt
+	        ,stu_ses_udt_id
+	        ,stu_ses_udt_dt
+	    )
+	    SELECT
+			(SELECT MAX(STU_SEQ) FROM SMTP_INFO_BASIC_TB t)
+	        ,stu_app_ses_ck
+	        ,stu_app_ses_apply_dt
+	        ,stu_app_ses_apply_rt
+	        ,#{updUser.id}
+			,NOW()
+			,#{updUser.id}
+			,NOW()
+	    FROM
+	        smtp_app_ses_tb
+	    WHERE
+			stu_app_seq = #{stu_app_seq}
+	</insert>
+	<!-- 지원신청서 본 과정 응시여부 복사 종료 -->
+	
+	<!-- 지원신청서 Kmove 참여여부 복사 시작 -->
+	<insert id="insertCopyStuApplyKmove" parameterType="ApplyVO">
+		INSERT INTO
+			smtp_info_kmove_tb
+	    (
+			stu_seq
+	        ,stu_kmove_ck
+	        ,stu_kmove_nm
+	        ,stu_kmove_ag
+	        ,stu_kmove_st
+	        ,stu_kmove_et
+	        ,stu_kmove_ins_id
+	        ,stu_kmove_ins_dt
+	        ,stu_kmove_udt_id
+	        ,stu_kmove_udt_dt
+	    )
+	    SELECT
+			(SELECT MAX(STU_SEQ) FROM SMTP_INFO_BASIC_TB t)
+	        ,stu_app_kmove_ck
+	        ,stu_app_kmove_nm
+	        ,stu_app_kmove_ag
+	        ,stu_app_kmove_st
+	        ,stu_app_kmove_et
+	        ,#{updUser.id}
+			,NOW()
+			,#{updUser.id}
+			,NOW()
+	    FROM
+	        smtp_app_kmove_tb
+	    WHERE
+			stu_app_seq = #{stu_app_seq}
+	</insert>
+	<!-- 지원신청서 Kmove 참여여부 복사 종료 -->
+	
+	<!-- 지원신청서 해외체류경험 복사 시작 -->
+	<insert id="insertCopyStuApplyOverseas" parameterType="ApplyVO">
+		INSERT INTO
+			smtp_info_overseas_tb
+	    (
+			stu_seq
+	        ,stu_overseas_ck
+	        ,stu_overseas_nm
+	        ,stu_overseas_st
+	        ,stu_overseas_et
+	        ,stu_overseas_purpose
+	        ,stu_overseas_ins_id
+	        ,stu_overseas_ins_dt
+	        ,stu_overseas_udt_id
+	        ,stu_overseas_udt_dt
+	    )
+	    SELECT
+			(SELECT MAX(STU_SEQ) FROM SMTP_INFO_BASIC_TB t)
+	        ,stu_app_overseas_ck
+	        ,stu_app_overseas_nm
+	        ,stu_app_overseas_st
+	        ,stu_app_overseas_et
+	        ,stu_app_overseas_purpose
+	        ,#{updUser.id}
+			,NOW()
+			,#{updUser.id}
+			,NOW()
+	    FROM
+	        smtp_app_overseas_tb
+	    WHERE
+			stu_app_seq = #{stu_app_seq}
+	</insert>
+	<!-- 지원신청서 해외체류경험 복사 종료 -->
+	
+	<!-- 지원신청서 자기소개서 복사 시작 -->
+	<insert id="insertCopyStuApplyIntroduce" parameterType="ApplyVO">
+		INSERT INTO
+			smtp_info_introduce_tb
+	    (
+			stu_seq
+	        ,stu_introduce_title
+	        ,stu_introduce_detail
+	        ,stu_introduce_ins_id
+	        ,stu_introduce_ins_dt
+	        ,stu_introduce_udt_id
+	        ,stu_introduce_udt_dt
+	    )
+	    SELECT
+			(SELECT MAX(STU_SEQ) FROM SMTP_INFO_BASIC_TB t)
+	        ,stu_app_introduce_title
+	        ,stu_app_introduce_detail
+	        ,#{updUser.id}
+			,NOW()
+			,#{updUser.id}
+			,NOW()
+	    FROM
+	        smtp_app_introduce_tb
+	    WHERE
+			stu_app_seq = #{stu_app_seq}
+	</insert>
+	<!-- 지원신청서 자기소개서 복사 종료 -->
+	
+	
+	<resultMap id="stuInfoBasicMap" type="StuInfoBasicVO" >
+		<id 	property="stu_seq" 					column="stu_seq"/>
+		<result property="stu_photo_attached" 		column="stu_photo_attached"/>
+		<result property="stu_edu_attached" 		column="stu_edu_attached"/>
+		<result property="stu_isr_attached" 		column="stu_isr_attached"/>
+		<result property="stu_imm_attached" 		column="stu_imm_attached"/>
+		<result property="stu_worknet_attached" 	column="stu_worknet_attached"/>
+	</resultMap>
+	
+	<select id="selectStuInfoBasic" parameterType="ApplyVO" resultMap="stuInfoBasicMap">
+		SELECT
+			stu_seq
+			,stu_photo_attached
+			,stu_edu_attached
+			,stu_isr_attached
+			,stu_imm_attached
+			,stu_worknet_attached 
+		FROM
+			smtp_info_basic_tb
+		WHERE
+			user_id = #{user_id}
+			AND
+			gisu_id = #{gisu_id}
+	</select>
+	
+	<!-- 입과처리 시작 -->
+	<update id="updateLearnApp" parameterType="ApplyVO">
+		UPDATE
+			cb_learn_app
+		SET
+			acceptance_yn = 'Y'
+			,admin_add_yn = '' <!-- 수강관리 -> 입과관리 메뉴에서 입과처리했을 때의 값 정리 -->
+			,UPD_USER = #{updUser.id}
+			,UPD_DATE = NOW()
+		WHERE
+			user_id = #{user_id}
+			AND
+			cardinal_id = #{gisu_id}
+	</update>
+	<!-- 입과처리 종료 -->
+	
+	<!-- 학적부에 지원서 첨부파일 등록시작 -->
+	<update id="regAttachFileID" parameterType="StuInfoBasicVO">
+		UPDATE
+			smtp_info_basic_tb
+		SET
+			stu_photo_attached = #{stu_photo_attached}
+			,stu_edu_attached = #{stu_edu_attached}
+			,stu_isr_attached = #{stu_isr_attached}
+			,stu_imm_attached = #{stu_imm_attached}
+			,stu_worknet_attached = #{stu_worknet_attached}
+		WHERE
+			stu_seq = #{stu_seq}
+	</update>
+	
+	<delete id="deleteStuInfo" parameterType="ApplyVO">
+		DELETE FROM smtp_info_basic_tb
+		WHERE 
+			user_id = #{user_id}
+		    AND gisu_id = #{gisu_id}
+		    AND crc_id = #{crc_id}
+	</delete>
+	
+	<!-- 입과처리 취소 -->
+	<update id="changeAcceptance" parameterType="ApplyVO">
+		UPDATE
+			cb_learn_app
+		SET
+			acceptance_yn = 'N'
+			,UPD_USER = #{updUser.id}
+			,UPD_DATE = NOW()
+		WHERE
+			user_id = #{user_id}
+			AND
+			cardinal_id = #{gisu_id}
+			AND
+			course_id = #{crc_id}
+	</update>
+	<!-- 입과처리 취소 종료 -->
+</mapper>

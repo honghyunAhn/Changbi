@@ -1,0 +1,1348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.changbi.tt.dev.data.dao.CourseDAO">
+
+
+	<!-- 연수영역 resultMap -->
+	<resultMap id="studyRangeMap"	type="forFaith.dev.vo.CodeVO">
+		<id		property="code"				column="CODE" />		 
+		<result	property="codeGroup.id"		column="GROUP_ID" />		 
+		<result	property="parentCode.code"	column="PARENT_CODE" />		
+		<result property="parentCode.name" column="PARENT_NAME" /> 
+		<association property="regUser" 	column="REG_USER"	jdbcType="VARCHAR"	javaType="forFaith.dev.vo.MemberVO"	select="forFaith.dev.dao.BaseDAO.memberInfo" />
+		<association property="updUser" 	column="UPD_USER"	jdbcType="VARCHAR"	javaType="forFaith.dev.vo.MemberVO"	select="forFaith.dev.dao.BaseDAO.memberInfo" />	 	
+	</resultMap>
+
+	
+	<!-- 연수과정 resultMap -->
+	<resultMap id="trainProcessMap" 		type="CourseVO"		autoMapping="true">
+		<id		property="id"				column="ID" />
+		<result property="company.id"		column="COM_ID" />
+		<result property="teacher.id"		column="TEACH_ID" />
+		<result property="mainBook.id"		column="MAIN_TB_ID" />
+		<result property="subBook.id"		column="SUB_TB_ID" />
+		<result property="bookCode.code"	column="TB_CODE" />	
+		<result property="courseCode.code"	column="COURSE_CODE" />
+		<result property="courseCode.name"	column="COURSE_NAME" />
+		<result property="subCourseCode.code"		column="PARENT_CODE_1"	 />
+		<result property="subCourseCode.name"		column="PARENT_NAME"	 />
+		<result property="portYn"		column="PORT_YN"	 />
+		<result property="mileageYn"		column="MILEAGE_YN"	 />
+		<result property="codeTxt"		column="PAGE_CODES"	 />
+		<association property="mainImg"			column="MAIN_IMG_FILE"	javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<association property="curriculumFile"			column="CURRICULUM_FILE"	javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<collection property="cardinalList"		ofType="CardinalVO"		javaType="list">
+			<result property="id"				column="CARDINAL_ID" />
+			<result property="name"				column="CARDINAL_NAME" />
+			<result property="appStartDate"		column="APP_START_DATE" />
+			<result property="appEndDate"		column="APP_END_DATE" />
+			<result property="learnStartDate"	column="LEARN_START_DATE" />
+			<result property="learnEndDate"		column="LEARN_END_DATE" />
+			<result property="complateYn"		column="COMPLATE_YN" />
+			<result property="useYn"			column="CARDINAL_USE_YN" />
+			<result property="price"			column="CARDINAL_PRICE" />
+			<result property="checkOnline"		column="CHECKONLINE" />
+		</collection>
+	</resultMap>
+	
+	<!-- 기수 resultMap -->
+	<resultMap id="cardinalMap"				type="CardinalVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<result property="satisfaction.id"	column="SATISFACTION_ID" />
+		<result property="evaluation.id"	column="EVALUATION_ID" />
+		<result property="complateYn"		column="COMPLATE_YN" />
+		<result property="classStartTime"		column="CLASS_START_TIME" />
+		<result property="classEndTime"		column="CLASS_END_TIME" />
+		<collection property="courseList"	ofType="CourseVO"	javaType="list">
+			<result property="id"			column="COURSE_ID" />
+			<result property="name"			column="COURSE_NAME" />
+			<result property="completeTime"	column="COMPLETE_TIME" />
+			<result property="learnTypes"	column="LEARN_TYPES" />
+			<result property="credit"		column="CREDIT" />
+			<result property="price"		column="COURSE_PRICE" />
+			<result property="mileageYn"	column="MILEAGE_YN"	 />
+			<result property="mainBook.id"	column="MAIN_TB_ID" />
+			<result property="mainPrice"	column="MAIN_PRICE" />
+			<result property="acceptYn"		column="ACCEPT_YN" />
+			<result property="useYn"		column="COURSE_USE_YN" />
+		</collection>
+	</resultMap>
+
+	<!-- 단체연수 resultMap -->
+	<resultMap id="groupLearnMap" 			type="GroupLearnVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<association property="region"		column="REGION_CODE"	javaType="forFaith.dev.vo.CodeVO"		select="forFaith.dev.dao.BaseDAO.codeInfo"  />
+		<association property="banner" 		column="BANNER_FILE"	javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<collection property="cardinalList"	ofType="CardinalVO"		javaType="list">
+			<result property="id"			column="CARDINAL_ID" />
+			<result property="name"			column="CARDINAL_NAME" />
+			<result property="appStartDate"		column="APP_START_DATE" />
+			<result property="appEndDate"		column="APP_END_DATE" />
+			<result property="learnStartDate"	column="LEARN_START_DATE" />
+			<result property="learnEndDate"	column="LEARN_END_DATE" />
+			<result property="complateYn"	column="COMPLATE_YN" />
+			<result property="useYn"		column="CARDINAL_USE_YN" />
+			<result property="limitNum"		column="LIMIT_NUM" />
+		</collection>
+	</resultMap>
+	
+<!-- 	세부차시 resultMap -->
+	<resultMap type="forFaith.dev.vo.SubChapVO" id="subChapMap">
+		<result property="seq"				column="SEQ" />
+		<result property="chap_id"			column="CHAP_ID" />
+		<result property="occ_num"			column="OCC_NUM" />
+		<result property="name"				column="NAME" />
+		<result property="filepath"			column="FILEPATH" />
+		<result property="depth"			column="DEPTH" />
+		<result property="order"			column="ORDER_NUM" />
+		<result property="content_type"			column="CONTENT_TYPE" />
+		<result property="course_id"			column="COURSE_ID" />
+		<collection property="chapter"		javaType="com.changbi.tt.dev.data.vo.ChapterVO">
+			<result property="name"		column="CHAP_NAME" />
+			<result property="study"		column="CHAP_STUDY" />
+			<result property="chk"		column="CHAP_CHK" />
+			<result property="mainUrl"		column="CHAP_MAIN_URL" />
+			<result property="mobileUrl"		column="CHAP_MOBILE_URL" />
+			<result property="teacher"		column="CHAP_TEACHER" />
+			<result property="fileInfo"		column="CHAP_FILE_INFO" />
+		</collection>
+	</resultMap>
+	
+	<!-- 연수영역리스트 조회  --> 
+	<select id="studyRangeList" parameterType="forFaith.dev.vo.CodeVO" resultMap="studyRangeMap">	
+		SELECT 
+				  CODES.CODE 
+				, CODES.GROUP_ID
+				, CODES.DEPTH 
+				, CODES.PARENT_CODE 
+				, (SELECT PARENTCODES.NAME
+				    FROM FF_CODE PARENTCODES	
+				    WHERE PARENTCODES.CODE = CODES.PARENT_CODE  )	 PARENT_NAME		 
+				, CODES.NAME
+				, CODES.INPUT_TYPE 
+				, CODES.BG_COLOR
+				, CODES.ORDER_NUM
+				, CODES.USE_YN 
+				, CODES.REG_DATE
+				, CODES.UPD_DATE			 
+		FROM 
+			FF_CODE CODES, FF_CODE PARENTCODES	    
+		WHERE	 	
+			CODES.GROUP_ID = #{codeGroup.id}
+		AND
+			CODES.PARENT_CODE = PARENTCODES.CODE
+		<if test="useYn != null and useYn != ''">
+			AND CODES.USE_YN = #{useYn}
+		</if>	 		 
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					CODES.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'name'">
+					CODES.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		ORDER BY CODES.ORDER_NUM
+	</select>
+	 
+	<!-- code에 다른 name 출력 -->
+	<select id="getCodeNameList" parameterType="forFaith.dev.vo.CodeVO" resultType="forFaith.dev.vo.CodeVO"> 
+	 	SELECT NAME
+	 	FROM FF_CODE
+	 	WHERE CODE = #{code}	
+	</select>
+	
+	<!-- 연수과정관리 리스트 검색조건 -->
+<!-- 	<sql id="trainProcessCondition">
+		<if test="useYn != null and useYn != ''">
+			AND M.USE_YN = #{useYn}
+		</if>
+		<if test="trainProcessId != null and trainProcessId != ''">
+			AND M.ID = #{trainProcessId}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(	M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+					OR	M.ID LIKE CONCAT('%',#{searchKeyword},'%') )
+				</when>
+				<when test="searchCondition == 'name'">
+					M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'id'">
+					M.ID LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		<if test="learnTypes != null and learnTypes != ''">
+			<choose>
+				<when test='learnTypes == "G"'>
+					AND M.GROUP_YN = 'Y'
+				</when>
+				<otherwise>
+					AND M.LEARN_TYPES LIKE CONCAT('%',#{learnTypes},'%')
+				</otherwise>
+			</choose>
+		</if>
+		<if test="courseCode != null and courseCode.code != ''">
+			AND M.COURSE_CODE = #{courseCode.code}
+		</if>
+		<if test="company != null and company.id != ''">
+			AND M.COM_ID = #{company.id}
+		</if>
+		<if test="teacher != null and teacher.id != ''">
+			AND M.TEACH_ID = #{teacher.id}
+		</if>
+		<if test='(learnTypes == "J" or learnTypes == "G") and creditList != null'>
+			AND M.CREDIT IN
+			<foreach collection="creditList" item="credit" index="index" separator="," open="(" close=")">
+        		#{credit}
+     		</foreach>
+		</if>
+	</sql> -->
+	
+	<!-- LMS 연수과정관리 리스트 검색조건 -->
+ 	<sql id="trainProcessCondition">
+<!-- 		<if test="useYn != null and useYn != ''">
+			AND M.USE_YN = #{useYn}
+		</if> -->
+		<if test="trainProcessId != null and trainProcessId != ''">
+			AND M.ID = #{trainProcessId}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(	M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+					OR	M.ID LIKE CONCAT('%',#{searchKeyword},'%') )
+				</when>
+				<when test="searchCondition == 'name'">
+					M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'id'">
+					M.ID LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		<if test="subCourseCode != null and subCourseCode.code != ''">
+			AND (select C.PARENT_CODE FROM FF_CODE C WHERE C.CODE = M.COURSE_CODE) = #{subCourseCode.code}
+		</if>
+		<if test="courseCode != null and courseCode.code != ''">
+			AND M.COURSE_CODE = #{courseCode.code}
+		</if>
+	</sql>
+	
+	<!-- 학습과정관리 리스트 -->
+	<select id="trainProcessList" parameterType="CourseVO" resultMap="trainProcessMap">
+		SELECT M.ID, M.COURSE_CODE
+			 , (SELECT C.NAME 
+		     	   FROM FF_CODE C 
+		     	 WHERE C.CODE=M.COURSE_CODE) COURSE_NAME		    
+		     , (SELECT C.PARENT_CODE 
+		     	   FROM FF_CODE C 
+		     	 WHERE C.CODE = M.COURSE_CODE) PARENT_CODE_1
+			 , (SELECT PARENTCODES.NAME 
+		           FROM FF_CODE PARENTCODES	
+			     WHERE PARENTCODES.CODE = PARENT_CODE_1) PARENT_NAME		
+			 , M.COM_ID, M.COM_CAL, M.TEACH_ID, M.TEACH_CAL, M.TUTOR_CAL, M.TB_CODE, M.NAME, M.SHORT_NAME, M.MAIN_YN, M.MAIN_DISPLAY
+			 , M.ICON_DISPLAYS, M.COMPLETE_TIME, M.LEARN_TYPES, M.TARGET_TYPES, M.CREDIT, M.LEARN_TARGET, M.PRICE, M.MILEAGE_YN, M.PROG_CHECK, M.OPEN_DATE
+			 , M.APP_DATE, M.RECRUIT, M.EXAM_PERIOD, M.MAIN_TB_ID, M.SUB_TB_ID, M.MAIN_PRICE, M.SUB_PRICE, M.LINK_SERVER, M.GROUP_YN, M.MOBILE_YN
+			 , M.INDEX_URL, M.TASTING_URL, M.SAMPLE_URL, M.WIDTH, M.HEIGHT, M.SELP_PERIOD, M.MAIN_IMG_FILE, M.CURRICULUM_FILE, M.DUP_DIS_YN, M.ACCEPT_YN, M.PURPOSE, M.CURRICULUM
+			 , M.SUMMARY, M.INSTRUCTOR, M.NOTE, M.MOBILE_SUMMARY, M.DEVELOPER, M.RES_TEL, M.COM_NAME, M.COM_TEL, M.PRODUCE_DATE, M.STORAGE_LOC, M.HISTORY, M.REMARKS
+			 , M.ORDER_NUM, M.USE_YN, M.REG_USER, M.REG_DATE, M.UPD_USER, M.UPD_DATE, M.PORT_YN
+			 , M.REVIEW_PERIOD, M.COMP_PERCENT_QUIZ, M.COMP_PERCENT_EXAM, M.COMP_PERCENT_PROG, M.COMP_SCORE_QUIZ, M.COMP_SCORE_EXAM, M.COMP_SCORE_PROG, M.COMPLETE_TOTAL, M.CHECKONLINE
+		FROM CB_COURSE M
+		<choose>
+			<when test="subCourseCode != null and subCourseCode.parentcode != '' and subCourseCode.code == ''">
+			, (SELECT * FROM FF_CODE F1 WHERE PARENT_CODE IN 
+			(SELECT F2.CODE FROM FF_CODE F2 WHERE F2.PARENT_CODE =#{subCourseCode.parentcode})) F
+			</when>
+			<when test="subCourseCode != null and subCourseCode.code != '' and courseCode.code == ''">
+			, (SELECT * FROM FF_CODE WHERE PARENT_CODE = #{subCourseCode.code}) F
+			</when>
+		</choose>
+		<if test="loginUser != null and loginUser.grade == 1">
+		INNER JOIN ( SELECT B.COURSE_ID
+					 FROM FF_MEMBER A
+					 INNER JOIN CB_MAN_COURSE B
+					 ON A.ID = B.MAN_ID
+					 WHERE A.ID = #{loginUser.id} ) B
+		ON M.ID = B.COURSE_ID
+		</if>
+		WHERE 1=1
+<!-- 		<if test="searchKeyword != null and searchKeyword != ''"> -->
+<!-- 		AND -->
+<!-- 			<choose> -->
+<!-- 				<when test="searchCondition == 'all'"> -->
+<!-- 				(	M.NAME LIKE CONCAT('%',#{searchKeyword},'%') -->
+<!-- 				OR	M.ID LIKE CONCAT('%',#{searchKeyword},'%') ) -->
+<!-- 				</when> -->
+<!-- 				<when test="searchCondition == 'name'"> -->
+<!-- 					M.NAME LIKE CONCAT('%',#{searchKeyword},'%') -->
+<!-- 				</when> -->
+<!-- 				<when test="searchCondition == 'id'"> -->
+<!-- 					M.ID LIKE CONCAT('%',#{searchKeyword},'%') -->
+<!-- 				</when> -->
+<!-- 			</choose> -->
+<!-- 		</if> -->
+		<if test="(subCourseCode != null and subCourseCode.parentcode != '' and subCourseCode.code == '') or
+		(subCourseCode != null and subCourseCode.code != '' and courseCode.code == '')">
+		AND M.COURSE_CODE = F.CODE
+		</if>
+		<include refid="trainProcessCondition"></include>
+		ORDER BY M.CREDIT, M.REG_DATE DESC
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if> 
+	</select>
+	
+	<!-- 연수과정관리 리스트 총 갯수 -->
+	<select id="trainProcessTotalCnt" parameterType="CourseVO" resultType="int">
+		SELECT COUNT(M.ID)
+		FROM CB_COURSE M
+		<choose>
+			<when test="subCourseCode != null and subCourseCode.parentcode != '' and subCourseCode.code == ''">
+			, (SELECT * FROM FF_CODE F1 WHERE PARENT_CODE IN 
+			(SELECT F2.CODE FROM FF_CODE F2 WHERE F2.PARENT_CODE =#{subCourseCode.parentcode})) F
+			</when>
+			<when test="subCourseCode != null and subCourseCode.code != '' and courseCode.code == ''">
+			, (SELECT * FROM FF_CODE WHERE PARENT_CODE = #{subCourseCode.code}) F
+			</when>
+		</choose>
+		<if test="loginUser != null and loginUser.grade == 1">
+		INNER JOIN ( SELECT B.COURSE_ID
+					 FROM FF_MEMBER A
+					 INNER JOIN CB_MAN_COURSE B
+					 ON A.ID = B.MAN_ID
+					 WHERE A.ID = #{loginUser.id} ) B
+		ON M.ID = B.COURSE_ID
+		</if>
+		WHERE 1=1
+		<if test="(subCourseCode != null and subCourseCode.parentcode != '' and subCourseCode.code == '') or
+		(subCourseCode != null and subCourseCode.code != '' and courseCode.code == '')">
+		AND M.COURSE_CODE = F.CODE
+		</if>
+		<include refid="trainProcessCondition"></include>
+	</select>
+	
+	<!-- 연수과정관리 상세 조회 -->
+	<select id="trainProcessInfo" parameterType="CourseVO" resultMap="trainProcessMap">
+		SELECT M.ID, M.COURSE_CODE
+		     , (SELECT C.NAME
+		     	   FROM FF_CODE C
+		     	 WHERE C.CODE=M.COURSE_CODE) COURSE_NAME
+		     , (SELECT C.PARENT_CODE
+		     	   FROM FF_CODE C
+		     	 WHERE C.CODE = M.COURSE_CODE) PARENT_CODE_1
+			 , (SELECT PARENTCODES.NAME
+		           FROM FF_CODE PARENTCODES
+			     WHERE PARENTCODES.CODE = PARENT_CODE_1) PARENT_NAME
+			 , M.COM_ID, M.COM_CAL, M.TEACH_ID, M.TEACH_CAL, M.TUTOR_CAL, M.TB_CODE, M.NAME, M.SHORT_NAME, M.MAIN_YN, M.MAIN_DISPLAY
+			 , M.ICON_DISPLAYS, M.COMPLETE_TIME,  M.TARGET_TYPES, M.CREDIT, M.LEARN_TARGET, M.PRICE, M.MILEAGE_YN, M.PROG_CHECK, M.OPEN_DATE
+			 , M.APP_DATE, M.RECRUIT, M.EXAM_PERIOD, M.MAIN_TB_ID, M.SUB_TB_ID, M.MAIN_PRICE, M.SUB_PRICE, M.LINK_SERVER, M.GROUP_YN, M.MOBILE_YN
+			 , M.INDEX_URL, M.TASTING_URL, M.SAMPLE_URL, M.WIDTH, M.HEIGHT, M.SELP_PERIOD, M.MAIN_IMG_FILE, M.CURRICULUM_FILE, M.DUP_DIS_YN, M.ACCEPT_YN, M.PURPOSE, M.CURRICULUM
+			 , M.SUMMARY, M.INSTRUCTOR, M.NOTE, M.MOBILE_SUMMARY, M.DEVELOPER, M.RES_TEL, M.COM_NAME, M.COM_TEL, M.PRODUCE_DATE, M.STORAGE_LOC, M.HISTORY, M.REMARKS
+			 , M.ORDER_NUM, M.USE_YN, M.REG_USER, M.REG_DATE, M.UPD_USER, M.UPD_DATE, M.APPLYFORM_YN, M.RECORD_YN
+			 , M.SURVEY_YN, M.PORT_YN, M.PAGE_CODES
+			 , A.ID AS CARDINAL_ID, A.NAME AS CARDINAL_NAME, A.APP_START_DATE, A.APP_END_DATE
+			 , A.LEARN_START_DATE, A.LEARN_END_DATE, A.COMPLATE_YN, A.USE_YN AS CARDINAL_USE_YN, A.PRICE AS CARDINAL_PRICE
+			 , M.REVIEW_PERIOD, M.COMP_PERCENT_QUIZ, M.COMP_PERCENT_EXAM, M.COMP_PERCENT_PROG, M.COMP_SCORE_QUIZ, M.COMP_SCORE_EXAM, M.COMP_SCORE_PROG, M.COMPLETE_TOTAL, M.CHECKONLINE
+			 , B.PAY_CRC_SEQ, B.PMT_CNT, B.PMT_START_DATE, B.PMT_END_DATE, B.PMT_AMT, B.CARDINAL_ID
+		FROM CB_COURSE M
+		LEFT OUTER JOIN	(	SELECT A.ID, A.NAME, A.APP_START_DATE, A.APP_END_DATE
+								 , A.LEARN_START_DATE, A.LEARN_END_DATE
+								 , A.COMPLATE_YN, A.USE_YN, A.PRICE, B.COURSE_ID
+							FROM CB_CARDINAL A
+							INNER JOIN CB_CN_COURSE B
+							ON A.ID = B.CARDINAL_ID
+							WHERE A.LEARN_TYPE != 'G' ) A
+		ON M.ID = A.COURSE_ID
+		LEFT OUTER JOIN	(	SELECT A.PAY_CRC_SEQ, A.PAY_CRC_PAYORDER AS PMT_CNT
+							, A.PAY_CRC_START AS PMT_START_DATE, A.PAY_CRC_END AS PMT_END_DATE
+                            , A.PAY_CRC_AMOUNT AS PMT_AMT, B.COURSE_ID, B.CARDINAL_ID
+							FROM EDU_CURRICULUM_PAY_TB A
+							INNER JOIN CB_CN_COURSE B
+							ON A.CARDINAL_ID = B.CARDINAL_ID) B
+		ON M.ID = B.COURSE_ID
+		WHERE M.ID = #{id}
+	</select>
+	
+	<!-- 기수별 분납 기초 정보 조회 -->
+	<select id="selectPaymentAdminInfo" parameterType="CourseVO" resultType="PaymentAdminVO">
+		SELECT T2.CARDINAL_ID as gisuId, T2.PAY_CRC_SEQ AS payCrcSeq, T2.PMT_CNT as pmtCnt, T2.PMT_START_DATE as pmtStartDate, T2.PMT_END_DATE as pmtEndDate, T2.PMT_AMT as pmtAmount
+			FROM CB_COURSE M
+			LEFT OUTER JOIN	(	SELECT A.ID, A.NAME, A.APP_START_DATE, A.APP_END_DATE
+								 , A.LEARN_START_DATE, A.LEARN_END_DATE
+								 , A.COMPLATE_YN, A.USE_YN, B.COURSE_ID
+							FROM CB_CARDINAL A
+							INNER JOIN CB_CN_COURSE B
+							ON A.ID = B.CARDINAL_ID
+							WHERE A.LEARN_TYPE != 'G' ) T1
+			ON M.ID = T1.COURSE_ID
+			LEFT OUTER JOIN	(	SELECT A.PAY_CRC_SEQ, A.PAY_CRC_PAYORDER AS PMT_CNT
+								 , A.PAY_CRC_START AS PMT_START_DATE, A.PAY_CRC_END AS PMT_END_DATE
+                                 , A.PAY_CRC_AMOUNT AS PMT_AMT, B.COURSE_ID, B.CARDINAL_ID
+							FROM EDU_CURRICULUM_PAY_TB A
+							INNER JOIN CB_CN_COURSE B
+							ON A.CARDINAL_ID = B.CARDINAL_ID ) T2
+			ON M.ID = T2.COURSE_ID
+        WHERE M.ID = #{id}
+        AND
+        T1.ID = T2.CARDINAL_ID
+        ORDER BY T2.CARDINAL_ID, T2.PAY_CRC_SEQ
+	</select>
+	
+	<!-- 연수과정 등록 -->
+	<insert id="trainProcessReg" parameterType="CourseVO">
+		<selectKey resultType="string" keyProperty="id" order="BEFORE">
+	        SELECT IFNULL(IF(#{id} = '', null, #{id}), CONCAT('c', LPAD(IFNULL(MAX(SEQ), 0)+1, 9, 0))) FROM CB_COURSE
+	    </selectKey>
+	    
+		INSERT INTO CB_COURSE
+		( ID, COURSE_CODE, COM_ID, COM_CAL,	TEACH_ID
+		, TEACH_CAL, TUTOR_CAL, TB_CODE, NAME, SHORT_NAME
+		, MAIN_YN, MAIN_DISPLAY, ICON_DISPLAYS, COMPLETE_TIME, TARGET_TYPES
+		, LEARN_TARGET, PRICE, MILEAGE_YN, PROG_CHECK, OPEN_DATE
+		, APP_DATE, RECRUIT, EXAM_PERIOD, MAIN_TB_ID, SUB_TB_ID
+		, MAIN_PRICE, SUB_PRICE,  GROUP_YN, MOBILE_YN, INDEX_URL, TASTING_URL
+		, SAMPLE_URL, WIDTH, HEIGHT, SELP_PERIOD, MAIN_IMG_FILE
+		, CURRICULUM_FILE, DUP_DIS_YN, ACCEPT_YN, PURPOSE, CURRICULUM
+		, SUMMARY, INSTRUCTOR, NOTE, MOBILE_SUMMARY, DEVELOPER
+		, RES_TEL, COM_NAME, COM_TEL, PRODUCE_DATE, STORAGE_LOC
+		, HISTORY, REMARKS, ORDER_NUM, USE_YN, REG_DATE
+		, UPD_DATE, REVIEW_PERIOD, COMP_PERCENT_QUIZ, COMP_PERCENT_EXAM, COMP_PERCENT_PROG
+		, COMP_SCORE_QUIZ, COMP_SCORE_EXAM, COMP_SCORE_PROG, COMPLETE_TOTAL, CHECKONLINE
+		, APPLYFORM_YN, RECORD_YN, SURVEY_YN, PORT_YN, PAGE_CODES )
+		VALUES
+		( #{id}, #{courseCode.code}, #{company.id}, #{comCal}, #{teacher.id}
+		, #{teachCal}, #{tutorCal}, #{bookCode.code}, #{name}, #{shortName}
+		, #{mainYn}, #{mainDisplay}, #{iconDisplays}, #{completeTime},#{targetTypes}
+		, #{learnTarget}, #{price}, #{mileageYn}, #{progCheck}, #{openDate}
+		, #{appDate}, #{recruit}, #{examPeriod}, #{mainBook.id}, #{subBook.id}
+		, #{mainPrice}, #{subPrice}, #{groupYn}, #{mobileYn}, #{indexUrl}, #{tastingUrl}
+		, #{sampleUrl}, #{width}, #{height}, #{selpPeriod}, #{mainImg.fileId}
+		, #{curriculumFile.fileId}, #{dupDisYn}, #{acceptYn}, #{purpose}, #{curriculum}
+		, #{summary}, #{instructor}, #{note}, #{mobileSummary}, #{developer}
+		, #{resTel}, #{comName}, #{comTel}, #{produceDate}, #{storageLoc}
+		, #{history}, #{remarks}, #{orderNum}, #{useYn}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'), #{reviewPeriod}, #{compPercentQuiz}, #{compPercentExam}, #{compPercentProg}
+		, #{compScoreQuiz}, #{compScoreExam}, #{compScoreProg}, #{completeTotal}, #{checkOnline}
+		, #{applyFormYn}, #{recordYn}, #{surveyYn}, #{portYn}, #{codeTxt} )
+	</insert>
+	
+	<!-- 학습과정 수정 -->
+	<insert id="trainProcessUpd" parameterType="CourseVO">
+		UPDATE CB_COURSE
+		SET COURSE_CODE		= #{courseCode.code},
+			COM_ID			= #{company.id},
+			COM_CAL			= #{comCal},
+			TEACH_ID		= #{teacher.id},
+			TEACH_CAL		= #{teachCal},
+			TUTOR_CAL		= #{tutorCal},
+			TB_CODE			= #{bookCode.code},
+			NAME			= #{name},
+			SHORT_NAME		= #{shortName},
+			MAIN_YN			= #{mainYn},
+			MAIN_DISPLAY	= #{mainDisplay},
+			ICON_DISPLAYS	= #{iconDisplays},
+			COMPLETE_TIME	= #{completeTime},		 
+			TARGET_TYPES	= #{targetTypes},
+			CREDIT			= #{credit},
+			LEARN_TARGET	= #{learnTarget},
+			PRICE			= #{price},
+			MILEAGE_YN		= #{mileageYn},
+			PROG_CHECK		= #{progCheck},
+			OPEN_DATE		= #{openDate},
+			APP_DATE		= #{appDate},
+			RECRUIT			= #{recruit},
+			EXAM_PERIOD		= #{examPeriod},
+			MAIN_TB_ID		= #{mainBook.id},
+			SUB_TB_ID		= #{subBook.id},
+			MAIN_PRICE		= #{mainPrice},
+			SUB_PRICE		= #{subPrice},
+			LINK_SERVER		= #{linkServer},
+			GROUP_YN		= #{groupYn},
+			MOBILE_YN		= #{mobileYn},
+			INDEX_URL		= #{indexUrl},
+			TASTING_URL		= #{tastingUrl},
+			SAMPLE_URL		= #{sampleUrl},
+			WIDTH			= #{width},
+			HEIGHT			= #{height},
+			SELP_PERIOD		= #{selpPeriod},
+			MAIN_IMG_FILE	= #{mainImg.fileId},
+			CURRICULUM_FILE	= #{curriculumFile.fileId},
+			DUP_DIS_YN		= #{dupDisYn},
+			ACCEPT_YN		= #{acceptYn},
+			PURPOSE			= #{purpose},
+			CURRICULUM		= #{curriculum},
+			SUMMARY			= #{summary},
+			INSTRUCTOR		= #{instructor},
+			NOTE			= #{note},
+			MOBILE_SUMMARY	= #{mobileSummary},
+			DEVELOPER		= #{developer},
+			RES_TEL			= #{resTel},
+			COM_NAME		= #{comName},
+			COM_TEL			= #{comTel},
+			PRODUCE_DATE	= #{produceDate},
+			STORAGE_LOC		= #{storageLoc},
+			HISTORY			= #{history},
+			REMARKS			= #{remarks},
+			ORDER_NUM 		= #{orderNum},
+			USE_YN 			= #{useYn},
+			UPD_DATE 		= DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+			REVIEW_PERIOD	= #{reviewPeriod},
+			COMP_PERCENT_QUIZ	= #{compPercentQuiz},
+			COMP_PERCENT_EXAM	= #{compPercentExam},
+			COMP_PERCENT_PROG	= #{compPercentProg},
+			COMP_SCORE_QUIZ		= #{compScoreQuiz},
+			COMP_SCORE_EXAM		= #{compScoreExam},
+			COMP_SCORE_PROG		= #{compScoreProg},
+			COMPLETE_TOTAL		= #{completeTotal},
+			CHECKONLINE			= #{checkOnline},
+			APPLYFORM_YN		= #{applyFormYn},
+			RECORD_YN			= #{recordYn},
+			SURVEY_YN			= #{surveyYn},
+			PORT_YN				= #{portYn},
+			PAGE_CODES			= #{codeTxt}
+		WHERE ID = #{id}
+	</insert>
+	
+	<!-- 연수과정 삭제 -->
+	<delete id="trainProcessDel" parameterType="CourseVO">
+		DELETE FROM CB_COURSE
+		WHERE ID = #{id}
+	</delete>
+	
+	<!-- 연수과정 선택 삭제 -->
+	<delete id="trainProcessSelectDel" parameterType="list">
+		DELETE FROM CB_COURSE
+		WHERE ID IN ( <foreach collection="list" item="course" index="index" separator=" , ">#{course.id}</foreach> )
+	</delete>
+	
+	
+	<!--  검색1- 대분류 selectbox 선택시 해당 학습영역리스트 출력 -->
+	<select id="selectCourseList" parameterType="forFaith.dev.vo.CodeVO" resultType="forFaith.dev.vo.CodeVO">
+		SELECT CODE, GROUP_ID,  NAME, USE_YN, PARENT_CODE
+			FROM FF_CODE
+	        WHERE  GROUP_ID = 'course'
+					<if test="useYn != null and useYn != ''">
+						AND USE_YN = #{useYn}					
+					</if>				 
+						AND PARENT_CODE = #{parentCode.code}
+					ORDER BY REG_DATE DESC;
+	</select>
+	
+	<!-- 검색2 - 학습영역 selectbox 선택시 해당 학습과정리스트 출력 -->
+	<select id="selectTrainProcessList" parameterType="forFaith.dev.vo.CodeVO" resultType="CourseVO">
+			   SELECT 
+			   			ID, COURSE_CODE, NAME 
+			   FROM  
+			   			CB_COURSE
+			   WHERE COURSE_CODE IN (
+				   	SELECT CODE 
+				   	  FROM FF_CODE 
+				   	WHERE CODE = #{code}
+			   	);
+	</select>
+	
+	<!-- 상세 챕터 리스트 조회 -->
+	<select id="chapterList" parameterType="ChapterVO" resultType="ChapterVO">
+		SELECT M.ID, M.COURSE_ID, M.NAME, M.STUDY, M.CHK, M.MAIN_URL, M.MOBILE_URL, M.TEACHER, M.FILE_INFO, M.SERVICE_TYPE, M.ORDER_NUM
+		FROM CB_CHAPTER M
+		WHERE M.COURSE_ID = #{course.id}
+		AND M.SERVICE_TYPE = #{serviceType}
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(	M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+					OR	M.TEACHER LIKE CONCAT('%',#{searchKeyword},'%') )
+				</when>
+				<when test="searchCondition == 'chasi'">
+					M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'teacher'">
+					M.TEACHER LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		ORDER BY ORDER_NUM
+	</select>
+
+	<!-- 코드 등록 -->
+	<insert id="chapterReg" parameterType="ChapterVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_CHAPTER
+			( 
+				ID, COURSE_ID, NAME, 
+				STUDY, CHK, 
+				MAIN_URL, MOBILE_URL, 
+				TEACHER, FILE_INFO, 
+				SERVICE_TYPE, ORDER_NUM 
+			)
+		VALUES
+			( 
+				#{id}, #{course.id}, #{name}, 
+				#{study}, #{chk}, 
+				#{mainUrl}, #{mobileUrl}, 
+				#{teacher}, #{fileInfo},
+				#{serviceType}, #{orderNum} 
+			)
+		ON DUPLICATE KEY UPDATE
+			COURSE_ID	= VALUES(COURSE_ID),
+			NAME		= VALUES(NAME),
+			STUDY		= VALUES(STUDY),
+			CHK			= VALUES(CHK),
+			TEACHER		= VALUES(TEACHER),
+			FILE_INFO	= VALUES(FILE_INFO),
+			SERVICE_TYPE= VALUES(SERVICE_TYPE),
+			ORDER_NUM	= VALUES(ORDER_NUM),
+			MAIN_URL = VALUES(MAIN_URL),
+			MOBILE_URL = VALUES(MOBILE_URL)
+	</insert>
+	<!-- 코드 등록 -->
+	<insert id="newChapterReg" parameterType="ChapterVO">
+		INSERT INTO CB_CHAPTER
+			( 
+				ID, COURSE_ID, NAME, 
+				STUDY, CHK, 
+				MAIN_URL, MOBILE_URL, 
+				TEACHER, FILE_INFO, 
+				SERVICE_TYPE, ORDER_NUM 
+			)
+		VALUES
+			( 
+				(select * from (select max(id)+1 from cb_chapter) aa), #{course.id}, #{name}, 
+				#{study}, #{chk}, 
+				#{mainUrl}, #{mobileUrl}, 
+				#{teacher}, #{fileInfo}, 
+				#{serviceType}, #{orderNum} 
+			)
+	</insert>
+	
+<!-- 	챕터 일괄등록 -->
+	<insert id="insertChap" parameterType="forFaith.dev.vo.SubChapVO">
+		INSERT INTO CB_CHAPTER (
+			ID
+			,COURSE_ID
+			,NAME
+			,ORDER_NUM
+		) VALUES
+			(	
+				<choose>
+					<when test="chap_id == null or chap_id == 0">
+						(select max(a.id)+1 from cb_chapter as a)
+					</when>
+					<otherwise>
+						#{chap_id}
+					</otherwise>
+				</choose>
+				, #{course_id}
+				, #{name}
+				, #{occ_num}
+			)
+		ON DUPLICATE KEY UPDATE
+			COURSE_ID 		= COURSE_ID
+			, NAME 			= VALUES(NAME)
+			, ORDER_NUM 	= VALUES(ORDER_NUM)
+			, STUDY			= STUDY
+			, CHK			= CHK
+			, TEACHER		= TEACHER
+			, MAIN_URL		= MAIN_URL
+			, MOBILE_URL 	= MOBILE_URL
+	</insert>
+<!-- 페이지 일괄등록 -->
+	<insert id="insertPage" parameterType="forFaith.dev.vo.SubChapVO">
+		<selectKey keyProperty="chap_id" resultType="int" order="BEFORE">
+			select id from cb_chapter where ORDER_NUM = #{occ_num} AND COURSE_ID=#{course_id}
+		</selectKey>
+		INSERT INTO CB_SUB_CHAPTER (
+			CHAP_ID
+			, OCC_NUM
+			, NAME
+			, FILEPATH
+			, DEPTH
+			, ORDER_NUM
+			, CONTENT_TYPE
+		) VALUES
+		 (
+		 	#{chap_id}
+		 	,#{occ_num}
+		 	,#{name}
+		 	,#{filepath}
+		 	,#{depth}
+		 	,#{order}
+		 	,#{content_type}
+		 )
+		 ON DUPLICATE KEY UPDATE
+		 	OCC_NUM = VALUES(OCC_NUM)
+			, NAME = VALUES(NAME)
+			, FILEPATH = VALUES(FILEPATH)
+			, DEPTH = VALUES(DEPTH)
+			, ORDER_NUM = VALUES(ORDER_NUM)
+			, CONTENT_TYPE = VALUES(CONTENT_TYPE)
+	</insert>
+	
+	<!-- 목차 리스트 조회 -->
+	<select id="subChapterList" parameterType="forFaith.dev.vo.SubChapVO" resultMap="subChapMap">
+		SELECT
+			ID AS CHAP_ID
+			, COURSE_ID
+			, NAME
+			, ORDER_NUM AS OCC_NUM
+			, NAME AS CHAP_NAME
+			, STUDY AS CHAP_STUDY
+			, CHK AS CHAP_CHK
+			, MAIN_URL AS CHAP_MAIN_URL
+			, MOBILE_URL AS CHAP_MOBILE_URL
+			, TEACHER AS CHAP_TEACHER
+			, FILE_INFO AS CHAP_FILE_INFO
+		FROM
+			CB_CHAPTER
+		WHERE
+			COURSE_ID = #{course.id}
+	</select>
+	<!-- 챕터 리스트 조회 -->
+	<select id="subPageList" parameterType="forFaith.dev.vo.SubChapVO" resultMap="subChapMap">
+		SELECT
+			CSC.SEQ
+			,CSC.CHAP_ID
+            ,CC.COURSE_ID
+			,CSC.OCC_NUM
+			,CSC.NAME
+			,CSC.FILEPATH
+			,CSC.DEPTH
+			,CSC.ORDER_NUM
+			,CSC.CONTENT_TYPE
+		FROM
+			CB_SUB_CHAPTER CSC
+		JOIN CB_CHAPTER CC ON CC.ID = CSC.CHAP_ID
+		WHERE
+			CSC.CHAP_ID = #{chap_id}
+	</select>
+	<delete id="delSubPage" parameterType="forFaith.dev.vo.SubChapVO">
+		DELETE FROM CB_SUB_CHAPTER
+		WHERE
+			CHAP_ID = #{chap_id}
+			AND
+			OCC_NUM = #{occ_num}
+			AND
+			NAME = #{name}
+			AND
+			FILEPATH = #{filepath}
+			AND
+			DEPTH = #{depth}
+			AND
+			ORDER_NUM = #{order}
+			AND
+			CONTENT_TYPE = #{content_type}
+	</delete>
+	<delete id="delChap" parameterType="forFaith.dev.vo.SubChapVO">
+		DELETE FROM CB_CHAPTER
+		WHERE COURSE_ID = #{course_id}
+	</delete>
+	<!-- 코드 삭제 -->
+	<update id="chapterDel" parameterType="ChapterVO">
+		DELETE FROM CB_CHAPTER
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 기수 리스트 조회 -->
+	<select id="cardinalList" parameterType="CardinalVO" resultMap="cardinalMap">
+		SELECT 
+			M.ID, M.NAME, M.LEARN_TYPE, M.CREDITS, M.COURSE_TYPE
+			, M.APP_START_DATE, M.APP_END_DATE, M.LEARN_START_DATE, M.LEARN_END_DATE
+		    , M.ISSUE_DATE, M.ATT_EVAL_DATE, M.ATT_EVAL_TIME, M.ATT_EXAM_TYPE
+		    , M.CANCEL, M.DUP_LIMIT, M.ADD_EXAM_PERIOD, M.RECRUIT
+		    , M.OPEN_RESULTS, M.APP_POSSIBLES, M.EXPECT_EXAM, M.PREVIEW
+		    , M.COMPLATE_YN, M.ORDER_NUM, M.USE_YN, M.REG_DATE, M.UPD_DATE
+		    , M.PRICE
+		    , M.CLASS_DAY, M.CLASS_START_TIME, M.CLASS_END_TIME
+		FROM CB_CARDINAL M
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+						SELECT M.ID
+						FROM CB_CARDINAL M
+						WHERE 1 = 1
+						<if test="useYn != null and useYn != ''">
+							AND M.USE_YN = #{useYn}
+						</if>
+						<if test="complateYn != null and complateYn != ''">
+							AND M.COMPLATE_YN = #{complateYn}
+						</if>
+						<if test="courseType != null and courseType != ''">
+							AND M.COURSE_TYPE = #{courseType}
+						</if>
+						<if test="learnType != null and learnType != ''">
+							AND M.LEARN_TYPE = #{learnType}
+						</if>
+						<if test='learnType == "J" and credits != null and credits != ""'>
+							AND M.CREDITS LIKE CONCAT('%',#{credits},'%')
+						</if>
+						<if test='appPossibles != null and appPossibles != ""'>
+							AND M.APP_POSSIBLES LIKE CONCAT('%',#{appPossibles},'%')
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	M.ID LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'name'">
+									M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'id'">
+									M.ID LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.LEARN_TYPE, M.CREDITS, M.REG_DATE DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.LEARN_TYPE, M.CREDITS, M.REG_DATE DESC
+	</select>
+	
+	<!-- 기수 리스트 총 갯수 -->
+	<select id="cardinalTotalCnt" parameterType="CardinalVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_CARDINAL M
+				WHERE 1 = 1
+				<if test="useYn != null and useYn != ''">
+					AND M.USE_YN = #{useYn}
+				</if>
+				<if test="complateYn != null and complateYn != ''">
+					AND M.COMPLATE_YN = #{complateYn}
+				</if>
+				<if test="courseType != null and courseType != ''">
+					AND M.COURSE_TYPE = #{courseType}
+				</if>
+				<if test="learnType != null and learnType != ''">
+					AND M.LEARN_TYPE = #{learnType}
+				</if>
+				<if test="credits != null and credits != ''">
+					AND M.CREDITS LIKE CONCAT('%',#{credits},'%')
+				</if>
+				<if test="appPossibles != null and appPossibles != ''">
+					AND M.APP_POSSIBLES LIKE CONCAT('%',#{appPossibles},'%')
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	M.ID LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'name'">
+							M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'id'">
+							M.ID LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select>
+	
+	<!-- 기수 상세 정보 조회 -->
+	<select id="cardinalInfo" parameterType="CardinalVO" resultMap="cardinalMap">
+		SELECT 
+			M.ID, M.NAME, M.LEARN_TYPE, M.CREDITS, M.COURSE_TYPE
+			, M.APP_START_DATE, M.APP_END_DATE, M.LEARN_START_DATE, M.LEARN_END_DATE
+		    , M.ISSUE_DATE, M.ATT_EVAL_DATE, M.ATT_EVAL_TIME, M.ATT_EXAM_TYPE
+		    , M.CANCEL, M.DUP_LIMIT, M.ADD_EXAM_PERIOD, M.RECRUIT
+		    , M.OPEN_RESULTS, M.APP_POSSIBLES, M.EXPECT_EXAM, M.PREVIEW
+		    , M.COMPLATE_YN, M.ORDER_NUM, M.USE_YN, M.REG_DATE, M.UPD_DATE
+			, M.SATISFACTION_ID, M.EVALUATION_ID
+			, A.ID AS COURSE_ID, A.NAME AS COURSE_NAME
+			, A.COMPLETE_TIME, A.LEARN_TYPES, A.CREDIT, A.PRICE AS COURSE_PRICE
+			, A.MAIN_TB_ID, A.MAIN_PRICE, A.ACCEPT_YN, A.USE_YN AS COURSE_USE_YN
+			, M.COMP_PERCENT_QUIZ, M.COMP_PERCENT_EXAM, M.COMP_PERCENT_PROG
+			, M.COMP_SCORE_QUIZ, M.COMP_SCORE_EXAM, M.COMP_SCORE_PROG, M.COMPLETE_TOTAL
+			, M.PRICE
+			, M.CLASS_DAY, M.CLASS_START_TIME, M.CLASS_END_TIME
+		FROM ( SELECT A.*
+					, MAX(IF(B.SURVEY_CODE = 'survey999', B.SURVEY_ID, '')) AS SATISFACTION_ID
+					, MAX(IF(B.SURVEY_CODE = 'survey001', B.SURVEY_ID, '')) AS EVALUATION_ID
+			   FROM CB_CARDINAL A
+			   LEFT OUTER JOIN CB_SURVEY_CARDINAL B
+			   ON A.ID = B.CARDINAL_ID
+			   WHERE A.ID = #{id}
+			   GROUP BY A.ID ) M
+		LEFT OUTER JOIN	(	SELECT A.ID, A.NAME, A.COMPLETE_TIME, A.LEARN_TYPES, A.CREDIT, A.PRICE
+								 , A.MAIN_TB_ID, A.MAIN_PRICE, A.ACCEPT_YN, A.USE_YN, B.CARDINAL_ID 
+							FROM CB_COURSE A
+							INNER JOIN CB_CN_COURSE B
+							ON A.ID = B.COURSE_ID
+							WHERE B.CARDINAL_ID = #{id} ) A
+		ON M.ID = A.CARDINAL_ID
+	</select>
+	
+	<!-- 기수 등록 -->
+	<insert id="cardinalReg" parameterType="CardinalVO">
+		<selectKey resultType="string" keyProperty="id" order="BEFORE">
+	        SELECT IFNULL(IF(#{id} = '', null, #{id}), CONCAT('n', LPAD(IFNULL(MAX(SEQ), 0)+1, 9, 0))) FROM CB_CARDINAL        
+	    </selectKey>
+	    
+		INSERT INTO CB_CARDINAL
+			( ID, NAME, LEARN_TYPE, CREDITS, COURSE_TYPE
+			, APP_START_DATE, APP_END_DATE, LEARN_START_DATE, LEARN_END_DATE
+			, ISSUE_DATE, ATT_EVAL_DATE, ATT_EVAL_TIME, ATT_EXAM_TYPE, CANCEL
+			, DUP_LIMIT, ADD_EXAM_PERIOD, RECRUIT
+			, OPEN_RESULTS, APP_POSSIBLES, EXPECT_EXAM, PREVIEW, COMPLATE_YN
+			, ORDER_NUM, USE_YN, REG_DATE, UPD_DATE
+			, COMP_PERCENT_QUIZ, COMP_PERCENT_EXAM, COMP_PERCENT_PROG, COMP_SCORE_QUIZ
+			, COMP_SCORE_EXAM, COMP_SCORE_PROG, COMPLETE_TOTAL
+			, PRICE
+			, CLASS_DAY, CLASS_START_TIME, CLASS_END_TIME
+			)
+		VALUES
+			( #{id}, #{name}, #{learnType}, #{credits}, #{courseType}
+			, #{appStartDate}, #{appEndDate}, #{learnStartDate}, #{learnEndDate}
+			, #{issueDate}, #{attEvalDate}, #{attEvalTime}, #{attExamType}, #{cancel}
+			, #{dupLimit}, #{addExamPeriod}, #{recruit}
+			, #{openResults}, #{appPossibles}, #{expectExam}, #{preview}, #{complateYn}
+			, #{orderNum}, #{useYn}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'), DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+			, #{compPercentQuiz}, #{compPercentExam}, #{compPercentProg}, #{compScoreQuiz}
+			, #{compScoreExam}, #{compScoreProg}, #{completeTotal}
+			, #{price}
+			, #{classDay}, #{classStartTime}, #{classEndTime}
+			 )
+	</insert>
+	
+	<!-- 기수 수정 -->
+	<update id="cardinalUpd" parameterType="CardinalVO">
+		UPDATE CB_CARDINAL
+		SET NAME			= #{name},
+			LEARN_TYPE		= #{learnType},
+			CREDITS			= #{credits},
+			COURSE_TYPE		= #{courseType},
+			APP_START_DATE	= #{appStartDate},
+			APP_END_DATE	= #{appEndDate},
+			LEARN_START_DATE= #{learnStartDate},
+			LEARN_END_DATE	= #{learnEndDate},
+			ISSUE_DATE		= #{issueDate},
+			ATT_EVAL_DATE	= #{attEvalDate},
+			ATT_EVAL_TIME	= #{attEvalTime},
+			ATT_EXAM_TYPE	= #{attExamType},
+			CANCEL			= #{cancel},
+			DUP_LIMIT		= #{dupLimit},
+			ADD_EXAM_PERIOD	= #{addExamPeriod},
+			OPEN_RESULTS	= #{openResults},
+			APP_POSSIBLES	= #{appPossibles},
+			EXPECT_EXAM		= #{expectExam},
+			PREVIEW			= #{preview},
+			COMPLATE_YN		= #{complateYn},
+			ORDER_NUM		= #{orderNum},
+			USE_YN			= #{useYn},
+			UPD_DATE		= DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+			COMP_PERCENT_QUIZ	= #{compPercentQuiz},
+			COMP_PERCENT_EXAM	= #{compPercentExam},
+			COMP_PERCENT_PROG	= #{compPercentProg},
+			COMP_SCORE_QUIZ	= #{compScoreQuiz},
+			COMP_SCORE_EXAM	= #{compScoreExam},
+			COMP_SCORE_PROG	= #{compScoreProg},
+			COMPLETE_TOTAL	= #{completeTotal},
+			RECRUIT 		= #{recruit},
+			PRICE			= #{price},
+			CLASS_DAY		=#{classDay},
+			CLASS_START_TIME=#{classStartTime},
+			CLASS_END_TIME	=#{classEndTime}
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 기수 삭제 -->
+	<update id="cardinalDel" parameterType="CardinalVO">
+		DELETE FROM CB_CARDINAL
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 기수 선택 삭제 -->
+	<delete id="cardinalSelectDel" parameterType="list">
+		DELETE FROM CB_CARDINAL
+		WHERE ID IN ( <foreach collection="list" item="cardinal" index="index" separator=" , ">#{cardinal.id}</foreach> )
+	</delete>
+	
+	<!-- 단체연수 리스트 조회 -->
+	<select id="groupLearnList" parameterType="GroupLearnVO" resultMap="groupLearnMap">
+		SELECT M.ID, M.NAME, M.START_DATE, M.END_DATE, M.REGION_CODE, M.JURISDICTION
+			 , M.PAYMENT_TYPE, M.TARGETS, M.BANNER_FILE, M.CONTENTS, M.PROC_CNT
+			 , M.ORDER_NUM, M.USE_YN, M.REG_DATE, M.UPD_DATE
+		FROM CB_GROUP_LEARN M
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+						SELECT M.ID
+						FROM CB_GROUP_LEARN M
+						WHERE 1 = 1
+						<if test="useYn != null and useYn != ''">
+							AND M.USE_YN = #{useYn}
+						</if>
+						<if test="region != null and region.code != ''">
+							AND M.REGION_CODE = #{region.code}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	M.JURISDICTION LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'name'">
+									M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'jurisdiction'">
+									M.JURISDICTION LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.REG_DATE DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.REG_DATE DESC
+	</select>
+	
+	<!-- 기수 리스트 총 갯수 -->
+	<select id="groupLearnTotalCnt" parameterType="GroupLearnVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_GROUP_LEARN M
+				WHERE 1 = 1
+				<if test="useYn != null and useYn != ''">
+					AND M.USE_YN = #{useYn}
+				</if>
+				<if test="region != null and region.code != ''">
+					AND M.REGION_CODE = #{region.code}
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	M.JURISDICTION LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'name'">
+							M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'jurisdiction'">
+							M.JURISDICTION LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select>
+	
+	<!-- 단체연수 상세 정보 조회 -->
+	<select id="groupLearnInfo" parameterType="GroupLearnVO" resultMap="groupLearnMap">
+		SELECT M.ID, M.NAME, M.START_DATE, M.END_DATE, M.REGION_CODE, M.JURISDICTION
+			 , M.PAYMENT_TYPE, M.TARGETS, M.BANNER_FILE, M.CONTENTS, M.PROC_CNT
+			 , M.ORDER_NUM, M.USE_YN, M.REG_DATE, M.UPD_DATE
+			 , A.ID AS CARDINAL_ID, A.NAME AS CARDINAL_NAME, A.APP_START_DATE, A.APP_END_DATE
+			 , A.LEARN_START_DATE, A.LEARN_END_DATE, A.COMPLATE_YN, A.USE_YN AS CARDINAL_USE_YN, A.LIMIT_NUM
+		FROM CB_GROUP_LEARN M
+		LEFT OUTER JOIN (	SELECT A.ID, A.NAME, A.APP_START_DATE, A.APP_END_DATE, A.LEARN_START_DATE, A.LEARN_END_DATE
+								 , A.COMPLATE_YN, A.USE_YN, B.GROUP_ID, B.LIMIT_NUM
+							FROM CB_CARDINAL A
+							INNER JOIN CB_GROUP_CN B
+							ON A.ID = B.CARDINAL_ID ) A
+		ON M.ID = A.GROUP_ID
+		WHERE M.ID = #{id}
+	</select>
+	
+	<!-- 단체연수 등록 -->
+	<insert id="groupLearnReg" parameterType="GroupLearnVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_GROUP_LEARN
+			( ID, NAME, START_DATE, END_DATE, REGION_CODE, JURISDICTION
+			, PAYMENT_TYPE, TARGETS, BANNER_FILE, CONTENTS
+			, ORDER_NUM, USE_YN, REG_DATE, UPD_DATE )
+		VALUES
+			( #{id}, #{name}, #{startDate}, #{endDate}, #{region.code}, #{jurisdiction}
+			, #{paymentType}, #{targets}, #{banner.fileId}, #{contents}
+			, #{orderNum}, #{useYn}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'), DATE_FORMAT(NOW(),'%Y%m%d%H%i%s') )
+		ON DUPLICATE KEY UPDATE
+			NAME			= VALUES(NAME),
+			START_DATE		= VALUES(START_DATE),
+			END_DATE		= VALUES(END_DATE),
+			REGION_CODE		= VALUES(REGION_CODE),
+			JURISDICTION	= VALUES(JURISDICTION),
+			PAYMENT_TYPE	= VALUES(PAYMENT_TYPE),
+			TARGETS			= VALUES(TARGETS),
+			BANNER_FILE		= VALUES(BANNER_FILE),
+			CONTENTS		= VALUES(CONTENTS),
+			ORDER_NUM		= VALUES(ORDER_NUM),
+			USE_YN			= VALUES(USE_YN),
+			UPD_DATE		= VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 단체연수 삭제 -->
+	<update id="groupLearnDel" parameterType="GroupLearnVO">
+		DELETE FROM CB_GROUP_LEARN
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 과정에 의한 기수 연동 삭제 -->
+	<update id="courseCardinalDel" parameterType="CourseVO">
+		DELETE FROM CB_CN_COURSE
+		WHERE COURSE_ID = #{id}
+	</update>
+	
+	<!-- 과정에 의한 기수 연동 등록 -->
+	<update id="courseCardinalReg" parameterType="CourseVO">
+		INSERT INTO CB_CN_COURSE
+			( SEQ, CARDINAL_ID, COURSE_ID )
+		VALUES
+		<foreach collection="cardinalList" item="cardinal" index="index" separator=" , ">
+			( (SELECT IFNULL(MAX(SEQ),0)+#{index}+1 FROM CB_CN_COURSE c), #{cardinal.id}, #{id} )
+		</foreach>
+	</update>
+	
+	<!-- 과정과 기수를 연동한 시퀀스 조회 -->
+	<select id="selectCnCourseSeq" parameterType="CourseVO" resultType="Hashmap">
+		SELECT * FROM CB_CN_COURSE
+		WHERE COURSE_ID = #{id}
+	</select>
+	
+	<!-- 과정에 의한 기수 납입 정보 등록 -->
+	<insert id="gisuPaymentReg" parameterType="CardinalVO">
+		insert into
+			edu_curriculum_pay_tb
+			(
+				COURSE_ID
+				,CARDINAL_ID
+				,PAY_CRC_START
+				,PAY_CRC_END
+				,PAY_CRC_AMOUNT
+				,PAY_CRC_PAYORDER
+				,PAY_INS_DT
+				,PAY_INS_ID
+				,PAY_UDT_DT
+				,PAY_UDT_ID
+			)values
+			
+			<foreach item="element" index="index" collection="paymentList" open=" " separator="," close=" ">
+			(
+				#{element.course_id}
+				,#{element.gisuId}
+				,#{element.pmtStartDate}
+				,#{element.pmtEndDate}
+				,#{element.pmtAmount}
+				,#{element.pmtCnt}
+				,now()
+				,#{element.id}
+				,now()
+				,#{element.id}
+			)
+			</foreach>
+	</insert>
+	
+	<update id="gisuPaymentUpdate" parameterType="PaymentAdminVO">
+		UPDATE
+			edu_curriculum_pay_tb
+		SET
+			PAY_CRC_START = #{pmtStartDate},
+			PAY_CRC_END = #{pmtEndDate},
+			PAY_CRC_AMOUNT = #{pmtAmount}
+		WHERE
+			pay_crc_seq = #{payCrcSeq}
+	</update>
+	
+	<delete id="deleteGisuPayment" parameterType="int">
+		delete from
+			EDU_CURRICULUM_PAY_TB
+		where
+			PAY_CRC_SEQ = #{pay}
+	</delete>
+	
+	<delete id="deleteGisuPaymentList" parameterType="hashmap">
+		delete from
+			EDU_CURRICULUM_PAY_TB
+		where
+			course_id = #{COURSE_ID}
+		and
+			cardinal_id = #{CARDINAL_ID}
+	</delete>
+	
+	<!-- 기수에 의한 과정 연동 삭제 -->
+	<update id="cardinalCourseDel" parameterType="CardinalVO">
+		DELETE FROM CB_CN_COURSE
+		WHERE CARDINAL_ID = #{id}
+	</update>
+	
+	<!-- 기수에 의한 과정 연동 등록 -->
+	<update id="cardinalCourseReg" parameterType="CardinalVO">
+		INSERT INTO CB_CN_COURSE
+			( CARDINAL_ID, COURSE_ID )
+		VALUES
+			<foreach collection="courseList" item="course" index="index" separator=" , ">
+			( #{id}, #{course.id} )
+			</foreach>
+	</update>
+	
+	<!-- 단체연수에 의한 기수 연동 삭제 -->
+	<update id="groupCardinalDel" parameterType="GroupLearnVO">
+		DELETE FROM CB_GROUP_CN
+		WHERE GROUP_ID = #{id}
+	</update>
+	
+	<!-- 단체연수에 의한 기수 연동 등록 -->
+	<update id="groupCardinalReg" parameterType="GroupLearnVO">
+		INSERT INTO CB_GROUP_CN
+			( GROUP_ID, CARDINAL_ID, LIMIT_NUM )
+		VALUES
+			<foreach collection="cardinalList" item="cardinal" index="index" separator=" , ">
+			( #{id}, #{cardinal.id}, #{cardinal.limitNum} )
+			</foreach>
+	</update>
+	
+	<!-- 기수에 의한 설문 연동 삭제 -->
+	<update id="cardinalSurveyDel" parameterType="CardinalVO">
+		DELETE FROM CB_SURVEY_CARDINAL
+		WHERE CARDINAL_ID = #{id}
+	</update>
+	
+	<!-- 기수에 의한 만족도 설문 연동 등록 -->
+	<update id="cardinalSatisfactionReg" parameterType="CardinalVO">
+		INSERT INTO CB_SURVEY_CARDINAL
+			( SURVEY_ID, CARDINAL_ID, SURVEY_CODE )
+		VALUES
+			( #{satisfaction.id}, #{id}, 'survey999' )
+	</update>
+	
+	<!-- 기수에 의한 강의평가 설문 연동 등록 -->
+	<update id="cardinalEvaluationReg" parameterType="CardinalVO">
+		INSERT INTO CB_SURVEY_CARDINAL
+			( SURVEY_ID, CARDINAL_ID, SURVEY_CODE )
+		VALUES
+			( #{evaluation.id}, #{id}, 'survey001' )
+	</update>
+
+	<!-- 대분류 코드 삭제1- 과정테이블의 학습영역 코드 삭제 -->
+	<update id="subCourseDeleteRelatedCode" parameterType="forFaith.dev.vo.CodeVO">
+	   UPDATE CB_COURSE SET
+	   COURSE_CODE = ''
+	   WHERE COURSE_CODE IN (
+	   	SELECT CODE 
+	   	  FROM FF_CODE 
+	   	WHERE PARENT_CODE = #{code} OR CODE = #{code}
+	   	)
+	</update>
+
+	<!-- 대분류 코드 삭제2- 코드테이블의 대분류,학습영역 코드 삭제 -->
+	<delete id="subCourseDelete" parameterType="forFaith.dev.vo.CodeVO">
+		
+		DELETE FROM FF_CODE 	 			   	 
+	    WHERE CODE =#{code}    	
+	          OR PARENT_CODE = #{code}
+	          OR PARENT_CODE IN ( SELECT * FROM (SELECT CODE FROM FF_CODE WHERE PARENT_CODE=#{code}) TEMP)
+	</delete>
+	
+	
+	<!-- 학습영역 코드 삭제1- 과정테이블의 학습영역 코드 삭제 -->
+	<delete id="studyRangeDeleteRelatedCode" parameterType="forFaith.dev.vo.CodeVO">
+	   DELETE FROM CB_COURSE
+	   WHERE COURSE_CODE IN (
+		   	SELECT CODE 
+		   	  FROM FF_CODE 
+		   	WHERE CODE = #{code}
+	   	);
+	</delete>
+	
+	<!-- LMS 기수 검색 리스트  -->
+	<select id="selectCourseCardinalList2" resultMap="cardinalMap" resultType="hashmap" useCache="false">
+		SELECT R.CARDINAL_ID AS ID
+		     , R.NAME
+		     , R.LEARN_TYPE
+		     , CASE R.LEARN_TYPE WHEN 'J' THEN '직무'
+		     				   WHEN 'S' THEN '자율'
+		     				   WHEN 'M' THEN '집합'
+		     				   WHEN 'G' THEN '단체'
+		     				   ELSE ''  END AS LEARN_TYPE_NAME
+		     , DATE_FORMAT(R.APP_START_DATE, '%Y-%m-%d') AS APP_START_DATE
+		     , DATE_FORMAT(R.APP_END_DATE, '%Y-%m-%d') AS APP_END_DATE
+		     , DATE_FORMAT(R.LEARN_START_DATE, '%Y-%m-%d') AS LEARN_START_DATE
+		     , DATE_FORMAT(R.LEARN_END_DATE, '%Y-%m-%d') AS LEARN_END_DATE
+		     , R.CREDITS
+		     , R.COURSE_TYPE
+		     , R.USE_YN
+		      , R.COMPLATE_YN
+		  FROM (
+		  	<include refid="sql_selectCourseCardinalList2"/>
+		  ) R
+		  	 WHERE 1 = 1						
+					<if test="searchKeyword != null and searchKeyword != ''">
+						AND
+						<choose>
+							<when test="searchCondition == 'all'">
+								(	R.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								 OR	R.CARDINAL_ID LIKE CONCAT('%',#{searchKeyword},'%') )
+							</when>
+							<when test="searchCondition == 'name'">
+								R.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+							</when>
+							<when test="searchCondition == 'id'">
+								R.CARDINAL_ID LIKE CONCAT('%',#{searchKeyword},'%')
+							</when>
+						</choose>
+					</if>
+		 ORDER BY R.APP_START_DATE
+		 <if test='pagingYn=="Y"'>
+			<include refid="forFaith.common.footer"/>
+		</if>
+	</select>
+	<select id="selectCourseCardinalList2TotCnt" parameterType="hashmap" resultType="int" useCache="false">
+		SELECT COUNT(1)
+		  FROM (
+		  	<include refid="sql_selectCourseCardinalList2"/>
+		  ) R
+	</select>
+	<sql id="sql_selectCourseCardinalList2">
+			(
+<!-- 				SELECT ICR.ID AS COURSE_ID, ICD.ID AS CARDINAL_ID, ICD.NAME, ICD.LEARN_TYPE, ICD.APP_START_DATE, APP_END_DATE, ICD.LEARN_START_DATE, ICD.LEARN_END_DATE, ICD.CREDITS, ICD.COURSE_TYPE, ICD.USE_YN -->
+<!-- 				  ,ICD.COMPLATE_YN -->
+<!-- 				  FROM CB_COURSE ICR -->
+<!-- 				  JOIN CB_CARDINAL ICD -->
+<!-- 				 WHERE 1=1 -->
+<!-- 				   and ICR.ID = #{courseId} -->
+<!-- 				   AND ICR.USE_YN = 'Y' -->
+<!-- 				   AND ICD.COURSE_TYPE = 'A' -->
+<!-- 				   AND ICD.APP_POSSIBLES LIKE CONCAT('%',ICR.CREDIT,'%') -->
+<!-- 				   AND ICD.USE_YN = 'Y' -->
+<!-- 				 UNION ALL -->
+				SELECT ICR.ID AS COURSE_ID, ICD.ID AS CARDINAL_ID, ICD.NAME, ICD.LEARN_TYPE, ICD.APP_START_DATE, APP_END_DATE, ICD.LEARN_START_DATE, ICD.LEARN_END_DATE, ICD.CREDITS, ICD.COURSE_TYPE, ICD.USE_YN
+				  ,ICD.COMPLATE_YN
+				  FROM CB_COURSE ICR
+				  JOIN CB_CN_COURSE ICNCR
+				    ON ICNCR.COURSE_ID = ICR.ID
+				  JOIN CB_CARDINAL ICD
+				    ON ICD.ID = ICNCR.CARDINAL_ID
+				 WHERE 1=1
+	     		   AND ICR.ID = #{courseId}
+				   AND ICR.USE_YN = 'Y'
+<!-- 				   AND ICD.COURSE_TYPE = 'S' -->
+				   AND ICD.USE_YN = 'Y'
+			)
+	</sql>
+	
+	<!-- LMS 실수강종료기간(real_end_date) 수정 -->
+	<update id="realEndDateUpd" parameterType="CourseVO">
+		UPDATE CB_LEARN_APP CLA
+			INNER JOIN CB_CARDINAL CCA
+			ON CLA.CARDINAL_ID = CCA.ID
+		SET CLA.REAL_END_DATE = DATE_ADD(CCA.LEARN_END_DATE, INTERVAL #{reviewPeriod} DAY)
+		WHERE CLA.COURSE_ID = #{id}
+	</update>
+	
+	
+</mapper>

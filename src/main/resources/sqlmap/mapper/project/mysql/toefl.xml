@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.changbi.tt.dev.data.dao.ToeflDAO">
+	
+	<resultMap type="ToeflVO" id="toeflMap" autoMapping="true">
+		<id		property="id"					column="TOEFL_ID" />
+		<result property="type"					column="TOEFL_TYPE" />
+		<result property="title"				column="TOEFL_TITLE" />
+		<result property="volum"				column="TOEFL_VOLUM" />
+		<result property="price"				column="TOEFL_PRICE" />
+		<result property="regDate"				column="TOEFL_INS_DT" />
+		<result property="updDate"				column="TOEFL_UPD_DT" />
+		<association property="imgFile"			column="TOEFL_IMG_FILE"	javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<association property="regUser" 		column="TOEFL_INS_ID"	jdbcType="VARCHAR"	javaType="forFaith.dev.vo.MemberVO"	select="forFaith.dev.dao.BaseDAO.memberInfo" />
+		<association property="updUser" 		column="TOEFL_UPD_ID"	jdbcType="VARCHAR"	javaType="forFaith.dev.vo.MemberVO"	select="forFaith.dev.dao.BaseDAO.memberInfo" />
+	</resultMap>
+	
+	<resultMap type="ToeflPayVO" id="toeflPayMap" autoMapping="true">
+		<id		property="pay_toefl_seq"		column="PAY_TOEFL_SEQ" />
+		<result property="pay_user_method"		column="PAY_USER_METHOD" />
+		<result property="pay_user_status"		column="PAY_USER_STATUS" />
+		<result property="real_pay_amount"		column="REAL_PAY_AMOUNT" />
+		<result property="updDate"				column="PAY_UDT_DT" />
+		<result property="dis_point"			column="DIS_POINT" />
+		<association property="user" 	javaType="forFaith.dev.vo.MemberVO">
+			<result property="id" column="USER_ID" />
+			<result property="name" column="USER_NM" />
+			<result property="email" column="USER_EMAIL" />
+		</association>
+		<association property="toefl_id"	javaType="ToeflVO">
+			<result property="type"  column="TOEFL_TYPE" />
+			<result property="title" column="TOEFL_TITLE" />
+			<result property="price" column="TOEFL_PRICE" />
+		</association>
+	</resultMap>
+	
+		<resultMap type="ToeflPayVO" id="toeflRefundMap" autoMapping="true">
+			<result property="accname" column="TOEFL_REFUND_ACCNAME" />
+			<result property="accnum" column="TOEFL_REFUND_ACCNUM" />
+			<result property="bank" column="TOEFL_REFUND_BANK" />
+			<result property="pay_user_status"	column="PAY_USER_STATUS" />
+			<result property="pay_toefl_seq"	column="PAY_TOEFL_SEQ" />
+	</resultMap>
+	
+	<sql id="commonSearchCondition">
+		<if test="id != 0">
+			AND
+				CT.TOEFL_ID = #{id}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					CT.TOEFL_VOLUM = CAST(#{searchKeyword} AS UNSIGNED) OR CT.TOEFL_INS_ID LIKE CONCAT('%', #{searchKeyword}, '%')
+				</when>
+				<when test="searchCondition == 'author'">
+					CT.TOEFL_INS_ID LIKE CONCAT('%', #{searchKeyword}, '%')
+				</when>
+				<when test="searchCondition == 'volum'">
+					CT.TOEFL_VOLUM = CAST(#{searchKeyword} AS UNSIGNED)
+				</when>
+			</choose>
+		</if>
+	</sql>
+	
+	<select id="selectToeflList" parameterType="ToeflVO" resultMap="toeflMap">
+		SELECT
+			CT.TOEFL_ID
+			, CT.TOEFL_TYPE
+			, CT.TOEFL_TITLE
+			, CT.TOEFL_VOLUM
+			, CT.TOEFL_PRICE
+			, CT.TOEFL_IMG_FILE
+            , FAFD.FILE_NAME
+            , FAFD.ORIGIN_FILE_NAME
+            , FAFD.FILE_PATH
+            , FAFD.FILE_EXT
+            , FAFD.FILE_SIZE
+            , FAFD.URL_PATH
+			, CT.TOEFL_INS_ID
+			, CT.TOEFL_INS_DT
+			, CT.TOEFL_UPD_ID
+			, CT.TOEFL_UPD_DT
+		FROM
+			CB_TOEFL CT
+		LEFT OUTER JOIN ff_attach_file_detail FAFD ON FAFD.FILE_ID = CT.TOEFL_IMG_FILE
+		<include refid="commonSearchCondition"/>
+		ORDER BY CT.TOEFL_INS_DT DESC 
+		<if test='pagingYn=="Y"'>
+			<include refid="forFaith.common.footer"/>
+	  	</if>
+	</select>
+	
+	<select id="toeflListTotalCnt" resultType="int" parameterType="ToeflVO">
+		SELECT
+			COUNT(*)
+		FROM CB_TOEFL
+		WHERE
+			1=1
+		<include refid="commonSearchCondition"/>
+	</select>
+	
+	<insert id="insertToefl" parameterType="ToeflVO">
+		<selectKey keyProperty="id" resultType="int" order="AFTER">
+			<choose>
+				<when test="id != 0">
+					SELECT TOEFL_ID FROM CB_TOEFL WHERE TOEFL_ID = #{id}
+				</when>
+				<otherwise>
+					SELECT LAST_INSERT_ID()
+				</otherwise>
+			</choose>
+		</selectKey>
+		INSERT INTO CB_TOEFL (
+			TOEFL_ID
+			, TOEFL_TYPE
+			, TOEFL_TITLE
+			, TOEFL_VOLUM
+			, TOEFL_PRICE
+			, TOEFL_IMG_FILE
+			, TOEFL_INS_ID
+			, TOEFL_INS_DT
+			, TOEFL_UPD_ID
+			, TOEFL_UPD_DT
+		) 
+		VALUES (
+			#{id}
+			,#{type}
+			,#{title}
+			,#{volum}
+			,#{price}
+			,#{imgFile.fileId}
+			,#{regUser.id}
+			,NOW()
+			,#{updUser.id}
+			,NOW()
+		)
+		ON DUPLICATE KEY UPDATE
+			 TOEFL_TYPE = VALUE(TOEFL_TYPE)
+			, TOEFL_TITLE = VALUE(TOEFL_TITLE)
+			, TOEFL_VOLUM = VALUE(TOEFL_VOLUM)
+			, TOEFL_PRICE = VALUE(TOEFL_PRICE)
+			, TOEFL_IMG_FILE = VALUE(TOEFL_IMG_FILE)
+			, TOEFL_UPD_ID = VALUE(TOEFL_UPD_ID)
+			, TOEFL_UPD_DT = NOW()
+	</insert>
+	
+	<delete id="deleteToefl" parameterType="ToeflVO">
+		DELETE FROM CB_TOEFL
+		WHERE
+			TOEFL_ID = #{id}
+	</delete>
+	<select id="selectToeflPayList" parameterType="ToeflPayVO" resultMap="toeflPayMap">
+		select
+			ctp.PAY_TOEFL_SEQ,
+			ctp.PAY_USER_METHOD,
+    		ctp.PAY_USER_STATUS,
+    		ctp.PAY_USER_ID,
+    		ctp.REAL_PAY_AMOUNT,
+    		ctp.DIS_POINT,
+    		date_format(ctp.PAY_UDT_DT, '%Y-%m-%d %H:%i') as PAY_UDT_DT,
+    		ct.TOEFL_TYPE AS TOEFL_TYPE,
+    		ct.TOEFL_TITLE AS TOEFL_TITLE,
+    		ct.TOEFL_PRICE AS TOEFL_PRICE,
+    		cu.USER_ID AS USER_ID,
+    		cu.USER_NM AS USER_NM,
+    		cu.USER_EMAIL AS USER_EMAIL
+		from 
+			cb_toefl_pay_tb ctp
+			left join cb_toefl ct
+			on ctp.toefl_id = ct.toefl_id
+			left join com_user_tb cu
+			on ctp.PAY_USER_ID = cu.USER_ID
+		WHERE
+			1=1
+		<if test="pay_user_status != null and pay_user_status != ''">
+	    	AND ctp.PAY_USER_STATUS = #{pay_user_status} 
+	    </if>
+	    <if test="(searchStartDate != null and searchStartDate != '') or (searchEndDate != null and searchEndDate != '')">
+	         AND DATE_FORMAT(ctp.PAY_UDT_DT, '%Y-%m-%d') BETWEEN #{searchStartDate} AND #{searchEndDate}
+	    </if>
+		ORDER BY ctp.PAY_UDT_DT DESC
+		<if test='pagingYn=="Y"'>
+			<include refid="forFaith.common.footer"/>
+	  	</if>
+	</select>
+	<select id="toeflPayListTotalCnt" parameterType="ToeflPayVO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM CB_TOEFL_PAY_TB
+		WHERE
+			1=1
+		<if test="pay_user_status != null and pay_user_status != ''">
+	    	AND PAY_USER_STATUS = #{pay_user_status}
+	    </if>
+	    <if test="(searchStartDate != null and searchStartDate != '') or (searchEndDate != null and searchEndDate != '')">
+	         AND DATE_FORMAT(PAY_UDT_DT, '%Y-%m-%d') BETWEEN #{searchStartDate} AND #{searchEndDate}
+	    </if>
+	</select>
+	
+	<select id="selectToeflRefund" parameterType="ToeflPayVO" resultMap="toeflRefundMap">
+		SELECT
+			TR.PAY_TOEFL_SEQ, TR.TOEFL_REFUND_ACCNAME, TR.TOEFL_REFUND_ACCNUM, TR.TOEFL_REFUND_BANK, TP.PAY_USER_STATUS
+		FROM CB_TOEFL_REFUND_TB TR
+		LEFT JOIN CB_TOEFL_PAY_TB TP
+		ON TR.PAY_TOEFL_SEQ = TP.PAY_TOEFL_SEQ
+		WHERE
+			1=1
+	    	AND TR.PAY_TOEFL_SEQ = #{pay_toefl_seq}
+	</select>
+	
+	<update id="updateToeflRefund" parameterType="ToeflPayVO">
+		update
+			CB_TOEFL_REFUND_TB
+		set
+			TOEFL_REFUND_STATUS = #{pay_user_status}
+		where
+			PAY_TOEFL_SEQ = #{pay_toefl_seq}
+	</update>
+	
+	<update id="updateToeflPay" parameterType="ToeflPayVO">
+		update
+			CB_TOEFL_PAY_TB
+		set
+			PAY_USER_STATUS = #{pay_user_status}
+		where
+			PAY_TOEFL_SEQ = #{pay_toefl_seq}
+	</update>
+</mapper>

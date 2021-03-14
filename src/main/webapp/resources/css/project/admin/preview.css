@@ -1,0 +1,263 @@
+@import url(font_nanumSquare.css);
+
+/*--------------------------------------------------------------
+1.0 Genericons 일반
+----------------------------------------------------------------*/
+	/* 1.1 Normalize  표준화 */
+		/* 1.1.0 ALL Element */
+			* {
+				margin: 0;
+				padding: 0;
+				border: 0;
+				vertical-align: baseline;
+			
+				font-size-adjust: none;
+				-webkit-text-size-adjust: none;
+				-moz-text-size-adjust: none;
+				-ms-text-size-adjust: none;
+				font-family:"Noto Sans Reqular","Malgun Gothic", "Apple SD Gothic Neo", AppleSDGothic, dotum, sans-serif;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+				letter-spacing: -.02em;
+				
+			}
+			h1, h2, h3, h4, h5,
+			h1 *, h2 *, h3 *, h4 *, h5 *, 
+			.gnb .menu-d1 *, .gnb .topmenu *, .tab-header *, .main.sideL *,.main.sideR *,
+			#sub-menu .menu-d2>li>a
+			{font-family:"NanumSquare", AppleSDGothic, sans-serif; letter-spacing:0;}
+			*,*:after,*:before {	-webkit-box-sizing: border-box;	-moz-box-sizing: border-box;	box-sizing: border-box;	padding: 0;	margin: 0;}
+		/* 1.2.1 Typography */
+			body {color:#4c4b46; font-size: 13px; font-size: .8125rem; line-height: 160%}
+			input, textarea, button, select { font-size:13px; font-size: .8125rem}
+			em { font-style: normal; font-weight:700}
+			strong {font-weight:900}
+			u { color:#0068b7}
+			h2 { font-size:28px;}
+			h3 { font-size:24px;}
+			h4 { font-size:22px;}
+			h5 { font-size:18px;}
+			h6 { font-size:16px;}
+			span.primary, em.primary, strong.primary, small.primary { color:#0068b7}
+			span.danger, em.danger, strong.danger, small.danger {color:#f44336}
+		/* 1.2.2 Link & Button */
+			button { cursor: pointer}
+			a, button, input[type=button] {text-decoration: none; color:#3a383e}
+			a.on, button.on, input[type=button].on { font-weight:900}
+			a:hover, a:active,
+			button:hover, button:active, 
+			input[type=button]:hover, input[type=button]:active {color:#e74683}
+		/* 1.2.3 Image */
+			img {max-width: 100%; max-height: 100%; vertical-align:middle; 	outline: none;}
+		/* 1.2.4 Table */
+			table {width:100%; line-height:1.4em; border-collapse:0; border-spacing: 0  }
+			table caption { font-weight: bold; font-size: 1.2em; text-align: left; margin-bottom:5px}
+			table th,  table td {box-sizing: border-box;  padding:5px 0; margin:0; vertical-align: middle}
+			table th { font-weight: bold; }
+	/* 1.2 Genericons 일반 */
+		.sr-only, .alt-txt { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;}
+		.off {display:none !important}
+		.halfW {float: left; width:50%}
+		.clearL { clear:left}
+		.clearR { clear: right}
+		.clearB { clear: both}
+		.floatL {float:left}
+		.floatR {float:right}
+		.alignL { text-align:left}
+		.alignR { text-align: right}
+		.alignC {text-align: center}
+	/* 1.4 icon & Blit */
+		.icon, .iconInvs,
+		.blit:before, .blitInvs:before {display: inline-block; min-width:20px; min-height:20px; background-repeat:no-repeat; background-position:50% 50%; vertical-align: middle}
+		.blit:before, .blitInvs:before { content:""}
+		.iconInvs, .blitInvs:before {background-color: #666464}
+		.iconInvs.primary, .blitInvs.primary:before {background-color: #0068b7}
+		.iconInvs.danger, .blitInvs.danger:before {background-color: #f44336}
+		.iconInvs.standby, .blitInvs.standby:before {background-color: #c39d5f}
+		/* 1.4.9 텍스트 아이콘 */
+			/* 리스트 제목용 mini icon set */ 
+			.iconSet>em {display: inline-block;color:#fff; background-color: #666464; padding: 0 2px; border-radius:2px; font-size:12px; font-size:.75rem; height:16px; height:1rem;  line-height:16px; line-height:1rem;  white-space: nowrap;vertical-align:middle; }
+			.iconSet>em.icon-new { background-color: #c39d5f}
+			.iconSet>em.icon-best { background-color:#0068b7}
+			.iconSet>em.icon-pop { background-color: #e74683}
+			.iconSet>em.icon-great { background-color: #19d3a1}
+			/* 버튼형 icon Set : 1.5 Butten 에 합침 */
+	/* 1.5 Butten */
+		.btn, .txtIcon { display:inline-block; text-align: center;  background-color:#666464; border:1px solid #666464; color:#fff!important; vertical-align: middle; min-height:28px; min-height:1.75rem; line-height:26px; line-height:1.625rem; padding-left:10px; padding-right:10px}
+		.btn.XS {font-size:12px; font-size:.75rem; min-height:18px; min-height:1.125rem; line-height:16px; line-height: 1rem; border-radius:2px; padding-left:5px; padding-right:5px}
+		.btn.S { height:28px; height:1.75rem; line-height:28px; line-height: 1.75rem}
+		.btn.M { font-size:16px; font-size:1rem; line-height:28px; line-height: 1.75rem; padding:5px 15px;}
+		.btn.icon { padding-left: 0; padding-right: 0}
+		.btn.blit { padding-left: 0; padding-right: 5px;}
+		.btn.primary, .txtIcon.primary { background-color: #0068b7; border-color:#0068b7}
+		.btn.danger, .txtIcon.danger  { background-color: #f44336; border-color:#f44336}
+		.btn.standby, .txtIcon.standby { background-color: #c39d5f; border-color:#c39d5f}
+		.btn:hover, .btn:active { background-color:#e74683; border-color: #e74683; color:#fff}
+		.btn.line, .txtIcon.line {border-width:1px; border-style: solid;  background-color:#fff; color:#5c5d57!important; font-weight: 700}
+		.btn.line.primary, .txtIcon.line.primary { color:#0068b7!important;}
+		.btn.line.danger, .txtIcon.line.danger {color:#f44336!important;}
+		.btn.line.standby, .txtIcon.line.standby { border-color:#c39d5f!important;}
+		.btn.line:hover, .btn.line:active {border-color:#e74683; background-color:#fff; color:#e74683!important}
+		.btn.line.icon:hover, .btn.line.icon:active {background-color:#e74683;}
+		
+/*--------------------------------------------------------------
+3.0 Layout Desgin : 레이아웃 디자인
+----------------------------------------------------------------*/
+
+	/* 3.3 Body Layout (서브 & 메인 공통 */
+		/* 3.3.3 섹션 */
+			.group {margin-bottom:40px}
+			.section {margin-bottom:15px}
+			.group-header { position:relative; height:60px; height:3.75rem; line-height: 60px; line-height:3.75rem }
+			.section-header {position:relative; height:50px; height:3.125rem; line-height: 50px; line-height:3.125rem }
+			.group-header.box{border:1px solid #e0e0e0; border-bottom:0 none; }
+			.section-header.box{border:1px solid #e0e0e0; border-bottom:0 none;  }
+			.group-header.box.strong,
+			.section-header.box.strong{background-color:#eaeff9; }
+			.section-body-footer {margin-top:15px;}
+			.group-body, .section-body { padding-bottom:15px;}
+			.empas { font-weight:700}
+			.strong { font-weight: 700; color:#0068b7}
+			.box {border:1px solid #e0e0e0}
+			.box.group {border-color:#c2c2c2}
+			.box.strongOut{ border:2px solid #0068b7}
+			.group-header.box.strongOut { border-bottom:0px none}
+			.group-body.borderT, .section-body.borderT,  .box.strongOut.borderT{border-top:1px solid #e0e0e0; padding-top:15px;}
+			.box.group, .box.section,
+			.box.group-header, .box.section-header{ padding-left: 15px; padding-right:15px}
+			.box.group-body, .box.section-body { padding:15px;}
+			
+			.section.qna>.section-header  { height:auto; padding:10px 15px 10px 30px;line-height: 30px; line-height:1.875rem }
+			.section.qna>.section-header:before { content:"Q."; position:absolute; top:7px; left:0; height:30px; font-size: 30px; font-weight: 700; color:#0068b7}
+			
+			.section.qna>.section-header>div { margin-top:10px;}
+
+/*--------------------------------------------------------------
+5.0 Contents Design
+----------------------------------------------------------------*/
+	.html-view { line-height:1.3 } 
+	.html-view.section { padding:15px}
+	.html-view p { margin:5px 0}
+	.html-view h1, .html-view h2, .html-view h3 { margin:20px 0 5px;}
+	.html-view h4, .html-view h5, .html-view h6  { margin:10px 0 0;}
+	/* 5.2 List TAG  */
+		/*5.2.2 설문 & 문제 List */
+			/* 설문 & 온라인 문제 공용 */
+				.poll-top { padding:0 1rem}
+				.poll-list>li{ 
+					list-style-position: outside; margin:40px 1.5rem 0 2.5rem; padding-left: .5rem; 
+					font-size:20px; font-size: 1.25rem; font-weight:700;
+					color:#0068b7
+				}
+				.fix-state { border:0 none; margin:0; padding:0 }
+				.fix-state>li { list-style:none; padding:0; margin-bottom:5px; text-align: right}
+				.fix-state>li:first-child {position:fixed; z-index:99998; left:15px; top:15px;  border-radius:5px; padding:5px 15px; background-color: #3a383e; background-color: rgba(0,0,0,.7); color:#fff;}
+				.fix-state>li .label { display: inline-block;margin-right:.3em; vertical-align: top}
+				.fix-state>li:first-child em { display:inline-block; vertical-align: top; font-size: 24px; font-size: 1.5rem;  color:#ff6;}
+				.fix-state>li:last-child em { color:#f44336;}
+				.poll-list>li,.question-list>li{ 
+					list-style-position: outside; margin:40px 1.5rem 0 2.5rem; padding-left: .5rem; 
+					font-size:20px; font-size: 1.25rem; font-weight:700;
+					color:#0068b7
+				}
+				.poll-list .item-header, .question-list .item-header{ margin:10px 0; font-size:16px; font-size: 1rem; color:#3a383e}
+				.poll-list .item-body, .question-list .item-body{font-size:14px; font-size: .875rem; font-weight: 400; color:#585858}
+			/* 설문조사*/
+				.poll-list label { padding-left:22px; padding-left:1.5rem; cursor: pointer}
+				.poll-list input[type="radio"], .poll-list input[type="checkbox"]{ display: inline-block; margin-left:-24px; margin-left:-1.5rem; width:16px; width:1rem; height:16px; height:1rem; margin-right:8px; margin-right:.5rem; padding: 0}
+				.poll-list .typeObjL label { display: block; line-height: 1.6em; margin-bottom:4px; margin-bottom:.5em; }
+				.poll-list .typeObjS label { display:inline-block; width:20%; margin-right:-.5em}
+				.poll-list .typeSbjC input { display:inline-block; width:5em; text-align: right}
+				.poll-list .typeSbjC label { padding-left:0; white-space: nowrap}
+			/* 온라인 문제(채점 포함) */
+				.myanswer-summary { border-top:1px solid #e0e0e0; border-bottom:1px solid #e0e0e0; height:71px; padding:15px; font-size:20px; font-size:1.25rem; text-align: right}
+				.myanswer-summary>li { display: inline-block; list-style: none; padding:10px 15px; text-align:left}
+				.myanswer-summary>li:first-child { float: left}
+				.myanswer-summary>li .label { display: inline-block; margin-right: .5em}
+
+				.question-list .item-header {position: relative}
+				.answer-right .item-header:before,
+				.answer-unright .item-header:before { content:""; position:absolute; display:inline-block; left:-52px; top:-13px; width:52px; height:52px; background-color: transparent; background-position: 50% 50%; background-repeat: no-repeat; vertical-align: top}
+				.answer-right .item-header:before {background-image: url(img-preview/exam-right.png) }
+				.answer-unright .item-header:before {background-image: url(img-preview/exam-unright.png) }
+
+				.question-list .item-body>li input[type="radio"],
+				.question-list .item-body>li input[type="checkbox"]{display: none}
+				.question-list .item-body>li { position:relative; margin-left: 1em; margin-bottom:.5em; list-style-position: outside; padding-left:0.5em;  font-weight: 900}
+				.question-list .item-body>li>label, .question-list .item-body>li>span { display:inline-block; vertical-align: top; color:#585858; font-weight: 400; cursor: pointer}
+				.question-list .item-body>li.check:before,
+				.question-list .item-body>li.right:after { content:""; position:absolute; left:-26px; top:-2px; width:26px; height:26px; background-color: transparent; background-position: 50% 50%; background-repeat: no-repeat}
+				.question-list .item-body>li.check:before {background-image: url(img-preview/exam-answer-check.png) }
+				.question-list .item-body>li.right:after {background-image: url(img-preview/exam-answer-right.png) }
+				.question-list .item-body>li.check>label,
+				.question-list .item-body>li.check>span { color:#0068b7;}
+				.question-list .item-body>li.right>label,
+				.question-list .item-body>li.right>span,
+				.question-list .item-header .right-answer { color:#f44336;}
+
+				
+
+	/* 5.3 Form */
+		/* 5.3.1 서브페이지 폼 일반 */
+			input[type=checkbox], input[type=checkbox]{ cursor: pointer;}
+			.sub-body input, .sub-body select,
+			.popup-body input, .popup-body select{border:1px solid #ccc; height: 30px; line-height: 30px; padding:0px 10px; display: inline-block; background-color: #fff; box-sizing: border-box; vertical-align: middle;}
+			input.nth-1st, select.nth-1st{margin-left:0px;}
+			textarea{border:1px solid #ccc; padding: 10px; resize: none; height: 100px; width: 100%; margin: 10px 0px;}
+			input[type=file]{padding:0px; border: 0px;}
+			input[type=checkbox],input[type=radio]{border: 0px;}
+			input[type=number] { padding-right:0; text-align: right}
+			select {display: inline-block;  -webkit-appearance:none; border:1px solid #e0e0e0; background-color: #fff; padding:0px 30px 0 10px !important; background: url(img/selectbox-arrow2.png) no-repeat 100% 50%}
+			input[type=date]  {display: inline-block;  -webkit-appearance:none; border:1px solid #e0e0e0; background-color: #fff; padding-left:10px;}
+
+		/* 5.3.3. Form 페이지 */
+				form h3{ min-height:50px; line-height: 50px; font-size: 16px; font-size: 1rem; font-weight: 700;}
+				form h3.nth-1st{ margin-top: 0px;}				
+				form dl{width:100%; border-bottom: 1px solid #e0e0e0; font-size: 0px;}
+				form dt,form dd{ padding: 10px 20px; min-height: 57px; line-height: 37px; border-top: 1px solid #e0e0e0; display:inline-block; box-sizing: border-box; font-size: 14px; font-size: .875rem; vertical-align: top;}
+				form dt{ width: 20%; font-weight:700; vertical-align: top; letter-spacing: -0.05em}
+				form dt.border{border-left:1px solid #e0e0e0;}
+				form dt i{color:#e74683;}
+				form dd{ width:80%; border-left: 1px solid #e0e0e0;vertical-align: top;}
+				form dd p, { line-height:1.5; margin:5px 0}
+				form dd p.alert {color:red;}
+				form .singleRow {width:100%; padding:10px 20px; border-top:1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0;}
+				form .singleRow p { margin-top:10px}
+				div.btn_wrap{ position: relative; margin-top: 30px;}
+				div.btn_wrap a{position: absolute; top:15px; right: 10px;}
+			/* form 구조 양식 내 재정의 */
+				form ul{ border: 1px solid #e0e0e0; border-left:0px; border-right: 0px; padding: 10px 20px;}
+				form ul>li{ list-style: inside; list-style-type: disc;}
+				form dd input, form dd select, form div input { margin:0 3px}
+				form dd input.nth-1st, form dd select.nth-1st { margin:0 3px 0 0}
+				form dd .body-select .btn-toggle { height:30px;line-height: 28px;}
+				form dd.NEIS input[type=text]{width:4%; vertical-align: middle;}
+				form dd.NEIS input[type=checkbox]{margin: 0px 5px 0px 0px!important; height: auto;}
+				form dd.NEIS a.btn{ vertical-align: middle!important; }
+				form dd.address input{ width: 30%;}
+				form dd label,form .singleRow label{ margin-right:10px; cursor: pointer;}
+				form dd strong{font-weight:700;}
+				form dd span{margin-left:10px;}
+				form dd span.nth-1st{margin-left: 0px; margin-right: 10px;}
+				form dd span.nth-last{display:block; margin-left: 0px;}
+				form dd span a{color:#0068b7; font-weight: 700;}
+				form dd span strong{ font-weight: 700; color: #0068b7; letter-spacing: -0.075em;}
+				form dd textarea { display: inline-block; vertical-align: middle}
+			/* 팝업 내 폼 재정의 */
+				.popup-body form dt,.popup-body form dd{ padding: 5px 10px; min-height: 47px;}
+
+
+	/* 5.6 게시판*/
+	/* 5.6.1. Top & Bottom*/
+		/* 목록 Top & Bottom */
+			.list-top { position:relative; min-height:40px; min-height:2.5rem; line-height:40px; line-height:2.5rem;}
+			.list-bottom{ position:relative; margin:40px 0}
+/*--------------------------------------------------------------
+7.0 Popup Design
+----------------------------------------------------------------*/
+	/* 7.1 레이어 팝업 */
+		.popup-header { margin:15px 15px 0; padding:30px 0; text-align: center; line-height:30px; line-height: 1.875rem}
+		.popup-header p { font-size: 18px; font-size: 1.125rem;  color:#3a383e}
+		.popup-body {margin:15px;}
+		.popup-header + .popup-body {margin:0 15px 15px;}
+		.popup-footer {padding:0 15px 45px; text-align: center}

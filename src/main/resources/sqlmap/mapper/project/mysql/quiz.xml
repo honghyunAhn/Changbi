@@ -1,0 +1,637 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.changbi.tt.dev.data.dao.QuizDAO">
+	
+	<!-- 시험지 풀 resultMap -->
+	<resultMap id="quizPoolMap" 			type="QuizPoolVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<association property="course"		javaType="CourseVO">
+			<result	property="id"			column="COURSE_ID" />
+			<result property="name"			column="COURSE_NAME" />
+		</association>
+		<collection property="quizItemList" 	ofType="QuizItemVO"	javaType="list">
+			<id	property="id"					column="QUIZ_ITEM_ID" />
+			<result property="quizPool.id"		column="ID" />
+			<result property="orderNum"			column="QUIZ_ITEM_ORDER_NUM" />
+			<association property="quizBank" 	javaType="QuizBankVO">
+				<id property="id"				column="QUIZ_BANK_ID" />
+				<result property="course.id"	column="COURSE_ID" />
+				<result property="quizType"		column="QUIZ_TYPE" />
+				<result property="title"		column="QUIZ_BANK_TITLE" />
+				<result property="osType"		column="OS_TYPE" />
+				<result property="examType"		column="EXAM_TYPE" />
+				<result property="exam1"		column="EXAM1" />
+				<result property="exam2"		column="EXAM2" />
+				<result property="exam3"		column="EXAM3" />
+				<result property="exam4"		column="EXAM4" />
+				<result property="exam5"		column="EXAM5" />
+				<result property="comment"		column="COMMENT" />
+				<result property="oAnswer"		column="O_ANSWER" />
+				<result property="sAnswer"		column="S_ANSWER" />
+			</association>
+		</collection>
+	</resultMap>
+	
+	<!-- 문제은행 resultMap -->
+	<resultMap id="quizBankMap" 			type="QuizBankVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<association property="course"		javaType="CourseVO">
+			<result	property="id"			column="COURSE_ID" />
+			<result property="name"			column="COURSE_NAME" />
+		</association>
+		<collection property="quizReplyList" ofType="QuizReplyVO"	javaType="list">
+			<result property="id"			column="REPLY_ID" />
+			<result property="pScore"		column="REPLY_P_SCORE" />
+			<result property="tScore"		column="REPLY_T_SCORE" />
+		</collection>
+	</resultMap>
+	
+	<!-- 시험문제 resultMap -->
+	<resultMap id="quizItemMap" 			type="QuizItemVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<result property="quizPool.id"		column="QUIZ_POOL_ID" />
+		<association property="quizBank" 	javaType="QuizBankVO">
+			<result property="id"			column="QUIZ_BANK_ID" />
+			<result property="course.id"	column="COURSE_ID" />
+			<result property="quizType"		column="QUIZ_TYPE" />
+			<result property="classType"	column="CLASS_TYPE" />
+			<result property="title"		column="TITLE" />
+			<result property="osType"		column="OS_TYPE" />
+			<result property="examType"		column="EXAM_TYPE" />
+			<result property="exam1"		column="EXAM1" />
+			<result property="exam2"		column="EXAM2" />
+			<result property="exam3"		column="EXAM3" />
+			<result property="exam4"		column="EXAM4" />
+			<result property="exam5"		column="EXAM5" />
+			<result property="category"		column="CATEGORY" />
+			<result property="cateName"		column="CATE_NAME" />
+			<result property="comment"		column="COMMENT" />
+			<result property="quizLevel"	column="QUIZ_LEVEL" />
+			<result property="oAnswer"		column="O_ANSWER" />
+			<result property="sAnswer"		column="S_ANSWER" />
+		</association>
+	</resultMap>
+	
+	<!-- 시험 resultMap -->
+	<resultMap id="quizMap" 				type="QuizVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<association property="cardinal"	javaType="CardinalVO">
+			<result	property="id"			column="CARDINAL_ID" />
+			<result property="name"			column="CARDINAL_NAME" />
+		</association>
+		<association property="course"		javaType="CourseVO">
+			<result	property="id"			column="COURSE_ID" />
+			<result property="name"			column="COURSE_NAME" />
+		</association>
+		<association property="quizPool"	javaType="QuizPoolVO">
+			<result	property="id"			column="QUIZ_POOL_ID" />
+			<result property="title"		column="QUIZ_POOL_TITLE" />
+		</association>
+	</resultMap>
+	
+	<!-- 레포트 맵 -->
+	<resultMap id="reportMap" 				type="ReportVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<result property="cardinal.id"		column="CARDINAL_ID" />
+		<result property="course.id"		column="COURSE_ID" />
+		<association property="file" 		column="FILE_ID"	javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<association property="quiz"		javaType="QuizVO">
+			<result	property="id"			column="QUIZ_ID" />
+			<result property="title"		column="QUIZ_TITLE" />
+			<result property="score"		column="QUIZ_SCORE" />
+			<result property="startDate"	column="START_DATE" />
+			<result property="endDate"		column="END_DATE" />
+		</association>
+		<association property="user"		javaType="UserVO">
+			<result	property="id"			column="USER_ID" />
+			<result property="name"			column="USER_NAME" />
+			<result property="schoolName"	column="SCHOOL_NAME" />
+		</association>
+		<collection property="quizReplyList" ofType="QuizReplyVO"	javaType="list">
+			<result property="id"			column="REPLY_ID" />
+			<result property="pScore"		column="P_SCORE" />
+			<result property="tScore"		column="T_SCORE" />
+		</collection>
+		<collection property="copyRatioList" ofType="CopyRatioVO"	javaType="list">
+			<result property="uri"			column="URI" />
+			<result property="checkType"	column="CHECK_TYPE" />
+			<result property="totalCopyRatio"	column="TOTAL_COPY_RATIO" />
+			<result property="dispTotalCopyRatio"	column="DISP_TOTAL_COPY_RATIO" />
+			<result property="completeStatus"	column="COMPLETE_STATUS" />
+			<result property="completeDate"	column="COMPLETE_DATE" />
+		</collection>
+	</resultMap>
+	
+	<!-- 출석평가 고사장 resultMap -->
+	<resultMap id="examSpotMap" 			type="ExamSpotVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<association property="map" 		column="MAP_FILE"	javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+	</resultMap>
+	
+	<!-- 시험지 풀 리스트 조회 -->
+	<select id="quizPoolList" parameterType="QuizPoolVO" resultMap="quizPoolMap">
+		SELECT M.ID, M.TITLE, M.QUIZ_TYPE
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , A.ID AS COURSE_ID, A.NAME AS COURSE_NAME, B.ID AS QUIZ_ITEM_ID
+		FROM CB_QUIZ_POOL M
+		INNER JOIN CB_COURSE A
+		ON M.COURSE_ID = A.ID
+		LEFT OUTER JOIN CB_QUIZ_ITEM B
+		ON M.ID = B.QUIZ_POOL_ID
+		WHERE M.COURSE_ID = #{course.id}
+		AND M.QUIZ_TYPE = #{quizType}
+		<if test="useYn != null and useYn != ''">
+			AND M.USE_YN = #{useYn}
+		</if>
+		ORDER BY M.REG_DATE DESC
+	</select>
+	
+	<!-- 시험지 풀 리스트 총 갯수 -->
+	<select id="quizPoolTotalCnt" parameterType="QuizPoolVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM CB_QUIZ_POOL
+	</select>
+	
+	<!-- 시험지 풀 상세 정보 조회 -->
+	<select id="quizPoolInfo" parameterType="QuizPoolVO" resultMap="quizPoolMap">
+		SELECT M.ID, M.TITLE, M.QUIZ_TYPE
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , A.ID AS COURSE_ID, A.NAME AS COURSE_NAME
+			 , B.ID AS QUIZ_ITEM_ID, B.QUIZ_BANK_ID, B.ORDER_NUM AS QUIZ_ITEM_ORDER_NUM, B.TITLE AS QUIZ_BANK_TITLE
+			 , B.OS_TYPE, B.EXAM_TYPE, B.EXAM1, B.EXAM2, B.EXAM3, B.EXAM4, B.EXAM5, B.COMMENT, B.O_ANSWER, B.S_ANSWER
+		FROM CB_QUIZ_POOL M
+		INNER JOIN CB_COURSE A
+		ON M.COURSE_ID = A.ID
+		LEFT OUTER JOIN ( SELECT A.ID, A.QUIZ_POOL_ID, A.QUIZ_BANK_ID, A.ORDER_NUM
+							   , B.TITLE, B.OS_TYPE, B.EXAM_TYPE, B.EXAM1, B.EXAM2, B.EXAM3, B.EXAM4, B.EXAM5
+							   , B.COMMENT, B.O_ANSWER, B.S_ANSWER
+						  FROM CB_QUIZ_ITEM A
+						  INNER JOIN CB_QUIZ_BANK B
+						  ON A.QUIZ_BANK_ID = B.ID
+						  WHERE A.QUIZ_POOL_ID = #{id}
+						  ORDER BY A.ORDER_NUM, A.ID DESC ) B
+		ON M.ID = B.QUIZ_POOL_ID
+		WHERE M.ID = #{id}
+	</select>
+	
+	<!-- 시험지 풀 등록 -->
+	<insert id="quizPoolReg" parameterType="QuizPoolVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_QUIZ_POOL
+			( ID, COURSE_ID, TITLE, QUIZ_TYPE, USE_YN )
+		VALUES
+			( #{id}, #{course.id}, #{title}, #{quizType}, #{useYn} )
+		ON DUPLICATE KEY UPDATE
+			COURSE_ID		= VALUES(COURSE_ID),
+			TITLE			= VALUES(TITLE),
+			QUIZ_TYPE		= VALUES(QUIZ_TYPE),
+			USE_YN			= VALUES(USE_YN),
+			UPD_DATE 		= VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 시험 리스트 조회 -->
+	<select id="quizList" parameterType="QuizVO" resultMap="quizMap">
+		SELECT M.ID, M.CARDINAL_ID, M.COURSE_ID, M.QUIZ_POOL_ID, M.TITLE, M.QUIZ_TYPE, M.START_DATE, M.END_DATE
+			 , M.EXAM_TIME, M.SCORE, M.GUIDE, M.RETRY, M.LIMITS, M.LIMIT_KEYS, M.OPEN_YN
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , IFNULL(COUNT(A.ID), 0) AS SUBMIT, SUM(IF(A.MARK_YN IS NULL || A.MARK_YN = 'Y', 0, 1)) AS BEFORE_APP
+		FROM CB_QUIZ M
+		LEFT OUTER JOIN CB_REPORT A
+		ON M.CARDINAL_ID = A.CARDINAL_ID
+		AND M.COURSE_ID = A.COURSE_ID
+		AND M.ID = A.QUIZ_ID
+		WHERE M.CARDINAL_ID = #{cardinal.id}
+		AND M.COURSE_ID = #{course.id}
+		AND M.QUIZ_TYPE = #{quizType}
+		GROUP BY M.CARDINAL_ID, M.COURSE_ID, M.ID
+	</select>
+	
+	<!-- 시험 리스트 총 갯수 -->
+	<select id="quizTotalCnt" parameterType="QuizVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM CB_QUIZ
+	</select>
+	
+	<!-- 시험 상세 정보 조회 -->
+	<select id="quizInfo" parameterType="QuizVO" resultMap="quizMap">
+		SELECT M.ID, M.QUIZ_POOL_ID, M.TITLE, M.QUIZ_TYPE, M.START_DATE, M.END_DATE, M.EXAM_TIME, M.SCORE, M.GUIDE, M.RETRY, M.LIMITS, M.LIMIT_KEYS, M.OPEN_YN
+			 , A.ID AS CARDINAL_ID, A.NAME AS CARDINAL_NAME, B.ID AS COURSE_ID, B.NAME AS COURSE_NAME, C.TITLE AS QUIZ_POOL_TITLE
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , IFNULL(COUNT(D.ID), 0) AS SUBMIT, SUM(IF(D.MARK_YN IS NULL || D.MARK_YN = 'Y', 0, 1)) AS BEFORE_APP
+		FROM CB_QUIZ M
+		INNER JOIN CB_CARDINAL A
+		ON M.CARDINAL_ID = A.ID
+		INNER JOIN CB_COURSE B
+		ON M.COURSE_ID = B.ID
+		INNER JOIN CB_QUIZ_POOL C
+		ON M.QUIZ_POOL_ID = C.ID
+		LEFT OUTER JOIN CB_REPORT D
+		ON M.CARDINAL_ID = D.CARDINAL_ID
+		AND M.COURSE_ID = D.COURSE_ID
+		AND M.ID = D.QUIZ_ID
+		WHERE M.ID = #{id}
+	</select>
+	
+	<!-- 시험 등록 -->
+	<insert id="quizReg" parameterType="QuizVO">
+		<selectKey resultType="string" keyProperty="id" order="BEFORE">
+	        SELECT CONCAT('q', LPAD(IFNULL(MAX(SEQ), 0)+1, 9, 0)) FROM CB_QUIZ
+	    </selectKey>
+	    
+		INSERT INTO CB_QUIZ
+			( ID, CARDINAL_ID, COURSE_ID, QUIZ_POOL_ID, TITLE, QUIZ_TYPE, START_DATE, END_DATE
+			, EXAM_TIME, SCORE, GUIDE, RETRY, LIMITS, LIMIT_KEYS, OPEN_YN
+			, USE_YN )
+		VALUES
+			( #{id}, #{cardinal.id}, #{course.id}, #{quizPool.id}, #{title}, #{quizType}, #{startDate}, #{endDate}
+			, #{examTime}, #{score}, #{guide}, #{retry}, #{limits}, #{limitKeys}, #{openYn}
+			, #{useYn} )
+	</insert>
+	
+	<!-- 시험 수정 -->
+	<update id="quizUpd" parameterType="QuizVO">
+		UPDATE CB_QUIZ
+		SET QUIZ_POOL_ID = #{quizPool.id}
+		  , TITLE = #{title}
+		  , START_DATE = #{startDate}
+		  , END_DATE = #{endDate}
+		  , EXAM_TIME = #{examTime}
+		  , SCORE = #{score}
+		  , GUIDE = #{guide}
+		  , RETRY = #{retry}
+		  , LIMITS = #{limits}
+		  , LIMIT_KEYS = #{limitKeys}
+		  , OPEN_YN = #{openYn}
+		  , USE_YN = #{useYn}
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 시험 문제 리스트 조회 -->
+	<select id="quizItemList" parameterType="QuizItemVO" resultMap="quizItemMap">
+		SELECT M.ID, M.QUIZ_POOL_ID, M.QUIZ_BANK_ID
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , A.COURSE_ID, A.QUIZ_TYPE, A.CLASS_TYPE, A.TITLE, A.OS_TYPE, A.EXAM_TYPE
+			 , A.EXAM1, A.EXAM2, A.EXAM3, A.EXAM4, A.EXAM5, A.CATEGORY, A.CATE_NAME, A.COMMENT, A.QUIZ_LEVEL, A.O_ANSWER, A.S_ANSWER
+		FROM CB_QUIZ_ITEM M
+		INNER JOIN CB_QUIZ_BANK A
+		ON M.QUIZ_BANK_ID = A.ID
+		WHERE M.QUIZ_POOL_ID = #{quizPool.id}
+		ORDER BY M.ORDER_NUM, M.ID DESC
+	</select>
+	
+	<!-- 시험 문제 리스트 총 갯수 -->
+	<select id="quizItemTotalCnt" parameterType="QuizItemVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM CB_QUIZ_ITEM
+		WHERE QUIZ_POOL_ID = #{quizPool.id}
+	</select>
+	
+	<!-- 시험 문제 상세 정보 조회 -->
+	<select id="quizItemInfo" parameterType="QuizItemVO" resultMap="quizItemMap">
+		SELECT M.ID, M.QUIZ_POOL_ID, M.QUIZ_BANK_ID
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , A.COURSE_ID, A.QUIZ_TYPE, A.CLASS_TYPE, A.TITLE, A.OS_TYPE, A.EXAM_TYPE
+			 , A.EXAM1, A.EXAM2, A.EXAM3, A.EXAM4, A.EXAM5, A.CATEGORY, A.CATE_NAME, A.COMMENT, A.QUIZ_LEVEL, A.O_ANSWER, A.S_ANSWER
+		FROM CB_QUIZ_ITEM M
+		INNER JOIN CB_QUIZ_BANK A
+		ON M.QUIZ_BANK_ID = A.ID
+		WHERE M.ID = #{id}
+	</select>
+	
+	<!-- 시험 문제 등록 -->
+	<insert id="quizItemBankReg" parameterType="QuizItemVO" useGeneratedKeys="true" keyProperty="quizBank.id">
+		INSERT INTO CB_QUIZ_BANK
+			( ID, COURSE_ID, QUIZ_TYPE, TITLE, OS_TYPE, EXAM_TYPE
+			, EXAM1, EXAM2, EXAM3, EXAM4, EXAM5
+			, CATEGORY, CATE_NAME, COMMENT, QUIZ_LEVEL, O_ANSWER, S_ANSWER )
+		VALUES
+			( #{quizBank.id}, #{quizBank.course.id}, #{quizBank.quizType}, #{quizBank.title}, #{quizBank.osType}, #{quizBank.examType}
+			, #{quizBank.exam1}, #{quizBank.exam2}, #{quizBank.exam3}, #{quizBank.exam4}, #{quizBank.exam5}
+			, #{quizBank.category}, #{quizBank.cateName}, #{quizBank.comment}, #{quizBank.quizLevel}, #{quizBank.oAnswer}, #{quizBank.sAnswer} )
+		ON DUPLICATE KEY UPDATE
+			COURSE_ID		= VALUES(COURSE_ID),
+			QUIZ_TYPE		= VALUES(QUIZ_TYPE),
+			TITLE			= VALUES(TITLE),
+			OS_TYPE			= VALUES(OS_TYPE),
+			EXAM_TYPE		= VALUES(EXAM_TYPE),
+			EXAM1			= VALUES(EXAM1),
+			EXAM2			= VALUES(EXAM2),
+			EXAM3			= VALUES(EXAM3),
+			EXAM4			= VALUES(EXAM4),
+			EXAM5			= VALUES(EXAM5),
+			CATEGORY		= VALUES(CATEGORY),
+			CATE_NAME		= VALUES(CATE_NAME),
+			COMMENT			= VALUES(COMMENT),
+			QUIZ_LEVEL		= VALUES(QUIZ_LEVEL),
+			O_ANSWER		= VALUES(O_ANSWER),
+			S_ANSWER		= VALUES(S_ANSWER),
+			UPD_DATE 		= VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 시험 문제 등록 -->
+	<insert id="quizItemReg" parameterType="QuizItemVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_QUIZ_ITEM
+			( ID, QUIZ_POOL_ID, QUIZ_BANK_ID, ORDER_NUM )
+		VALUES
+			( #{id}, #{quizPool.id}, #{quizBank.id}, #{orderNum} )
+		ON DUPLICATE KEY UPDATE
+			QUIZ_POOL_ID	= VALUES(QUIZ_POOL_ID),
+			QUIZ_BANK_ID	= VALUES(QUIZ_BANK_ID),
+			ORDER_NUM 		= VALUES(ORDER_NUM),
+			UPD_DATE 		= VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 문제은행에서 시험문제 대량 등록 -->
+	<update id="quizItemListReg" parameterType="QuizItemVO">
+		INSERT INTO CB_QUIZ_ITEM
+		( QUIZ_POOL_ID, QUIZ_BANK_ID, ORDER_NUM )
+		SELECT #{quizPool.id}, #{quizBank.id}
+			 , ( SELECT IFNULL(MAX(ORDER_NUM), 0)+1 FROM CB_QUIZ_ITEM WHERE QUIZ_POOL_ID = #{quizPool.id} )
+		FROM DUAL
+		WHERE NOT EXISTS (	SELECT ID
+							FROM  CB_QUIZ_ITEM
+							WHERE QUIZ_POOL_ID = #{quizPool.id}
+							AND QUIZ_BANK_ID = #{quizBank.id} )
+	</update>
+	
+	<!-- 시험문제 삭제 -->
+	<delete id="quizItemDel" parameterType="QuizItemVO">
+		DELETE FROM CB_QUIZ_ITEM
+		WHERE ID = #{id}
+	</delete>
+	
+	<!-- 레포트 리스트 조회 -->
+	<select id="reportList" parameterType="ReportVO" resultMap="reportMap">
+		SELECT M.ID, M.CARDINAL_ID, M.COURSE_ID, M.QUIZ_ID, M.USER_ID, M.QUIZ_TYPE, M.EXAM_NUM, M.SCORE, M.FILE_ID, M.ANSWER, M.MARK_YN, M.CORRECT
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , A.TITLE AS QUIZ_TITLE, A.SCORE AS QUIZ_SCORE, A.START_DATE, A.END_DATE
+			 , B.USER_NM AS USER_NAME<!-- , B.SCHOOL_NAME -->
+			 , C.ID AS REPLY_ID, C.P_SCORE, C.T_SCORE
+			 <!-- , D.URI, D.CHECK_TYPE, D.TOTAL_COPY_RATIO, D.DISP_TOTAL_COPY_RATIO, D.COMPLETE_STATUS, D.COMPLETE_DATE -->
+		FROM CB_REPORT M
+		INNER JOIN CB_QUIZ A
+		ON M.QUIZ_ID = A.ID
+		<!-- INNER JOIN CB_MEMBER B
+		ON M.USER_ID = B.ID -->
+		INNER JOIN COM_USER_TB B
+		ON M.USER_ID = B.USER_ID
+		LEFT OUTER JOIN CB_QUIZ_REPLY C
+		ON M.ID = C.REPORT_ID
+		<!-- LEFT OUTER JOIN ( SELECT A.TERM_ID, A.CLASS_ID, A.REPORT_ID, REPLACE(A.STUDENT_ID, '-', '@') AS STUDENT_ID
+							   , B.URI, B.CHECK_TYPE, B.TOTAL_COPY_RATIO, B.DISP_TOTAL_COPY_RATIO, B.COMPLETE_STATUS, B.COMPLETE_DATE
+						  FROM VW_COPYKILLER A
+						  INNER JOIN TB_COPYKILLER_COPYRATIO B
+						  ON A.URI = B.URI ) D
+		ON M.CARDINAL_ID = D.TERM_ID
+		AND M.QUIZ_ID = D.REPORT_ID
+		AND M.USER_ID = D.STUDENT_ID-->
+		WHERE M.CARDINAL_ID = #{cardinal.id}
+		AND M.COURSE_ID = #{course.id}
+		AND M.QUIZ_ID = #{quiz.id}
+		AND M.QUIZ_TYPE = #{quizType}
+		ORDER BY M.REG_DATE
+	</select>
+	
+	<!-- 레포트 상세 조회 -->
+	<select id="reportInfo" parameterType="ReportVO" resultMap="reportMap">
+		SELECT M.ID, M.CARDINAL_ID, M.COURSE_ID, M.QUIZ_ID, M.USER_ID, M.QUIZ_TYPE, M.EXAM_NUM, M.SCORE, M.FILE_ID, M.ANSWER, M.CORRECT, M.MARK_YN
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+		FROM CB_REPORT M
+		WHERE ID = #{id}
+	</select>
+  	
+  	<!-- 첨삭 지도 저장 -->
+	<update id="correctReg" parameterType="ReportVO">
+		UPDATE CB_REPORT
+		SET CORRECT = #{correct}
+		WHERE ID = #{id}
+	</update>
+
+	<!-- 레포트 성적 수정 -->
+	<update id="reportUpd" parameterType="ReportVO">
+		UPDATE CB_REPORT
+		SET SCORE = #{score}
+		  , MARK_YN = 'Y'
+		  , UPD_USER = #{updUser.id}
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 응답 리스트 조회 -->
+	<select id="selectExamReplyList" resultType="hashmap">
+		SELECT ID
+			, REPORT_ID
+			, TITLE
+			, COMMENT
+			, OS_TYPE /*문항종류*/
+			, O_ANSWER /*객관식 정답*/
+			, S_ANSWER /*주관식 정답*/
+			, O_REPLY /*객관식 본인 답*/
+			, S_REPLY /*주관식 보인 답 */
+			, P_SCORE /*문제 개별 점수*/
+			, T_SCORE /*문제 개별 득점점수*/
+			, ORIGINAL_FILE_NM
+			, SAVED_FILE_NM
+		FROM CB_QUIZ_REPLY
+		WHERE REPORT_ID = #{report_id}
+		ORDER BY ORDER_NUM ASC
+	</select>
+	
+	<!-- 문제은행 리스트 조회 -->
+	<select id="quizBankList" parameterType="QuizBankVO" resultMap="quizBankMap">
+		SELECT M.ID, M.QUIZ_TYPE, M.CLASS_TYPE, M.TITLE, M.OS_TYPE, M.EXAM_TYPE
+			 , M.EXAM1, M.EXAM2, M.EXAM3, M.EXAM4, M.EXAM5, M.CATEGORY, M.CATE_NAME, M.COMMENT, M.QUIZ_LEVEL, M.O_ANSWER, M.S_ANSWER
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , A.ID AS COURSE_ID, A.NAME AS COURSE_NAME
+			 , B.ID AS REPLY_ID, B.P_SCORE AS REPLY_P_SCORE, B.T_SCORE AS REPLY_T_SCORE
+		FROM CB_QUIZ_BANK M
+		INNER JOIN CB_COURSE A
+		ON M.COURSE_ID = A.ID
+		LEFT OUTER JOIN ( SELECT A.CARDINAL_ID, A.COURSE_ID, A.QUIZ_ID, A.USER_ID, A.QUIZ_TYPE
+							   , B.ID, B.QUIZ_BANK_ID, B.QUIZ_ITEM_ID, B.P_SCORE, B.T_SCORE
+						  FROM CB_REPORT A
+						  LEFT OUTER JOIN CB_QUIZ_REPLY B
+						  ON A.ID = B.REPORT_ID ) B
+		ON M.ID = B.QUIZ_BANK_ID
+		WHERE M.COURSE_ID = #{course.id}
+		AND M.QUIZ_TYPE = #{quizType}
+		<if test="classType != null and classType != ''">
+			AND M.CLASS_TYPE = #{classType}
+		</if>
+		<if test="cardinalId != null and cardinalId != ''">
+			AND B.CARDINAL_ID = #{cardinalId}
+			AND B.QUIZ_TYPE = #{quizType}
+		</if>
+	</select>
+	
+	<!-- 문제은행 리스트 총 갯수 -->
+	<select id="quizBankTotalCnt" parameterType="QuizBankVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM CB_QUIZ_BANK M
+	</select>
+	
+	<!-- 문제은행 상세 정보 조회 -->
+	<select id="quizBankInfo" parameterType="QuizBankVO" resultMap="quizBankMap">
+		SELECT M.ID, M.QUIZ_TYPE, M.CLASS_TYPE, M.TITLE, M.OS_TYPE, M.EXAM_TYPE
+			 , M.EXAM1, M.EXAM2, M.EXAM3, M.EXAM4, M.EXAM5, M.CATEGORY, M.CATE_NAME, M.COMMENT, M.QUIZ_LEVEL, M.O_ANSWER, M.S_ANSWER
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , A.ID AS COURSE_ID, A.NAME AS COURSE_NAME
+		FROM CB_QUIZ_BANK M
+		INNER JOIN CB_COURSE A
+		ON M.COURSE_ID = A.ID
+		WHERE M.ID = #{id}
+	</select>
+	
+	<!-- 문제은행 등록 -->
+	<insert id="quizBankReg" parameterType="QuizBankVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_QUIZ_BANK
+			( ID, COURSE_ID, QUIZ_TYPE, CLASS_TYPE, TITLE, OS_TYPE, EXAM_TYPE
+			, EXAM1, EXAM2, EXAM3, EXAM4, EXAM5, CATEGORY, CATE_NAME, COMMENT, QUIZ_LEVEL, O_ANSWER, S_ANSWER
+			, ORDER_NUM, USE_YN )
+		VALUES
+			( #{id}, #{course.id}, #{quizType}, #{classType}, #{title}, #{osType}, #{examType}
+			, #{exam1}, #{exam2}, #{exam3}, #{exam4}, #{exam5}, #{category}, #{cateName}, #{comment}, #{quizLevel}, #{oAnswer}, #{sAnswer}
+			, #{orderNum}, #{useYn} )
+		ON DUPLICATE KEY UPDATE
+			COURSE_ID		= VALUES(COURSE_ID),
+			QUIZ_TYPE		= VALUES(QUIZ_TYPE),
+			CLASS_TYPE		= VALUES(CLASS_TYPE),
+			TITLE			= VALUES(TITLE),
+			OS_TYPE			= VALUES(OS_TYPE),
+			EXAM_TYPE		= VALUES(EXAM_TYPE),
+			EXAM1			= VALUES(EXAM1),
+			EXAM2			= VALUES(EXAM2),
+			EXAM3			= VALUES(EXAM3),
+			EXAM4			= VALUES(EXAM4),
+			EXAM5			= VALUES(EXAM5),
+			CATEGORY		= VALUES(CATEGORY),
+			CATE_NAME		= VALUES(CATE_NAME),
+			COMMENT			= VALUES(COMMENT),
+			QUIZ_LEVEL		= VALUES(QUIZ_LEVEL),
+			O_ANSWER		= VALUES(O_ANSWER),
+			S_ANSWER		= VALUES(S_ANSWER),
+			ORDER_NUM 		= VALUES(ORDER_NUM),
+			USE_YN 			= VALUES(USE_YN),
+			UPD_DATE 		= VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 문제은행 삭제 -->
+	<delete id="quizBankDel" parameterType="QuizBankVO">
+		DELETE FROM CB_QUIZ_BANK
+		WHERE ID = #{id}
+	</delete>
+	
+	<!-- 출석평가 고사장 리스트 조회 -->
+	<select id="examSpotList" parameterType="ExamSpotVO" resultMap="examSpotMap">
+		<if test='pagingYn=="Y"'>
+			<include refid="forFaith.common.header"/>
+		</if>
+		SELECT M.ID, M.MAP_FILE, M.NAME, M.SPOT, M.POST_CODE, M.ADDR1, M.ADDR2
+			 , M.TEL, M.LIMIT_NUM, M.APP_AREA, M.TRAFFIC
+			 , M.ORDER_NUM, M.USE_YN
+			 , DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE
+			 , DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+		FROM CB_EXAM_SPOT M
+		WHERE 1 = 1
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(	M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+					OR	M.SPOT LIKE CONCAT('%',#{searchKeyword},'%') )
+				</when>
+				<when test="searchCondition == 'name'">
+					M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'spot'">
+					M.SPOT LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		ORDER BY M.ID DESC
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if>
+	</select>
+	
+	<!-- 출석평가 고사장 리스트 총 갯수 -->
+	<select id="examSpotTotalCnt" parameterType="ExamSpotVO" resultType="int">
+		SELECT COUNT(M.ID)
+		FROM CB_EXAM_SPOT M
+		WHERE 1 = 1
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(	M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+					OR	M.SPOT LIKE CONCAT('%',#{searchKeyword},'%') )
+				</when>
+				<when test="searchCondition == 'name'">
+					M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'spot'">
+					M.SPOT LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	<!-- 출석평가 고사장 상세 정보 조회 -->
+	<select id="examSpotInfo" parameterType="ExamSpotVO" resultMap="examSpotMap">
+		SELECT M.ID, M.MAP_FILE, M.NAME, M.SPOT, M.POST_CODE, M.ADDR1, M.ADDR2
+			 , M.TEL, M.LIMIT_NUM, M.APP_AREA, M.TRAFFIC
+			 , M.ORDER_NUM, M.USE_YN
+			 , DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE
+			 , DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+		FROM CB_EXAM_SPOT M
+		WHERE M.ID = #{id}
+	</select>
+	
+	<!-- 출석평가 고사장 등록 -->
+	<insert id="examSpotReg" parameterType="ExamSpotVO">
+		<selectKey resultType="string" keyProperty="id" order="BEFORE">
+	        SELECT LPAD(IFNULL(MAX(SEQ), 0)+1, 3, 0) FROM CB_EXAM_SPOT
+	    </selectKey>
+	    
+		INSERT INTO CB_EXAM_SPOT
+			( ID, MAP_FILE, NAME, SPOT, POST_CODE, ADDR1, ADDR2
+			, TEL, LIMIT_NUM, APP_AREA, TRAFFIC, USE_YN )
+		VALUES
+			( #{id}, #{map.fileId}, #{name}, #{spot}, #{postCode}, #{addr1}, #{addr2}
+			, #{tel}, #{limitNum}, #{appArea}, #{traffic}, #{useYn} )
+	</insert>
+	
+	<!-- 출석평가 고사장 수정 -->
+	<update id="examSpotUpd" parameterType="ExamSpotVO">
+		UPDATE CB_EXAM_SPOT
+		SET MAP_FILE = #{map.fileId}
+		  , NAME = #{name}
+		  , SPOT = #{spot}
+		  , POST_CODE = #{postCode}
+		  , ADDR1 = #{addr1}
+		  , ADDR2 = #{addr2}
+		  , TEL = #{tel}
+		  , LIMIT_NUM = #{limitNum}
+		  , APP_AREA = #{appArea}
+		  , TRAFFIC = #{traffic}
+		  , USE_YN = #{useYn}
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 출석평가 고사장 삭제 -->
+	<delete id="examSpotDel" parameterType="ExamSpotVO">
+		DELETE FROM CB_EXAM_SPOT
+		WHERE ID = #{id}
+	</delete>
+	
+	<!-- 출석시험 성적 적용 -->
+	<update id="attScoreReg" parameterType="ReportVO">
+		UPDATE CB_REPORT
+		SET SCORE = #{score}
+		  , MARK_YN = 'Y'
+		  , ANSWER = #{answer}
+		WHERE CARDINAL_ID = #{cardinal.id}
+		AND COURSE_ID = #{course.id}
+		AND EXAM_NUM = #{examNum}
+		AND QUIZ_TYPE = '1'
+	</update>
+</mapper>

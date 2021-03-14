@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE configuration PUBLIC	"-//mybatis.org//DTD Config 3.0//EN"
+  								"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <settings>
+        <setting name="cacheEnabled" value="false" />
+		<setting name="useGeneratedKeys" value="true" />
+		<setting name="defaultExecutorType" value="REUSE" />
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+	
+    <typeAliases>
+    	<!-- project VO 파일 -->
+    	<typeAlias alias="ManagerVO"			type="com.changbi.tt.dev.data.vo.ManagerVO"/>			<!-- 관리자 정보 -->
+    	<typeAlias alias="LoginHistoryVO"		type="com.changbi.tt.dev.data.vo.LoginHistoryVO"/>		<!-- 관리자 로그인 히스토리 정보 -->
+    	<typeAlias alias="UserVO"				type="com.changbi.tt.dev.data.vo.UserVO"/>				<!-- 사용자 정보 -->
+    	<typeAlias alias="WithdrawalVO"			type="com.changbi.tt.dev.data.vo.WithdrawalVO"/>		<!-- 탈퇴회원 정보 -->
+    	<typeAlias alias="TccVO"				type="com.changbi.tt.dev.data.vo.TccVO"/>				<!-- 강사 TCC 정보 -->
+    	<typeAlias alias="BookAppVO"			type="com.changbi.tt.dev.data.vo.BookAppVO"/>			<!-- 교재신청 정보 -->
+    	<typeAlias alias="BookVO"				type="com.changbi.tt.dev.data.vo.BookVO"/>				<!-- 교재 정보 -->
+    	<typeAlias alias="BookInoutVO"			type="com.changbi.tt.dev.data.vo.BookInoutVO"/>			<!-- 교재 입출 정보 -->
+    	<typeAlias alias="CourseVO"				type="com.changbi.tt.dev.data.vo.CourseVO"/>			<!-- 연수과정 관리 정보 -->
+    	<typeAlias alias="ChapterVO"			type="com.changbi.tt.dev.data.vo.ChapterVO"/>			<!-- 기수 관리 정보 -->
+    	<typeAlias alias="CardinalVO"			type="com.changbi.tt.dev.data.vo.CardinalVO"/>			<!-- 기수 관리 정보 -->
+    	<typeAlias alias="GroupLearnVO"			type="com.changbi.tt.dev.data.vo.GroupLearnVO"/>		<!-- 단체연수 관리 정보 -->
+    	<typeAlias alias="LearnAppVO"			type="com.changbi.tt.dev.data.vo.LearnAppVO"/>			<!-- 수강신청 관리 정보 -->
+    	<typeAlias alias="LearnChangeVO"		type="com.changbi.tt.dev.data.vo.LearnChangeVO"/>		<!-- 수강변경 관리 정보 -->
+    	<typeAlias alias="LearnDelayVO"			type="com.changbi.tt.dev.data.vo.LearnDelayVO"/>		<!-- 수강연기 관리 정보 -->
+    	<typeAlias alias="LearnCancelVO"		type="com.changbi.tt.dev.data.vo.LearnCancelVO"/>		<!-- 수강취소 관리 정보 -->
+    	<typeAlias alias="AttLecVO"				type="com.changbi.tt.dev.data.vo.AttLecVO"/>			<!-- 수강이력 마스터 정보 -->
+    	<typeAlias alias="QuizVO"				type="com.changbi.tt.dev.data.vo.QuizVO"/>				<!-- 시험 관리 정보 -->
+    	<typeAlias alias="QuizPoolVO"			type="com.changbi.tt.dev.data.vo.QuizPoolVO"/>			<!-- 문제지 풀 관리 정보 -->
+    	<typeAlias alias="QuizBankVO"			type="com.changbi.tt.dev.data.vo.QuizBankVO"/>			<!-- 시험문제 관리 정보 -->
+    	<typeAlias alias="QuizItemVO"			type="com.changbi.tt.dev.data.vo.QuizItemVO"/>			<!-- 문제은행 관리 정보 -->
+    	<typeAlias alias="ReportVO"				type="com.changbi.tt.dev.data.vo.ReportVO"/>			<!-- 문제정답 마스터 관리 정보 -->
+    	<typeAlias alias="QuizReplyVO"			type="com.changbi.tt.dev.data.vo.QuizReplyVO"/>			<!-- 문제정답 상세 관리 정보 -->
+    	<typeAlias alias="ExamSpotVO"			type="com.changbi.tt.dev.data.vo.ExamSpotVO"/>			<!-- 출석평가 고사장 관리 정보 -->
+    	<typeAlias alias="CopyRatioVO"			type="com.changbi.tt.dev.data.vo.CopyRatioVO"/>			<!-- 모사율 정보 -->
+    	<typeAlias alias="PointVO"				type="com.changbi.tt.dev.data.vo.PointVO"/>				<!-- 포인트 관리 정보 -->
+    	<typeAlias alias="CouponVO"				type="com.changbi.tt.dev.data.vo.CouponVO"/>			<!-- 쿠폰 관리 정보 -->
+    	<typeAlias alias="BoardVO" 				type="com.changbi.tt.dev.data.vo.BoardVO"/> 			<!-- 게시판 정보 -->
+    	<typeAlias alias="BoardReplyVO" 		type="com.changbi.tt.dev.data.vo.BoardReplyVO"/> 		<!-- 게시판 댓글정보 -->
+    	<typeAlias alias="AttLecHistoryVO"		type="com.changbi.tt.dev.data.vo.AttLecHistoryVO"/> 	<!-- 수강이력 히스토리 정보 -->
+    	<typeAlias alias="GroupLearnAppVO"		type="com.changbi.tt.dev.data.vo.GroupLearnAppVO"/> 	<!-- 단체결제 관리 정보 -->
+    	<typeAlias alias="SchoolVO"				type="com.changbi.tt.dev.data.vo.SchoolVO"/>			<!-- 학교정보 -->
+    	<typeAlias alias="PolicyPointVO"		type="com.changbi.tt.dev.data.vo.PolicyPointVO"/>		<!-- 포인트 정책 정보 -->
+    	<typeAlias alias="PolicyDelayCancelVO"	type="com.changbi.tt.dev.data.vo.PolicyDelayCancelVO"/>	<!-- 수강 연기/취소 정책 정보 -->
+    	<typeAlias alias="EventVO"				type="com.changbi.tt.dev.data.vo.EventVO"/>				<!-- 이벤트 정보 -->
+    	<typeAlias alias="BannerVO"				type="com.changbi.tt.dev.data.vo.BannerVO"/>			<!-- 배너 정보 -->
+    	<typeAlias alias="InfoVO"				type="com.changbi.tt.dev.data.vo.InfoVO"/>				<!-- 안내 정보 -->
+    	<typeAlias alias="SurveyVO"				type="com.changbi.tt.dev.data.vo.SurveyVO"/>			<!-- 연수설문 마스터 정보 -->
+    	<typeAlias alias="SurveyItemVO"			type="com.changbi.tt.dev.data.vo.SurveyItemVO"/>		<!-- 연수설문 아이템 정보 -->
+    	<typeAlias alias="NoteVO"				type="com.changbi.tt.dev.data.vo.NoteVO"/>				<!-- 쪽지 정보 -->
+    	<typeAlias alias="StatsVO"				type="com.changbi.tt.dev.data.vo.StatsVO"/>				<!-- 통계 조회 정보 -->
+    	<typeAlias alias="CalculateVO" 			type="com.changbi.tt.dev.data.vo.CalculateVO"/>			<!-- 정산 정보 (업체, 강사, 튜터) -->
+    	<typeAlias alias="IpAddressVO" 			type="com.changbi.tt.dev.data.vo.IpAddressVO"/>			<!-- 연수자IP 정보 -->
+    	<typeAlias alias="BoardCommentVO" 		type="com.changbi.tt.dev.data.vo.BoardCommentVO"/>			<!-- 연수자IP 정보 -->   	
+    	<typeAlias alias="PaymentVO" 			type="com.changbi.tt.dev.data.vo.PaymentVO"/>	<!-- 결제관리정보(모집홍보DB연결) -->  	
+    	<typeAlias alias="AttendanceVO" 		type="com.changbi.tt.dev.data.vo.AttendanceVO"/>	<!-- 출결관리정보 -->
+    	<typeAlias alias="PaymentAdminVO"		type="com.changbi.tt.dev.data.vo.PaymentAdminVO"/>			<!-- 과정 매핑된 기수의 분납 결제 기본 정보 -->
+    	
+    	<typeAlias alias="SurveysVO"				type="com.lms.student.vo.SurveysVO"/>
+    	<typeAlias alias="SurveyAutoVO"				type="com.lms.student.vo.SurveyAutoVO"/>
+    	<typeAlias alias="SurveyAnswerVO"			type="com.lms.student.vo.SurveyAnswerVO"/>
+		<typeAlias alias="CounselVO" 				type="com.lms.student.vo.CounselVO"/>
+    	<typeAlias alias="ApplyVO" 					type="com.lms.student.vo.ApplyVO"/>
+    	<typeAlias alias="StudentTbVO" 				type="com.lms.student.vo.StudentTbVO"/>
+    	<typeAlias alias="StuInfoBasicVO"	 		type="com.lms.student.vo.StuInfoBasicVO"/>
+    	<typeAlias alias="StuInfoEduHistoryVO" 		type="com.lms.student.vo.StuInfoEduHistoryVO"/>
+    	<typeAlias alias="StuInfoLanguageVO" 		type="com.lms.student.vo.StuInfoLanguageVO"/>
+    	<typeAlias alias="StuInfoLicenseVO" 		type="com.lms.student.vo.StuInfoLicenseVO"/>
+    	<typeAlias alias="StuInfoOverseasVO" 		type="com.lms.student.vo.StuInfoOverseasVO"/>
+    	<typeAlias alias="MouVO" 					type="com.lms.student.vo.MouVO"/>
+    	<typeAlias alias="ComCodeGroupVO"			type="com.changbi.tt.dev.data.vo.ComCodeGroupVO"/>
+    	<typeAlias alias="ComCodeVO"				type="com.changbi.tt.dev.data.vo.ComCodeVO"/>
+    	
+    	<typeAlias alias="InfoAttendanceVO" 		type="com.changbi.tt.dev.data.vo.InfoAttendanceVO"/>	<!-- 20 09 09 김태원 출결관리정보 -->
+    	<typeAlias alias="DateAttendanceVO" 		type="com.changbi.tt.dev.data.vo.DateAttendanceVO"/>	<!-- 20 09 09 김태원 출결관리정보 -->
+    	<typeAlias alias="EduUserRefundVO"          type="com.changbi.tt.dev.data.vo.EduUserRefundVO"/>     <!-- 20 11 25 김태원 환불정보 -->
+    	<typeAlias alias="EduUserPayVO"             type="com.changbi.tt.dev.data.vo.EduUserPayVO"/>
+    	<typeAlias alias="ToeflVO"             		type="com.changbi.tt.dev.data.vo.ToeflVO"/>					<!-- 모의토플 정보 -->
+    	<typeAlias alias="ToeflPayVO"             	type="com.changbi.tt.dev.data.vo.ToeflPayVO"/>				<!-- 모의토플 결제 정보 -->
+    	
+    </typeAliases>
+    
+	<plugins>
+		<plugin interceptor="forFaith.interceptor.CommonLogInterceptor">
+		</plugin>
+	</plugins>
+	<!-- mapper는 자동 mapper 기능 사용 자동org.mybatis.spring.mapper.MapperScannerConfigurer -->
+	<!-- 자동 mapper를 사용하지 않을 경우 여기서 mapper를 등록해주고. mybatis-context.xml을 수정한다. -->
+   	<!--  <mappers>
+        <mapper resource="Person.xml"></mapper>
+    </mappers> -->
+</configuration>

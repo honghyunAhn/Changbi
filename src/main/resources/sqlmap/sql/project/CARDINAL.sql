@@ -1,0 +1,32 @@
+-- DATETIME에 DEFAULT CURRENT_TIMESTAMP 는 mysql 5.6버전 이상부터 가능
+-- AUTO_INCREMENT 와 DEFAULT 는 5버전 이상부터는 같이 사용 불가
+CREATE TABLE CB_CARDINAL (
+	SEQ					INT(12)			AUTO_INCREMENT	UNIQUE		COMMENT '기수 관리 마스터 SEQ',
+	ID					VARCHAR(12)		PRIMARY KEY					COMMENT '기수 관리 ID',
+	NAME				VARCHAR(100)	NOT NULL					COMMENT '기수명',
+	LEARN_TYPE			CHAR(1)			DEFAULT 'J'					COMMENT '연수타입(J : 직무, S : 자율, M : 집합, G : 단체)',
+	CREDITS				VARCHAR(20)									COMMENT '직무인 경우 학점(메뉴에서 고정시킴)',
+	COURSE_TYPE			CHAR(1)			DEFAULT 'A'					COMMENT '과정서비스형태(S : 선택과목서비스, A : 전체과목서비스)',
+	APP_START_DATE		VARCHAR(10)									COMMENT '접수시작일',
+	APP_END_DATE		VARCHAR(10)									COMMENT '접수종료일',
+	LEARN_START_DATE	VARCHAR(10)									COMMENT '연수시작일',
+	LEARN_END_DATE		VARCHAR(10)									COMMENT '연수종료일',
+	ISSUE_DATE			VARCHAR(10)									COMMENT '이수발급일',
+	ATT_EVAL_DATE		VARCHAR(10)									COMMENT '출석평가일자',
+	ATT_EVAL_TIME		VARCHAR(200)								COMMENT '출석평가시간',
+	ATT_EXAM_TYPE		CHAR(1)			DEFAULT 'A'					COMMENT '출석고사장(A : 고사장숨김/변경신청불가, B : 고사장노출/변경신청가능, C : 고사장노출/변경신청불가)',
+	CANCEL				INT(2)			DEFAULT 0					COMMENT '수강취소가능기간(신청일로부터 1~10일)',
+	DUP_LIMIT			INT(2)			DEFAULT 0					COMMENT '기수내 다른 과정 신청 제한(1~10개)',
+	ADD_EXAM_PERIOD		INT(2)			DEFAULT 0					COMMENT '추가평가기간(1~5일) 온라인평가 과제제출기간에서 설정만큼 추가로 제출 가능',
+	OPEN_RESULTS		VARCHAR(20)									COMMENT '학점별 성적 공개(1~4학점) 다중선택',
+	APP_POSSIBLES		VARCHAR(20)									COMMENT '신청가능학점(1~4학점) 다중선택',
+	EXPECT_EXAM			CHAR(1)										COMMENT '출석평가 예상문제(A~)',
+	PREVIEW				INT(2)			DEFAULT 2					COMMENT '예습미리보기(1~10강)',
+	COMPLATE_YN			CHAR(1)			DEFAULT 'N'					COMMENT '이수처리 여부',
+	ORDER_NUM			INT(3)			DEFAULT 1					COMMENT '순서(필요없음)',
+	USE_YN				CHAR(1)			DEFAULT 'Y'					COMMENT '사용여부(Y : 사용, N : 미사용)',
+	REG_USER        	VARCHAR(100)                             	COMMENT '등록자 ID',
+	REG_DATE			VARCHAR(14)									COMMENT '등록일자',
+  	UPD_USER        	VARCHAR(100)                             	COMMENT '수정자 ID',
+	UPD_DATE		  	VARCHAR(14)									COMMENT '수정일자'
+) COMMENT='기수 관리 테이블';

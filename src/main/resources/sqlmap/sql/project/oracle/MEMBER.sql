@@ -1,0 +1,138 @@
+ALTER TABLE BOGUN.T_MEMBER
+ DROP PRIMARY KEY CASCADE;
+
+DROP TABLE BOGUN.T_MEMBER CASCADE CONSTRAINTS;
+
+CREATE TABLE BOGUN.T_MEMBER
+(
+  ID            VARCHAR2(100 BYTE)              NOT NULL,
+  PW            VARCHAR2(100 BYTE)              NOT NULL,
+  NAME          VARCHAR2(50 BYTE)               DEFAULT NULL,
+  MEM_GBN       VARCHAR2(1 BYTE)                DEFAULT 'P',
+  MEM_SUB_GBN   VARCHAR2(2 BYTE),
+  TEACHER_YN    CHAR(1 BYTE)                    DEFAULT 'N',
+  ACCEPT_EMAIL  CHAR(1 BYTE)                    DEFAULT 'N',
+  ACCEPT_SMS    CHAR(1 BYTE)                    DEFAULT 'N',
+  TEL           VARCHAR2(50 BYTE)               DEFAULT NULL,
+  PHONE         VARCHAR2(50 BYTE)               DEFAULT NULL,
+  FAX           VARCHAR2(50 BYTE)               DEFAULT NULL,
+  EMAIL         VARCHAR2(100 BYTE)              DEFAULT NULL,
+  GENDER        CHAR(1 BYTE)                    DEFAULT 'M',
+  BIRTH_DAY     VARCHAR2(10 BYTE)               DEFAULT NULL,
+  POST_CODE     VARCHAR2(8 BYTE)                DEFAULT NULL,
+  ADDR1         VARCHAR2(200 BYTE)              DEFAULT NULL,
+  ADDR2         VARCHAR2(200 BYTE)              DEFAULT NULL,
+  EDU_YN        VARCHAR2(1 BYTE)                DEFAULT 'N',
+  EDU_YEAR      VARCHAR2(4 BYTE)                DEFAULT NULL,
+  LAST_LOGIN    VARCHAR2(14 BYTE)               DEFAULT NULL,
+  IP_USE_YN     CHAR(1 BYTE)                    DEFAULT 'N',
+  IDEN_CO       VARCHAR2(2 BYTE)                DEFAULT '1',
+  IDEN_DI       VARCHAR2(100 BYTE)              DEFAULT NULL,
+  PW_INIT_YN    CHAR(1 BYTE)                    DEFAULT 'N',
+  AUTH_KEY      VARCHAR2(20 BYTE)               DEFAULT NULL,
+  USE_YN        CHAR(1 BYTE)                    DEFAULT 'Y',
+  REG_DATE      VARCHAR2(14 BYTE)               DEFAULT NULL,
+  UPD_DATE      VARCHAR2(14 BYTE)               DEFAULT NULL
+)
+TABLESPACE BOGUN
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+MONITORING;
+
+COMMENT ON TABLE BOGUN.T_MEMBER IS '회원마스터';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.ID IS 'MEMBER ID';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.PW IS 'MEMBER 계정 비밀번호';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.NAME IS 'MEMBER명';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.MEM_GBN IS '멤버 구분(O : 기관, P : 개인)';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.MEM_SUB_GBN IS '멤버 하위 구분(P1 : 기관종사자, P2 : 학부모, P9 : 기타)';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.TEACHER_YN IS '강사 여부';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.ACCEPT_EMAIL IS 'EMAIL 수신 여부 (Y/N)';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.ACCEPT_SMS IS 'SMS 수신 여부 (Y/N)';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.TEL IS '연락처';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.PHONE IS '핸드폰';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.EMAIL IS '이메일';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.GENDER IS '성별: 남자(M), 여자(F)';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.BIRTH_DAY IS '생년월일: 1999-01-01';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.POST_CODE IS '우편번호(신:5자리, 구:6자리)';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.ADDR1 IS '주소1: 우편번호에 연결된 주소';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.ADDR2 IS '주소2: 상세주소 (사용자 입력)';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.EDU_YN IS '이전교육 여부 (Y/N)';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.EDU_YEAR IS '최근교 육 년도';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.LAST_LOGIN IS '마지막 접속일';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.IP_USE_YN IS '아이피 사용여부';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.IDEN_CO IS '인증기관(1:나이스)';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.IDEN_DI IS '본인인증과 관련한 필드 추가 - 중복가입체크시 인증기관과 함께 사용';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.PW_INIT_YN IS '비번변경필요여부 : 비번초기화 등으로 로그인시 비번 변경 팝업에 사용';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.AUTH_KEY IS '랜덤 인증번호';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.USE_YN IS '사용여부(Y : 사용, N : 미사용)';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.REG_DATE IS '등록일자';
+
+COMMENT ON COLUMN BOGUN.T_MEMBER.UPD_DATE IS '수정일자';
+
+
+--  There is no statement for index BOGUN.SYS_C0010547.
+--  The object is created when the parent object is created.
+
+--  There is no statement for index BOGUN.SYS_C0010548.
+--  The object is created when the parent object is created.
+
+ALTER TABLE BOGUN.T_MEMBER ADD (
+  PRIMARY KEY
+  (ID)
+  USING INDEX
+    TABLESPACE BOGUN
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+                BUFFER_POOL      DEFAULT
+               )
+  ENABLE VALIDATE);

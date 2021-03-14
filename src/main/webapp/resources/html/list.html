@@ -1,0 +1,240 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="/resources/css/project/admin/common.css" rel="stylesheet" type="text/css">
+<link href="/resources/css/project/admin/accordion.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="/resources/js/ext/jquery/jquery-2.0.3.min.js"></script> 
+<script type="text/javascript" src="/resources/js/project/accordion.js"></script>
+<title>무제 문서</title>
+</head>
+
+<body>
+<div id="wrap">
+	<div id="header">
+		<div class="header">
+			<h1 class="navbar-brand">Admin</h1>			
+			<ul class="navbar-top-links">
+  				<li class="button-dropdown">
+    				<a href="javascript:void(0)" class="dropdown-toggle active">사용자<span>▼</span></a>
+    				<ul class="dropdown-menu">
+      					<li><a href="#">내정보</a></li>
+      					<li><a href="#">로그아웃</a></li>
+						<li><a href="#">원격지원</a></li>
+					</ul>
+  				</li>
+			</ul>
+		</div>
+	</div>
+	<div id="container">		
+		<div class="navbar-sidebar">
+			<ul id="my-accordion" class="accordionjs">  
+				<li>
+					<a href="#">1Depth</a>
+					<ul class="acc_content">
+						<li><a href="#">2Depth</a>
+							<ul>
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+							</ul>
+						</li>
+						<li><a href="#">2Depth</a>
+							<ul style="display: none">
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+							</ul>
+						</li>
+						<li><a href="#">2Depth</a>
+							<ul style="display: none">
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="#">1Depth</a>
+					<ul class="acc_content">
+						<li><a href="#">2Depth</a>
+							<ul>
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+							</ul>
+						</li>
+						<li><a href="#">2Depth</a>
+							<ul style="display: none">
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+							</ul>
+						</li>
+						<li><a href="#">2Depth</a>
+							<ul style="display: none">
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="#">1Depth</a>
+					<ul class="acc_content">
+						<li><a href="#">2Depth</a>
+							<ul>
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+							</ul>
+						</li>
+						<li><a href="#">2Depth</a>
+							<ul style="display: none">
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+							</ul>
+						</li>
+						<li><a href="#">2Depth</a>
+							<ul style="display: none">
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+								<li><a href="#">3Depth</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div class="content_wraper">
+			<h3>과정기초관리</h3>
+			<div class="tab">
+				<ul class="tab_head">
+					<li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'tab1');">직무 4학점</a></li>
+					<li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'tab2');">직무 3학점</a></li>                    
+					<li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'tab3');">직무 1,2학점</a></li>                    
+					<li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'tab4');">단체연수</a></li>                    
+					<li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'tab5');">무료특강</a></li>                    				
+				</ul>
+			</div>				
+			<div id="tab1" class="tab_body">                	
+				<form>
+					<select>
+						<option selected>1</option>
+						<option>2</option>
+						<option>3</option>
+					</select>
+					<input type="text">
+					<select>
+						<option selected>이수구분</option>
+						<option>이수처리</option>
+						<option>미처리</option>
+					</select>
+					<select>
+						<option selected>기수명</option>
+						<option>기수코드</option>						
+					</select>					
+					<input type="text">
+					<button type="submit">검색</button>
+					<button class="btn-primary" type="submit">검색</button>
+					<button class="btn-danger" type="button">검색</button>
+				</form>
+				<table cellpadding="0" cellspacing="0">
+					<thead>
+						<th>순번</th>
+						<th>기수코드</th>
+						<th>기수명</th>
+						<th>접수기간</th>
+						<th>연수기간</th>
+						<th>이수구분</th>
+						<th>상태</th>
+					</thead>
+					<tbody>
+					<tr>
+						<td>97</td><td>1610</td><td>10기</td><td>2016-08-09~2016-11-21</td><td>2016-08-09~2016-11-21</td><td>미처리</td><td>서비스</td>
+					</tr>
+					<tr>
+						<td>97</td><td>1610</td><td>10기</td><td>2016-08-09~2016-11-21</td><td>2016-08-09~2016-11-21</td><td>미처리</td><td>서비스</td>
+					</tr>						
+					</tbody>
+				</table>
+				<div class="pagination">
+					<a href="#">&laquo;</a>					
+					<a class="on" href="#">1</a>
+					<a href="#">2</a>
+					<a href="#">3</a>					
+					<a href="#">&raquo;</a>
+					<a class="btn align_right" href="#">신규등록</a>
+				</div>
+			</div>
+			<div id="tab2" class="tab_body"></div>
+			<div id="tab3" class="tab_body"></div>
+			<div id="tab4" class="tab_body"></div>
+			<div id="tab5" class="tab_body"></div>			
+		</div>
+	</div>
+</div>
+</body>
+</html>
+<script>
+/* 사용자 드랍다운 레이어	*/
+jQuery(document).ready(function (e) {
+    function t(t) {
+        e(t).bind("click", function (t) {
+            t.preventDefault();
+            e(this).parent().fadeOut()
+        })
+    }
+    e(".dropdown-toggle").click(function () {
+        var t = e(this).parents(".button-dropdown").children(".dropdown-menu").is(":hidden");
+        e(".button-dropdown .dropdown-menu").hide();
+        e(".button-dropdown .dropdown-toggle").removeClass("active");
+        if (t) {
+            e(this).parents(".button-dropdown").children(".dropdown-menu").toggle().parents(".button-dropdown").children(".dropdown-toggle").addClass("active")
+        }
+    });
+    e(document).bind("click", function (t) {
+        var n = e(t.target);
+        if (!n.parents().hasClass("button-dropdown")) e(".button-dropdown .dropdown-menu").hide();
+    });
+    e(document).bind("click", function (t) {
+        var n = e(t.target);
+        if (!n.parents().hasClass("button-dropdown")) e(".button-dropdown .dropdown-toggle").removeClass("active");
+    })
+});
+
+    jQuery(document).ready(function($){
+        $("#my-accordion").accordionjs();
+			
+    });
+
+/* 컨텐츠 페이지 높이 */	
+function funLoad(){
+	var height = $(window).height();
+	$('#my-accordion').css({'min-height':(height-50)+'px'});	
+
+}
+window.onload = funLoad;
+window.onresize = funLoad;			
+	
+/* 탭메뉴 */		
+ $(document).ready(function() {	
+        $(".tablink:eq(0)").click();
+    });
+    function openTab(evt, TabName) {	
+      $(".tab_body").hide(); 
+      $(".tablink").removeClass("on");      
+      $("#"+TabName).show();
+      $(evt.target).addClass("on");
+    }
+	
+/* 아코디언 메뉴 고정 */	
+$(".acc_content li a").click(function() {
+$(this).toggleClass("active");
+});
+		
+</script>
+

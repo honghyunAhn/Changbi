@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.changbi.tt.dev.data.dao.SmsDAO">
+
+	<insert id="insertSms" parameterType="hashmap">
+		INSERT INTO COM_SMSHISTORY_TB(
+			SMS_MID
+			,ADMIN_ID
+			,SEND_NAME
+			,SEND_NUM
+			,SEND_TITLE
+			,SEND_CONTENT
+			,SEND_CNT
+			,SMS_INS_DATE
+			,RDATE
+		) VALUES (
+			#{sms_mid}
+			,#{admin_id}
+			,#{send_name}
+			,#{send_num}
+			,#{title}
+			,#{msg}
+			,#{send_cnt}
+			,now()
+			<choose>
+				<when test="rdate != null and rdate != ''">
+					,#{rdate}
+				</when>
+				<otherwise>
+					,null
+				</otherwise>
+			</choose>
+		)
+	</insert>
+	<select id="selectSmsList" parameterType="com.changbi.tt.dev.data.vo.SmsVO" resultType="hashmap">
+		SELECT
+			SMS_SEQ
+			,SMS_MID
+			,ADMIN_ID
+			,SEND_NAME
+			,SEND_NUM
+			,SEND_TITLE
+			,SEND_CONTENT
+			,SEND_CNT
+			,DATE_FORMAT(SMS_INS_DATE, '%Y-%m-%d %H:%i:%s') SMS_INS_DATE
+			,RDATE
+		FROM COM_SMSHISTORY_TB
+		WHERE 1=1
+		<if test="sms_seq != null and sms_seq != 0">
+			AND SMS_SEQ = #{sms_seq}
+		</if>
+		<if test="(start_date != null and start_date !='') and (end_date != null and end_date !='')">
+			AND SMS_INS_DATE BETWEEN #{start_date} AND #{end_date}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 0">
+					((SEND_NAME LIKE CONCAT('%',#{searchKeyword},'%'))
+					OR (SEND_NUM LIKE CONCAT('%',#{searchKeyword},'%'))
+					OR (SEND_TITLE LIKE CONCAT('%',#{searchKeyword},'%'))
+					OR (SEND_CONTENT LIKE CONCAT('%',#{searchKeyword},'%')))
+				</when>
+				<when test="searchCondition == 1">
+					SEND_NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 2">
+					SEND_NUM LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 3">
+					SEND_TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 4">
+					SEND_CONTENT LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		ORDER BY SMS_INS_DATE DESC
+		<if test='pagingYn=="Y"'>
+			<include refid="forFaith.common.footer"/>
+		</if>
+	</select>
+	
+	<select id="smsListTotalCnt" parameterType="com.changbi.tt.dev.data.vo.SmsVO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM COM_SMSHISTORY_TB
+		WHERE 1=1
+		<if test="(start_date != null and start_date !='') and (end_date != null and end_date !='')">
+			AND SMS_INS_DATE BETWEEN #{start_date} AND #{end_date}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 0">
+					((SEND_NAME LIKE CONCAT('%',#{searchKeyword},'%'))
+					OR (SEND_NUM LIKE CONCAT('%',#{searchKeyword},'%'))
+					OR (SEND_TITLE LIKE CONCAT('%',#{searchKeyword},'%'))
+					OR (SEND_CONTENT LIKE CONCAT('%',#{searchKeyword},'%')))
+				</when>
+				<when test="searchCondition == 1">
+					SEND_NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 2">
+					SEND_NUM LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 3">
+					SEND_TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 4">
+					SEND_CONTENT LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+	</select>
+</mapper>

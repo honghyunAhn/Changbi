@@ -1,0 +1,1055 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.changbi.tt.dev.data.dao.PayDAO">
+	
+	<!-- 결제관리 resutMap -->
+	<resultMap id="learnAppMap" type="LearnAppVO" autoMapping="true">
+		<result property="id"		            column="ID" />
+		<result property="acceptance_yn" 		column="ACCEPTANCE_YN"/>
+		<result property="admin_add_yn" 		column="ADMIN_ADD_YN"/>
+		
+		<association property="user"		javaType="UserVO">
+			<result	property="id"			column="USER_ID" />
+			<result property="name"			column="USER_NAME" />
+		</association>
+		<association property="groupLearn"	javaType="GroupLearnVO">
+			<result	property="id"			column="GROUP_ID" />
+			<result property="name"			column="GROUP_NAME" />
+		</association>
+		<association property="cardinal"	javaType="CardinalVO">
+			<result	property="id"			column="CARDINAL_ID" />
+			<result property="name"			column="CARDINAL_NAME" />
+		</association>
+		<association property="course"		javaType="CourseVO">
+			<result	property="id"			    column="COURSE_ID" />
+			<result property="name"			    column="COURSE_NAME" />
+			<result property="price"			column="PRICE" />
+		</association>
+		<association property="pay" javaType="PaymentVO">
+		    <result property="pay_ins_dt"       column="PAY_INS_DT"/>		
+		    <result property="pay_crc_seq"      column="PAY_CRC_SEQ"/>	
+		    <result property="pay_user_seq"     column="PAY_USER_SEQ"/>		
+			<result	property="real_price"		column="REAL_PRICE"/>
+			<result property="pay_user_status"	column="PAY_USER_STATUS"/>
+		</association>
+		
+		<association property="edu" javaType="EduUserPayVO">
+			<!-- <result property="pay_user_seq"       column="PAY_USER_SEQ"/> -->
+			<result property="pay_user_status"    column="PAY_USER_STATUS"/>
+			<result property="pay_crc_amount"     column="PAY_CRC_AMOUNT"/>
+			<result property="real_pay_amount"    column="REAL_PAY_AMOUNT"/>
+			<!-- <result property="pay_crc_seq"        column="PAY_CRC_SEQ"/> -->
+			<result property="dis_point"          column="DIS_POINT"/>
+		</association>
+	</resultMap>
+	
+	<resultMap type="learnAppVO" id="learnApp" autoMapping="true">
+		<!-- <result property="id"            column="ID"/> -->
+		<id     property="id" 			 column="ID"/>
+		<result property="acceptance_yn" column="ACCEPTANCE_YN"/>
+		<result property="admin_add_yn"  column="ADMIN_ADD_YN"/>
+		
+		<association property="user" javaType="UserVO">
+			<result property="id"    column="USER_ID"/>
+			<result property="name"  column="USER_NAME"/>
+		</association>
+		<association property="groupLearn" javaType="GroupLearnVO">
+			<result property="id"    column="GROUP_ID"/>
+			<result property="name"  column="GROUP_NAME"/>
+		</association>
+		<association property="cardinal"	javaType="CardinalVO">
+			<result	property="id"			column="CARDINAL_ID" />
+			<result property="name"			column="CARDINAL_NAME" />
+		</association>
+		<association property="course"		javaType="CourseVO">
+			<result	property="id"			    column="COURSE_ID" />
+			<result property="name"			    column="COURSE_NAME" />
+			<result property="price"			column="PRICE" />
+		</association>
+		<association property="edu" javaType="EduUserPayVO">
+			<id     property="pay_user_seq"       column="PAY_USER_SEQ"/>
+			<!-- <result property="pay_user_seq"       column="PAY_USER_SEQ"/> -->
+			<result property="pay_user_status"    column="PAY_USER_STATUS"/>
+			<result property="pay_crc_amount"     column="PAY_CRC_AMOUNT"/>
+			<result property="real_pay_amount"    column="REAL_PAY_AMOUNT"/>
+			<result property="pay_crc_seq"        column="PAY_CRC_SEQ"/> 
+			<result property="dis_point"          column="DIS_POINT"/>
+		</association>
+	</resultMap>
+	
+	<resultMap id="eduUserPayMap" type="EduUserPayVO" autoMapping="true">
+	
+		<result property="pay_user_seq"       column="PAY_USER_SEQ"/>
+		<result property="pay_user_status"    column="PAY_USER_STATUS"/>
+		<result property="real_pay_amount"    column="REAL_PAY_AMOUNT"/>
+		<result property="dis_point"          column="DIS_POINT"/>
+		<result property="pay_crc_seq"        column="PAY_CRC_SEQ"/>
+		<result property="pay_user_method"    column="PAY_USER_METHOD"/>
+		<result property="pay_user_id"        column="PAY_USER_ID"/>
+		<result property="pay_accnum"         column="PAY_ACCNUM"/>
+		<result property="pay_bankname"       column="PAY_BANKNAME"/>
+		<result property="pay_ins_dt"         column="PAY_INS_DT"/>
+		<result property="pay_crc_amount"     column="PAY_CRC_AMOUNT"/>
+		<result property="course_id"          column="CARDINAL_ID"/>
+		<result property="course_name"        column="CARDINAL_NAME"/>
+		<result property="cardinal_id"        column="COURSE_ID"/>
+		<result property="cardinal_name"      column="COURSE_NAME"/>
+		
+		<!-- <association property="user" javaType="UserVO">
+			<result	property="id"	    column="USER_ID" />
+			<result property="name"	    column="USER_NM" />
+		</association> -->
+		
+	</resultMap>
+	
+	
+	
+	<!-- 개별결제관리 리스트 검색조건 -->
+	<sql id="individualPayCondition">
+		WHERE 1=1
+		<choose>
+			<when test="searchCondition == 'userName'">
+				AND USER_NAME LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+			<when test="searchCondition == 'courseName'">
+				AND COURSE_NAME LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+			<when test="searchCondition == 'cardinalName'">
+				AND CARDINAL_NAME LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+		</choose>
+		<if test="paymentType != null and paymentType != ''">
+			AND PAYMENT_TYPE = #{paymentType}
+		</if>
+		<if test="paymentState != null and paymentState != ''">
+			AND PAYMENT_STATE = #{paymentState}
+		</if>
+		<if test="(searchStartDate != null and searchStartDate != '') or (searchEndDate != null and searchEndDate != '')">
+			AND DATE_FORMAT(REG_DATE, '%Y-%m-%d') BETWEEN #{searchStartDate} AND #{searchEndDate}
+		</if>
+	</sql>
+	
+	<!-- 개별결제관리 리스트 -->
+<!-- 	<select id="individualPayList" parameterType="LearnAppVO" resultMap="learnAppMap">
+		SELECT * FROM
+		(SELECT
+			CLA.ID,
+			CLA.USER_ID,
+			CLA.GROUP_ID,
+			CLA.CARDINAL_ID,
+			CLA.COURSE_ID,
+			CLA.NEIS_NUM,
+			CLA.DES_NUM,
+			CLA.SCHOOL_NAME,
+			CLA.TEL,
+			CLA.PHONE,
+			CLA.EMAIL,
+			CLA.REGION_CODE,
+			CLA.JURISDICTION,
+			CLA.S_TYPE,
+			CLA.E_TYPE,
+			CLA.POST_TYPE,
+			CLA.PAYMENT_TYPE,
+			CLA.PAYMENT_STATE,
+			CLA.PAYMENT_DATE,
+			CLA.APP_NUM,
+			CLA.DIS_COUPON,
+			CLA.DIS_POINT,
+			CLA.PAYMENT,
+			CLA.REAL_PAYMENT,
+			CLA.REQ_TYPE,
+			CLA.REQ_MEMO,
+			CLA.REQ_DATE,
+			CLA.TOTAL_SCORE,
+			CLA.ISSUE_NUM,
+			CLA.ORDER_NUM,
+			CLA.USE_YN,
+			CLA.REG_USER,
+			CLA.REG_DATE,
+			CLA.UPD_USER,
+			CLA.UPD_DATE,
+			CM.NAME AS USER_NAME,
+			CGL.NAME AS GROUP_NAME,
+			CC1.NAME AS CARDINAL_NAME,
+			CC2.NAME AS COURSE_NAME				
+		FROM CB_LEARN_APP CLA
+		LEFT OUTER JOIN CB_MEMBER CM
+		ON CLA.USER_ID = CM.ID
+		LEFT OUTER JOIN CB_GROUP_LEARN CGL
+		ON CLA.GROUP_ID = CGL.ID
+		LEFT OUTER JOIN CB_CARDINAL CC1
+		ON CLA.CARDINAL_ID = CC1.ID
+		LEFT OUTER JOIN CB_COURSE CC2
+		ON CLA.COURSE_ID = CC2.ID) T
+		<include refid="individualPayCondition"></include>
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if> 
+	</select> -->
+	
+	<!-- 개별결제관리 리스트 총 갯수 -->
+<!-- 	<select id="individualPayTotalCnt" parameterType="LearnAppVO" resultType="int">
+		SELECT COUNT(*) FROM
+		(SELECT
+			CLA.ID,
+			CLA.USER_ID,
+			CLA.GROUP_ID,
+			CLA.CARDINAL_ID,
+			CLA.COURSE_ID,
+			CLA.NEIS_NUM,
+			CLA.DES_NUM,
+			CLA.SCHOOL_NAME,
+			CLA.TEL,
+			CLA.PHONE,
+			CLA.EMAIL,
+			CLA.REGION_CODE,
+			CLA.JURISDICTION,
+			CLA.S_TYPE,
+			CLA.E_TYPE,
+			CLA.POST_TYPE,
+			CLA.PAYMENT_TYPE,
+			CLA.PAYMENT_STATE,
+			CLA.PAYMENT_DATE,
+			CLA.APP_NUM,
+			CLA.DIS_COUPON,
+			CLA.DIS_POINT,
+			CLA.PAYMENT,
+			CLA.REAL_PAYMENT,
+			CLA.REQ_TYPE,
+			CLA.REQ_MEMO,
+			CLA.REQ_DATE,
+			CLA.TOTAL_SCORE,
+			CLA.ISSUE_NUM,
+			CLA.ORDER_NUM,
+			CLA.USE_YN,
+			CLA.REG_USER,
+			CLA.REG_DATE,
+			CLA.UPD_USER,
+			CLA.UPD_DATE,
+			CM.NAME AS USER_NAME,
+			CGL.NAME AS GROUP_NAME,
+			CC1.NAME AS CARDINAL_NAME,
+			CC2.NAME AS COURSE_NAME
+		FROM CB_LEARN_APP CLA
+		LEFT OUTER JOIN CB_MEMBER CM
+		ON CLA.USER_ID = CM.ID
+		LEFT OUTER JOIN CB_GROUP_LEARN CGL
+		ON CLA.GROUP_ID = CGL.ID
+		LEFT OUTER JOIN CB_CARDINAL CC1
+		ON CLA.CARDINAL_ID = CC1.ID
+		LEFT OUTER JOIN CB_COURSE CC2
+		ON CLA.COURSE_ID = CC2.ID) T
+		<include refid="individualPayCondition"></include>
+	</select> -->
+	
+	<!-- 단체결제관리 리스트 검색조건 -->
+	<sql id="groupPayCondition">
+		WHERE 1=1
+		<choose>
+			<when test="searchCondition == 'schoolName'">
+				AND CLA.SCHOOL_NAME LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+			<when test="searchCondition == 'courseName'">
+				AND CC2.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+		</choose> 
+		<if test="paymentState != null and paymentState != ''">
+			AND PAYMENT_STATE = #{paymentState}
+		</if>
+	</sql>
+	
+	<!-- 단체결제관리 리스트  -->
+	<select id="groupPayList" parameterType="GroupLearnAppVO" resultType="GroupLearnAppVO">
+		SELECT 
+			CLA.GROUP_ID,
+			CLA.CARDINAL_ID,
+			CLA.COURSE_ID,
+			CLA.SCHOOL_NAME,
+			CC2.NAME AS COURSE_NAME,
+			CLA.TOTAL_APP_USER,
+			CLA.TOTAL_PAYMENT,
+			CLA.VALID_APP_USER,
+			CLA.TOTAL_VALID_PAYMENT,
+			CLA.PAYMENT_STATE,
+			CC1.LEARN_START_DATE,
+			CC1.LEARN_END_DATE,
+			CASE WHEN CLA.PAYMENT_STATE = '1' THEN '미결제'
+				 WHEN CLA.PAYMENT_STATE = '2' THEN '결제완료'
+				 WHEN CLA.PAYMENT_STATE = '3' THEN '일부결제'
+				 WHEN CLA.PAYMENT_STATE = '4' THEN '환불'
+			END AS PAYMENT_STATE_NAME	
+		FROM 
+			(SELECT 
+				GROUP_ID, PAYMENT_STATE, CARDINAL_ID, COURSE_ID, SCHOOL_NAME,
+				COUNT(USER_ID) AS TOTAL_APP_USER,
+				SUM(PAYMENT) AS TOTAL_PAYMENT,
+				SUM(IF(REQ_TYPE = '3', 1, 0)) AS VALID_APP_USER,
+				SUM(IF(PAYMENT_STATE = '2', PAYMENT, 0)) AS TOTAL_VALID_PAYMENT
+			FROM CB_LEARN_APP
+			WHERE (GROUP_ID IS NOT NULL AND GROUP_ID > 0)
+			GROUP BY GROUP_ID, PAYMENT_STATE, CARDINAL_ID, COURSE_ID, SCHOOL_NAME) CLA
+			INNER JOIN CB_CARDINAL CC1 ON CLA.CARDINAL_ID = CC1.ID
+			INNER JOIN CB_COURSE CC2 ON CLA.COURSE_ID = CC2.ID		
+			<include refid="groupPayCondition"></include>
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if> 
+	</select>
+	
+	<select id="groupPayTotalCnt" parameterType="GroupLearnAppVO" resultType="int">
+		SELECT 
+			COUNT(*)
+		FROM 
+			(SELECT 
+				GROUP_ID, PAYMENT_STATE, CARDINAL_ID, COURSE_ID, SCHOOL_NAME,
+				COUNT(USER_ID) AS TOTAL_APP_USER,
+				SUM(PAYMENT) AS TOTAL_PAYMENT,
+				SUM(IF(REQ_TYPE = '3', 1, 0)) AS VALID_APP_USER,
+				SUM(IF(PAYMENT_STATE = '2', PAYMENT, 0)) AS TOTAL_VALID_PAYMENT
+			FROM CB_LEARN_APP
+			WHERE (GROUP_ID IS NOT NULL AND GROUP_ID > 0)
+			GROUP BY GROUP_ID, PAYMENT_STATE, CARDINAL_ID, COURSE_ID, SCHOOL_NAME) CLA
+			INNER JOIN CB_CARDINAL CC1 ON CLA.CARDINAL_ID = CC1.ID
+			INNER JOIN CB_COURSE CC2 ON CLA.COURSE_ID = CC2.ID		
+			<include refid="groupPayCondition"></include>
+	</select>
+	
+	<!-- 결제처리 -->
+	<update id="groupPayEdit" parameterType="GroupLearnAppVO">
+		UPDATE CB_LEARN_APP SET
+			PAYMENT_STATE = '2'
+		WHERE GROUP_ID = #{groupId}
+		AND PAYMENT_STATE = #{paymentState}
+		AND CARDINAL_ID = #{cardinalId}
+		AND COURSE_ID = #{courseId}
+		AND SCHOOL_NAME = #{schoolName}
+	</update>
+	
+	<sql id="pointCondition">
+		WHERE 1=1 
+		<choose>
+			<when test="searchCondition == 'name'">
+				AND NAME LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+			<when test="searchCondition == 'userId'">
+				AND USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+		</choose> 
+	</sql>
+	
+	<select id="pointList" parameterType="pointVO" resultType="pointVO">
+		SELECT
+			ID,
+			USER_ID,
+			LEARN_APP_ID,
+			NAME,
+			GIVE,
+			WITHDRAW,
+			BALANCE,
+			NOTE,
+			REG_DATE
+		FROM CB_POINT
+		<include refid="pointCondition"></include>
+		ORDER BY REG_DATE DESC
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if>
+	</select>
+	
+	<select id="pointTotalCnt" parameterType="pointVO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM CB_POINT	
+		<include refid="pointCondition"></include>
+	</select>
+	
+	<insert id="pointReg" parameterType="PointVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_POINT
+		(
+			ID,
+			USER_ID,
+			LEARN_APP_ID,
+			NAME,
+			GIVE,
+			WITHDRAW,
+			BALANCE,
+			NOTE,
+			REG_DATE
+		)
+		VALUES
+		( 
+			#{id},
+			#{userId},
+			#{learnAppId},
+			#{name},
+			#{give},
+			#{withdraw},
+			IFNULL((SELECT BALANCE FROM CB_POINT AS CP WHERE USER_ID = #{userId} ORDER BY ID DESC LIMIT 1), 0) + #{give} - #{withdraw},
+			#{note},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s') 
+		)
+		ON DUPLICATE KEY UPDATE
+			USER_ID = VALUES(USER_ID),
+			LEARN_APP_ID = VALUES(LEARN_APP_ID),
+			NAME = VALUES(NAME),
+			GIVE = VALUES(GIVE),
+			WITHDRAW = VALUES(WITHDRAW),
+			BALANCE = VALUES(BALANCE)+VALUES(GIVE)-VALUES(WITHDRAW),
+			NOTE = VALUES(NOTE)
+	</insert>
+	
+	<!-- 쿠폰 검색 조건 -->
+	<sql id="couponCondition">
+		WHERE 1=1 
+		<choose>
+			<when test="searchCondition == 'name'">
+				AND CM.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+			<when test="searchCondition == 'userId'">
+				AND CC.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+			<when test="searchCondition == 'couponNum'">
+				AND CC.COUPON_NUM LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+		</choose> 
+	</sql>
+	
+	<!-- 쿠폰 리스트 -->
+	<select id="couponList" parameterType="CouponVO" resultType="CouponVO">
+		SELECT
+			CC.ID,
+			CC.COUPON_NUM,
+			CC.USER_ID,
+			CC.COURSE_ID,
+			CC.COND,
+			CC.COUPON,
+			CC.COUPON_TYPE,
+			CC.USE_YN,
+			CC.USE_DATE,
+			CC.EXP_DATE,
+			CC.REG_DATE,
+			CM.NAME
+		FROM CB_COUPON CC
+		LEFT OUTER JOIN CB_MEMBER CM
+		ON CC.USER_ID = CM.ID
+		<include refid="couponCondition"></include>
+		ORDER BY CC.ID DESC
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if>
+	</select>
+	
+	<!-- 쿠폰 리스트 총 갯수 -->
+	<select id="couponTotalCnt" parameterType="CouponVO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM CB_COUPON CC
+		LEFT OUTER JOIN CB_MEMBER CM
+		ON CC.USER_ID = CM.ID
+		<include refid="couponCondition"></include>
+	</select>
+	
+	<!-- 쿠폰 등록 (사용자 매핑) -->
+	<insert id="couponReg" parameterType="CouponVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_COUPON
+		(
+			COUPON_NUM,
+			USER_ID,
+			COURSE_ID,
+			COND,
+			COUPON,
+			COUPON_TYPE,
+			USE_YN,
+			USE_DATE,
+			EXP_DATE,
+			REG_DATE
+		)
+		SELECT 
+			CONCAT('CB-CP-', LPAD(FLOOR(RAND()*9999999999),10, 0)),
+			ID,
+			#{courseId},
+			#{cond},
+			#{coupon},
+			#{couponType},
+			#{useYn},
+			#{useDate},
+			#{expDate},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		FROM CB_MEMBER, (SELECT @rownum:=0) rn
+		WHERE ID IN
+		<foreach collection="userIds" item="id" index="index" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</insert>
+	
+	<!-- 쿠폰 등록 (쿠폰만, 유저ID 매핑 되지 않음) -->
+	<insert id="couponOnlyReg" parameterType="CouponVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_COUPON
+		(
+			COUPON_NUM,
+			COURSE_ID,
+			COND,
+			COUPON,
+			COUPON_TYPE,
+			USE_YN,
+			USE_DATE,
+			EXP_DATE,
+			REG_DATE
+		) VALUES (
+			CONCAT('CB-CP-', LPAD(FLOOR(RAND()*9999999999),10, 0)),
+			#{courseId},
+			#{cond},
+			#{coupon},
+			#{couponType},
+			#{useYn},
+			#{useDate},
+			#{expDate},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		)
+	</insert>
+	
+	<!-- 쿠폰 삭제 -->
+	<delete id="couponDel" parameterType="CouponVO">
+		DELETE FROM CB_COUPON
+		WHERE ID IN
+		<foreach collection="delCouponIds" item="couponId" index="index" open="(" close=")" separator=",">
+			#{couponId}
+		</foreach>
+	</delete>
+	
+	<!-- 정산 조회 -->
+	<select id="calculateList" parameterType="CalculateVO" resultType="CalculateVO">
+		SELECT
+			CC_CLA.ID, /* ID (업체, 강사, 튜터) */
+			CC_CLA.NAME, /* 명 (업체, 강사, 튜터) */
+			CC_CLA.CNT_CAL, /* 정산건수 */
+			CC_CLA.SUM_PAYMENT, /* 원금액계 */
+			CC_CLA.SUM_DIS_PAYMENT, /* 할인금액 */
+			CC_CLA.SUM_DIS_POINT, /* 사용포인트 */
+			CC_CLA.SUM_REAL_PAYMENT, /* 실결제금액 */
+			CC_CLA.SUM_COMM_PAYMENT, /* 금융수수료 */
+			CC_CLA.SUM_CAL_PAYMENT, /* 정산금액 */
+			CC_CLA.SUM_COMPANY_PAYMENT /* 본사금액 */
+		FROM 
+			(SELECT
+				ST.MEMBER_ID AS ID, ST.MEMBER_NAME AS NAME, CLA.COURSE_ID, CLA.CARDINAL_ID,
+				COUNT(CLA.ID) AS CNT_CAL, /* 정산건수  */
+				SUM(CLA.PAYMENT) AS SUM_PAYMENT, /* 원금액계 */
+				SUM(CLA.DIS_COUPON + CLA.DIS_GROUP) AS SUM_DIS_PAYMENT, /* 할인금액 */
+				SUM(CLA.DIS_POINT) SUM_DIS_POINT, /* 사용포인트 */
+				SUM(CLA.REAL_PAYMENT) AS SUM_REAL_PAYMENT, /* 실결제금액 */
+				SUM(ROUND((CLA.REAL_PAYMENT * 3) / 100)) AS SUM_COMM_PAYMENT, /* 금융수수료 (현재는 고정 3%) */
+			    SUM(ROUND((CLA.REAL_PAYMENT - ROUND((CLA.REAL_PAYMENT * 3) / 100) * ST.CAL_PER) / 100)) AS SUM_CAL_PAYMENT, /* 정산금액 (((실결제금액 - 금융수수료) * 정산지급율) / 100) */
+				SUM(CLA.REAL_PAYMENT) - SUM(ROUND((CLA.REAL_PAYMENT * 3) / 100)) - SUM(ROUND((CLA.REAL_PAYMENT - ROUND((CLA.REAL_PAYMENT * 3) / 100) * ST.CAL_PER) / 100)) AS SUM_COMPANY_PAYMENT /* 본사금액 (실결제금액 - 금융수수료 - 정산금액) */
+			FROM 
+			<choose >
+				<when test='calType.equals("company")'>
+					(SELECT 
+						FM.ID AS MEMBER_ID, FM.NAME AS MEMBER_NAME, CC.ID AS COURSE_ID,
+						IFNULL(NULLIF(COM_CAL,''),0) AS CAL_PER 
+					FROM
+					(SELECT ID, NAME FROM FF_MEMBER WHERE USE_YN = 'Y' AND GRADE = '3') FM
+					INNER JOIN (SELECT * FROM CB_COURSE WHERE USE_YN = 'Y') CC ON FM.ID = CC.COM_ID
+					<if test="id != null and id != ''">
+						WHERE FM.ID = #{id}
+					</if>
+					) ST
+				</when>
+				<when test='calType.equals("teacher")'>
+					(SELECT 
+						FM.ID AS MEMBER_ID, FM.NAME AS MEMBER_NAME, CC.ID AS COURSE_ID,
+						IFNULL(NULLIF(TEACH_CAL,''),0) AS CAL_PER
+					FROM
+					(SELECT ID, NAME FROM FF_MEMBER WHERE USE_YN = 'Y' AND GRADE = '2') FM
+					INNER JOIN (SELECT * FROM CB_COURSE WHERE USE_YN = 'Y') CC ON FM.ID = CC.TEACH_ID
+					<if test="id != null and id != ''">
+						WHERE FM.ID = #{id}
+					</if>
+					) ST
+				</when>
+				<when test='calType.equals("tutor")'>
+					(SELECT 
+						FM.ID AS MEMBER_ID, FM.NAME AS MEMBER_NAME, CC.ID AS COURSE_ID,
+						IFNULL(NULLIF(TUTOR_CAL,''),0) AS CAL_PER 
+					FROM 
+					(SELECT ID, NAME FROM FF_MEMBER WHERE USE_YN = 'Y' AND GRADE = '1') FM 
+					INNER JOIN CB_MAN_COURSE CMC ON FM.ID = CMC.MAN_ID 
+					INNER JOIN (SELECT * FROM CB_COURSE WHERE USE_YN = 'Y') CC ON CMC.COURSE_ID = CC.ID
+					<if test="loginUser != null and loginUser.grade == 1">
+						AND FM.ID = #{loginUser.id}
+					</if>
+					) ST
+				</when>
+			</choose>
+			INNER JOIN 
+				(SELECT 
+					*
+				FROM CB_LEARN_APP 
+				WHERE USE_YN = 'Y' 
+				AND PAYMENT_STATE = '2' 
+				AND REQ_TYPE IN (1, 2)) CLA
+			ON ST.COURSE_ID = CLA.COURSE_ID
+			AND CLA.CARDINAL_ID = #{cardinal.id} /* 기수선택 검색조건 (필수O) */
+			GROUP BY CLA.COURSE_ID, CLA.CARDINAL_ID) CC_CLA
+	</select>
+	
+	<select id="calculateTotalCnt" parameterType="CalculateVO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM 
+			(SELECT
+				ST.MEMBER_ID AS ID, ST.MEMBER_NAME AS NAME, CLA.COURSE_ID, CLA.CARDINAL_ID,
+				COUNT(CLA.ID) AS CNT_CAL, /* 정산건수  */
+				SUM(CLA.PAYMENT) AS SUM_PAYMENT, /* 원금액계 */
+				SUM(CLA.DIS_COUPON + CLA.DIS_GROUP) AS SUM_DIS_PAYMENT, /* 할인금액 */
+				SUM(CLA.DIS_POINT) SUM_DIS_POINT, /* 사용포인트 */
+				SUM(CLA.REAL_PAYMENT) AS SUM_REAL_PAYMENT, /* 실결제금액 */
+				SUM(ROUND((CLA.REAL_PAYMENT * 3) / 100)) AS SUM_COMM_PAYMENT, /* 금융수수료 (현재는 고정 3%) */
+			    SUM(ROUND((CLA.REAL_PAYMENT - ROUND((CLA.REAL_PAYMENT * 3) / 100) * ST.CAL_PER) / 100)) AS SUM_CAL_PAYMENT, /* 정산금액 (((실결제금액 - 금융수수료) * 정산지급율) / 100) */
+				SUM(CLA.REAL_PAYMENT) - SUM(ROUND((CLA.REAL_PAYMENT * 3) / 100)) - SUM(ROUND((CLA.REAL_PAYMENT - ROUND((CLA.REAL_PAYMENT * 3) / 100) * ST.CAL_PER) / 100)) AS SUM_COMPANY_PAYMENT /* 본사금액 (실결제금액 - 금융수수료 - 정산금액) */
+			FROM 
+			<choose >
+				<when test='calType.equals("company")'>
+					(SELECT 
+						FM.ID AS MEMBER_ID, FM.NAME AS MEMBER_NAME, CC.ID AS COURSE_ID,
+						IFNULL(NULLIF(COM_CAL,''),0) AS CAL_PER 
+					FROM
+					(SELECT ID, NAME FROM FF_MEMBER WHERE USE_YN = 'Y' AND GRADE = '3') FM
+					INNER JOIN (SELECT * FROM CB_COURSE WHERE USE_YN = 'Y') CC ON FM.ID = CC.COM_ID
+						<if test="id != null and id != ''">
+							WHERE FM.ID = #{id}
+						</if>
+					) ST
+				</when>
+				<when test='calType.equals("teacher")'>
+					(SELECT 
+						FM.ID AS MEMBER_ID, FM.NAME AS MEMBER_NAME, CC.ID AS COURSE_ID,
+						IFNULL(NULLIF(TEACH_CAL,''),0) AS CAL_PER
+					FROM
+					(SELECT ID, NAME FROM FF_MEMBER WHERE USE_YN = 'Y' AND GRADE = '2') FM
+					INNER JOIN (SELECT * FROM CB_COURSE WHERE USE_YN = 'Y') CC ON FM.ID = CC.TEACH_ID
+						<if test="id != null and id != ''">
+							WHERE FM.ID = #{id}
+						</if>
+					) ST
+				</when>
+				<when test='calType.equals("tutor")'>
+					(SELECT 
+						FM.ID AS MEMBER_ID, FM.NAME AS MEMBER_NAME, CC.ID AS COURSE_ID,
+						IFNULL(NULLIF(TUTOR_CAL,''),0) AS CAL_PER 
+					FROM 
+					(SELECT ID, NAME FROM FF_MEMBER WHERE USE_YN = 'Y' AND GRADE = '1') FM 
+					INNER JOIN CB_MAN_COURSE CMC ON FM.ID = CMC.MAN_ID 
+					INNER JOIN (SELECT * FROM CB_COURSE WHERE USE_YN = 'Y') CC ON CMC.COURSE_ID = CC.ID
+						<if test="loginUser != null and loginUser.grade == 1">
+						AND FM.ID = #{loginUser.id}
+					</if>
+					) ST				
+				</when>
+			</choose>
+			INNER JOIN 
+				(SELECT 
+					*
+				FROM CB_LEARN_APP 
+				WHERE USE_YN = 'Y' 
+				AND PAYMENT_STATE = '2' 
+				AND REQ_TYPE IN (1, 2)) CLA
+			ON ST.COURSE_ID = CLA.COURSE_ID
+			AND CLA.CARDINAL_ID = #{cardinal.id} /* 기수선택 검색조건 (필수O) */
+			GROUP BY CLA.COURSE_ID, CLA.CARDINAL_ID) CC_CLA
+	</select>
+	
+	
+	<!-- LMS -->
+	<!-- 결제관리 리스트  (모집홍보 DB 연결) -->
+	<select id="payList" parameterType="LearnAppVO" resultMap="learnAppMap">
+		SELECT * FROM
+	      (SELECT
+	         CLA.ID
+	         , CLA.USER_ID
+	         , CLA.GROUP_ID
+	         , CLA.CARDINAL_ID
+	         , CLA.COURSE_ID
+	         , CLA.NEIS_NUM
+	         , CLA.DES_NUM
+	         , CLA.SCHOOL_NAME
+	         , CLA.TEL
+	         , CLA.PHONE
+	         , CLA.EMAIL
+	         , CLA.REGION_CODE
+	         , CLA.JURISDICTION
+	         , CLA.S_TYPE
+	         , CLA.E_TYPE
+	         , CLA.POST_TYPE
+	         , CLA.PAYMENT_TYPE
+	         , CLA.PAYMENT_STATE
+	         , CLA.PAYMENT_DATE
+	         , CLA.APP_NUM
+	         , CLA.DIS_COUPON
+	         , CLA.DIS_POINT
+	         , CLA.PAYMENT         
+	         , CLA.REQ_TYPE
+	         , CLA.REQ_MEMO
+	         , CLA.REQ_DATE
+	         , CLA.TOTAL_SCORE
+	         , CLA.ISSUE_NUM
+	         , CLA.ORDER_NUM
+	         , CLA.USE_YN
+	         , CLA.REG_USER
+	         , CLA.REG_DATE
+	         , CLA.UPD_USER
+	         , CLA.UPD_DATE
+	         , CLA.ACCEPTANCE_YN
+	         , CLA.ADMIN_ADD_YN
+	         , CM.USER_NM AS USER_NAME         
+	         , CC1.NAME AS CARDINAL_NAME
+	         , CC2.NAME AS COURSE_NAME
+	         , CC2.PRICE AS PRICE
+	         <if test="pay != null">
+	         	, PAY.PAY_USER_SEQ
+	         	, PAY.PAY_CRC_SEQ
+	         	, PAY.PAY_INS_DT
+	         	, PAY.PAY_USER_STATUS
+	            , PAY.REAL_PAY_AMOUNT
+	            , INFO.PAY_CRC_AMOUNT
+	            , INFO.PAY_CRC_PAYORDER
+	          </if>    
+	      FROM CB_LEARN_APP CLA
+	      LEFT OUTER JOIN COM_USER_TB CM
+	      ON CLA.USER_ID = CM.USER_ID      
+	      LEFT OUTER JOIN CB_CARDINAL CC1
+	      ON CLA.CARDINAL_ID = CC1.ID
+	      LEFT OUTER JOIN CB_COURSE CC2
+	      ON CLA.COURSE_ID = CC2.ID   
+	      <if test="pay != null">
+	      LEFT OUTER JOIN EDU_USER_PAY_TB PAY 
+	       ON CLA.CARDINAL_ID = PAY.CARDINAL_ID
+	      AND CLA.COURSE_ID = PAY.COURSE_ID
+	      AND CLA.USER_ID = PAY.PAY_USER_ID
+	        LEFT OUTER JOIN EDU_CURRICULUM_PAY_TB INFO 
+	       ON CLA.CARDINAL_ID = INFO.CARDINAL_ID
+	      AND CLA.COURSE_ID = INFO.COURSE_ID
+	        and PAY.PAY_CRC_SEQ = INFO.PAY_CRC_SEQ
+	      </if>
+	      WHERE 1=1
+	      <if test="course.id != null and course.id != ''">
+	         AND CC2.ID = #{course.id}
+	      </if>
+	      <if test="cardinal.id != null and cardinal.id != ''">
+	         AND CC1.ID = #{cardinal.id}
+	      </if>
+	      <if test="(searchStartDate != null and searchStartDate != '') or (searchEndDate != null and searchEndDate != '')">
+	         AND DATE_FORMAT(CLA.REG_DATE, '%Y-%m-%d') BETWEEN #{searchStartDate} AND #{searchEndDate}
+	      </if>
+	       ORDER BY CLA.REG_DATE DESC     
+	       ) T
+	      <if test='pagingYn=="Y"'>
+           <include refid="forFaith.common.footer"/>
+        </if> 
+	<!-- SELECT * FROM
+		(SELECT
+			CLA.ID
+			, CLA.USER_ID
+			, CLA.GROUP_ID
+			, CLA.CARDINAL_ID
+			, CLA.COURSE_ID
+			, CLA.NEIS_NUM
+			, CLA.DES_NUM
+			, CLA.SCHOOL_NAME
+			, CLA.TEL
+			, CLA.PHONE
+			, CLA.EMAIL
+			, CLA.REGION_CODE
+			, CLA.JURISDICTION
+			, CLA.S_TYPE
+			, CLA.E_TYPE
+			, CLA.POST_TYPE
+			, CLA.PAYMENT_TYPE
+			, CLA.PAYMENT_STATE
+			, CLA.PAYMENT_DATE
+			, CLA.APP_NUM
+			, CLA.DIS_COUPON
+			, CLA.DIS_POINT
+			, CLA.PAYMENT			
+			, CLA.REQ_TYPE
+			, CLA.REQ_MEMO
+			, CLA.REQ_DATE
+			, CLA.TOTAL_SCORE
+			, CLA.ISSUE_NUM
+			, CLA.ORDER_NUM
+			, CLA.USE_YN
+			, CLA.REG_USER
+			, CLA.REG_DATE
+			, CLA.UPD_USER
+			, CLA.UPD_DATE
+			, CLA.ACCEPTANCE_YN
+			, CLA.ADMIN_ADD_YN
+			, CM.USER_NM AS USER_NAME			
+			, CC1.NAME AS CARDINAL_NAME
+			, CC2.NAME AS COURSE_NAME
+			, CC2.PRICE AS PRICE
+			<if test="pay != null">
+		    , PAY.PAY_USER_SEQ
+			, PAY.PAY_CRC_SEQ
+		    , PAY.PAY_INS_DT
+		    </if>    
+		FROM CB_LEARN_APP CLA
+		LEFT OUTER JOIN COM_USER_TB CM
+		ON CLA.USER_ID = CM.USER_ID		
+		LEFT OUTER JOIN CB_CARDINAL CC1
+		ON CLA.CARDINAL_ID = CC1.ID
+		LEFT OUTER JOIN CB_COURSE CC2
+		ON CLA.COURSE_ID = CC2.ID	
+		<if test="pay != null">
+		LEFT OUTER JOIN EDU_USER_PAY_TB PAY 
+	    ON CLA.CARDINAL_ID = SUBSTRING( PAY.PAY_CRC_SEQ , 1 , 10) 
+		AND CLA.COURSE_ID = SUBSTRING( PAY.PAY_CRC_SEQ , 12, 10) 
+		AND CLA.USER_ID = PAY.PAY_USER_ID	 
+		</if>
+		WHERE 1=1
+		<if test="course.id != null and course.id != ''">
+			AND CC2.ID = #{course.id}
+		</if>
+		<if test="cardinal.id != null and cardinal.id != ''">
+			AND CC1.ID = #{cardinal.id}
+		</if>
+		<if test="(searchStartDate != null and searchStartDate != '') or (searchEndDate != null and searchEndDate != '')">
+			AND DATE_FORMAT(CLA.REG_DATE, '%Y-%m-%d') BETWEEN #{searchStartDate} AND #{searchEndDate}
+		</if>
+		 ORDER BY CLA.REG_DATE DESC	  
+		 ) T
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if>  -->
+	</select>
+	
+		<!-- 결제관리 리스트(모집홍보 DB 연결) 총 갯수 -->
+	<select id="payTotalCnt" parameterType="LearnAppVO" resultType="int">
+		SELECT COUNT(*) FROM
+		(		SELECT 
+			LA.ID, LA.USER_ID, DATE_FORMAT(LA.REG_DATE, '%Y-%m-%d') AS REG_DATE, LA.ADMIN_ADD_YN
+			, PT.PAY_USER_SEQ, PT.PAY_USER_STATUS, PT.REAL_PAY_AMOUNT, PT.DIS_POINT, PT.PAY_CRC_SEQ, DATE_FORMAT(PT.PAY_INS_DT, '%Y-%m-%d') AS PAY_INS_DT
+			, UT.USER_NM AS USER_NAME, CC1.ID AS COURSE_ID, CC1.NAME AS COURSE_NAME, CC2.ID AS CARDINAL_ID, CC2.NAME AS CARDINAL_NAME, CPT.PAY_CRC_AMOUNT<!-- , CPT.PAY_CRC_SEQ -->
+		FROM	
+			CB_LEARN_APP LA
+		LEFT JOIN
+			EDU_CURRICULUM_PAY_TB CPT
+		ON
+			LA.COURSE_ID = CPT.COURSE_ID
+		AND
+			LA.CARDINAL_ID = CPT.CARDINAL_ID
+		LEFT JOIN 
+			EDU_USER_PAY_TB PT
+		ON
+			PT.COURSE_ID = LA.COURSE_ID
+		AND
+			PT.CARDINAL_ID = LA.CARDINAL_ID
+		AND
+			PT.PAY_USER_ID = LA.USER_ID
+		AND
+			PT.PAY_CRC_SEQ = CPT.PAY_CRC_SEQ
+		LEFT JOIN
+			COM_USER_TB UT
+		ON
+			LA.USER_ID = UT.USER_ID
+		LEFT JOIN
+			CB_COURSE CC1
+		ON
+			LA.COURSE_ID = CC1.ID
+		LEFT JOIN
+			CB_CARDINAL CC2
+		ON
+			LA.CARDINAL_ID = CC2.ID
+		WHERE
+			1=1
+		<if test="course.id != null and course.id != ''">
+			AND CC1.ID = #{course.id}
+	   	</if>
+	    <if test="cardinal.id != null and cardinal.id != ''">
+	    	AND CC2.ID = #{cardinal.id}
+	    </if>
+	    <if test="edu.pay_user_status != null and edu.pay_user_status != ''">
+	    	AND PT.PAY_USER_STATUS = #{edu.pay_user_status} 
+	    </if>
+	    <if test="(searchStartDate != null and searchStartDate != '') or (searchEndDate != null and searchEndDate != '')">
+	         AND DATE_FORMAT(LA.REG_DATE, '%Y-%m-%d') BETWEEN #{searchStartDate} AND #{searchEndDate}
+	    </if>
+<!-- 			and PT.PAY_INS_DT is not null -->
+		ORDER BY
+			LA.REG_DATE DESC	  
+		 ) T
+	</select>
+ 
+	
+	
+	<!-- 개별결제관리 리스트 -->
+	<select id="individualPayList" parameterType="LearnAppVO" resultMap="learnAppMap">
+		SELECT * FROM
+		(SELECT
+			CLA.ID,
+			CLA.USER_ID,
+			CLA.GROUP_ID,
+			CLA.CARDINAL_ID,
+			CLA.COURSE_ID,
+			CLA.NEIS_NUM,
+			CLA.DES_NUM,
+			CLA.SCHOOL_NAME,
+			CLA.TEL,
+			CLA.PHONE,
+			CLA.EMAIL,
+			CLA.REGION_CODE,
+			CLA.JURISDICTION,
+			CLA.S_TYPE,
+			CLA.E_TYPE,
+			CLA.POST_TYPE,
+			CLA.PAYMENT_TYPE,
+			CLA.PAYMENT_STATE,
+			CLA.PAYMENT_DATE,
+			CLA.APP_NUM,
+			CLA.DIS_COUPON,
+			CLA.DIS_POINT,
+			CLA.PAYMENT,
+			CLA.REAL_PAYMENT,
+			CLA.REQ_TYPE,
+			CLA.REQ_MEMO,
+			CLA.REQ_DATE,
+			CLA.TOTAL_SCORE,
+			CLA.ISSUE_NUM,
+			CLA.ORDER_NUM,
+			CLA.USE_YN,
+			CLA.REG_USER,
+			CLA.REG_DATE,
+			CLA.UPD_USER,
+			CLA.UPD_DATE,
+			CM.USER_NM AS USER_NAME,
+			CGL.NAME AS GROUP_NAME,
+			CC1.NAME AS CARDINAL_NAME,
+			CC2.NAME AS COURSE_NAME				
+		FROM CB_LEARN_APP CLA
+		LEFT OUTER JOIN COM_USER_TB CM
+		ON CLA.USER_ID = CM.USER_ID
+		LEFT OUTER JOIN CB_GROUP_LEARN CGL
+		ON CLA.GROUP_ID = CGL.ID
+		LEFT OUTER JOIN CB_CARDINAL CC1
+		ON CLA.CARDINAL_ID = CC1.ID
+		LEFT OUTER JOIN CB_COURSE CC2
+		ON CLA.COURSE_ID = CC2.ID) T
+		<include refid="individualPayCondition"></include>
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if> 
+	</select>
+	
+	<!-- 개별결제관리 리스트 총 갯수 -->
+	<select id="individualPayTotalCnt" parameterType="LearnAppVO" resultType="int">
+		SELECT COUNT(*) FROM
+		(SELECT
+			CLA.ID,
+			CLA.USER_ID,
+			CLA.GROUP_ID,
+			CLA.CARDINAL_ID,
+			CLA.COURSE_ID,
+			CLA.NEIS_NUM,
+			CLA.DES_NUM,
+			CLA.SCHOOL_NAME,
+			CLA.TEL,
+			CLA.PHONE,
+			CLA.EMAIL,
+			CLA.REGION_CODE,
+			CLA.JURISDICTION,
+			CLA.S_TYPE,
+			CLA.E_TYPE,
+			CLA.POST_TYPE,
+			CLA.PAYMENT_TYPE,
+			CLA.PAYMENT_STATE,
+			CLA.PAYMENT_DATE,
+			CLA.APP_NUM,
+			CLA.DIS_COUPON,
+			CLA.DIS_POINT,
+			CLA.PAYMENT,
+			CLA.REAL_PAYMENT,
+			CLA.REQ_TYPE,
+			CLA.REQ_MEMO,
+			CLA.REQ_DATE,
+			CLA.TOTAL_SCORE,
+			CLA.ISSUE_NUM,
+			CLA.ORDER_NUM,
+			CLA.USE_YN,
+			CLA.REG_USER,
+			CLA.REG_DATE,
+			CLA.UPD_USER,
+			CLA.UPD_DATE,
+			CM.USER_NM AS USER_NAME,
+			CGL.NAME AS GROUP_NAME,
+			CC1.NAME AS CARDINAL_NAME,
+			CC2.NAME AS COURSE_NAME
+		FROM CB_LEARN_APP CLA
+		LEFT OUTER JOIN COM_USER_TB CM
+		ON CLA.USER_ID = CM.USER_ID
+		LEFT OUTER JOIN CB_GROUP_LEARN CGL
+		ON CLA.GROUP_ID = CGL.ID
+		LEFT OUTER JOIN CB_CARDINAL CC1
+		ON CLA.CARDINAL_ID = CC1.ID
+		LEFT OUTER JOIN CB_COURSE CC2
+		ON CLA.COURSE_ID = CC2.ID) T
+		<include refid="individualPayCondition"></include>
+	</select>
+	
+	<select id="payListTest"  parameterType="LearnAppVO" resultType="hashmap">
+		SELECT 
+			LA.ID, LA.USER_ID, DATE_FORMAT(LA.REG_DATE, '%Y-%m-%d') AS REG_DATE, LA.ADMIN_ADD_YN
+			, PT.PAY_USER_SEQ, PT.PAY_USER_STATUS, PT.REAL_PAY_AMOUNT, PT.DIS_POINT, PT.PAY_CRC_SEQ, DATE_FORMAT(PT.PAY_INS_DT, '%Y-%m-%d') AS PAY_INS_DT
+			, UT.USER_NM AS USER_NAME, CC1.ID AS COURSE_ID, CC1.NAME AS COURSE_NAME, CC2.ID AS CARDINAL_ID, CC2.NAME AS CARDINAL_NAME, CPT.PAY_CRC_AMOUNT<!-- , CPT.PAY_CRC_SEQ -->
+		FROM	
+			CB_LEARN_APP LA
+		LEFT JOIN
+			EDU_CURRICULUM_PAY_TB CPT
+		ON
+			LA.COURSE_ID = CPT.COURSE_ID
+		AND
+			LA.CARDINAL_ID = CPT.CARDINAL_ID
+		LEFT JOIN 
+			EDU_USER_PAY_TB PT
+		ON
+			PT.COURSE_ID = LA.COURSE_ID
+		AND
+			PT.CARDINAL_ID = LA.CARDINAL_ID
+		AND
+			PT.PAY_USER_ID = LA.USER_ID
+		AND
+			PT.PAY_CRC_SEQ = CPT.PAY_CRC_SEQ
+		LEFT JOIN
+			COM_USER_TB UT
+		ON
+			LA.USER_ID = UT.USER_ID
+		LEFT JOIN
+			CB_COURSE CC1
+		ON
+			LA.COURSE_ID = CC1.ID
+		LEFT JOIN
+			CB_CARDINAL CC2
+		ON
+			LA.CARDINAL_ID = CC2.ID
+		WHERE
+			1=1
+		<if test="course.id != null and course.id != ''">
+			AND CC1.ID = #{course.id}
+	   	</if>
+	    <if test="cardinal.id != null and cardinal.id != ''">
+	    	AND CC2.ID = #{cardinal.id}
+	    </if>
+	    <if test="edu.pay_user_status != null and edu.pay_user_status != ''">
+	    	AND PT.PAY_USER_STATUS = #{edu.pay_user_status} 
+	    </if>
+	    <if test="(searchStartDate != null and searchStartDate != '') or (searchEndDate != null and searchEndDate != '')">
+	         AND DATE_FORMAT(LA.REG_DATE, '%Y-%m-%d') BETWEEN #{searchStartDate} AND #{searchEndDate}
+	    </if>
+<!-- 	    	and PT.PAY_INS_DT is not null -->
+		ORDER BY
+			LA.REG_DATE DESC
+		<if test='pagingYn=="Y"'>
+           <include refid="forFaith.common.footer"/>
+        </if>
+	</select>
+</mapper>

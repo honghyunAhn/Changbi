@@ -1,0 +1,459 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="/resources/css/project/admin/common.css" rel="stylesheet" type="text/css">
+<link href="/resources/css/project/admin/accordion.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="/resources/js/ext/jquery/jquery-2.0.3.min.js"></script> 
+<script type="text/javascript" src="/resources/js/project/accordion.js"></script> 
+<title>무제 문서</title>
+</head>
+
+<body>
+<div id="wrap">
+	<div id="header">
+		<div class="header">
+			<h1 class="navbar-brand">Admin</h1>			
+			<ul class="navbar-top-links">
+  				<li class="button-dropdown">
+    				<a href="javascript:void(0)" class="dropdown-toggle active">사용자<span>▼</span></a>
+    				<ul class="dropdown-menu">
+      					<li><a href="#">내정보</a></li>
+      					<li><a href="#">로그아웃</a></li>
+						<li><a href="#">원격지원</a></li>
+					</ul>
+  				</li>
+			</ul>
+		</div>
+	</div>
+	<div id="container">		
+		<div class="navbar-sidebar">
+			<ul id="my-accordion" class="accordionjs">  
+				<li>
+					<a href="#">test</a>
+					<ul class="acc_content">
+						<li><a href="#">1</a></li>
+						<li><a href="#">2</a></li>
+						<li><a href="#">3</a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="#">test</a>
+					<ul class="acc_content">
+						<li><a href="#">1</a></li>
+						<li><a href="#">2</a></li>
+						<li><a href="#">3</a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="#">배너 및 기타관리</a>
+					<ul class="acc_content">
+						<li><a href="#">직무연수안내 설정</a></li>
+						<li><a href="#">2</a></li>
+						<li><a class="test" href="#">3</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div class="content_wraper">
+			<h3>연수기수 관리(직무 4학점)</h3>						
+			<dl>
+				<dt>연수타입</dt><dd class="half">직무연수</dd>
+				<dt>기수코드</dt><dd class="half"><input type="text" size="5" maxlength="5" value="n1506"></dd>
+				<dt>기수명</dt><dd class="half"><input type="text" maxlength="50" value="2015년 제6기"></dd>
+				<dt>과정서비스형태</dt><dd class="half"><input id="Select_subject" type="radio" value="2"><label for="Select_subject">선택과목서비스</label><input id="All_subject" type="radio" value="1"><label for="All_subject">전체과목서비스</label></dd>
+				<dt>접수기간</dt><dd class="half"><input type="text" maxlength="10" value="2015-07-20">~<input type="text" maxlength="10" value="2015-07-20"></dd>
+				<dt>연수기간</dt><dd class="half"><input type="text" maxlength="10" value="2015-07-20">~<input type="text" maxlength="10" value="2015-07-20"><label>이수발급일 :</label><input type="text" maxlength="10" value="2015-07-20"></dd>
+				<dt>출석평가</dt><dd><label style="margin-left: 0px;" for="date_evaluation">평가일자 :</label><input style="width: initial" id="date_evaluation" type="text" maxlength="10" value="2015-07-11"><label for="time_evaluation">평가시간 :</label><input style="width: initial;" id="time_evaluation" size="10" type="text" maxlength="10" value="2015-07-11"><span>※ ex)1교시:15시, 2교시:16시10분</span></dd>
+				<dt>수강취소일</dt>
+				<dd class="half">
+					<select>
+						<option selected>지정안함</option>
+						<option>신청일로부터 1일</option>
+						<option>신청일로부터 2일</option>
+						<option>신청일로부터 3일</option>
+					</select>
+				</dd>
+				<dt>중복접수Limit</dt>
+				<dd class="half">
+					<select>
+						<option selected>제한없음</option>
+						<option>1개 과정</option>
+						<option>2개 과정</option>
+						<option>3개 과정</option>
+					</select>
+				</dd>
+				<dt>출석고사장</dt>
+				<dd class="half">
+					<select>
+						<option selected>출석고사장 뷰어 / 변경신청 불가</option>
+						<option>출석고사장 히든 / 변경신청 불가</option>
+						<option>출석고사장 뷰어 / 변경신청 가능</option>						
+					</select>
+				</dd>
+				<dt>추가평가기간</dt>
+				<dd class="half">
+					<select>
+						<option selected>지정안함</option>
+						<option>1일</option>
+						<option>2일</option>
+						<option>3일</option>
+					</select>
+				</dd>
+				<dt>학점별성적공개</dt>
+				<dd>
+					<label>1학점</label><input type="checkbox">
+					<label>2학점</label><input type="checkbox">
+					<label>3학점</label><input type="checkbox">
+					<label>4학점</label><input type="checkbox">					
+					<span>※ 체크된 학점은 최종성적이 수강자에게 보여집니다.</span>
+				</dd>
+				<dt>신청가능학점</dt>
+				<dd>
+					<label>1학점</label><input type="checkbox">
+					<label>2학점</label><input type="checkbox">
+					<label>3학점</label><input type="checkbox">
+					<label>4학점</label><input type="checkbox">					
+					<span>※ 접수가능한 학점별 과정을 설정하십시오.</span>
+				</dd>
+				<dt>출석평가 예상문제</dt>
+				<dd class="half">
+					<input type="radio"><label>비공개</label>
+					<input type="radio"><label>공개</label>/
+					<select style="margin-left: 5px;">
+						<option selected>A형 예상문제</option>
+						<option>B형 예상문제</option>
+						<option>C형 예상문제</option>
+					</select>
+					<a class="btn" href="#">예상문제보기</a>
+				</dd>
+				<dt>예습미리보기</dt>
+				<dd class="half">
+					<select>
+						<option>8강</option>
+						<option>9강</option>
+						<option selected>10강</option>
+						<option>11강</option>
+						<option>12강</option>
+						<option>13강</option>
+					</select>
+				</dd>
+				<dt>이수처리</dt>
+				<dd class="half">
+					<select>
+						<option selected>이수미처리</option>
+						<option>이수처리 및 성적발표</option>						
+					</select>
+					<input style="margin-left: 10px; margin-right: -8px;" type="checkbox"><label>적용(체크시 수강정보반영)</label>
+				</dd>
+				<dt>상태구분</dt>
+				<dd class="half">
+					<select>
+						<option selected>서비스</option>
+						<option>보류</option>
+					</select>
+				</dd>
+				<dt>접수현황</dt>
+				<dd class="half">
+					<span>접수자 : <strong>0명</strong> / 수강자 : <strong>0명</strong> / 이수자 : <strong>0명</strong></span>					
+				</dd>
+				<dt>수강자뷰어링</dt>
+				<dd class="half">
+					<input type="radio"><label>수강자공개</label>
+					<input type="radio"><label>수강자비공개</label>				
+				</dd>
+				<dt>연수설문지설정</dt>
+				<dd>
+					<select>
+						<option selected>- 연수설문지 선택-</option>
+						<option>[160420151456] 연수 만족도 설문조사</option>						
+					</select>
+					<span>※ 과정별 차시에 등록된 평가설문지도 자동적용됩니다.</span>
+				</dd>
+				<dt>교육청보고내용</dt>
+				<dd>
+					<label>공문시행 :</label>
+					<input type="text" style="margin-right: 13px;">/
+					<label>공문보고담당 :</label>
+					<input type="text">
+					<span>※ 문구내용 그대로 인쇄됨</span>
+				</dd>
+				<dt class="texttextarea">추후일정</dt>
+				<dd class="texttextarea">
+					<textarea></textarea>					
+				</dd>
+			</dl>
+			
+			<div class="btn">
+			<a class="primary" href="#">수정</a><a class="danger" href="#">삭제</a><a class="primary_line" href="#">리스트</a>
+			</div>
+			
+			<h4>출석고사 및 성적관련 데이터조회</h4>
+			<dl>
+				<dt>고사장별인원조회</dt>
+				<dd class="half"><a class="btn" href="#">명단조회</a><a href="#">[4학점 중복과정신청자 조회]</a></dd>
+				<dt style="width:15%">해당기수 교원이 아닌 회원</dt>
+				<dd class="half" style="width:35%;"><a class="btn" href="#">명단조회</a></dd>
+				<dt>구제대상자조회</dt>
+				<dd>
+					<span>구제대상자 조건 → 진도율기준 :</span>
+					<select>
+						<option>100% 이상</option>
+						<option>95% 이상</option>
+						<option>90% 이상</option>
+						<option>85% 이상</option>
+						<option selected>80% 이상</option>
+						<option>75% 이상</option>
+						<option>70% 이상</option>
+						<option>65% 이상</option>
+						<option>60% 이상</option>
+						<option>55% 이상</option>
+						<option>50% 이상</option>						
+					</select>
+					/
+					<span>참여기준점수 :</span>
+					<select>
+						<option>50점 만점</option>
+						<option>40점 만점</option>
+						<option selected>30점 만점</option>
+						<option>20점 만점</option>
+						<option>10점 만점</option>						
+					</select>
+					/
+					<span>합계성적 이수 기준점수 :</span>
+					<select>
+						<option>50점 이상</option>
+						<option>40점 이상</option>
+						<option selected>30점 이상</option>
+						<option>20점 이상</option>
+						<option>10점 이상</option>						
+					</select>
+					<a class="btn" href="#">명단조회</a></dd>
+				<dt>OMR성적비교</dt>
+				<dd><span>OMR 나이스개인번호와 수강신청시 등록한 나이스개인번호 불일치 수강자 OMR성적(출석고사성적)조회 및 처리</span><a class="btn" href="#">명단조회</a></dd>
+			</dl>
+			<h4>기수별 출석고사장배정</h4>			
+			<table cellpadding="0" cellspacing="0">
+					<thead>
+						<th><input type="checkbox"></th>
+						<th>고사장명</th>
+						<th>장소명</th>
+						<th>주소</th>
+						<th>약도</th>
+						<th>상세보기</th>						
+					</thead>
+					<tbody>
+					<tr>
+						<td>97</td><td>1610</td><td>10기</td><td>2016-08-09~2016-11-21</td><td>2016-08-09~2016-11-21</td><td>미처리</td>
+					</tr>
+					<tr>
+						<td>97</td><td>1610</td><td>10기</td><td>2016-08-09~2016-11-21</td><td>2016-08-09~2016-11-21</td><td>미처리</td>
+					</tr>						
+					</tbody>
+			</table>
+			<h4>기수별 서비스과목지정</h4>			
+			<form>
+				<select>
+					<option selected>1</option>
+					<option>2</option>
+					<option>3</option>
+				</select>
+				<input type="text">
+				<select>
+					<option selected>이수구분</option>
+					<option>이수처리</option>
+					<option>미처리</option>
+				</select>
+				<select>
+					<option selected>기수명</option>
+					<option>기수코드</option>						
+				</select>					
+				<input type="text">
+				<button type="submit">검색</button>
+				<button class="btn-primary" type="submit">검색</button>
+				<button class="btn-danger" type="button">검색</button>
+			</form>	
+			<table cellpadding="0" cellspacing="0">
+					<thead>
+						<th><input type="checkbox"></th>
+						<th>연수타입</th>
+						<th>과정코드</th>
+						<th>과정명</th>
+						<th>이수시간</th>
+						<th>신청</th>						
+						<th>상태</th>						
+						<th>시험교시</th>						
+						<th>변경</th>						
+					</thead>
+					<tbody>
+					<tr>
+						<td>97</td><td>1610</td><td>10기</td><td>2016-08-09~2016-11-21</td><td>2016-08-09~2016-11-21</td><td>미처리</td><td>미처리</td><td>미처리</td><td>미처리</td>
+					</tr>
+					<tr>
+						<td>97</td><td>1610</td><td>10기</td><td>2016-08-09~2016-11-21</td><td>2016-08-09~2016-11-21</td><td>미처리</td><td>미처리</td><td>미처리</td><td>미처리</td>
+					</tr>						
+					</tbody>
+			</table>
+			<div class="pagination">
+					<a href="#">&laquo;</a>					
+					<a class="on" href="#">1</a>
+					<a href="#">2</a>
+					<a href="#">3</a>					
+					<a href="#">&raquo;</a>
+					<a class="btn align_right" href="#">선택삭제</a>
+					<a id="btn-add" class="btn align_left" href="#layer2">과정추가</a>
+				</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+<div class="dim-layer">
+    <div class="dimBg"></div>
+    <div id="layer2" class="pop-layer">
+        <div class="pop-container">
+            <div class="pop-conts">
+             <h4>기수별 서비스과목지정</h4>			
+				<form>
+					<select>
+						<option selected>1</option>
+						<option>2</option>
+						<option>3</option>
+					</select>
+					<input type="text">
+					<select>
+						<option selected>이수구분</option>
+						<option>이수처리</option>
+						<option>미처리</option>
+					</select>
+					<select>
+						<option selected>기수명</option>
+						<option>기수코드</option>						
+					</select>					
+					<input type="text">
+					<button type="submit">검색</button>
+					<button class="btn-primary" type="submit">검색</button>
+					<button class="btn-danger" type="button">검색</button>
+				</form>	
+				<table cellpadding="0" cellspacing="0">
+						<thead>
+							<th><input type="checkbox"></th>
+							<th>연수타입</th>
+							<th>과정코드</th>
+							<th>과정명</th>
+							<th>이수시간</th>
+							<th>신청</th>						
+							<th>상태</th>													
+						</thead>
+						<tbody>
+						<tr>
+							<td>97</td><td>1610</td><td>10기</td><td>2016-08-09~2016-11-21</td><td>2016-08-09~2016-11-21</td><td>미처리</td><td>미처리</td>
+						</tr>
+						<tr>
+							<td>97</td><td>1610</td><td>10기</td><td>2016-08-09~2016-11-21</td><td>2016-08-09~2016-11-21</td><td>미처리</td><td>미처리</td>
+						</tr>						
+						</tbody>
+				</table>
+				<a href="#" class="btn-layerClose">x</a>                
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+/* 사용자 드랍다운 레이어	*/
+jQuery(document).ready(function (e) {
+    function t(t) {
+        e(t).bind("click", function (t) {
+            t.preventDefault();
+            e(this).parent().fadeOut()
+        })
+    }
+    e(".dropdown-toggle").click(function () {
+        var t = e(this).parents(".button-dropdown").children(".dropdown-menu").is(":hidden");
+        e(".button-dropdown .dropdown-menu").hide();
+        e(".button-dropdown .dropdown-toggle").removeClass("active");
+        if (t) {
+            e(this).parents(".button-dropdown").children(".dropdown-menu").toggle().parents(".button-dropdown").children(".dropdown-toggle").addClass("active")
+        }
+    });
+    e(document).bind("click", function (t) {
+        var n = e(t.target);
+        if (!n.parents().hasClass("button-dropdown")) e(".button-dropdown .dropdown-menu").hide();
+    });
+    e(document).bind("click", function (t) {
+        var n = e(t.target);
+        if (!n.parents().hasClass("button-dropdown")) e(".button-dropdown .dropdown-toggle").removeClass("active");
+    })
+});
+
+    jQuery(document).ready(function($){
+        $("#my-accordion").accordionjs();
+			
+    });
+
+/* 컨텐츠 페이지 높이 */	
+function funLoad(){
+	var height = $(window).height();
+	$('#my-accordion').css({'min-height':(height-50)+'px'});	
+
+}
+window.onload = funLoad;
+window.onresize = funLoad;			
+	
+/* 탭메뉴 */		
+ $(document).ready(function() {	
+        $(".tablink:eq(0)").click();
+    });
+    function openTab(evt, TabName) {	
+      $(".tab_body").hide(); 
+      $(".tablink").removeClass("on");      
+      $("#"+TabName).show();
+      $(evt.target).addClass("on");
+    }
+	
+/* 아코디언 메뉴 고정 */	
+$(".acc_content li a").click(function() {
+$(this).toggleClass("active");
+});
+
+	
+/* 레이어 팝업 */	
+$('#btn-add').click(function(){
+        var $href = $(this).attr('href');
+        layer_popup($href);
+    });
+    function layer_popup(el){
+
+        var $el = $(el);		//레이어의 id를 $el 변수에 저장
+        var isDim = $el.prev().hasClass('dimBg');	//dimmed 레이어를 감지하기 위한 boolean 변수
+
+        isDim ? $('.dim-layer').fadeIn() : $el.fadeIn();
+
+        var $elWidth = ~~($el.outerWidth()),
+            $elHeight = ~~($el.outerHeight()),
+            docWidth = $(document).width(),
+            docHeight = $(document).height();
+
+        // 화면의 중앙에 레이어를 띄운다.
+        if ($elHeight < docHeight || $elWidth < docWidth) {
+            $el.css({
+                marginTop: -$elHeight /2,
+                marginLeft: -$elWidth/2
+            })
+        } else {
+            $el.css({top: 0, left: 0});
+        }
+
+        $el.find('a.btn-layerClose').click(function(){
+            isDim ? $('.dim-layer').fadeOut() : $el.fadeOut(); // 닫기 버튼을 클릭하면 레이어가 닫힌다.
+            return false;
+        });
+
+        $('.layer .dimBg').click(function(){
+            $('.dim-layer').fadeOut();
+            return false;
+        });
+
+    }	
+</script>
+

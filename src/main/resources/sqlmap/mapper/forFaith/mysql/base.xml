@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="forFaith.dev.dao.BaseDAO">
+	
+	<!-- MEMBER resultMap -->
+	<resultMap id="memberMap" 				type="forFaith.dev.vo.MemberVO">
+		<id		property="id"				column="ID" />
+		<result property="deptCode.code"	column="DEPT_CODE" />
+		<association property="photoFile" 	column="PHOTO_FILE"	javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+	</resultMap>
+	
+	<!-- CODE resultMap -->
+	<resultMap id="codeMap"					type="forFaith.dev.vo.CodeVO">
+		<id		property="code"				column="CODE" />
+		<result	property="codeGroup.id"		column="GROUP_ID" />
+		<result	property="parentCode.code"	column="PARENT_CODE" />
+		<association property="regUser" 	column="REG_USER"	jdbcType="VARCHAR"	javaType="forFaith.dev.vo.MemberVO"	select="forFaith.dev.dao.BaseDAO.memberInfo" />
+		<association property="updUser" 	column="UPD_USER"	jdbcType="VARCHAR"	javaType="forFaith.dev.vo.MemberVO"	select="forFaith.dev.dao.BaseDAO.memberInfo" />
+	</resultMap>
+	
+	<!-- 로그인 정보 조회 -->
+	<!-- <select id="actionLogin" parameterType="forFaith.dev.vo.MemberVO" resultMap="memberMap">
+		select
+			id
+			,pw
+			,name
+			,email
+			,gender
+			,birth_day
+			,post_code
+			,addr1
+			,addr2
+			,grade
+			,school_name
+			,reg_date
+		from
+			cb_member
+		where
+			id = #{id}
+	</select> -->
+	<select id="actionLogin" parameterType="forFaith.dev.vo.MemberVO" resultMap="memberMap">
+		SELECT M.ID, M.PW, M.NAME, M.LOCALE, M.SNS_CD, M.SNS_ID, M.SNS_URL, M.ACCEPT_SNS, M.ACCEPT_EMAIL, M.ACCEPT_SMS
+			 , M.TEL, M.PHONE, M.FAX, M.EMAIL, M.EMAIL_YN, M.GENDER, M.BIRTH_DAY, M.POST_CODE, M.ADDR1, M.ADDR2
+			 , M.LAST_LOGIN, M.AUTH_KEY, M.SESSION_ID, M.GRADE, M.BELONG_TO, M.PROFILE, M.PHOTO_FILE, M.PROFILE, M.DEPT_CODE
+			 , M.USE_YN, M.REG_DATE, M.UPD_DATE
+			 , G.MEM_CODE
+		FROM FF_MEMBER M
+		LEFT OUTER JOIN FF_MEMBER_GROUP G
+		ON M.ID = G.MEM_ID
+		WHERE M.ID = #{id}		
+		AND M.USE_YN = 'Y'
+	</select>
+	
+	<!-- 멤버 리스트 조회 -->
+	<select id="memberList" parameterType="forFaith.dev.vo.MemberVO" resultMap="memberMap">
+		SELECT M.ID, M.NAME, M.LOCALE, M.SNS_CD, M.SNS_ID, M.SNS_URL, M.ACCEPT_SNS, M.ACCEPT_EMAIL, M.ACCEPT_SMS
+			 , M.TEL, M.PHONE, M.FAX, M.EMAIL, M.EMAIL_YN, M.GENDER, M.BIRTH_DAY, M.POST_CODE, M.ADDR1, M.ADDR2
+			 , M.LAST_LOGIN, M.AUTH_KEY, M.SESSION_ID, M.GRADE, M.BELONG_TO, M.PHOTO_FILE, M.PROFILE, M.DEPT_CODE
+			 , M.USE_YN, M.REG_DATE, M.UPD_DATE
+			 , G.MEM_CODE
+		FROM FF_MEMBER M
+		LEFT OUTER JOIN FF_MEMBER_GROUP G
+		ON M.ID = G.MEM_ID
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+						SELECT M.ID
+						FROM FF_MEMBER M
+						LEFT OUTER JOIN FF_MEMBER_GROUP G
+						ON M.ID = G.MEM_ID
+						WHERE 1 = 1
+						<if test="loginUser != null and loginUser.grade == 1">
+							AND M.ID = #{loginUser.id}
+						</if>
+						<if test="grade > 0">
+							AND M.GRADE = #{grade}
+						</if>
+						<if test="useYn != null and useYn != ''">
+							AND M.USE_YN = #{useYn}
+						</if>
+						<if test="searchMemberCode != null and searchMemberCode != ''">
+							AND G.MEM_CODE = #{searchMemberCode}
+						</if>
+						<if test="deptCode != null and deptCode.code != ''">
+							AND M.DEPT_CODE = #{deptCode.code}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	M.ID LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	M.PHONE LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	M.EMAIL LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'name'">
+									M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'id'">
+									M.ID LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'phone'">
+									M.PHONE LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'email'">
+									M.EMAIL LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.ID DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.ID DESC
+	</select>
+	
+	<!-- 멤버 총 갯수 -->
+	<select id="memberTotalCnt" parameterType="forFaith.dev.vo.MemberVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM FF_MEMBER M
+				LEFT OUTER JOIN FF_MEMBER_GROUP G
+				ON M.ID = G.MEM_ID
+				WHERE 1 = 1
+				<if test="grade > 0">
+					AND M.GRADE = #{grade}
+				</if>
+				<if test="useYn != null and useYn != ''">
+					AND M.USE_YN = #{useYn}
+				</if>
+				<if test="searchMemberCode != null and searchMemberCode != ''">
+					AND G.MEM_CODE = #{searchMemberCode}
+				</if>
+				<if test="deptCode != null and deptCode.code != ''">
+					AND M.DEPT_CODE = #{deptCode.code}
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	M.ID LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	M.PHONE LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	M.EMAIL LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'name'">
+							M.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'id'">
+							M.ID LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'phone'">
+							M.PHONE LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'email'">
+							M.EMAIL LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select>
+	
+	<!-- 멤버 상세 정보 조회 -->
+	<select id="memberInfo" parameterType="forFaith.dev.vo.MemberVO" resultMap="memberMap">
+		SELECT M.ID, M.NAME, M.LOCALE, M.SNS_CD, M.SNS_ID, M.SNS_URL, M.ACCEPT_SNS, M.ACCEPT_EMAIL, M.ACCEPT_SMS
+			 , M.TEL, M.PHONE, M.FAX, M.EMAIL, M.EMAIL_YN, M.GENDER, M.BIRTH_DAY, M.POST_CODE, M.ADDR1, M.ADDR2
+			 , M.LAST_LOGIN, M.AUTH_KEY, M.SESSION_ID, M.GRADE, M.BELONG_TO, M.PHOTO_FILE, M.PROFILE, M.DEPT_CODE
+			 , M.USE_YN, M.REG_DATE, M.UPD_DATE
+			 , G.MEM_CODE
+		FROM FF_MEMBER M
+		LEFT OUTER JOIN FF_MEMBER_GROUP G
+		ON M.ID = G.MEM_ID
+		WHERE M.ID = #{id}
+	</select>
+	
+	<!-- 멤버 등록 -->
+	<insert id="memberReg" parameterType="forFaith.dev.vo.MemberVO">
+		INSERT INTO FF_MEMBER
+			( ID, PW, NAME, LOCALE, COURSE_CODE, SNS_CD, SNS_ID, SNS_URL, ACCEPT_SNS, ACCEPT_EMAIL, ACCEPT_SMS
+			, TEL, PHONE, FAX, EMAIL, EMAIL_YN, GENDER, BIRTH_DAY, POST_CODE, ADDR1, ADDR2, GRADE, BELONG_TO, DEPT_CODE
+			, PHOTO_FILE, PROFILE, ORDER_NUM, REG_DATE, UPD_DATE )
+		VALUES
+			( #{id}, PASSWORD(#{pw}), #{name}, #{locale}, #{courseCode.code}, #{snsCd}, #{snsId}, #{snsUrl}, #{acceptSns}, #{acceptEmail}, #{acceptSms}
+			, #{tel}, #{phone}, #{fax}, #{email}, #{emailYn}, #{gender}, #{birthDay}, #{postCode}, #{addr1}, #{addr2}, #{grade}, #{belongTo}, #{deptCode.code}
+			, #{photoFile.fileId}, #{profile}, #{orderNum}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'), DATE_FORMAT(NOW(),'%Y%m%d%H%i%s') )
+		ON DUPLICATE KEY UPDATE
+			<if test='pw != null and pw != ""'>
+			PW				= VALUES(PW),
+			</if>
+			NAME			= VALUES(NAME),
+			LOCALE			= VALUES(LOCALE),
+			COURSE_CODE		= VALUES(COURSE_CODE),
+			SNS_CD			= VALUES(SNS_CD),
+			SNS_ID			= VALUES(SNS_ID),
+			SNS_URL			= VALUES(SNS_URL),
+			ACCEPT_SNS		= VALUES(ACCEPT_SNS),
+			ACCEPT_EMAIL	= VALUES(ACCEPT_EMAIL),
+			ACCEPT_SMS		= VALUES(ACCEPT_SMS),
+			TEL				= VALUES(TEL),
+			PHONE			= VALUES(PHONE),
+			FAX				= VALUES(FAX),
+			EMAIL			= VALUES(EMAIL),
+			EMAIL_YN		= VALUES(EMAIL_YN),
+			GENDER			= VALUES(GENDER),
+			BIRTH_DAY		= VALUES(BIRTH_DAY),
+			POST_CODE		= VALUES(POST_CODE),
+			ADDR1			= VALUES(ADDR1),
+			ADDR2			= VALUES(ADDR2),
+			GRADE			= VALUES(GRADE),
+			BELONG_TO		= VALUES(BELONG_TO),
+			PHOTO_FILE		= VALUES(PHOTO_FILE),
+			PROFILE			= VALUES(PROFILE),
+			DEPT_CODE		= VALUES(DEPT_CODE),
+			ORDER_NUM		= VALUES(ORDER_NUM),
+			UPD_DATE		= VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 멤버 그룹 등록 -->
+	<update id="memberGroupReg" parameterType="forFaith.dev.vo.MemberVO">
+		INSERT INTO FF_MEMBER_GROUP
+			( MEM_ID, MEM_CODE )
+		VALUES
+			<foreach collection="memberGroupList" item="memCode" index="index" separator=" , ">
+			( #{id}, #{memCode.code} )
+			</foreach>
+	</update>
+	
+	<!-- 멤버 삭제 -->
+	<update id="memberDel" parameterType="forFaith.dev.vo.MemberVO">
+		DELETE FROM FF_MEMBER
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 멤버 그룹 삭제 -->
+	<update id="memberGroupDel" parameterType="forFaith.dev.vo.MemberVO">
+		DELETE FROM FF_MEMBER_GROUP
+		WHERE MEM_ID = #{id}
+	</update>
+	
+	<!-- 멤버 사용 여부 상태 변경 -->
+	<update id="memberUseChange" parameterType="list">
+		UPDATE FF_MEMBER
+		SET USE_YN = IF(USE_YN = 'N', 'Y', 'N')
+		  , UPD_USER = #{list[0].updUser.id}
+		  , UPD_DATE = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		WHERE ID IN ( <foreach collection="list" item="member" index="index" separator=" , ">#{member.id}</foreach> )
+	</update>
+	
+	<!-- 멤버 ID 중복 체크 -->
+	<select id="memberIdCheck" parameterType="forFaith.dev.vo.MemberVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM FF_MEMBER
+		WHERE ID = #{id}
+	</select>
+	
+	<!-- 멤버 로그인 업데이트 -->
+	<update id="memberLoginUpd" parameterType="forFaith.dev.vo.MemberVO">
+		UPDATE FF_MEMBER
+		SET LAST_LOGIN = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		  , IP_ADDRESS = #{ipAddress}
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 멤버 로그인 히스토리 저장 -->
+	<insert id="memberLoginHistory" parameterType="forFaith.dev.vo.MemberVO">
+		INSERT INTO FF_LOGIN_HISTORY
+			( MEMBER_ID, IP_ADDRESS, LOGIN_DATE )
+		VALUES
+			( #{id}, #{ipAddress}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s') )
+	</insert>
+	
+	<!-- 코드 분류 그룹 리스트 조회 -->
+	<select id="codeGroupList" parameterType="forFaith.dev.vo.CodeGroupVO" resultType="forFaith.dev.vo.CodeGroupVO">
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.header"/>
+	  	</if>
+		SELECT ID, NAME, COMMENT
+			 , ORDER_NUM, USE_YN, REG_DATE, UPD_DATE
+		FROM FF_CODE_GROUP
+		WHERE 1 = 1
+		<if test="useYn != null and useYn != ''">
+			AND USE_YN = #{useYn}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(	NAME LIKE CONCAT('%',#{searchKeyword},'%')
+					OR	COMMENT LIKE CONCAT('%',#{searchKeyword},'%') )
+				</when>
+				<when test="searchCondition == 'name'">
+					NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'comment'">
+					COMMENT LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		ORDER BY ORDER_NUM
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if>
+	</select>
+	
+	<!-- 코드 분류 그룹 리스트 총 갯수 -->
+	<select id="codeGroupTotalCnt" parameterType="forFaith.dev.vo.CodeGroupVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM FF_CODE_GROUP
+		WHERE 1 = 1
+		<if test="useYn != null and useYn != ''">
+			AND USE_YN = #{useYn}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(	NAME LIKE CONCAT('%',#{searchKeyword},'%')
+					OR	COMMENT LIKE CONCAT('%',#{searchKeyword},'%') )
+				</when>
+				<when test="searchCondition == 'name'">
+					NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'comment'">
+					COMMENT LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	<!-- 코드 분류 그룹 정보 조회 -->
+	<select id="codeGroupInfo"	parameterType="forFaith.dev.vo.CodeGroupVO"	resultType="forFaith.dev.vo.CodeGroupVO">
+		SELECT ID, NAME, COMMENT
+			 , ORDER_NUM, USE_YN, REG_DATE, UPD_DATE
+		FROM FF_CODE_GROUP
+		WHERE ID = #{id}
+	</select>
+	
+	<!-- 코드 분류 그룹 등록 -->
+	<insert id="codeGroupReg" parameterType="forFaith.dev.vo.CodeGroupVO">
+		INSERT INTO FF_CODE_GROUP
+			( ID, NAME, COMMENT
+			, ORDER_NUM, REG_USER, REG_DATE, UPD_USER, UPD_DATE )
+		VALUES
+			( #{id}, #{name}, #{comment}
+			, #{orderNum}, #{regUser.id}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'), #{updUser.id}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s') )
+		ON DUPLICATE KEY UPDATE
+			ID				= VALUES(ID),
+			NAME			= VALUES(NAME),
+			COMMENT			= VALUES(COMMENT),
+			ORDER_NUM		= VALUES(ORDER_NUM),
+			UPD_USER		= VALUES(UPD_USER),
+			UPD_DATE		= VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 코드 분류 그룹 삭제 -->
+	<update id="codeGroupDel" parameterType="forFaith.dev.vo.CodeGroupVO">
+		DELETE FROM FF_CODE_GROUP
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 코드 리스트 조회 -->
+	<select id="codeList" parameterType="forFaith.dev.vo.CodeVO" resultMap="codeMap">
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.header"/>
+	  	</if>
+		SELECT CODE, GROUP_ID, DEPTH, PARENT_CODE, NAME, INPUT_TYPE, BG_COLOR
+			 , ORDER_NUM, USE_YN, REG_DATE, UPD_DATE
+		FROM FF_CODE
+		WHERE GROUP_ID = #{codeGroup.id}
+		<if test="useYn != null and useYn != ''">
+			AND USE_YN = #{useYn}
+		</if>
+		<choose>
+			<when test="parentCode != null and parentCode.code != ''">
+				AND PARENT_CODE = #{parentCode.code}
+				AND DEPTH != 1
+			</when>
+			<otherwise>
+				AND DEPTH = 1
+			</otherwise>
+		</choose>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'name'">
+					NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		ORDER BY ORDER_NUM
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if>
+	</select>
+	
+	<!-- 대중소분류카테고리 조회리스트 -->
+	<select id="cateCodeList" resultType="forFaith.dev.vo.CodeVO">
+		SELECT CODE, GROUP_ID, DEPTH, PARENT_CODE parentcode, NAME, INPUT_TYPE, BG_COLOR
+			 , ORDER_NUM, USE_YN, REG_DATE, UPD_DATE
+		FROM FF_CODE
+		WHERE GROUP_ID = 'categorysequence'
+		ORDER BY DEPTH
+	</select>
+	
+	<!-- 코드 리스트 총 갯수 -->
+	<select id="codeTotalCnt" parameterType="forFaith.dev.vo.CodeVO" resultType="int">
+		SELECT COUNT(CODE)
+		FROM FF_CODE
+		WHERE GROUP_ID = #{codeGroup.id}
+		<if test="useYn != null and useYn != ''">
+			AND USE_YN = #{useYn}
+		</if>
+		<choose>
+			<when test="parentCode != null and parentCode.code != ''">
+				AND PARENT_CODE = #{parentCode.code}
+				AND DEPTH != 1
+			</when>
+			<otherwise>
+				AND DEPTH = 1
+			</otherwise>
+		</choose>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'name'">
+					NAME LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	<!-- 코드 기본 정보 조회 -->
+	<select id="codeInfo"	parameterType="forFaith.dev.vo.CodeVO"	resultMap="codeMap">
+		SELECT CODE, GROUP_ID, DEPTH, PARENT_CODE, NAME, INPUT_TYPE, BG_COLOR
+			 , ORDER_NUM, USE_YN, REG_DATE, UPD_DATE
+		FROM FF_CODE
+		WHERE CODE = #{code}
+	</select>
+	<select id="codeInfoByString"	parameterType="string"	resultMap="codeMap">
+		SELECT CODE, GROUP_ID, DEPTH, PARENT_CODE, NAME, INPUT_TYPE, BG_COLOR
+			 , ORDER_NUM, USE_YN, REG_DATE, UPD_DATE
+		FROM FF_CODE
+		WHERE CODE = #{searchCode}
+	</select>
+	<!-- 코드 등록 -->
+	<insert id="codeReg" parameterType="forFaith.dev.vo.CodeVO">
+		INSERT INTO FF_CODE
+			( CODE, GROUP_ID, DEPTH, PARENT_CODE, NAME, INPUT_TYPE, BG_COLOR
+			, ORDER_NUM, REG_USER, REG_DATE, UPD_USER, UPD_DATE )
+		VALUES
+			( #{code}, #{codeGroup.id}, #{depth}, #{parentCode.code}, #{name}, #{inputType}, #{bgColor}
+			, #{orderNum}, #{regUser.id}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'), #{updUser.id}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s') )
+		ON DUPLICATE KEY UPDATE
+			CODE			= VALUES(CODE),
+			GROUP_ID		= VALUES(GROUP_ID),
+			DEPTH			= VALUES(DEPTH),
+			PARENT_CODE		= VALUES(PARENT_CODE),
+			NAME			= VALUES(NAME),
+			INPUT_TYPE		= VALUES(INPUT_TYPE),
+			BG_COLOR		= VALUES(BG_COLOR),
+			ORDER_NUM		= VALUES(ORDER_NUM),
+			UPD_USER		= VALUES(UPD_USER),
+			UPD_DATE		= VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 대중소 코드 등록시 사용되는 시퀀스 생성 -->
+	<insert id="makeCategorySequence">
+		INSERT INTO CB_CATEGORYSEQ VALUES ()
+	</insert>
+	<!-- 대중소 코드 등록시 사용되는 시퀀스 검색 -->
+	<select id="selectCategorySequence" resultType="string">
+		SELECT LAST_INSERT_ID()
+	</select>
+	
+	<update id="codeYnUpt" parameterType="hashmap">
+		UPDATE FF_CODE SET
+		USE_YN=#{yn}
+		WHERE
+			CODE=#{code} OR CODE IN (SELECT * FROM (SELECT CODE FROM FF_CODE WHERE PARENT_CODE = #{code}) CODE_GROUP)
+	</update>
+	
+	<!-- 코드 삭제 -->
+	<update id="codeDel" parameterType="forFaith.dev.vo.CodeVO">
+		DELETE FROM FF_CODE
+		WHERE CODE = #{code}
+	</update>
+	
+	<!-- 코드 사용 여부 상태 변경 -->
+	<update id="codeUseChange" parameterType="list">
+		UPDATE FF_CODE
+		SET USE_YN = IF(USE_YN = 'N', 'Y', 'N')
+		  , UPD_USER = #{list[0].updUser.id}
+		  , UPD_DATE = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		WHERE CODE IN ( <foreach collection="list" item="code" index="index" separator=" , ">#{code.code}</foreach> )
+	</update>
+</mapper>

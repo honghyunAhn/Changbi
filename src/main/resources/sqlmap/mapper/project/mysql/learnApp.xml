@@ -1,0 +1,2455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.changbi.tt.dev.data.dao.LearnAppDAO">
+	
+	<!-- 교재 resultMap -->
+<!--  	<resultMap id="learnAppMap" 			type="LearnAppVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<result property="recommend.id"		column="RECOMM_ID" />
+		<association property="region"		column="REGION_CODE"	javaType="forFaith.dev.vo.CodeVO"		select="forFaith.dev.dao.BaseDAO.codeInfo"  />
+		<association property="user"		javaType="UserVO">
+			<result	property="id"			column="USER_ID" />
+			<result property="name"			column="USER_NAME" />
+			<result property="grade"		column="USER_GRADE" />
+			<result property="position"		column="POSITION" />
+			<result property="positionEtc"	column="POSITION_ETC" />
+			<result property="appYear"		column="APP_YEAR" />
+			<result property="subject"		column="SUBJECT" />
+			<result property="phone"		column="PHONE" />
+			<result property="email"		column="EMAIL" />
+			<result property="postCode"		column="POST_CODE" />
+			<result property="addr1"		column="ADDR1" />
+			<result property="addr2"		column="ADDR2" />
+			<result property="schoolTel"	column="SCHOOL_TEL" />
+			<result property="schoolFax"	column="SCHOOL_FAX" />
+			<result property="schoolPostCode"	column="SCHOOL_POST_CODE" />
+			<result property="schoolAddr1"	column="SCHOOL_ADDR1" />
+			<result property="schoolAddr2"	column="SCHOOL_ADDR2" />
+		</association>
+		<association property="cardinal"	javaType="CardinalVO">
+			<result	property="id"			column="CARDINAL_ID" />
+			<result property="name"			column="CARDINAL_NAME" />
+			<result property="learnType"	column="LEARN_TYPE" />
+			<result property="learnStartDate"	column="LEARN_START_DATE" />
+			<result property="learnEndDate"	column="LEARN_END_DATE" />
+		</association>
+		<association property="course"		javaType="CourseVO">
+			<result	property="id"			column="COURSE_ID" />
+			<result property="name"			column="COURSE_NAME" />
+			<result property="credit"		column="CREDIT" />
+			<result property="price"		column="COURSE_PRICE" />
+			<result property="mainBook.id"	column="MAIN_TB_ID" />
+			<result property="mainPrice"	column="MAIN_PRICE" />
+			<result property="subBook.id"	column="SUB_TB_ID" />
+		</association>
+		<association property="groupLearn"	javaType="GroupLearnVO">
+			<result	property="id"			column="GROUP_ID" />
+			<result property="name"			column="GROUP_NAME" />
+		</association>
+	</resultMap> -->
+	
+	<!-- 챕터 resultMap -->
+	<resultMap id="chapterMap" 				type="ChapterVO"		autoMapping="true">
+		<id		property="id"				column="ID" />
+		<collection property="attLecList"	ofType="AttLecVO"		javaType="list">
+			<result	property="id"			column="ATT_LEC_ID" />
+			<result property="chasi"		column="CHASI" />
+			<result property="study"		column="STUDY" />
+			<result property="chk"			column="CHK" />
+			<result property="learnTime"	column="LEARN_TIME" />
+			<result property="progYn"		column="PROG_YN" />
+			<result property="user.id"		column="USER_ID" />
+			<collection property="historyList"	ofType="AttLecHistoryVO"	javaType="list">
+				<result property="id"			column="HISTORY_ID" />
+				<result property="startDate"	column="START_DATE" />
+				<result property="endDate"		column="END_DATE" />
+			</collection>
+		</collection>
+		<collection property="subChapList" ofType="forFaith.dev.vo.SubChapVO"	javaType="list">
+			<result	property="seq"			column="SEQ" />
+			<result	property="chap_id"			column="CHAP_ID" />
+			<result	property="occ_num"			column="OCC_NUM" />
+			<result	property="name"			column="NAME" />
+			<result	property="filepath"			column="FILEPATH" />
+			<result	property="depth"			column="DEPTH" />
+			<result	property="order"			column="ORDER_NUM" />
+			<result	property="content_type"			column="CONTENT_TYPE" />
+		</collection>
+	</resultMap>
+	
+	<!-- 수강이력 resultMap -->
+	<resultMap id="attLecMap"				type="AttLecVO"			autoMapping="true">
+		<id		property="id"				column="ID" />
+		<result	property="learnApp.id"		column="LEARN_APP_ID" />
+		<result	property="user.id"			column="USER_ID" />
+		<result	property="cardinal.id"		column="CARDINAL_ID" />
+		<result	property="course.id"		column="COURSE_ID" />
+		<result	property="chapter.id"		column="CHAPTER" />
+		<collection property="historyList"	ofType="AttLecHistoryVO"	javaType="list">
+			<result property="id"			column="HISTORY_ID" />
+			<result property="startDate"	column="START_DATE" />
+			<result property="endDate"		column="END_DATE" />
+		</collection>
+	</resultMap>
+	
+	<!-- 수강변경 resultMap -->
+	<resultMap id="learnChangeMap" 			type="LearnChangeVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<result	property="learnApp.id"		column="LEARN_APP_ID" />
+		<association property="user"		javaType="UserVO">
+			<result	property="id"			column="USER_ID" />
+			<result property="name"			column="USER_NAME" />
+			<result property="tel"			column="TEL" />
+			<result property="phone"		column="PHONE" />
+			<result property="email"		column="EMAIL" />
+		</association>
+		<association property="cardinal"	javaType="CardinalVO">
+			<result	property="id"			column="CARDINAL_ID" />
+			<result property="name"			column="CARDINAL_NAME" />
+		</association>
+		<association property="oldCourse"	javaType="CourseVO">
+			<result	property="id"			column="OLD_COURSE_ID" />
+			<result property="name"			column="OLD_COURSE_NAME" />
+		</association>
+		<association property="newCourse"	javaType="CourseVO">
+			<result	property="id"			column="NEW_COURSE_ID" />
+			<result property="name"			column="NEW_COURSE_NAME" />
+		</association>
+	</resultMap>
+	
+	<!-- 수강연기 resultMap -->
+	<resultMap id="learnDelayMap" 			type="LearnDelayVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<association property="user"		javaType="UserVO">
+			<result	property="id"			column="USER_ID" />
+			<result property="name"			column="USER_NAME" />
+			<result property="tel"			column="TEL" />
+			<result property="phone"		column="PHONE" />
+			<result property="email"		column="EMAIL" />
+		</association>
+		<association property="learnApp"	javaType="LearnAppVO">
+			<result	property="id"			column="LEARN_APP_ID" />
+			<association property="course"	javaType="CourseVO">
+				<result	property="id"		column="COURSE_ID" />
+				<result property="name"		column="COURSE_NAME" />
+			</association>
+		</association>
+		<association property="oldCardinal"	javaType="CardinalVO">
+			<result	property="id"		column="OLD_CARDINAL_ID" />
+			<result property="name"		column="OLD_CARDINAL_NAME" />
+		</association>
+		<association property="newCardinal"	javaType="CardinalVO">
+			<result	property="id"		column="NEW_CARDINAL_ID" />
+			<result property="name"		column="NEW_CARDINAL_NAME" />
+		</association>
+	</resultMap>
+	
+	<resultMap id="eduUserRefundMap" type="EduUserRefundVO" autoMapping="true">
+		<id property="pay_refund_seq" column="PAY_REFUND_SEQ"/>
+		<result property="pay_refund_status" column="PAY_REFUND_STATUS"/>
+		<result property="pay_refund_reqdt" column="PAY_REFUND_REQDT"/>
+		<result property="pay_refund_comdt" column="PAY_REFUND_COMDT"/>
+		<result property="pay_refund_accname" column="PAY_REFUND_ACCNAME"/>
+		<result property="pay_refund_accnum" column="PAY_REFUND_ACCNUM"/>
+		<result property="pay_refund_reason" column="PAY_REFUND_REASON"/>
+		<result property="pay_refund_memo" column="PAY_REFUND_MEMO"/>
+		<result property="pay_refund_bank" column="PAY_REFUND_BANK"/>
+		<result property="pay_user_seq" column="PAY_USER_SEQ"/>
+		<result property="real_pay_amount" column="REAL_PAY_AMOUNT"/>
+	</resultMap>
+	
+	<resultMap id="eduUserPayMap" type="EduUserPayVO" autoMapping="true">
+		<id property="pay_user_seq" column="PAY_USER_SEQ" />
+		<result property="course_id" column="COURSE_ID"/>
+		<result property="cardinal_id" column="CARDINAL_ID"/>
+		<result property="pay_crc_seq" column="PAY_CRC_SEQ" />
+		<result property="pay_user_method" column="PAY_USER_METHOD"/>
+		<result property="pay_user_status" column="PAY_USER_STATUS"/>
+		<result property="pay_user_id" column="PAY_USER_ID"/>
+		<result property="pay_accnum" column="PAY_ACCNUM" />
+		<result property="pay_bankname" column="PAY_BANKNAME" />
+		<result property="pay_tid" column="PAY_TID" />
+		<result property="pay_product_name" column="PAY_PRODUCT_NAME" />
+		<result property="pay_rtn_data" column="PAY_RTN_DATA" />
+		<result property="pay_ins_dt" column="PAY_INS_DT" />
+		<result property="pay_gb" column="PAY_GB" />
+		<result property="real_pay_amount" column="REAL_PAY_AMOUNT" />
+		<result property="dis_point" column="DIS_POINT" />
+		<result property="pay_crc_amount" column="PAY_CRC_AMOUNT"/>
+	</resultMap>
+	
+	<!-- 수강취소 resultMap -->
+<!-- 	<resultMap id="learnCancelMap" 			type="LearnCancelVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<association property="user"		javaType="UserVO">
+			<result	property="id"			column="USER_ID" />
+			<result property="name"			column="USER_NAME" />
+			<result property="tel"			column="TEL" />
+			<result property="phone"		column="PHONE" />
+			<result property="email"		column="EMAIL" />
+		</association>
+		<association property="learnApp"	javaType="LearnAppVO">
+			<result	property="id"			column="LEARN_APP_ID" />
+			<association property="cardinal"	javaType="CardinalVO">
+				<result	property="id"		column="CARDINAL_ID" />
+				<result property="name"		column="CARDINAL_NAME" />
+			</association>
+			<association property="course"	javaType="CourseVO">
+				<result	property="id"		column="COURSE_ID" />
+				<result property="name"		column="COURSE_NAME" />
+			</association>
+		</association>
+	</resultMap>
+ -->
+	<!-- 연수신청 리스트 조회 -->
+<!--  	<select id="learnAppList" parameterType="LearnAppVO" resultMap="learnAppMap">
+		SELECT M.ID, M.USER_ID, M.GROUP_ID, M.CARDINAL_ID, M.COURSE_ID, M.NEIS_NUM, M.DES_NUM, M.SCHOOL_NAME
+			 , M.TEL, M.PHONE, M.EMAIL, M.REGION_CODE, M.JURISDICTION, M.S_TYPE, M.E_TYPE, M.POST_TYPE, M.ORDER_IDX
+			 , M.PAYMENT_TYPE, M.PAYMENT_STATE, M.PAYMENT_DATE, M.APP_NUM
+			 , M.DIS_COUPON, M.DIS_POINT, M.DIS_GROUP, M.PAYMENT, M.REAL_PAYMENT, M.REAL_END_DATE
+			 , M.REQ_TYPE, M.REQ_MEMO, M.REQ_DATE, M.PART_SCORE, M.TOTAL_SCORE, M.ISSUE_DATE, M.ISSUE_NUM, M.RECOMM_ID
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , A.NAME AS USER_NAME, A.GRADE AS USER_GRADE, A.POSITION, A.POSITION_ETC, A.APP_YEAR, A.SUBJECT, A.PHONE, A.EMAIL
+			 , A.POST_CODE, A.ADDR1, A.ADDR2, A.SCHOOL_TEL, A.SCHOOL_FAX, A.SCHOOL_POST_CODE, A.SCHOOL_ADDR1, A.SCHOOL_ADDR2
+			 , B.NAME AS CARDINAL_NAME, B.LEARN_TYPE, B.LEARN_START_DATE, B.LEARN_END_DATE
+			 , C.NAME AS COURSE_NAME, C.CREDIT, C.PRICE AS COURSE_PRICE, C.MAIN_TB_ID, C.MAIN_PRICE, C.SUB_TB_ID, C.CHAPTER_CNT
+			 , IFNULL(D.TOTAL_PERSON, 0) AS TOTAL_PERSON, E.NAME AS GROUP_NAME
+			 , IFNULL(F.PROG_CNT, 0) AS PROG_CNT, IFNULL(F.LEARN_TIME, 0) AS LEARN_TIME, IFNULL(F.ACC_CNT, 0) AS ACC_CNT
+			 , IFNULL(G.OBJ_CNT, 0) AS OBJ_CNT, IFNULL(G.SUB_CNT, 0) AS SUB_CNT
+			 , IFNULL(G.ATT_SCORE, 0) AS ATT_SCORE, IFNULL(G.OBJ_SCORE, 0) AS OBJ_SCORE, IFNULL(G.SUB_SCORE, 0) AS SUB_SCORE
+			 , IFNULL(H.BOARD_CNT, 0) AS BOARD_CNT, IFNULL(I.COMMENT_CNT, 0) AS COMMENT_CNT
+		FROM CB_LEARN_APP M
+		INNER JOIN CB_MEMBER A
+		ON M.USER_ID = A.ID
+		INNER JOIN CB_CARDINAL B
+		ON M.CARDINAL_ID = B.ID
+		INNER JOIN ( SELECT A.ID, A.NAME, A.CREDIT, A.PRICE, A.MAIN_TB_ID, A.MAIN_PRICE, A.SUB_TB_ID, COUNT(B.ID) AS CHAPTER_CNT
+					 FROM CB_COURSE A
+					 LEFT OUTER JOIN CB_CHAPTER B
+					 ON A.ID = B.COURSE_ID
+					 <if test="loginUser != null and loginUser.grade == 1">
+					 INNER JOIN ( SELECT B.COURSE_ID
+								  FROM FF_MEMBER A
+								  INNER JOIN CB_MAN_COURSE B
+								  ON A.ID = B.MAN_ID
+								  WHERE A.ID = #{loginUser.id} ) C
+					 ON A.ID = C.COURSE_ID
+					 </if>
+					 GROUP BY A.ID ) C
+		ON M.COURSE_ID = C.ID
+		LEFT OUTER JOIN ( SELECT CARDINAL_ID, COURSE_ID, COUNT(ID) AS TOTAL_PERSON
+					 	  FROM CB_LEARN_APP
+					 	  WHERE PAYMENT_STATE = '2'
+					 	  AND ( REQ_TYPE IS NULL OR REQ_TYPE NOT IN ('3','4') )
+					 	  GROUP BY CARDINAL_ID, COURSE_ID ) D
+		ON M.CARDINAL_ID = D.CARDINAL_ID
+		AND M.COURSE_ID = D.COURSE_ID
+		LEFT OUTER JOIN CB_GROUP_LEARN E
+		ON M.GROUP_ID = E.ID
+		LEFT OUTER JOIN ( SELECT A.LEARN_APP_ID, A.PROG_CNT, A.LEARN_TIME, B.ACC_CNT
+		                  FROM ( SELECT LEARN_APP_ID
+		                              , SUM(IF(PROG_YN = 'Y', 1, 0)) AS PROG_CNT
+		                              , SUM(LEARN_TIME) AS LEARN_TIME
+		                         FROM CB_ATT_LEC
+		                         GROUP BY LEARN_APP_ID ) A
+		                  INNER JOIN ( SELECT LEARN_APP_ID, COUNT(ID) AS ACC_CNT
+		                               FROM CB_ATT_LEC_HISTORY
+		                               GROUP BY LEARN_APP_ID ) B
+		                  ON A.LEARN_APP_ID = B.LEARN_APP_ID ) F
+		ON M.ID = F.LEARN_APP_ID
+		LEFT OUTER JOIN (  SELECT LEARN_APP_ID
+							    , SUM(IF(QUIZ_TYPE = '2', 1, 0)) AS OBJ_CNT
+							    , SUM(IF(QUIZ_TYPE = '3', 1, 0)) AS SUB_CNT
+							    , SUM(IF(QUIZ_TYPE = '1', SCORE, 0)) AS ATT_SCORE
+							    , SUM(IF(QUIZ_TYPE = '2', SCORE, 0)) AS OBJ_SCORE
+							    , SUM(IF(QUIZ_TYPE = '3', SCORE, 0)) AS SUB_SCORE
+							FROM CB_REPORT 
+							GROUP BY LEARN_APP_ID ) G
+		ON M.ID = G.LEARN_APP_ID
+		LEFT OUTER JOIN ( SELECT CARDINAL_ID, USER_ID, COUNT(ID) AS BOARD_CNT
+						  FROM CB_BOARD
+						  WHERE CARDINAL_ID IS NOT NULL
+						  AND CARDINAL_ID != ''
+						  AND USER_ID IS NOT NULL
+						  AND USER_ID != ''
+						  GROUP BY CARDINAL_ID, USER_ID ) H
+		ON M.CARDINAL_ID = H.CARDINAL_ID
+		AND M.USER_ID = H.USER_ID
+		LEFT OUTER JOIN ( SELECT A.CARDINAL_ID, B.USER_ID, COMMENT_CNT
+						  FROM CB_BOARD A
+						  INNER JOIN ( SELECT BOARD_ID, USER_ID, COUNT(ID) AS COMMENT_CNT
+							           FROM CB_BOARD_COMMENT
+							           WHERE USER_ID IS NOT NULL
+							           AND USER_ID != ''
+							           GROUP BY BOARD_ID, USER_ID ) B
+						  ON A.ID = B.BOARD_ID
+						  WHERE A.CARDINAL_ID IS NOT NULL
+						  AND A.CARDINAL_ID != '' ) I
+		ON M.CARDINAL_ID = I.CARDINAL_ID
+		AND M.USER_ID = I.USER_ID
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+	  					SELECT M.ID
+						FROM CB_LEARN_APP M
+						INNER JOIN CB_MEMBER A
+						ON M.USER_ID = A.ID
+						INNER JOIN CB_CARDINAL B
+						ON M.CARDINAL_ID = B.ID
+						INNER JOIN CB_COURSE C
+						ON M.COURSE_ID = C.ID
+						<if test="loginUser != null and loginUser.grade == 1">
+						INNER JOIN ( SELECT B.COURSE_ID
+									 FROM FF_MEMBER A
+									 INNER JOIN CB_MAN_COURSE B
+									 ON A.ID = B.MAN_ID
+									 WHERE A.ID = #{loginUser.id} ) D
+						ON C.ID = D.COURSE_ID
+						</if>
+						WHERE M.USE_YN = 'Y'
+						<choose>
+							<when test='groupLearnYn != null and groupLearnYn == "Y"'>
+								AND M.GROUP_ID IS NOT NULL
+								AND M.GROUP_ID > 0
+							</when>
+							<otherwise>
+								AND ( M.GROUP_ID IS NULL OR M.GROUP_ID = 0 )
+							</otherwise>
+						</choose>
+						<if test="groupLearn != null and groupLearn.id != null and groupLearn.id > 0">
+							AND M.GROUP_ID = #{groupLearn.id}
+						</if>
+						<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+							AND M.CARDINAL_ID = #{cardinal.id}
+						</if>
+						<if test="course != null and course.id != null and course.id != ''">
+							AND M.COURSE_ID = #{course.id}
+						</if>
+						<if test="region != null and region.code != ''">
+							AND M.REGION_CODE = #{region.code}
+						</if>
+						<if test="paymentState != null and paymentState != ''">
+							AND M.PAYMENT_STATE = #{paymentState}
+						</if>
+						<if test="searchStartDate != null and searchStartDate != '' and searchEndDate != null and searchEndDate != ''">
+							AND M.REG_DATE BETWEEN #{searchStartDate} AND #{searchEndDate}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	A.ID LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	A.NAME LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'id'">
+									A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'name'">
+									A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.ID DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.ID DESC
+	</select> -->
+	
+	<!-- 연수신청 총 갯수 -->
+<!--  	<select id="learnAppTotalCnt" parameterType="LearnAppVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_LEARN_APP M
+				INNER JOIN CB_MEMBER A
+				ON M.USER_ID = A.ID
+				INNER JOIN CB_CARDINAL B
+				ON M.CARDINAL_ID = B.ID
+				INNER JOIN CB_COURSE C
+				ON M.COURSE_ID = C.ID
+				<if test="loginUser != null and loginUser.grade == 1">
+				INNER JOIN ( SELECT B.COURSE_ID
+							 FROM FF_MEMBER A
+							 INNER JOIN CB_MAN_COURSE B
+							 ON A.ID = B.MAN_ID
+							 WHERE A.ID = #{loginUser.id} ) D
+				ON C.ID = D.COURSE_ID
+				</if>
+				WHERE M.USE_YN = 'Y'
+				<choose>
+					<when test='groupLearnYn != null and groupLearnYn == "Y"'>
+						AND M.GROUP_ID IS NOT NULL
+						AND M.GROUP_ID > 0
+					</when>
+					<otherwise>
+						AND ( M.GROUP_ID IS NULL OR M.GROUP_ID = 0 )
+					</otherwise>
+				</choose>
+				<if test="groupLearn != null and groupLearn.id != null and groupLearn.id > 0">
+					AND M.GROUP_ID = #{groupLearn.id}
+				</if>
+				<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+					AND M.CARDINAL_ID = #{cardinal.id}
+				</if>
+				<if test="course != null and course.id != null and course.id != ''">
+					AND M.COURSE_ID = #{course.id}
+				</if>
+				<if test="region != null and region.code != ''">
+					AND M.REGION_CODE = #{region.code}
+				</if>
+				<if test="paymentState != null and paymentState != ''">
+					AND M.PAYMENT_STATE = #{paymentState}
+				</if>
+				<if test="searchStartDate != null and searchStartDate != '' and searchEndDate != null and searchEndDate != ''">
+					AND M.REG_DATE BETWEEN #{searchStartDate} AND #{searchEndDate}
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	A.ID LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	A.NAME LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'id'">
+							A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'name'">
+							A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select> -->
+	
+	<!-- 연수신청 상세 정보 조회 -->
+<!-- 	<select id="learnAppInfo" parameterType="LearnAppVO" resultMap="learnAppMap">
+		SELECT M.ID, M.USER_ID, M.GROUP_ID, M.CARDINAL_ID, M.COURSE_ID, M.NEIS_NUM, M.DES_NUM, M.SCHOOL_NAME
+			 , M.TEL, M.PHONE, M.EMAIL, M.REGION_CODE, M.JURISDICTION, M.S_TYPE, M.E_TYPE, M.POST_TYPE, M.ORDER_IDX
+			 , M.PAYMENT_TYPE, M.PAYMENT_STATE, M.PAYMENT_DATE, M.APP_NUM
+			 , M.DIS_COUPON, M.DIS_POINT, M.DIS_GROUP, M.PAYMENT, M.REAL_PAYMENT, M.REAL_END_DATE
+			 , M.REQ_TYPE, M.REQ_MEMO, M.REQ_DATE, M.PART_SCORE, M.TOTAL_SCORE, M.ISSUE_DATE, M.ISSUE_NUM, M.RECOMM_ID
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , A.NAME AS USER_NAME, A.GRADE AS USER_GRADE, A.POSITION, A.POSITION_ETC, A.APP_YEAR, A.SUBJECT
+			 , A.POST_CODE, A.ADDR1, A.ADDR2, A.SCHOOL_TEL, A.SCHOOL_FAX, A.SCHOOL_POST_CODE, A.SCHOOL_ADDR1, A.SCHOOL_ADDR2
+			 , B.NAME AS CARDINAL_NAME, B.LEARN_TYPE, B.LEARN_START_DATE, B.LEARN_END_DATE
+			 , C.NAME AS COURSE_NAME, C.CREDIT, C.PRICE AS COURSE_PRICE, C.MAIN_TB_ID, C.MAIN_PRICE, C.SUB_TB_ID, C.CHAPTER_CNT
+			 , IFNULL(D.TOTAL_PERSON, 0) AS TOTAL_PERSON, E.NAME AS GROUP_NAME
+			 , IFNULL(F.PROG_CNT, 0) AS PROG_CNT, IFNULL(F.LEARN_TIME, 0) AS LEARN_TIME, IFNULL(F.ACC_CNT, 0) AS ACC_CNT
+			 , IFNULL(G.OBJ_CNT, 0) AS OBJ_CNT, IFNULL(G.SUB_CNT, 0) AS SUB_CNT
+			 , IFNULL(G.ATT_SCORE, 0) AS ATT_SCORE, IFNULL(G.OBJ_SCORE, 0) AS OBJ_SCORE, IFNULL(G.SUB_SCORE, 0) AS SUB_SCORE
+			 , IFNULL(H.BOARD_CNT, 0) AS BOARD_CNT, IFNULL(I.COMMENT_CNT, 0) AS COMMENT_CNT
+		FROM CB_LEARN_APP M
+		INNER JOIN CB_MEMBER A
+		ON M.USER_ID = A.ID
+		INNER JOIN CB_CARDINAL B
+		ON M.CARDINAL_ID = B.ID
+		INNER JOIN ( SELECT A.ID, A.NAME, A.CREDIT, A.PRICE, A.MAIN_TB_ID, A.MAIN_PRICE, A.SUB_TB_ID, COUNT(B.ID) AS CHAPTER_CNT
+					 FROM CB_COURSE A
+					 LEFT OUTER JOIN CB_CHAPTER B
+					 ON A.ID = B.COURSE_ID
+					 GROUP BY A.ID ) C
+		ON M.COURSE_ID = C.ID
+		LEFT OUTER JOIN ( SELECT CARDINAL_ID, COURSE_ID, COUNT(ID) AS TOTAL_PERSON
+					 	  FROM CB_LEARN_APP
+					 	  WHERE PAYMENT_STATE = '2'
+					 	  AND ( REQ_TYPE IS NULL OR REQ_TYPE NOT IN ('3','4') )
+					 	  GROUP BY CARDINAL_ID, COURSE_ID ) D
+		ON M.CARDINAL_ID = D.CARDINAL_ID
+		AND M.COURSE_ID = D.COURSE_ID
+		LEFT OUTER JOIN CB_GROUP_LEARN E
+		ON M.GROUP_ID = E.ID
+		LEFT OUTER JOIN ( SELECT A.LEARN_APP_ID, A.PROG_CNT, A.LEARN_TIME, B.ACC_CNT
+		                  FROM ( SELECT LEARN_APP_ID
+		                              , SUM(IF(PROG_YN = 'Y', 1, 0)) AS PROG_CNT
+		                              , SUM(LEARN_TIME) AS LEARN_TIME
+		                         FROM CB_ATT_LEC
+		                         GROUP BY LEARN_APP_ID ) A
+		                  INNER JOIN ( SELECT LEARN_APP_ID, COUNT(ID) AS ACC_CNT
+		                               FROM CB_ATT_LEC_HISTORY
+		                               GROUP BY LEARN_APP_ID ) B
+		                  ON A.LEARN_APP_ID = B.LEARN_APP_ID ) F
+		ON M.ID = F.LEARN_APP_ID
+		LEFT OUTER JOIN (  SELECT LEARN_APP_ID
+							    , SUM(IF(QUIZ_TYPE = '2', 1, 0)) AS OBJ_CNT
+							    , SUM(IF(QUIZ_TYPE = '3', 1, 0)) AS SUB_CNT
+							    , SUM(IF(QUIZ_TYPE = '1', SCORE, 0)) AS ATT_SCORE
+							    , SUM(IF(QUIZ_TYPE = '2', SCORE, 0)) AS OBJ_SCORE
+							    , SUM(IF(QUIZ_TYPE = '3', SCORE, 0)) AS SUB_SCORE
+							FROM CB_REPORT 
+							GROUP BY LEARN_APP_ID ) G
+		ON M.ID = G.LEARN_APP_ID
+		LEFT OUTER JOIN ( SELECT CARDINAL_ID, USER_ID, COUNT(ID) AS BOARD_CNT
+						  FROM CB_BOARD
+						  WHERE CARDINAL_ID IS NOT NULL
+						  AND CARDINAL_ID != ''
+						  AND USER_ID IS NOT NULL
+						  AND USER_ID != ''
+						  GROUP BY CARDINAL_ID, USER_ID ) H
+		ON M.CARDINAL_ID = H.CARDINAL_ID
+		AND M.USER_ID = H.USER_ID
+		LEFT OUTER JOIN ( SELECT A.CARDINAL_ID, B.USER_ID, COMMENT_CNT
+						  FROM CB_BOARD A
+						  INNER JOIN ( SELECT BOARD_ID, USER_ID, COUNT(ID) AS COMMENT_CNT
+							           FROM CB_BOARD_COMMENT
+							           WHERE USER_ID IS NOT NULL
+							           AND USER_ID != ''
+							           GROUP BY BOARD_ID, USER_ID ) B
+						  ON A.ID = B.BOARD_ID
+						  WHERE A.CARDINAL_ID IS NOT NULL
+						  AND A.CARDINAL_ID != '' ) I
+		ON M.CARDINAL_ID = I.CARDINAL_ID
+		AND M.USER_ID = I.USER_ID
+		WHERE M.ID = #{id}
+	</select> -->
+	
+	<!-- 연수신청 등록/수정 --> 
+<!-- 	<insert id="learnAppReg" parameterType="LearnAppVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_LEARN_APP
+			( ID, USER_ID, GROUP_ID, CARDINAL_ID, COURSE_ID, DES_NUM, SCHOOL_NAME, TEL, PHONE, EMAIL, REGION_CODE, JURISDICTION, S_TYPE, E_TYPE
+			, RECOMM_ID, POST_TYPE, ORDER_IDX, PAYMENT_TYPE, PAYMENT_STATE, PAYMENT_DATE, APP_NUM, PAYMENT, REAL_PAYMENT, REAL_END_DATE, REG_USER, UPD_USER )
+		VALUES
+			( #{id}, #{user.id}, #{groupLearn.id}, #{cardinal.id}, #{course.id}, #{desNum}, #{schoolName}, #{tel}, #{phone}, #{email}, #{region.code}, #{jurisdiction}, #{sType}, #{eType}
+			, #{recommend.id}, #{postType}, #{orderIdx}, #{paymentType}, #{paymentState}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'), #{appNum}, #{payment}, #{realPayment}, #{realEndDate}, #{regUser.id}, #{updUser.id} )
+		ON DUPLICATE KEY UPDATE
+			USER_ID			= VALUES(USER_ID),
+			GROUP_ID		= VALUES(GROUP_ID),
+			CARDINAL_ID		= VALUES(CARDINAL_ID),
+			COURSE_ID		= VALUES(COURSE_ID),
+			DES_NUM			= VALUES(DES_NUM),
+			SCHOOL_NAME		= VALUES(SCHOOL_NAME),
+			TEL				= VALUES(TEL),
+			PHONE			= VALUES(PHONE),
+			EMAIL			= VALUES(EMAIL),
+			REGION_CODE		= VALUES(REGION_CODE),
+			JURISDICTION	= VALUES(JURISDICTION),
+			S_TYPE			= VALUES(S_TYPE),
+			E_TYPE			= VALUES(E_TYPE),
+			RECOMM_ID		= VALUES(RECOMM_ID),
+			POST_TYPE		= VALUES(POST_TYPE),
+			ORDER_IDX		= VALUES(ORDER_IDX),
+			PAYMENT_TYPE	= VALUES(PAYMENT_TYPE),
+			PAYMENT_STATE	= VALUES(PAYMENT_STATE),
+			<if test='paymentState == "2"'>
+			PAYMENT_DATE	= VALUES(PAYMENT_DATE),
+			</if>
+			APP_NUM			= VALUES(APP_NUM),
+			PAYMENT			= VALUES(PAYMENT),
+			REAL_PAYMENT	= VALUES(REAL_PAYMENT),
+			REAL_END_DATE	= VALUES(REAL_END_DATE),
+			UPD_USER		= VALUES(UPD_USER),
+			UPD_DATE		= VALUES(UPD_DATE)
+	</insert> -->
+	
+	<!-- LMS 복습기간 설정 기능 추가한 연수 신청 등록/수정 -->
+	<insert id="learnAppReg" parameterType="LearnAppVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_LEARN_APP
+			( ID, USER_ID, GROUP_ID, CARDINAL_ID, COURSE_ID, DES_NUM, SCHOOL_NAME, TEL, PHONE, EMAIL, REGION_CODE, JURISDICTION, S_TYPE, E_TYPE
+			, RECOMM_ID, POST_TYPE, ORDER_IDX, PAYMENT_TYPE, PAYMENT_STATE, PAYMENT_DATE, APP_NUM, PAYMENT, REAL_PAYMENT, REAL_END_DATE, REG_USER, UPD_USER, ACCEPTANCE_YN, ADMIN_ADD_YN)
+		SELECT #{id}, #{user.id}, #{groupLearn.id}, #{cardinal.id}, #{course.id}, #{desNum}, #{schoolName}, #{tel}, #{phone}, #{email}, #{region.code}, #{jurisdiction}, #{sType}, #{eType}
+			, #{recommend.id}, #{postType}, #{orderIdx}, #{paymentType}, #{paymentState}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'), #{appNum}, #{payment}, #{realPayment}, DATE_ADD(C.LEARN_END_DATE, INTERVAL C.REVIEW_PERIOD DAY), #{regUser.id}, #{updUser.id}, #{acceptance_yn}, #{admin_add_yn}
+		FROM (
+			SELECT A.LEARN_END_DATE, B.REVIEW_PERIOD 
+			FROM CB_CN_COURSE CN
+				INNER JOIN CB_CARDINAL A ON CN.CARDINAL_ID = A.ID
+    			INNER JOIN CB_COURSE B ON CN.COURSE_ID = B.ID
+    		WHERE CARDINAL_ID = #{cardinal.id}
+		) C
+		ON DUPLICATE KEY UPDATE
+			USER_ID			= VALUES(USER_ID),
+			GROUP_ID		= VALUES(GROUP_ID),
+			CARDINAL_ID		= VALUES(CARDINAL_ID),
+			COURSE_ID		= VALUES(COURSE_ID),
+			DES_NUM			= VALUES(DES_NUM),
+			SCHOOL_NAME		= VALUES(SCHOOL_NAME),
+			TEL				= VALUES(TEL),
+			PHONE			= VALUES(PHONE),
+			EMAIL			= VALUES(EMAIL),
+			REGION_CODE		= VALUES(REGION_CODE),
+			JURISDICTION	= VALUES(JURISDICTION),
+			S_TYPE			= VALUES(S_TYPE),
+			E_TYPE			= VALUES(E_TYPE),
+			RECOMM_ID		= VALUES(RECOMM_ID),
+			POST_TYPE		= VALUES(POST_TYPE),
+			ORDER_IDX		= VALUES(ORDER_IDX),
+			PAYMENT_TYPE	= VALUES(PAYMENT_TYPE),
+			PAYMENT_STATE	= VALUES(PAYMENT_STATE),
+			<if test='paymentState == "2"'>
+			PAYMENT_DATE	= VALUES(PAYMENT_DATE),
+			</if>
+			APP_NUM			= VALUES(APP_NUM),
+			PAYMENT			= VALUES(PAYMENT),
+			REAL_PAYMENT	= VALUES(REAL_PAYMENT),
+			REAL_END_DATE	= VALUES(REAL_END_DATE),
+			UPD_USER		= VALUES(UPD_USER),
+			UPD_DATE		= VALUES(UPD_DATE),
+			ACCEPTANCE_YN	= VALUES(ACCEPTANCE_YN),
+			ADMIN_ADD_YN	= VALUES(ADMIN_ADD_YN)
+			
+	</insert>
+	
+	<!-- 수강신청자 입과 처리 -->
+	<update id="learnAppIn" parameterType="list">
+		UPDATE CB_LEARN_APP
+		SET ACCEPTANCE_YN = 'Y'
+		WHERE ID IN ( <foreach collection="list" item="learnApp" index="index" separator=" , ">#{learnApp.id}</foreach> )
+	</update>
+	
+	<!-- LMS 입과 정보 중복 조회 -->
+	<select id="getLearnApp" parameterType="LearnAppVO" resultType="String">
+		SELECT USER_ID
+		FROM CB_LEARN_APP
+		WHERE USER_ID = #{user.id}
+		AND CARDINAL_ID = #{cardinal.id}	
+	</select>
+	
+	<!-- 잔여포인트 조회 -->
+	<select id="getBalance" parameterType="UserVO" resultType="int">
+		SELECT IF(COUNT(BALANCE) > 0, BALANCE, 0) AS BALANCE
+		FROM (  SELECT M.BALANCE
+		        FROM CB_POINT M
+		        WHERE M.USER_ID = #{id}
+		        ORDER BY M.REG_DATE DESC
+		        LIMIT 1 ) T
+	</select>
+	
+	<!-- 수강신청 포인트 적립 -->
+	<insert id="pointReg" parameterType="PointVO">
+		INSERT INTO CB_POINT
+			( ID, USER_ID, LEARN_APP_ID, NAME, GIVE, WITHDRAW, BALANCE, NOTE, REG_DATE )
+		VALUES
+			( #{id}, #{userId}, #{learnAppId}, #{name}, #{give}, #{withdraw}, #{balance}, #{note}, DATE_FORMAT(NOW(),'%Y%m%d%H%i%s') )
+	</insert>
+
+	<!-- 수강신청 선택 삭제 -->
+	<update id="learnAppSelectDel" parameterType="list">
+		DELETE FROM CB_LEARN_APP
+		WHERE ID IN ( <foreach collection="list" item="learnApp" index="index" separator=" , ">#{learnApp.id}</foreach> )
+	</update>
+	
+	<!-- 수강관리 리스트 조회 -->
+	<!-- <select id="learnManList" parameterType="LearnAppVO" resultMap="learnAppMap">
+		SELECT M.ID, M.USER_ID, M.GROUP_ID, M.CARDINAL_ID, M.COURSE_ID, M.NEIS_NUM, M.DES_NUM, M.SCHOOL_NAME
+			 , M.TEL, M.PHONE, M.EMAIL, M.REGION_CODE, M.JURISDICTION, M.S_TYPE, M.E_TYPE, M.POST_TYPE, M.ORDER_IDX
+			 , M.PAYMENT_TYPE, M.PAYMENT_STATE, M.PAYMENT_DATE, M.APP_NUM
+			 , M.DIS_COUPON, M.DIS_POINT, M.DIS_GROUP, M.PAYMENT, M.REAL_PAYMENT, M.REAL_END_DATE
+			 , M.REQ_TYPE, M.REQ_MEMO, M.REQ_DATE, M.PART_SCORE, M.TOTAL_SCORE, M.ISSUE_DATE, M.ISSUE_NUM, M.RECOMM_ID
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , A.NAME AS USER_NAME, A.GRADE AS USER_GRADE, A.POSITION, A.POSITION_ETC, A.APP_YEAR, A.SUBJECT, A.PHONE, A.EMAIL
+			 , A.POST_CODE, A.ADDR1, A.ADDR2, A.SCHOOL_TEL, A.SCHOOL_FAX, A.SCHOOL_POST_CODE, A.SCHOOL_ADDR1, A.SCHOOL_ADDR2
+			 , B.NAME AS CARDINAL_NAME, B.LEARN_TYPE, B.LEARN_START_DATE, B.LEARN_END_DATE
+			 , C.NAME AS COURSE_NAME, C.CREDIT, C.PRICE AS COURSE_PRICE, C.MAIN_TB_ID, C.MAIN_PRICE, C.SUB_TB_ID, C.CHAPTER_CNT
+			 , IFNULL(D.TOTAL_PERSON, 0) AS TOTAL_PERSON, E.NAME AS GROUP_NAME
+			 , IFNULL(F.PROG_CNT, 0) AS PROG_CNT, IFNULL(F.LEARN_TIME, 0) AS LEARN_TIME, IFNULL(F.ACC_CNT, 0) AS ACC_CNT
+			 , IFNULL(G.OBJ_CNT, 0) AS OBJ_CNT, IFNULL(G.SUB_CNT, 0) AS SUB_CNT
+			 , IFNULL(G.ATT_SCORE, 0) AS ATT_SCORE, IFNULL(G.OBJ_SCORE, 0) AS OBJ_SCORE, IFNULL(G.SUB_SCORE, 0) AS SUB_SCORE
+			 , IFNULL(H.BOARD_CNT, 0) AS BOARD_CNT, IFNULL(I.COMMENT_CNT, 0) AS COMMENT_CNT
+		FROM CB_LEARN_APP M
+		INNER JOIN CB_MEMBER A
+		ON M.USER_ID = A.ID
+		INNER JOIN CB_CARDINAL B
+		ON M.CARDINAL_ID = B.ID
+		INNER JOIN ( SELECT A.ID, A.NAME, A.CREDIT, A.PRICE, A.MAIN_TB_ID, A.MAIN_PRICE, A.SUB_TB_ID, COUNT(B.ID) AS CHAPTER_CNT
+					 FROM CB_COURSE A
+					 LEFT OUTER JOIN CB_CHAPTER B
+					 ON A.ID = B.COURSE_ID
+					 <if test="loginUser != null and loginUser.grade == 1">
+					 INNER JOIN ( SELECT B.COURSE_ID
+								  FROM FF_MEMBER A
+								  INNER JOIN CB_MAN_COURSE B
+								  ON A.ID = B.MAN_ID
+								  WHERE A.ID = #{loginUser.id} ) C
+					 ON A.ID = C.COURSE_ID
+					 </if>
+					 GROUP BY A.ID ) C
+		ON M.COURSE_ID = C.ID
+		INNER JOIN ( SELECT CARDINAL_ID, COURSE_ID, COUNT(ID) AS TOTAL_PERSON
+					 FROM CB_LEARN_APP
+					 WHERE PAYMENT_STATE = '2'
+					 AND ( REQ_TYPE IS NULL OR REQ_TYPE NOT IN ('3','4') )
+					 GROUP BY CARDINAL_ID, COURSE_ID ) D
+		ON M.CARDINAL_ID = D.CARDINAL_ID
+		AND M.COURSE_ID = D.COURSE_ID
+		LEFT OUTER JOIN CB_GROUP_LEARN E
+		ON M.GROUP_ID = E.ID
+		LEFT OUTER JOIN ( SELECT A.LEARN_APP_ID, A.PROG_CNT, A.LEARN_TIME, B.ACC_CNT
+		                  FROM ( SELECT LEARN_APP_ID
+		                              , SUM(IF(PROG_YN = 'Y', 1, 0)) AS PROG_CNT
+		                              , SUM(LEARN_TIME) AS LEARN_TIME
+		                         FROM CB_ATT_LEC
+		                         GROUP BY LEARN_APP_ID ) A
+		                  INNER JOIN ( SELECT LEARN_APP_ID, COUNT(ID) AS ACC_CNT
+		                               FROM CB_ATT_LEC_HISTORY
+		                               GROUP BY LEARN_APP_ID ) B
+		                  ON A.LEARN_APP_ID = B.LEARN_APP_ID ) F
+		ON M.ID = F.LEARN_APP_ID
+		LEFT OUTER JOIN (  SELECT LEARN_APP_ID
+							    , SUM(IF(QUIZ_TYPE = '2', 1, 0)) AS OBJ_CNT
+							    , SUM(IF(QUIZ_TYPE = '3', 1, 0)) AS SUB_CNT
+							    , SUM(IF(QUIZ_TYPE = '1', SCORE, 0)) AS ATT_SCORE
+							    , SUM(IF(QUIZ_TYPE = '2', SCORE, 0)) AS OBJ_SCORE
+							    , SUM(IF(QUIZ_TYPE = '3', SCORE, 0)) AS SUB_SCORE
+							FROM CB_REPORT 
+							GROUP BY LEARN_APP_ID ) G
+		ON M.ID = G.LEARN_APP_ID
+		LEFT OUTER JOIN ( SELECT CARDINAL_ID, COURSE_ID, USER_ID, COUNT(ID) AS BOARD_CNT
+						  FROM CB_BOARD
+						  WHERE CARDINAL_ID IS NOT NULL
+						  AND CARDINAL_ID != ''
+						  AND COURSE_ID IS NOT NULL
+						  AND COURSE_ID != ''
+						  AND USER_ID IS NOT NULL
+						  AND USER_ID != ''
+						  GROUP BY CARDINAL_ID, COURSE_ID, USER_ID ) H
+		ON M.CARDINAL_ID = H.CARDINAL_ID
+		AND M.COURSE_ID = H.COURSE_ID
+		AND M.USER_ID = H.USER_ID
+		LEFT OUTER JOIN ( SELECT A.CARDINAL_ID, A.COURSE_ID, B.USER_ID, COMMENT_CNT
+						  FROM CB_BOARD A
+						  INNER JOIN ( SELECT BOARD_ID, USER_ID, COUNT(ID) AS COMMENT_CNT
+							           FROM CB_BOARD_COMMENT
+							           WHERE USER_ID IS NOT NULL
+							           AND USER_ID != ''
+							           GROUP BY BOARD_ID, USER_ID ) B
+						  ON A.ID = B.BOARD_ID
+						  WHERE A.CARDINAL_ID IS NOT NULL
+						  AND A.CARDINAL_ID != ''
+						  AND A.COURSE_ID IS NOT NULL
+						  AND A.COURSE_ID != '' ) I
+		ON M.CARDINAL_ID = I.CARDINAL_ID
+		AND M.COURSE_ID = I.COURSE_ID
+		AND M.USER_ID = I.USER_ID
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+	  					SELECT M.ID
+						FROM CB_LEARN_APP M
+						INNER JOIN CB_MEMBER A
+						ON M.USER_ID = A.ID
+						INNER JOIN CB_CARDINAL B
+						ON M.CARDINAL_ID = B.ID
+						INNER JOIN CB_COURSE C
+						ON M.COURSE_ID = C.ID
+						<if test="loginUser != null and loginUser.grade == 1">
+						INNER JOIN ( SELECT B.COURSE_ID
+									 FROM FF_MEMBER A
+									 INNER JOIN CB_MAN_COURSE B
+									 ON A.ID = B.MAN_ID
+									 WHERE A.ID = #{loginUser.id} ) D
+						ON C.ID = D.COURSE_ID
+						</if>
+						WHERE 1 = 1
+						<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+							AND M.CARDINAL_ID = #{cardinal.id}
+						</if>
+						<if test="course != null and course.id != null and course.id != ''">
+							AND M.COURSE_ID = #{course.id}
+						</if>
+						<if test="region != null and region.code != ''">
+							AND M.REGION_CODE = #{region.code}
+						</if>
+						<if test="paymentState != null and paymentState != ''">
+							AND M.PAYMENT_STATE = #{paymentState}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	A.ID LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	A.NAME LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'id'">
+									A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'name'">
+									A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.CARDINAL_ID, M.COURSE_ID, M.ID
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.CARDINAL_ID, M.COURSE_ID, M.ID
+	</select> -->
+	
+	<!-- 수강관리 리스트 총 갯수 -->
+<!-- 	<select id="learnManTotalCnt" parameterType="LearnAppVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_LEARN_APP M
+				INNER JOIN CB_MEMBER A
+				ON M.USER_ID = A.ID
+				INNER JOIN CB_CARDINAL B
+				ON M.CARDINAL_ID = B.ID
+				INNER JOIN CB_COURSE C
+				ON M.COURSE_ID = C.ID
+				<if test="loginUser != null and loginUser.grade == 1">
+				INNER JOIN ( SELECT B.COURSE_ID
+							 FROM FF_MEMBER A
+							 INNER JOIN CB_MAN_COURSE B
+							 ON A.ID = B.MAN_ID
+							 WHERE A.ID = #{loginUser.id} ) D
+				ON C.ID = D.COURSE_ID
+				</if>
+				WHERE 1 = 1
+				<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+					AND M.CARDINAL_ID = #{cardinal.id}
+				</if>
+				<if test="course != null and course.id != null and course.id != ''">
+					AND M.COURSE_ID = #{course.id}
+				</if>
+				<if test="region != null and region.code != ''">
+					AND M.REGION_CODE = #{region.code}
+				</if>
+				<if test="paymentState != null and paymentState != ''">
+					AND M.PAYMENT_STATE = #{paymentState}
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	A.ID LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	A.NAME LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'id'">
+							A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'name'">
+							A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select> -->
+	
+	<!-- 수강 변경 처리 -->
+	<update id="changeLearnApp" parameterType="LearnAppVO">
+		UPDATE CB_LEARN_APP
+		SET COURSE_ID = #{course.id}
+		  , UPD_USER = #{updUser.id}
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 수강 연기 처리 -->
+	<update id="delayLearnApp" parameterType="LearnAppVO">
+		UPDATE CB_LEARN_APP
+		SET CARDINAL_ID = #{cardinal.id}
+		  , UPD_USER = #{updUser.id}
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 수강 취소 처리 -->
+	<update id="cancelLearnApp" parameterType="LearnAppVO">
+		UPDATE CB_LEARN_APP
+		SET REQ_TYPE = #{reqType}
+		  , REQ_MEMO = #{reqMemo}
+		  , REQ_DATE = #{reqDate}
+		  , UPD_USER = #{updUser.id}
+		  <!--  , PAYMENT_STATE='6'-->
+		WHERE ID = #{id}
+	</update>
+	
+<!-- 전체 챕터/세부페이지 조회(포팅) -->
+	<select id="getChapPage" parameterType="LearnAppVO" resultMap="chapterMap">
+		SELECT 
+			M.ID
+			, M.COURSE_ID
+			, M.NAME
+			, M.STUDY
+			, M.CHK
+			, M.MAIN_URL
+			, M.MOBILE_URL
+			, M.TEACHER
+			, M.FILE_INFO
+			, M.SERVICE_TYPE
+			, M.ORDER_NUM
+			, s.seq
+			, s.occ_num
+			, s.name
+			, s.depth
+			, s.order_num
+			, s.content_type
+		FROM CB_CHAPTER M
+		inner join cb_sub_chapter S
+		on m.id = S.chap_id
+		where m.course_id = #{course.id}
+	</select>
+	<!-- 전체 챕터/세부페이지 조회(링크) -->
+	<select id="getChapPage2" parameterType="LearnAppVO" resultMap="chapterMap">
+		SELECT 
+			M.ID
+			, M.COURSE_ID
+			, M.NAME
+			, M.STUDY
+			, M.CHK
+			, M.MAIN_URL
+			, M.MOBILE_URL
+			, M.TEACHER
+			, M.FILE_INFO
+			, M.SERVICE_TYPE
+			, M.ORDER_NUM
+		FROM CB_CHAPTER M
+		where m.course_id = #{course.id}
+	</select>
+<!-- 	수강이력정보 생성 -->
+	<insert id="insertAttLec" parameterType="hashmap">
+		INSERT INTO CB_ATT_LEC (
+			LEARN_APP_ID
+			, USER_ID
+			, CARDINAL_ID
+			, COURSE_ID
+			, CHAPTER
+			, SUBCHAP
+			, PROG_YN
+			, CHASI
+		) VALUES (
+			#{learn_app_id}
+			,#{user_id}
+			,#{cardinal_id}
+			,#{course_id}
+			,#{chapter}
+			,#{subchap}
+			,'N'
+			, #{orderNum}
+		)
+		ON DUPLICATE KEY UPDATE
+			LEARN_APP_ID = VALUES(LEARN_APP_ID)
+			, USER_ID = VALUES(USER_ID)
+			, CHAPTER = VALUES(CHAPTER)
+			, SUBCHAP = VALUES(SUBCHAP)
+	</insert>
+	<!-- 수강이력 토탈 리스트 조회 -->
+	<select id="attLecList" parameterType="LearnAppVO" resultMap="chapterMap">
+		SELECT M.ID, M.COURSE_ID, M.NAME, M.STUDY, M.CHK, M.MAIN_URL, M.MOBILE_URL, M.TEACHER, M.FILE_INFO, M.SERVICE_TYPE, M.ORDER_NUM
+			 , A.USER_ID, A.CARDINAL_ID, A.ATT_LEC_ID, A.CHASI, A.LEARN_TIME, A.PROG_YN, A.HISTORY_ID
+		FROM CB_CHAPTER M
+		LEFT OUTER JOIN ( SELECT A.USER_ID, A.CARDINAL_ID, A.COURSE_ID, A.CHAPTER
+							   , A.ID AS ATT_LEC_ID, A.CHASI, A.LEARN_TIME, A.PROG_YN
+							   , B.ID AS HISTORY_ID
+						  FROM CB_ATT_LEC A
+						  INNER JOIN CB_ATT_LEC_HISTORY B
+						  ON A.USER_ID = B.USER_ID
+						  AND A.CARDINAL_ID = B.CARDINAL_ID
+						  AND A.COURSE_ID = B.COURSE_ID
+						  AND A.CHAPTER = B.CHAPTER
+						  AND A.CARDINAL_ID = #{cardinal.id}
+						  AND A.COURSE_ID = #{course.id}
+						  <if test='attLecType == "P"'>
+						  AND A.USER_ID = #{user.id}
+						  </if> ) A
+		ON M.ID = A.CHAPTER
+		AND M.COURSE_ID = A.COURSE_ID
+		WHERE M.COURSE_ID = #{course.id}
+		AND M.SERVICE_TYPE = #{serviceType}
+		ORDER BY M.ORDER_NUM
+	</select>
+	<!-- 수강이력 조회 -->
+	<select id="attLecHistory" parameterType="LearnAppVO" resultMap="attLecMap">
+		SELECT M.ID, M.LEARN_APP_ID, M.USER_ID, M.CARDINAL_ID, M.COURSE_ID, M.CHAPTER, M.CHASI, M.STUDY, M.CHK, M.LEARN_TIME, M.PROG_YN
+		   	 , A.ID AS HISTORY_ID
+		FROM CB_ATT_LEC M
+		INNER JOIN CB_ATT_LEC_HISTORY A
+		ON M.LEARN_APP_ID = A.LEARN_APP_ID
+		AND M.CHAPTER = A.CHAPTER
+		WHERE M.LEARN_APP_ID = #{id}
+		ORDER BY M.CHASI
+	</select>
+	
+	<!-- 수강변경 관리 리스트 -->
+	<select id="learnChangeList" parameterType="LearnChangeVO" resultMap="learnChangeMap">
+		SELECT M.ID, M.USER_ID, M.LEARN_APP_ID, M.CARDINAL_ID, M.OLD_COURSE_ID, M.NEW_COURSE_ID, M.STATE
+			 , M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , B.NAME AS USER_NAME, B.TEL, B.PHONE, B.EMAIL, C.NAME AS CARDINAL_NAME, D.NAME AS OLD_COURSE_NAME, E.NAME AS NEW_COURSE_NAME
+		FROM CB_LEARN_CHANGE_APP M
+		INNER JOIN CB_LEARN_APP A
+		ON M.LEARN_APP_ID = A.ID
+		INNER JOIN CB_MEMBER B
+		ON M.USER_ID = B.ID
+		INNER JOIN CB_CARDINAL C
+		ON M.CARDINAL_ID = C.ID
+		INNER JOIN CB_COURSE D
+		ON M.OLD_COURSE_ID = D.ID
+		INNER JOIN CB_COURSE E
+		ON M.NEW_COURSE_ID = E.ID
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+						SELECT M.ID
+						FROM CB_LEARN_CHANGE_APP M
+						INNER JOIN CB_MEMBER A
+						ON M.USER_ID = A.ID
+						WHERE 1 = 1
+						<if test="state != null and state != ''">
+							AND M.STATE = #{state}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	A.ID LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'name'">
+									A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'id'">
+									A.ID LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.ID DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.ID DESC
+	</select>
+	
+	<!-- 수강변경 관리 리스트 총 갯수 -->
+	<select id="learnChangeTotalCnt" parameterType="LearnChangeVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_LEARN_CHANGE_APP M
+				INNER JOIN CB_MEMBER A
+				ON M.USER_ID = A.ID
+				WHERE 1 = 1
+				<if test="state != null and state != ''">
+					AND M.STATE = #{state}
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	A.ID LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'name'">
+							A.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'id'">
+							A.ID LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select>
+	
+	<!-- 수강변경 상태 처리 -->
+	<update id="learnChange" parameterType="LearnChangeVO">
+		UPDATE CB_LEARN_CHANGE_APP
+		SET STATE = '2'
+		  , UPD_USER = #{updUser.id}
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 수강연기 관리 리스트 -->
+	<select id="learnDelayList" parameterType="LearnDelayVO" resultMap="learnDelayMap">
+		SELECT M.ID, M.USER_ID, M.LEARN_APP_ID, M.TEL, M.PHONE, M.EMAIL, M.MEMO, M.STATE
+			 , M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , B.NAME AS USER_NAME
+			 , C.ID AS OLD_CARDINAL_ID, C.NAME AS OLD_CARDINAL_NAME
+			 , D.ID AS NEW_CARDINAL_ID, D.NAME AS NEW_CARDINAL_NAME
+			 , E.ID AS COURSE_ID, E.NAME AS COURSE_NAME
+		FROM CB_LEARN_DELAY_APP M
+		INNER JOIN CB_LEARN_APP A
+		ON M.LEARN_APP_ID = A.ID
+		INNER JOIN CB_MEMBER B
+		ON M.USER_ID = B.ID
+		INNER JOIN CB_CARDINAL C
+		ON M.OLD_CARDINAL_ID = C.ID
+		INNER JOIN CB_CARDINAL D
+		ON M.NEW_CARDINAL_ID = D.ID
+		INNER JOIN CB_COURSE E
+		ON A.COURSE_ID = E.ID
+		<if test="loginUser != null and loginUser.grade == 1">
+		INNER JOIN ( SELECT B.COURSE_ID
+					 FROM FF_MEMBER A
+					 INNER JOIN CB_MAN_COURSE B
+					 ON A.ID = B.MAN_ID
+					 WHERE A.ID = #{loginUser.id} ) F
+		ON A.COURSE_ID = F.COURSE_ID
+		</if>
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+						SELECT M.ID
+						FROM CB_LEARN_DELAY_APP M
+						INNER JOIN CB_LEARN_APP A
+						ON M.LEARN_APP_ID = A.ID
+						INNER JOIN CB_MEMBER B
+						ON M.USER_ID = B.ID
+						<if test="loginUser != null and loginUser.grade == 1">
+						INNER JOIN ( SELECT B.COURSE_ID
+									 FROM FF_MEMBER A
+									 INNER JOIN CB_MAN_COURSE B
+									 ON A.ID = B.MAN_ID
+									 WHERE A.ID = #{loginUser.id} ) C
+						ON A.COURSE_ID = C.COURSE_ID
+						</if>
+						WHERE 1 = 1
+						<if test="state != null and state != ''">
+							AND M.STATE = #{state}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	B.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	B.ID LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'name'">
+									B.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'id'">
+									B.ID LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.ID DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.ID DESC
+	</select>
+	
+	<!-- 수강연기 관리 리스트 총 갯수 -->
+	<select id="learnDelayTotalCnt" parameterType="LearnDelayVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_LEARN_DELAY_APP M
+				INNER JOIN CB_LEARN_APP A
+				ON M.LEARN_APP_ID = A.ID
+				INNER JOIN CB_MEMBER B
+				ON M.USER_ID = B.ID
+				<if test="loginUser != null and loginUser.grade == 1">
+				INNER JOIN ( SELECT B.COURSE_ID
+							 FROM FF_MEMBER A
+							 INNER JOIN CB_MAN_COURSE B
+							 ON A.ID = B.MAN_ID
+							 WHERE A.ID = #{loginUser.id} ) C
+				ON A.COURSE_ID = C.COURSE_ID
+				</if>
+				WHERE 1 = 1
+				<if test="state != null and state != ''">
+					AND M.STATE = #{state}
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	B.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	B.ID LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'name'">
+							B.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'id'">
+							B.ID LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select>
+	
+	<!-- 수강연기 상태 처리 -->
+	<update id="learnDelay" parameterType="LearnDelayVO">
+		UPDATE CB_LEARN_DELAY_APP
+		SET STATE = '2'
+		  , UPD_USER = #{updUser.id}
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 수강취소 관리 리스트 -->
+<!-- 	<select id="learnCancelList" parameterType="LearnCancelVO" resultMap="learnCancelMap">
+		SELECT M.ID, M.USER_ID, M.LEARN_APP_ID, M.TEL, M.PHONE, M.EMAIL, M.BOOK_TYPE, M.BANK, M.ACCOUNT, M.OWNER, M.MEMO, M.STATE
+			 , M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , B.NAME AS USER_NAME, C.ID AS CARDINAL_ID, C.NAME AS CARDINAL_NAME, D.ID AS COURSE_ID, D.NAME AS COURSE_NAME
+		FROM CB_LEARN_CANCEL_APP M
+		INNER JOIN CB_LEARN_APP A
+		ON M.LEARN_APP_ID = A.ID
+		INNER JOIN CB_MEMBER B
+		ON M.USER_ID = B.ID
+		INNER JOIN CB_CARDINAL C
+		ON A.CARDINAL_ID = C.ID
+		INNER JOIN CB_COURSE D
+		ON A.COURSE_ID = D.ID
+		<if test="loginUser != null and loginUser.grade == 1">
+		INNER JOIN ( SELECT B.COURSE_ID
+					 FROM FF_MEMBER A
+					 INNER JOIN CB_MAN_COURSE B
+					 ON A.ID = B.MAN_ID
+					 WHERE A.ID = #{loginUser.id} ) E
+		ON D.ID = E.COURSE_ID
+		</if>
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+						SELECT M.ID
+						FROM CB_LEARN_CANCEL_APP M
+						INNER JOIN CB_LEARN_APP A
+						ON M.LEARN_APP_ID = A.ID
+						INNER JOIN CB_MEMBER B
+						ON M.USER_ID = B.ID
+						<if test="loginUser != null and loginUser.grade == 1">
+						INNER JOIN ( SELECT B.COURSE_ID
+									 FROM FF_MEMBER A
+									 INNER JOIN CB_MAN_COURSE B
+									 ON A.ID = B.MAN_ID
+									 WHERE A.ID = #{loginUser.id} ) C
+						ON A.COURSE_ID = C.COURSE_ID
+						</if>
+						WHERE 1 = 1
+						<if test="state != null and state != ''">
+							AND M.STATE = #{state}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	B.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	B.ID LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'name'">
+									B.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'id'">
+									B.ID LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.ID DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.ID DESC
+	</select> -->
+	
+	<!-- 수강취소 관리 리스트 총 갯수 -->
+<!-- 	<select id="learnCancelTotalCnt" parameterType="LearnCancelVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_LEARN_CANCEL_APP M
+				INNER JOIN CB_LEARN_APP A
+				ON M.LEARN_APP_ID = A.ID
+				INNER JOIN CB_MEMBER B
+				ON M.USER_ID = B.ID
+				<if test="loginUser != null and loginUser.grade == 1">
+				INNER JOIN ( SELECT B.COURSE_ID
+							 FROM FF_MEMBER A
+							 INNER JOIN CB_MAN_COURSE B
+							 ON A.ID = B.MAN_ID
+							 WHERE A.ID = #{loginUser.id} ) C
+				ON A.COURSE_ID = C.COURSE_ID
+				</if>
+				WHERE 1 = 1
+				<if test="state != null and state != ''">
+					AND M.STATE = #{state}
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	B.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	B.ID LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'name'">
+							B.NAME LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'id'">
+							B.ID LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select> -->
+	
+	<!-- 수강취소 상태 처리 -->
+	<update id="learnCancel" parameterType="LearnCancelVO">
+		UPDATE CB_LEARN_CANCEL_APP
+		SET STATE = '2'
+		  , UPD_USER = #{updUser.id}
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 첨삭이력 조회 리스트 -->
+	<select id="activeList" parameterType="StatsVO" resultType="hashMap">
+		SELECT M.ID, M.NAME, M.PHONE, M.EMAIL, M.LOGIN, M.FIRST_LOGIN, M.LAST_LOGIN, A.CARDINAL_ID, A.CARDINAL_NAME, A.COURSE_ID, A.COURSE_NAME
+		     , IFNULL(B.N_CNT, 0) AS N_CNT, IFNULL(C.Q_CNT, 0) AS Q_CNT, IFNULL(D.A_CNT, 0) AS A_CNT
+		     , IFNULL(E.QUIZ_CNT, 0) AS QUIZ_CNT, IFNULL(F.CHECK_CNT, 0) AS CHECK_CNT
+		FROM ( SELECT A.ID, A.NAME, A.PHONE, A.EMAIL, B.COURSE_ID, COUNT(C.ID) AS LOGIN
+		            , IFNULL(MIN(C.LOGIN_DATE),'') AS FIRST_LOGIN, IFNULL(MAX(C.LOGIN_DATE),'') AS LAST_LOGIN
+		       FROM FF_MEMBER A
+		       INNER JOIN CB_MAN_COURSE B
+		       ON A.ID = B.MAN_ID
+		       LEFT OUTER JOIN FF_LOGIN_HISTORY C
+		       ON A.ID = C.MEMBER_ID
+		       AND C.LOGIN_DATE BETWEEN DATE_FORMAT(#{searchStartDate},'%Y%m%d%H%i%s') AND DATE_FORMAT(CONCAT(#{searchEndDate},' 23:59:59'),'%Y%m%d%H%i%s')
+		       WHERE A.GRADE = 1
+		       <if test="loginUser != null and loginUser.grade == 1">
+			   AND A.ID = #{loginUser.id}
+			   </if>
+		       GROUP BY A.ID, B.COURSE_ID ) M
+		INNER JOIN (SELECT A.ID AS CARDINAL_ID, A.NAME AS CARDINAL_NAME
+		                 , IF(A.COURSE_TYPE = 'A', 'Y', 'N') AS CHECK_YN
+		                 , B.ID AS COURSE_ID, B.NAME AS COURSE_NAME
+		            FROM CB_CARDINAL A
+		            INNER JOIN CB_COURSE B
+		            ON IF(A.LEARN_TYPE = 'G', B.GROUP_YN = 'Y', B.LEARN_TYPES LIKE CONCAT('%',A.LEARN_TYPE,'%'))
+		            AND A.APP_POSSIBLES LIKE CONCAT('%',B.CREDIT,'%')
+		            WHERE A.ID = #{cardinal.id}
+		            <if test="course != null and course.id != null and course.id != ''">
+						AND B.ID = #{course.id}
+					</if>
+		            					 
+		            UNION ALL
+		            					 
+		            SELECT A.ID AS CARDINAL_ID, A.NAME AS CARDINAL_NAME
+		                 , IF(A.COURSE_TYPE = 'S', 'Y', 'N') AS CHECK_YN
+		                 , C.ID AS COURSE_ID, C.NAME AS COURSE_NAME
+		            FROM CB_CARDINAL A
+		            INNER JOIN CB_CN_COURSE B
+		            ON A.ID = B.CARDINAL_ID
+		            INNER JOIN CB_COURSE C
+		            ON B.COURSE_ID = C.ID
+		            WHERE A.ID = #{cardinal.id}
+		            <if test="course != null and course.id != null and course.id != ''">
+						AND C.ID = #{course.id}
+					</if> ) A
+		ON M.COURSE_ID = A.COURSE_ID
+		AND A.CHECK_YN = 'Y'
+		LEFT OUTER JOIN ( SELECT REG_USER, COURSE_ID, COUNT(ID) AS N_CNT
+		                  FROM CB_BOARD
+		                  WHERE REG_DATE BETWEEN DATE_FORMAT(#{searchStartDate},'%Y%m%d%H%i%s') AND DATE_FORMAT(CONCAT(#{searchEndDate},' 23:59:59'),'%Y%m%d%H%i%s')
+		                  AND BOARD_TYPE = '1'
+		                  <choose>
+							<when test="course != null and course.id != null and course.id != ''">
+								AND COURSE_ID = #{course.id}
+							</when>
+							<otherwise>
+								AND COURSE_ID IS NOT NULL
+		                 		AND COURSE_ID != ''
+							</otherwise>
+						  </choose>
+		                  GROUP BY REG_USER, COURSE_ID ) B
+		ON M.ID = B.REG_USER
+		AND M.COURSE_ID = B.COURSE_ID
+		LEFT OUTER JOIN ( SELECT COURSE_ID, COUNT(ID) AS Q_CNT
+		                  FROM CB_BOARD
+		                  WHERE REG_DATE BETWEEN DATE_FORMAT(#{searchStartDate},'%Y%m%d%H%i%s') AND DATE_FORMAT(CONCAT(#{searchEndDate},' 23:59:59'),'%Y%m%d%H%i%s')
+		                  AND BOARD_TYPE = '4'
+		                  <choose>
+							<when test="course != null and course.id != null and course.id != ''">
+								AND COURSE_ID = #{course.id}
+							</when>
+							<otherwise>
+								AND COURSE_ID IS NOT NULL
+		                 		AND COURSE_ID != ''
+							</otherwise>
+						  </choose>
+		                  GROUP BY COURSE_ID ) C
+		ON M.COURSE_ID = C.COURSE_ID
+		LEFT OUTER JOIN ( SELECT B.REG_USER, A.COURSE_ID, COUNT(B.ID) AS A_CNT
+		                  FROM CB_BOARD A
+		                  INNER JOIN CB_BOARD_REPLY B
+		                  ON A.ID = B.BOARD_ID
+		                  WHERE A.BOARD_TYPE = '4'
+		                  AND A.REG_DATE BETWEEN DATE_FORMAT(#{searchStartDate},'%Y%m%d%H%i%s') AND DATE_FORMAT(CONCAT(#{searchEndDate},' 23:59:59'),'%Y%m%d%H%i%s')
+		                  <choose>
+							<when test="course != null and course.id != null and course.id != ''">
+								AND A.COURSE_ID = #{course.id}
+							</when>
+							<otherwise>
+								AND A.COURSE_ID IS NOT NULL
+		                 		AND A.COURSE_ID != ''
+							</otherwise>
+						  </choose>
+		                  GROUP BY B.REG_USER, A.COURSE_ID ) D
+		ON M.ID = D.REG_USER
+		AND M.COURSE_ID = D.COURSE_ID
+		LEFT OUTER JOIN ( SELECT COURSE_ID, COUNT(ID) AS QUIZ_CNT
+		                  FROM CB_REPORT
+		                  WHERE CARDINAL_ID = #{cardinal.id}
+		                  AND REG_DATE BETWEEN DATE_FORMAT(#{searchStartDate},'%Y%m%d%H%i%s') AND DATE_FORMAT(CONCAT(#{searchEndDate},' 23:59:59'),'%Y%m%d%H%i%s')
+		                  AND QUIZ_TYPE = '3'
+		                  <if test="course != null and course.id != null and course.id != ''">
+							AND COURSE_ID = #{course.id}
+						  </if>
+		                  GROUP BY COURSE_ID ) E
+		ON M.COURSE_ID = E.COURSE_ID
+		LEFT OUTER JOIN ( SELECT UPD_USER, COURSE_ID, SUM(IF(MARK_YN = 'Y', 1, 0)) AS CHECK_CNT
+		                  FROM CB_REPORT
+		                  WHERE CARDINAL_ID = #{cardinal.id}
+		                  AND REG_DATE BETWEEN DATE_FORMAT(#{searchStartDate},'%Y%m%d%H%i%s') AND DATE_FORMAT(CONCAT(#{searchEndDate},' 23:59:59'),'%Y%m%d%H%i%s')
+		                  AND QUIZ_TYPE = '3'
+		                  AND MARK_YN = 'Y'
+		                  <if test="course != null and course.id != null and course.id != ''">
+							AND COURSE_ID = #{course.id}
+						  </if>
+		                  GROUP BY UPD_USER, COURSE_ID ) F
+		ON M.ID = F.UPD_USER
+		AND M.COURSE_ID = F.COURSE_ID
+		ORDER BY M.ID
+	</select>
+	
+	<!-- 첨삭이력 조회 총 갯수 -->
+	<select id="activeTotalCnt" parameterType="StatsVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM FF_MEMBER
+	</select>
+	
+	
+	
+	<!-- LMS -->
+	<!-- 연수신청 resultMap -->
+ 	<resultMap id="learnAppMap" 			type="LearnAppVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<result property="recommend.id"		column="RECOMM_ID" />
+		<result property="realEndDate"	column="REAL_END_DATE" />
+		<result property="acceptance_yn"	column="ACCEPTANCE_YN" />
+		<association property="region"		column="REGION_CODE"	javaType="forFaith.dev.vo.CodeVO"		select="forFaith.dev.dao.BaseDAO.codeInfo"  />
+		<association property="user"		javaType="UserVO">
+			<result	property="id"			column="USER_ID" />
+			<result property="name"			column="USER_NAME" />
+			<result property="phone"		column="USER_PHONE" />
+			<result property="email"		column="USER_EMAIL" />
+			<result property="postCode"		column="USER_ZIPCODE" />
+			<result property="addr1"		column="USER_ADDR1" />
+			<result property="addr2"		column="USER_ADDR2" />
+		</association>
+		<association property="cardinal"	javaType="CardinalVO">
+			<result	property="id"			column="CARDINAL_ID" />
+			<result property="name"			column="CARDINAL_NAME" />
+			<result property="learnType"	column="LEARN_TYPE" />
+			<result property="learnStartDate"	column="LEARN_START_DATE" />
+			<result property="learnEndDate"	column="LEARN_END_DATE" />
+		</association>
+		<association property="course"		javaType="CourseVO">
+			<result	property="id"			column="COURSE_ID" />
+			<result property="name"			column="COURSE_NAME" />
+			<result property="credit"		column="CREDIT" />
+			<result property="price"		column="COURSE_PRICE" />
+			<result property="mainBook.id"	column="MAIN_TB_ID" />
+			<result property="mainPrice"	column="MAIN_PRICE" />
+			<result property="subBook.id"	column="SUB_TB_ID" />
+		</association>
+		<association property="groupLearn"	javaType="GroupLearnVO">
+			<result	property="id"			column="GROUP_ID" />
+			<result property="name"			column="GROUP_NAME" />
+		</association>		
+		<association property="pay"	javaType="PaymentVO">
+			<result	property="pay_user_tid"			column="PAY_TID" />
+			<result property="pay_user_moid"		column="PAY_MOID" />
+			<result property="pay_ins_dt"           column="PAY_INS_DT"/>
+			<result property="paymentState"			column="PAY_USER_STATUS" />	
+			<result property="paymentType"			column="PAYMENT_TYPE" />	
+			<!-- <result property="paymentType"			column="PAY_USER_METHOD" />	 -->
+		</association>	
+		<association property="point" javaType="PointVO">
+			<result property="balance" column="BALANCE"/>
+		</association>	
+	</resultMap>
+	
+	<!-- 수강취소 resultMap -->
+	<resultMap id="learnCancelMap" 			type="LearnCancelVO"	autoMapping="true">
+		<id		property="id"				column="ID" />
+		<association property="user"		javaType="UserVO">
+			<result	property="id"			column="USER_ID" />
+			<result property="name"			column="USER_NAME" />
+			<result property="tel"			column="USER_TEL" />
+			<result property="phone"		column="USER_PHONE" />
+			<result property="email"		column="USER_EMAIL" />
+		</association>
+		<association property="learnApp"	javaType="LearnAppVO">
+			<result	property="id"			column="LEARN_APP_ID" />
+			<association property="cardinal"	javaType="CardinalVO">
+				<result	property="id"		column="CARDINAL_ID" />
+				<result property="name"		column="CARDINAL_NAME" />
+			</association>
+			<association property="course"	javaType="CourseVO">
+				<result	property="id"		column="COURSE_ID" />
+				<result property="name"		column="COURSE_NAME" />
+			</association>
+		</association>
+	</resultMap>
+	
+	<!-- 연수신청 리스트 조회 -->
+ 	<select id="learnAppList" parameterType="LearnAppVO" resultMap="learnAppMap">
+		SELECT M.ID, M.USER_ID, M.ACCEPTANCE_YN, M.GROUP_ID, M.CARDINAL_ID, M.COURSE_ID, M.NEIS_NUM, M.DES_NUM, M.SCHOOL_NAME
+			 , M.TEL, M.PHONE, M.EMAIL, M.REGION_CODE, M.JURISDICTION, M.S_TYPE, M.E_TYPE, M.POST_TYPE, M.ORDER_IDX
+			 , M.PAYMENT_TYPE, M.PAYMENT_STATE, M.PAYMENT_DATE, M.APP_NUM
+			 , M.DIS_COUPON, M.DIS_POINT, M.DIS_GROUP, M.PAYMENT, M.REAL_PAYMENT, M.REAL_END_DATE
+			 , M.REQ_TYPE, M.REQ_MEMO, M.REQ_DATE, M.PART_SCORE, M.TOTAL_SCORE, M.ISSUE_DATE, M.ISSUE_NUM, M.RECOMM_ID
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , A.USER_NM AS USER_NAME, A.USER_PHONE, A.USER_EMAIL
+			 , J.USER_ZIPCODE, J.USER_ADDR1, J.USER_ADDR2
+			 , B.NAME AS CARDINAL_NAME, B.LEARN_TYPE, B.LEARN_START_DATE, B.LEARN_END_DATE
+			 , C.NAME AS COURSE_NAME, C.CREDIT, C.PRICE AS COURSE_PRICE, C.MAIN_TB_ID, C.MAIN_PRICE, C.SUB_TB_ID, C.CHAPTER_CNT
+			 , IFNULL(D.TOTAL_PERSON, 0) AS TOTAL_PERSON, E.NAME AS GROUP_NAME
+			 , IFNULL(F.PROG_CNT, 0) AS PROG_CNT, IFNULL(F.LEARN_TIME, 0) AS LEARN_TIME, IFNULL(F.ACC_CNT, 0) AS ACC_CNT
+			 , IFNULL(G.OBJ_CNT, 0) AS OBJ_CNT, IFNULL(G.SUB_CNT, 0) AS SUB_CNT
+			 , IFNULL(G.ATT_SCORE, 0) AS ATT_SCORE, IFNULL(G.OBJ_SCORE, 0) AS OBJ_SCORE, IFNULL(G.SUB_SCORE, 0) AS SUB_SCORE
+			 , IFNULL(H.BOARD_CNT, 0) AS BOARD_CNT, IFNULL(I.COMMENT_CNT, 0) AS COMMENT_CNT
+		FROM CB_LEARN_APP M
+		INNER JOIN COM_USER_TB A
+		ON M.USER_ID = A.USER_ID
+		LEFT OUTER JOIN CB_USER_INFO J
+		ON M.USER_ID = J.USER_ID
+		INNER JOIN CB_CARDINAL B
+		ON M.CARDINAL_ID = B.ID
+		INNER JOIN ( SELECT A.ID, A.NAME, A.CREDIT, A.PRICE, A.MAIN_TB_ID, A.MAIN_PRICE, A.SUB_TB_ID, COUNT(B.ID) AS CHAPTER_CNT
+					 FROM CB_COURSE A
+					 LEFT OUTER JOIN CB_CHAPTER B
+					 ON A.ID = B.COURSE_ID
+					 <if test="loginUser != null and loginUser.grade == 1">
+					 INNER JOIN ( SELECT B.COURSE_ID
+								  FROM FF_MEMBER A
+								  INNER JOIN CB_MAN_COURSE B
+								  ON A.ID = B.MAN_ID
+								  WHERE A.ID = #{loginUser.id} ) C
+					 ON A.ID = C.COURSE_ID
+					 </if>
+					 GROUP BY A.ID ) C
+		ON M.COURSE_ID = C.ID
+		LEFT OUTER JOIN ( SELECT CARDINAL_ID, COURSE_ID, COUNT(ID) AS TOTAL_PERSON
+					 	  FROM CB_LEARN_APP
+					 	   WHERE PAYMENT_STATE = '2' AND
+					 	  ( REQ_TYPE IS NULL OR REQ_TYPE NOT IN ('3','4') )
+					 	  GROUP BY CARDINAL_ID, COURSE_ID ) D
+		ON M.CARDINAL_ID = D.CARDINAL_ID
+		AND M.COURSE_ID = D.COURSE_ID
+		LEFT OUTER JOIN CB_GROUP_LEARN E
+		ON M.GROUP_ID = E.ID
+		LEFT OUTER JOIN ( SELECT A.LEARN_APP_ID, A.PROG_CNT, A.LEARN_TIME, B.ACC_CNT
+		                  FROM ( SELECT LEARN_APP_ID
+		                              , SUM(IF(PROG_YN = 'Y', 1, 0)) AS PROG_CNT
+		                              , SUM(LEARN_TIME) AS LEARN_TIME
+		                         FROM CB_ATT_LEC
+		                         GROUP BY LEARN_APP_ID ) A
+		                  INNER JOIN ( SELECT LEARN_APP_ID, COUNT(ID) AS ACC_CNT
+		                               FROM CB_ATT_LEC_HISTORY
+		                               GROUP BY LEARN_APP_ID ) B
+		                  ON A.LEARN_APP_ID = B.LEARN_APP_ID ) F
+		ON M.ID = F.LEARN_APP_ID
+		LEFT OUTER JOIN (  SELECT LEARN_APP_ID
+							    , SUM(IF(QUIZ_TYPE = '2', 1, 0)) AS OBJ_CNT
+							    , SUM(IF(QUIZ_TYPE = '3', 1, 0)) AS SUB_CNT
+							    , SUM(IF(QUIZ_TYPE = '1', SCORE, 0)) AS ATT_SCORE
+							    , SUM(IF(QUIZ_TYPE = '2', SCORE, 0)) AS OBJ_SCORE
+							    , SUM(IF(QUIZ_TYPE = '3', SCORE, 0)) AS SUB_SCORE
+							FROM CB_REPORT 
+							GROUP BY LEARN_APP_ID ) G
+		ON M.ID = G.LEARN_APP_ID
+		LEFT OUTER JOIN ( SELECT CARDINAL_ID, USER_ID, COUNT(ID) AS BOARD_CNT
+						  FROM CB_BOARD
+						  WHERE CARDINAL_ID IS NOT NULL
+						  AND CARDINAL_ID != ''
+						  AND USER_ID IS NOT NULL
+						  AND USER_ID != ''
+						  GROUP BY CARDINAL_ID, USER_ID ) H
+		ON M.CARDINAL_ID = H.CARDINAL_ID
+		AND M.USER_ID = H.USER_ID
+		LEFT OUTER JOIN ( SELECT A.CARDINAL_ID, B.USER_ID, COMMENT_CNT
+						  FROM CB_BOARD A
+						  INNER JOIN ( SELECT BOARD_ID, USER_ID, COUNT(ID) AS COMMENT_CNT
+							           FROM CB_BOARD_COMMENT
+							           WHERE USER_ID IS NOT NULL
+							           AND USER_ID != ''
+							           GROUP BY BOARD_ID, USER_ID ) B
+						  ON A.ID = B.BOARD_ID
+						  WHERE A.CARDINAL_ID IS NOT NULL
+						  AND A.CARDINAL_ID != '' ) I
+		ON M.CARDINAL_ID = I.CARDINAL_ID
+		AND M.USER_ID = I.USER_ID
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+	  					SELECT M.ID
+						FROM CB_LEARN_APP M
+						INNER JOIN COM_USER_TB A
+						ON M.USER_ID = A.USER_ID
+						INNER JOIN CB_CARDINAL B
+						ON M.CARDINAL_ID = B.ID
+						INNER JOIN CB_COURSE C
+						ON M.COURSE_ID = C.ID
+						<if test="loginUser != null and loginUser.grade == 1">
+						INNER JOIN ( SELECT B.COURSE_ID
+									 FROM FF_MEMBER A
+									 INNER JOIN CB_MAN_COURSE B
+									 ON A.ID = B.MAN_ID
+									 WHERE A.ID = #{loginUser.id} ) D
+						ON C.ID = D.COURSE_ID
+						</if>
+						WHERE M.USE_YN = 'Y'
+						<choose>
+							<when test='groupLearnYn != null and groupLearnYn == "Y"'>
+								AND M.GROUP_ID IS NOT NULL
+								AND M.GROUP_ID > 0
+							</when>
+							<otherwise>
+								AND ( M.GROUP_ID IS NULL OR M.GROUP_ID = 0 )
+							</otherwise>
+						</choose>
+						<if test="groupLearn != null and groupLearn.id != null and groupLearn.id > 0">
+							AND M.GROUP_ID = #{groupLearn.id}
+						</if>
+						<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+							AND M.CARDINAL_ID = #{cardinal.id}
+						</if>
+						<if test="course != null and course.id != null and course.id != ''">
+							AND M.COURSE_ID = #{course.id}
+						</if>
+						<if test="region != null and region.code != ''">
+							AND M.REGION_CODE = #{region.code}
+						</if>
+						<if test="paymentState != null and paymentState != ''">
+							AND M.PAYMENT_STATE = #{paymentState}
+						</if>
+						<if test="searchStartDate != null and searchStartDate != '' and searchEndDate != null and searchEndDate != ''">
+							AND M.REG_DATE BETWEEN #{searchStartDate} AND #{searchEndDate}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	A.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'id'">
+									A.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'name'">
+									A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						<choose>
+							<when test='acceptance_yn=="Y"'>
+								and M.ACCEPTANCE_YN = "Y"
+							</when>
+							<otherwise>
+								and M.ACCEPTANCE_YN = ''
+							</otherwise>
+						</choose>
+						GROUP BY M.ID
+						ORDER BY A.USER_NM
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY A.USER_NM
+	</select>
+	
+	<!-- 연수신청 리스트 조회 -->
+ 	<select id="applyLearnAppList" parameterType="LearnAppVO" resultMap="learnAppMap">
+		SELECT M.ID, M.USER_ID, M.GROUP_ID, M.CARDINAL_ID, M.COURSE_ID, M.NEIS_NUM, M.DES_NUM, M.SCHOOL_NAME
+			 , M.TEL, M.PHONE, M.EMAIL, M.REGION_CODE, M.JURISDICTION, M.S_TYPE, M.E_TYPE, M.POST_TYPE, M.ORDER_IDX
+			 , M.PAYMENT_TYPE, M.PAYMENT_STATE, M.PAYMENT_DATE, M.APP_NUM, M.ACCEPTANCE_YN
+			 , M.DIS_COUPON, M.DIS_POINT, M.DIS_GROUP, M.PAYMENT, M.REAL_PAYMENT, M.REAL_END_DATE
+			 , M.REQ_TYPE, M.REQ_MEMO, M.REQ_DATE, M.PART_SCORE, M.TOTAL_SCORE, M.ISSUE_DATE, M.ISSUE_NUM, M.RECOMM_ID
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , A.USER_NM AS USER_NAME, A.USER_PHONE, A.USER_EMAIL
+			 , J.USER_ZIPCODE, J.USER_ADDR1, J.USER_ADDR2
+			 , B.NAME AS CARDINAL_NAME, B.LEARN_TYPE, B.LEARN_START_DATE, B.LEARN_END_DATE
+			 , C.NAME AS COURSE_NAME, C.CREDIT, C.PRICE AS COURSE_PRICE, C.MAIN_TB_ID, C.MAIN_PRICE, C.SUB_TB_ID, C.CHAPTER_CNT
+			 , IFNULL(D.TOTAL_PERSON, 0) AS TOTAL_PERSON, E.NAME AS GROUP_NAME
+			 , IFNULL(F.PROG_CNT, 0) AS PROG_CNT, IFNULL(F.LEARN_TIME, 0) AS LEARN_TIME, IFNULL(F.ACC_CNT, 0) AS ACC_CNT
+			 , IFNULL(G.OBJ_CNT, 0) AS OBJ_CNT, IFNULL(G.SUB_CNT, 0) AS SUB_CNT
+			 , IFNULL(G.ATT_SCORE, 0) AS ATT_SCORE, IFNULL(G.OBJ_SCORE, 0) AS OBJ_SCORE, IFNULL(G.SUB_SCORE, 0) AS SUB_SCORE
+			 , IFNULL(H.BOARD_CNT, 0) AS BOARD_CNT, IFNULL(I.COMMENT_CNT, 0) AS COMMENT_CNT
+		FROM CB_LEARN_APP M
+		INNER JOIN COM_USER_TB A
+		ON M.USER_ID = A.USER_ID
+		LEFT OUTER JOIN CB_USER_INFO J
+		ON M.USER_ID = J.USER_ID
+		INNER JOIN CB_CARDINAL B
+		ON M.CARDINAL_ID = B.ID
+		INNER JOIN ( SELECT A.ID, A.NAME, A.CREDIT, A.PRICE, A.MAIN_TB_ID, A.MAIN_PRICE, A.SUB_TB_ID, COUNT(B.ID) AS CHAPTER_CNT
+					 FROM CB_COURSE A
+					 LEFT OUTER JOIN CB_CHAPTER B
+					 ON A.ID = B.COURSE_ID
+					 <if test="loginUser != null and loginUser.grade == 1">
+					 INNER JOIN ( SELECT B.COURSE_ID
+								  FROM FF_MEMBER A
+								  INNER JOIN CB_MAN_COURSE B
+								  ON A.ID = B.MAN_ID
+								  WHERE A.ID = #{loginUser.id} ) C
+					 ON A.ID = C.COURSE_ID
+					 </if>
+					 GROUP BY A.ID ) C
+		ON M.COURSE_ID = C.ID
+		LEFT OUTER JOIN ( SELECT CARDINAL_ID, COURSE_ID, COUNT(ID) AS TOTAL_PERSON
+					 	  FROM CB_LEARN_APP
+					 	   WHERE PAYMENT_STATE = '2' AND
+					 	  ( REQ_TYPE IS NULL OR REQ_TYPE NOT IN ('3','4') )
+					 	  GROUP BY CARDINAL_ID, COURSE_ID ) D
+		ON M.CARDINAL_ID = D.CARDINAL_ID
+		AND M.COURSE_ID = D.COURSE_ID
+		LEFT OUTER JOIN CB_GROUP_LEARN E
+		ON M.GROUP_ID = E.ID
+		LEFT OUTER JOIN ( SELECT A.LEARN_APP_ID, A.PROG_CNT, A.LEARN_TIME, B.ACC_CNT
+		                  FROM ( SELECT LEARN_APP_ID
+		                              , SUM(IF(PROG_YN = 'Y', 1, 0)) AS PROG_CNT
+		                              , SUM(LEARN_TIME) AS LEARN_TIME
+		                         FROM CB_ATT_LEC
+		                         GROUP BY LEARN_APP_ID ) A
+		                  INNER JOIN ( SELECT LEARN_APP_ID, COUNT(ID) AS ACC_CNT
+		                               FROM CB_ATT_LEC_HISTORY
+		                               GROUP BY LEARN_APP_ID ) B
+		                  ON A.LEARN_APP_ID = B.LEARN_APP_ID ) F
+		ON M.ID = F.LEARN_APP_ID
+		LEFT OUTER JOIN (  SELECT LEARN_APP_ID
+							    , SUM(IF(QUIZ_TYPE = '2', 1, 0)) AS OBJ_CNT
+							    , SUM(IF(QUIZ_TYPE = '3', 1, 0)) AS SUB_CNT
+							    , SUM(IF(QUIZ_TYPE = '1', SCORE, 0)) AS ATT_SCORE
+							    , SUM(IF(QUIZ_TYPE = '2', SCORE, 0)) AS OBJ_SCORE
+							    , SUM(IF(QUIZ_TYPE = '3', SCORE, 0)) AS SUB_SCORE
+							FROM CB_REPORT 
+							GROUP BY LEARN_APP_ID ) G
+		ON M.ID = G.LEARN_APP_ID
+		LEFT OUTER JOIN ( SELECT CARDINAL_ID, USER_ID, COUNT(ID) AS BOARD_CNT
+						  FROM CB_BOARD
+						  WHERE CARDINAL_ID IS NOT NULL
+						  AND CARDINAL_ID != ''
+						  AND USER_ID IS NOT NULL
+						  AND USER_ID != ''
+						  GROUP BY CARDINAL_ID, USER_ID ) H
+		ON M.CARDINAL_ID = H.CARDINAL_ID
+		AND M.USER_ID = H.USER_ID
+		LEFT OUTER JOIN ( SELECT A.CARDINAL_ID, B.USER_ID, COMMENT_CNT
+						  FROM CB_BOARD A
+						  INNER JOIN ( SELECT BOARD_ID, USER_ID, COUNT(ID) AS COMMENT_CNT
+							           FROM CB_BOARD_COMMENT
+							           WHERE USER_ID IS NOT NULL
+							           AND USER_ID != ''
+							           GROUP BY BOARD_ID, USER_ID ) B
+						  ON A.ID = B.BOARD_ID
+						  WHERE A.CARDINAL_ID IS NOT NULL
+						  AND A.CARDINAL_ID != '' ) I
+		ON M.CARDINAL_ID = I.CARDINAL_ID
+		AND M.USER_ID = I.USER_ID
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+	  					SELECT M.ID
+						FROM CB_LEARN_APP M
+						INNER JOIN COM_USER_TB A
+						ON M.USER_ID = A.USER_ID
+						INNER JOIN CB_CARDINAL B
+						ON M.CARDINAL_ID = B.ID
+						INNER JOIN CB_COURSE C
+						ON M.COURSE_ID = C.ID
+						<if test="loginUser != null and loginUser.grade == 1">
+						INNER JOIN ( SELECT B.COURSE_ID
+									 FROM FF_MEMBER A
+									 INNER JOIN CB_MAN_COURSE B
+									 ON A.ID = B.MAN_ID
+									 WHERE A.ID = #{loginUser.id} ) D
+						ON C.ID = D.COURSE_ID
+						</if>
+						WHERE M.USE_YN = 'Y'
+						<choose>
+							<when test='groupLearnYn != null and groupLearnYn == "Y"'>
+								AND M.GROUP_ID IS NOT NULL
+								AND M.GROUP_ID > 0
+							</when>
+							<otherwise>
+								AND ( M.GROUP_ID IS NULL OR M.GROUP_ID = 0 )
+							</otherwise>
+						</choose>
+						<if test="groupLearn != null and groupLearn.id != null and groupLearn.id > 0">
+							AND M.GROUP_ID = #{groupLearn.id}
+						</if>
+						<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+							AND M.CARDINAL_ID = #{cardinal.id}
+						</if>
+						<if test="course != null and course.id != null and course.id != ''">
+							AND M.COURSE_ID = #{course.id}
+						</if>
+						<if test="region != null and region.code != ''">
+							AND M.REGION_CODE = #{region.code}
+						</if>
+						<if test="paymentState != null and paymentState != ''">
+							AND M.PAYMENT_STATE = #{paymentState}
+						</if>
+						<if test="searchStartDate != null and searchStartDate != '' and searchEndDate != null and searchEndDate != ''">
+							AND M.REG_DATE BETWEEN #{searchStartDate} AND #{searchEndDate}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	A.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'id'">
+									A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'name'">
+									A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.ID DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		WHERE	M.ACCEPTANCE_YN = ''
+		ORDER BY M.ID DESC
+	</select>
+	
+	<!-- 연수신청 총 갯수 -->
+ 	<select id="learnAppTotalCnt" parameterType="LearnAppVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_LEARN_APP M
+				INNER JOIN COM_USER_TB A
+				ON M.USER_ID = A.USER_ID
+				INNER JOIN CB_CARDINAL B
+				ON M.CARDINAL_ID = B.ID
+				INNER JOIN CB_COURSE C
+				ON M.COURSE_ID = C.ID
+				<if test="loginUser != null and loginUser.grade == 1">
+				INNER JOIN ( SELECT B.COURSE_ID
+							 FROM FF_MEMBER A
+							 INNER JOIN CB_MAN_COURSE B
+							 ON A.ID = B.MAN_ID
+							 WHERE A.ID = #{loginUser.id} ) D
+				ON C.ID = D.COURSE_ID
+				</if>
+				WHERE M.USE_YN = 'Y' 
+				<choose>
+					<when test='groupLearnYn != null and groupLearnYn == "Y"'>
+						AND M.GROUP_ID IS NOT NULL
+						AND M.GROUP_ID > 0
+					</when>
+					<otherwise>
+						AND ( M.GROUP_ID IS NULL OR M.GROUP_ID = 0 )
+					</otherwise>
+				</choose>
+				<choose>
+					<when test='acceptance_yn != null and acceptance_yn == "Y"'>
+						AND M.ACCEPTANCE_YN = 'Y'
+					</when>
+					<otherwise>
+						AND M.ACCEPTANCE_YN = ''
+					</otherwise>
+				</choose>
+				<if test="groupLearn != null and groupLearn.id != null and groupLearn.id > 0">
+					AND M.GROUP_ID = #{groupLearn.id}
+				</if>
+				<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+					AND M.CARDINAL_ID = #{cardinal.id}
+				</if>
+				<if test="course != null and course.id != null and course.id != ''">
+					AND M.COURSE_ID = #{course.id}
+				</if>
+				<if test="region != null and region.code != ''">
+					AND M.REGION_CODE = #{region.code}
+				</if>
+				<if test="paymentState != null and paymentState != ''">
+					AND M.PAYMENT_STATE = #{paymentState}
+				</if>
+				<if test="searchStartDate != null and searchStartDate != '' and searchEndDate != null and searchEndDate != ''">
+					AND M.REG_DATE BETWEEN #{searchStartDate} AND #{searchEndDate}
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	A.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'id'">
+							A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'name'">
+							A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select>
+	
+	 	<!-- 연수신청 총 갯수 -->
+ 	<!--<select id="learnAppTotalCnt" parameterType="LearnAppVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_LEARN_APP M
+				INNER JOIN COM_USER_TB A
+				ON M.USER_ID = A.USER_ID
+				INNER JOIN CB_CARDINAL B
+				ON M.CARDINAL_ID = B.ID
+				INNER JOIN CB_COURSE C
+				ON M.COURSE_ID = C.ID
+				<if test="loginUser != null and loginUser.grade == 1">
+				INNER JOIN ( SELECT B.COURSE_ID
+							 FROM FF_MEMBER A
+							 INNER JOIN CB_MAN_COURSE B
+							 ON A.ID = B.MAN_ID
+							 WHERE A.ID = #{loginUser.id} ) D
+				ON C.ID = D.COURSE_ID
+				</if>
+				WHERE M.USE_YN = 'Y'
+				<choose>
+					<when test='groupLearnYn != null and groupLearnYn == "Y"'>
+						AND M.GROUP_ID IS NOT NULL
+						AND M.GROUP_ID > 0
+					</when>
+					<otherwise>
+						AND ( M.GROUP_ID IS NULL OR M.GROUP_ID = 0 )
+					</otherwise>
+				</choose>
+				<if test="groupLearn != null and groupLearn.id != null and groupLearn.id > 0">
+					AND M.GROUP_ID = #{groupLearn.id}
+				</if>
+				<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+					AND M.CARDINAL_ID = #{cardinal.id}
+				</if>
+				<if test="course != null and course.id != null and course.id != ''">
+					AND M.COURSE_ID = #{course.id}
+				</if>
+				<if test="region != null and region.code != ''">
+					AND M.REGION_CODE = #{region.code}
+				</if>
+				<if test="paymentState != null and paymentState != ''">
+					AND M.PAYMENT_STATE = #{paymentState}
+				</if>
+				<if test="searchStartDate != null and searchStartDate != '' and searchEndDate != null and searchEndDate != ''">
+					AND M.REG_DATE BETWEEN #{searchStartDate} AND #{searchEndDate}
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	A.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'id'">
+							A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'name'">
+							A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select> -->
+	
+	
+	<!-- 연수신청 상세 정보 조회 -->
+	<select id="learnAppInfo" parameterType="LearnAppVO" resultMap="learnAppMap">
+		SELECT M.ID, M.USER_ID, M.GROUP_ID, M.CARDINAL_ID, M.COURSE_ID, M.NEIS_NUM, M.DES_NUM, M.SCHOOL_NAME
+			 , M.TEL, M.PHONE, M.EMAIL, M.REGION_CODE, M.JURISDICTION, M.S_TYPE, M.E_TYPE, M.POST_TYPE, M.ORDER_IDX
+			 <!-- , M.PAYMENT_TYPE -->
+			 <if test = "pay !=null">
+			 ,CASE WHEN PAY.PAY_USER_METHOD='Card' THEN 'C'
+             WHEN PAY.PAY_USER_METHOD='VBank' THEN 'B'
+             END
+             AS PAYMENT_TYPE
+             </if>
+			 , M.PAYMENT_STATE, M.PAYMENT_DATE, M.APP_NUM
+			 , M.DIS_COUPON, M.DIS_POINT, M.DIS_GROUP, M.PAYMENT, M.REAL_PAYMENT, M.REAL_END_DATE
+			 , M.REQ_TYPE, M.REQ_MEMO, M.REQ_DATE, M.PART_SCORE, M.TOTAL_SCORE, M.ISSUE_DATE, M.ISSUE_NUM, M.RECOMM_ID
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , A.USER_NM AS USER_NAME
+			 , J.USER_ZIPCODE, J.USER_ADDR1, J.USER_ADDR2
+			 , B.NAME AS CARDINAL_NAME, B.LEARN_TYPE, B.LEARN_START_DATE, B.LEARN_END_DATE
+			 , C.NAME AS COURSE_NAME, C.CREDIT, C.PRICE AS COURSE_PRICE, C.MAIN_TB_ID, C.MAIN_PRICE, C.SUB_TB_ID, C.CHAPTER_CNT
+			 , IFNULL(D.TOTAL_PERSON, 0) AS TOTAL_PERSON, E.NAME AS GROUP_NAME
+			 , IFNULL(F.PROG_CNT, 0) AS PROG_CNT, IFNULL(F.LEARN_TIME, 0) AS LEARN_TIME, IFNULL(F.ACC_CNT, 0) AS ACC_CNT
+			 , IFNULL(G.OBJ_CNT, 0) AS OBJ_CNT, IFNULL(G.SUB_CNT, 0) AS SUB_CNT
+			 , IFNULL(G.ATT_SCORE, 0) AS ATT_SCORE, IFNULL(G.OBJ_SCORE, 0) AS OBJ_SCORE, IFNULL(G.SUB_SCORE, 0) AS SUB_SCORE
+			 , IFNULL(H.BOARD_CNT, 0) AS BOARD_CNT, IFNULL(I.COMMENT_CNT, 0) AS COMMENT_CNT
+		     , IFNULL(POINT.BALANCE, 0) AS BALANCE
+		    <if test = "pay !=null">
+		     , IFNULL(PAY.PAY_TID, 0) AS PAY_TID
+		     , IFNULL(PAY.PAY_MOID, 0) AS PAY_MOID	
+		     , IFNULL(PAY.PAY_USER_METHOD, '') AS PAY_USER_METHOD	        
+		     , IFNULL(PAY.PAY_USER_STATUS, '') AS PAY_USER_STATUS
+		     </if>
+		FROM CB_LEARN_APP M
+		INNER JOIN COM_USER_TB A
+		ON M.USER_ID = A.USER_ID
+		LEFT OUTER JOIN CB_USER_INFO J
+		ON M.USER_ID = J.USER_ID
+		INNER JOIN CB_CARDINAL B
+		ON M.CARDINAL_ID = B.ID
+		INNER JOIN ( SELECT A.ID, A.NAME, A.CREDIT, A.PRICE, A.MAIN_TB_ID, A.MAIN_PRICE, A.SUB_TB_ID, COUNT(B.ID) AS CHAPTER_CNT
+					 FROM CB_COURSE A
+					 LEFT OUTER JOIN CB_CHAPTER B
+					 ON A.ID = B.COURSE_ID
+					 GROUP BY A.ID ) C
+		ON M.COURSE_ID = C.ID
+		LEFT OUTER JOIN ( SELECT CARDINAL_ID, COURSE_ID, COUNT(ID) AS TOTAL_PERSON
+					 	  FROM CB_LEARN_APP
+					 	  WHERE PAYMENT_STATE = '2'
+					 	  AND ( REQ_TYPE IS NULL OR REQ_TYPE NOT IN ('3','4') )
+					 	  GROUP BY CARDINAL_ID, COURSE_ID ) D
+		ON M.CARDINAL_ID = D.CARDINAL_ID
+		AND M.COURSE_ID = D.COURSE_ID
+		LEFT OUTER JOIN CB_GROUP_LEARN E
+		ON M.GROUP_ID = E.ID
+		LEFT OUTER JOIN ( SELECT A.LEARN_APP_ID, A.PROG_CNT, A.LEARN_TIME, B.ACC_CNT
+		                  FROM ( SELECT LEARN_APP_ID
+		                              , SUM(IF(PROG_YN = 'Y', 1, 0)) AS PROG_CNT
+		                              , SUM(LEARN_TIME) AS LEARN_TIME
+		                         FROM CB_ATT_LEC
+		                         GROUP BY LEARN_APP_ID ) A
+		                  INNER JOIN ( SELECT LEARN_APP_ID, COUNT(ID) AS ACC_CNT
+		                               FROM CB_ATT_LEC_HISTORY
+		                               GROUP BY LEARN_APP_ID ) B
+		                  ON A.LEARN_APP_ID = B.LEARN_APP_ID ) F
+		ON M.ID = F.LEARN_APP_ID
+		LEFT OUTER JOIN (  SELECT LEARN_APP_ID
+							    , SUM(IF(QUIZ_TYPE = '2', 1, 0)) AS OBJ_CNT
+							    , SUM(IF(QUIZ_TYPE = '3', 1, 0)) AS SUB_CNT
+							    , SUM(IF(QUIZ_TYPE = '1', SCORE, 0)) AS ATT_SCORE
+							    , SUM(IF(QUIZ_TYPE = '2', SCORE, 0)) AS OBJ_SCORE
+							    , SUM(IF(QUIZ_TYPE = '3', SCORE, 0)) AS SUB_SCORE
+							FROM CB_REPORT 
+							GROUP BY LEARN_APP_ID ) G
+		ON M.ID = G.LEARN_APP_ID
+		LEFT OUTER JOIN ( SELECT CARDINAL_ID, USER_ID, COUNT(ID) AS BOARD_CNT
+						  FROM CB_BOARD
+						  WHERE CARDINAL_ID IS NOT NULL
+						  AND CARDINAL_ID != ''
+						  AND USER_ID IS NOT NULL
+						  AND USER_ID != ''
+						  GROUP BY CARDINAL_ID, USER_ID ) H
+		ON M.CARDINAL_ID = H.CARDINAL_ID
+		AND M.USER_ID = H.USER_ID
+		LEFT OUTER JOIN ( SELECT A.CARDINAL_ID, B.USER_ID, COMMENT_CNT
+						  FROM CB_BOARD A
+						  INNER JOIN ( SELECT BOARD_ID, USER_ID, COUNT(ID) AS COMMENT_CNT
+							           FROM CB_BOARD_COMMENT
+							           WHERE USER_ID IS NOT NULL
+							           AND USER_ID != ''
+							           GROUP BY BOARD_ID, USER_ID ) B
+						  ON A.ID = B.BOARD_ID
+						  WHERE A.CARDINAL_ID IS NOT NULL
+						  AND A.CARDINAL_ID != '' ) I
+		ON M.CARDINAL_ID = I.CARDINAL_ID
+		AND M.USER_ID = I.USER_ID
+		<if test = "pay !=null">
+		LEFT OUTER JOIN EDU_USER_PAY_TB PAY 
+		ON  M.CARDINAL_ID = SUBSTRING( PAY.PAY_CRC_SEQ , 1 , 10) 
+		AND  M.COURSE_ID = SUBSTRING( PAY.PAY_CRC_SEQ , 12, 10)
+        AND  M.USER_ID = PAY.PAY_USER_ID
+        </if>
+       LEFT OUTER JOIN CB_POINT POINT 
+        ON M.USER_ID = POINT.USER_ID 
+		AND M.ID = POINT.LEARN_APP_ID
+		WHERE M.ID = #{id}
+	</select>
+	
+	<!-- 수강관리 리스트 조회 -->
+	<select id="learnManList" parameterType="LearnAppVO" resultMap="learnAppMap">
+		SELECT M.ID, M.USER_ID, M.GROUP_ID, M.CARDINAL_ID, M.COURSE_ID, M.NEIS_NUM, M.DES_NUM, M.SCHOOL_NAME
+			 , M.TEL, M.PHONE, M.EMAIL, M.REGION_CODE, M.JURISDICTION, M.S_TYPE, M.E_TYPE, M.POST_TYPE, M.ORDER_IDX
+			 , M.PAYMENT_TYPE, M.PAYMENT_STATE, M.PAYMENT_DATE, M.APP_NUM
+			 , M.DIS_COUPON, M.DIS_POINT, M.DIS_GROUP, M.PAYMENT, M.REAL_PAYMENT, M.REAL_END_DATE
+			 , M.REQ_TYPE, M.REQ_MEMO, M.REQ_DATE, M.PART_SCORE, M.TOTAL_SCORE, M.ISSUE_DATE, M.ISSUE_NUM, M.RECOMM_ID
+			 , M.ORDER_NUM, M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , A.USER_NM AS USER_NAME, A.USER_PHONE, A.USER_EMAIL
+			 , J.USER_ZIPCODE, J.USER_ADDR1, J.USER_ADDR2
+			 , B.NAME AS CARDINAL_NAME, B.LEARN_TYPE, B.LEARN_START_DATE, B.LEARN_END_DATE
+			 , C.NAME AS COURSE_NAME, C.CREDIT, C.PRICE AS COURSE_PRICE, C.MAIN_TB_ID, C.MAIN_PRICE, C.SUB_TB_ID, C.CHAPTER_CNT
+			 , IFNULL(D.TOTAL_PERSON, 0) AS TOTAL_PERSON, E.NAME AS GROUP_NAME
+			 , IFNULL(F.PROG_CNT, 0) AS PROG_CNT, IFNULL(F.LEARN_TIME, 0) AS LEARN_TIME, IFNULL(F.ACC_CNT, 0) AS ACC_CNT
+			 , IFNULL(G.OBJ_CNT, 0) AS OBJ_CNT, IFNULL(G.SUB_CNT, 0) AS SUB_CNT
+			 , IFNULL(G.ATT_SCORE, 0) AS ATT_SCORE, IFNULL(G.OBJ_SCORE, 0) AS OBJ_SCORE, IFNULL(G.SUB_SCORE, 0) AS SUB_SCORE
+			 , IFNULL(H.BOARD_CNT, 0) AS BOARD_CNT, IFNULL(I.COMMENT_CNT, 0) AS COMMENT_CNT
+		FROM CB_LEARN_APP M
+		INNER JOIN COM_USER_TB A
+		ON M.USER_ID = A.USER_ID
+		LEFT OUTER JOIN CB_USER_INFO J
+		ON M.USER_ID = J.USER_ID
+		INNER JOIN CB_CARDINAL B
+		ON M.CARDINAL_ID = B.ID
+		INNER JOIN ( SELECT A.ID, A.NAME, A.CREDIT, A.PRICE, A.MAIN_TB_ID, A.MAIN_PRICE, A.SUB_TB_ID, COUNT(B.ID) AS CHAPTER_CNT
+					 FROM CB_COURSE A
+					 LEFT OUTER JOIN CB_CHAPTER B
+					 ON A.ID = B.COURSE_ID
+					 <if test="loginUser != null and loginUser.grade == 1">
+					 INNER JOIN ( SELECT B.COURSE_ID
+								  FROM FF_MEMBER A
+								  INNER JOIN CB_MAN_COURSE B
+								  ON A.ID = B.MAN_ID
+								  WHERE A.ID = #{loginUser.id} ) C
+					 ON A.ID = C.COURSE_ID
+					 </if>
+					 GROUP BY A.ID ) C
+		ON M.COURSE_ID = C.ID
+		INNER JOIN ( SELECT CARDINAL_ID, COURSE_ID, COUNT(ID) AS TOTAL_PERSON
+					 FROM CB_LEARN_APP
+					 WHERE PAYMENT_STATE = '2'
+					 AND ( REQ_TYPE IS NULL OR REQ_TYPE NOT IN ('3','4') )
+					 GROUP BY CARDINAL_ID, COURSE_ID ) D
+		ON M.CARDINAL_ID = D.CARDINAL_ID
+		AND M.COURSE_ID = D.COURSE_ID
+		LEFT OUTER JOIN CB_GROUP_LEARN E
+		ON M.GROUP_ID = E.ID
+		LEFT OUTER JOIN ( SELECT A.LEARN_APP_ID, A.PROG_CNT, A.LEARN_TIME, B.ACC_CNT
+		                  FROM ( SELECT LEARN_APP_ID
+		                              , SUM(IF(PROG_YN = 'Y', 1, 0)) AS PROG_CNT
+		                              , SUM(LEARN_TIME) AS LEARN_TIME
+		                         FROM CB_ATT_LEC
+		                         GROUP BY LEARN_APP_ID ) A
+		                  INNER JOIN ( SELECT LEARN_APP_ID, COUNT(ID) AS ACC_CNT
+		                               FROM CB_ATT_LEC_HISTORY
+		                               GROUP BY LEARN_APP_ID ) B
+		                  ON A.LEARN_APP_ID = B.LEARN_APP_ID ) F
+		ON M.ID = F.LEARN_APP_ID
+		LEFT OUTER JOIN (  SELECT LEARN_APP_ID
+							    , SUM(IF(QUIZ_TYPE = '2', 1, 0)) AS OBJ_CNT
+							    , SUM(IF(QUIZ_TYPE = '3', 1, 0)) AS SUB_CNT
+							    , SUM(IF(QUIZ_TYPE = '1', SCORE, 0)) AS ATT_SCORE
+							    , SUM(IF(QUIZ_TYPE = '2', SCORE, 0)) AS OBJ_SCORE
+							    , SUM(IF(QUIZ_TYPE = '3', SCORE, 0)) AS SUB_SCORE
+							FROM CB_REPORT 
+							GROUP BY LEARN_APP_ID ) G
+		ON M.ID = G.LEARN_APP_ID
+		LEFT OUTER JOIN ( SELECT CARDINAL_ID, COURSE_ID, USER_ID, COUNT(ID) AS BOARD_CNT
+						  FROM CB_BOARD
+						  WHERE CARDINAL_ID IS NOT NULL
+						  AND CARDINAL_ID != ''
+						  AND COURSE_ID IS NOT NULL
+						  AND COURSE_ID != ''
+						  AND USER_ID IS NOT NULL
+						  AND USER_ID != ''
+						  GROUP BY CARDINAL_ID, COURSE_ID, USER_ID ) H
+		ON M.CARDINAL_ID = H.CARDINAL_ID
+		AND M.COURSE_ID = H.COURSE_ID
+		AND M.USER_ID = H.USER_ID
+		LEFT OUTER JOIN ( SELECT A.CARDINAL_ID, A.COURSE_ID, B.USER_ID, COMMENT_CNT
+						  FROM CB_BOARD A
+						  INNER JOIN ( SELECT BOARD_ID, USER_ID, COUNT(ID) AS COMMENT_CNT
+							           FROM CB_BOARD_COMMENT
+							           WHERE USER_ID IS NOT NULL
+							           AND USER_ID != ''
+							           GROUP BY BOARD_ID, USER_ID ) B
+						  ON A.ID = B.BOARD_ID
+						  WHERE A.CARDINAL_ID IS NOT NULL
+						  AND A.CARDINAL_ID != ''
+						  AND A.COURSE_ID IS NOT NULL
+						  AND A.COURSE_ID != '' ) I
+		ON M.CARDINAL_ID = I.CARDINAL_ID
+		AND M.COURSE_ID = I.COURSE_ID
+		AND M.USER_ID = I.USER_ID
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+	  					SELECT M.ID
+						FROM CB_LEARN_APP M
+						INNER JOIN COM_USER_TB A
+						ON M.USER_ID = A.USER_ID
+						INNER JOIN CB_CARDINAL B
+						ON M.CARDINAL_ID = B.ID
+						INNER JOIN CB_COURSE C
+						ON M.COURSE_ID = C.ID
+						<if test="loginUser != null and loginUser.grade == 1">
+						INNER JOIN ( SELECT B.COURSE_ID
+									 FROM FF_MEMBER A
+									 INNER JOIN CB_MAN_COURSE B
+									 ON A.ID = B.MAN_ID
+									 WHERE A.ID = #{loginUser.id} ) D
+						ON C.ID = D.COURSE_ID
+						</if>
+						WHERE 1 = 1
+						<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+							AND M.CARDINAL_ID = #{cardinal.id}
+						</if>
+						<if test="course != null and course.id != null and course.id != ''">
+							AND M.COURSE_ID = #{course.id}
+						</if>
+						<if test="region != null and region.code != ''">
+							AND M.REGION_CODE = #{region.code}
+						</if>
+						<if test="paymentState != null and paymentState != ''">
+							AND M.PAYMENT_STATE = #{paymentState}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	A.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'id'">
+									A.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'name'">
+									A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.CARDINAL_ID, M.COURSE_ID, M.ID
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.CARDINAL_ID, M.COURSE_ID, M.ID
+	</select>
+	
+	<!-- 수강관리 리스트 총 갯수 -->
+	<select id="learnManTotalCnt" parameterType="LearnAppVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_LEARN_APP M
+				INNER JOIN COM_USER_TB A
+				ON M.USER_ID = A.USER_ID
+				INNER JOIN CB_CARDINAL B
+				ON M.CARDINAL_ID = B.ID
+				INNER JOIN CB_COURSE C
+				ON M.COURSE_ID = C.ID
+				<if test="loginUser != null and loginUser.grade == 1">
+				INNER JOIN ( SELECT B.COURSE_ID
+							 FROM FF_MEMBER A
+							 INNER JOIN CB_MAN_COURSE B
+							 ON A.ID = B.MAN_ID
+							 WHERE A.ID = #{loginUser.id} ) D
+				ON C.ID = D.COURSE_ID
+				</if>
+				WHERE 1 = 1
+				<if test="cardinal != null and cardinal.id != null and cardinal.id != ''">
+					AND M.CARDINAL_ID = #{cardinal.id}
+				</if>
+				<if test="course != null and course.id != null and course.id != ''">
+					AND M.COURSE_ID = #{course.id}
+				</if>
+				<if test="region != null and region.code != ''">
+					AND M.REGION_CODE = #{region.code}
+				</if>
+				<if test="paymentState != null and paymentState != ''">
+					AND M.PAYMENT_STATE = #{paymentState}
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	A.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'id'">
+							A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'name'">
+							A.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select>
+	
+	<!-- 수강취소 관리 리스트 -->
+	<select id="learnCancelList" parameterType="LearnCancelVO" resultMap="learnCancelMap">
+		SELECT M.ID, M.USER_ID, M.LEARN_APP_ID, M.TEL, M.PHONE, M.EMAIL, M.BOOK_TYPE, M.BANK, M.ACCOUNT, M.OWNER, M.MEMO, M.STATE
+			 , M.USE_YN, DATE_FORMAT(M.REG_DATE,'%Y%m%d%H%i%s') AS REG_DATE, DATE_FORMAT(M.UPD_DATE,'%Y%m%d%H%i%s') AS UPD_DATE
+			 , B.USER_NM AS USER_NAME, C.ID AS CARDINAL_ID, C.NAME AS CARDINAL_NAME, D.ID AS COURSE_ID, D.NAME AS COURSE_NAME
+		FROM CB_LEARN_CANCEL_APP M
+		INNER JOIN CB_LEARN_APP A
+		ON M.LEARN_APP_ID = A.ID
+		INNER JOIN COM_USER_TB B
+		ON M.USER_ID = B.USER_ID
+		INNER JOIN CB_CARDINAL C
+		ON A.CARDINAL_ID = C.ID
+		INNER JOIN CB_COURSE D
+		ON A.COURSE_ID = D.ID
+		<if test="loginUser != null and loginUser.grade == 1">
+		INNER JOIN ( SELECT B.COURSE_ID
+					 FROM FF_MEMBER A
+					 INNER JOIN CB_MAN_COURSE B
+					 ON A.ID = B.MAN_ID
+					 WHERE A.ID = #{loginUser.id} ) E
+		ON D.ID = E.COURSE_ID
+		</if>
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+						SELECT M.ID
+						FROM CB_LEARN_CANCEL_APP M
+						INNER JOIN CB_LEARN_APP A
+						ON M.LEARN_APP_ID = A.ID
+						INNER JOIN COM_USER_TB B
+						ON M.USER_ID = B.USER_ID
+						<if test="loginUser != null and loginUser.grade == 1">
+						INNER JOIN ( SELECT B.COURSE_ID
+									 FROM FF_MEMBER A
+									 INNER JOIN CB_MAN_COURSE B
+									 ON A.ID = B.MAN_ID
+									 WHERE A.ID = #{loginUser.id} ) C
+						ON A.COURSE_ID = C.COURSE_ID
+						</if>
+						WHERE 1 = 1
+						<if test="state != null and state != ''">
+							AND M.STATE = #{state}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									(	B.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+									OR	B.USER_ID LIKE CONCAT('%',#{searchKeyword},'%') )
+								</when>
+								<when test="searchCondition == 'name'">
+									B.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'id'">
+									B.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.ID DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.ID DESC
+	</select>
+	
+	<!-- 수강취소 관리 리스트 총 갯수 -->
+	<select id="learnCancelTotalCnt" parameterType="LearnCancelVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_LEARN_CANCEL_APP M
+				INNER JOIN CB_LEARN_APP A
+				ON M.LEARN_APP_ID = A.ID
+				INNER JOIN COM_USER_TB B
+				ON M.USER_ID = B.USER_ID
+				<if test="loginUser != null and loginUser.grade == 1">
+				INNER JOIN ( SELECT B.COURSE_ID
+							 FROM FF_MEMBER A
+							 INNER JOIN CB_MAN_COURSE B
+							 ON A.ID = B.MAN_ID
+							 WHERE A.ID = #{loginUser.id} ) C
+				ON A.COURSE_ID = C.COURSE_ID
+				</if>
+				WHERE 1 = 1
+				<if test="state != null and state != ''">
+					AND M.STATE = #{state}
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							(	B.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+							OR	B.USER_ID LIKE CONCAT('%',#{searchKeyword},'%') )
+						</when>
+						<when test="searchCondition == 'name'">
+							B.USER_NM LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'id'">
+							B.USER_ID LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select>
+	   
+ 	<select id="learnAppInfoForCertificate" parameterType="LearnAppVO" resultType="hashmap">
+	 	SELECT
+ 			CLA.ID
+			, CLA.GROUP_ID
+			, CLA.CARDINAL_ID
+			, CLA.COURSE_ID
+			, IFNULL(CLA.DES_NUM, '') AS DES_NUM /*연수지명번호*/
+			, CCA.LEARN_TYPE /*연수구분*/
+			, CCA.NAME AS CARDINAL_NAME /*기수명*/
+			, CONCAT(IF(LOCATE(CCA.LEARN_TYPE, 'J')>0,'직무 ',''), IF(LOCATE(CCA.LEARN_TYPE,'S')>0,'자율 ',''),IF(LOCATE(CCA.LEARN_TYPE,'M')>0,'집합 ',''), IF(LOCATE(CCA.LEARN_TYPE,'G')>0,'단체 ','')) AS LEARN_TYPE_NAME
+			, CCB.COURSE_CODE /*연수영역*/
+			, (SELECT`NAME` FROM FF_CODE WHERE CODE = CCB.COURSE_CODE AND GROUP_ID = 'course') AS COURSE_CODE_NAME
+			, CCB.NAME /*연수과정*/
+			, CCB.CREDIT /*학점*/
+			, CCA.LEARN_START_DATE /*연수시작일*/
+			, CCA.LEARN_END_DATE /*연수종료일*/
+			, (DATE_ADD(CCA.LEARN_END_DATE, INTERVAL 1 DAY) ) AS REAL_START_DATE /*복습시작일*/
+			, CLA.REAL_END_DATE /*복습종료일*/
+			, CLA.PAYMENT_STATE
+			, CLA.PAYMENT_TYPE
+			, CCB.MAIN_TB_ID
+			, CCB.SUB_TB_ID
+			, CCB.RECORD_YN
+			, CCB.APPLYFORM_YN
+			, CCB.checkOnline
+			, CCA.COMP_PERCENT_QUIZ AS QUPERCENT, CCA.COMP_PERCENT_EXAM AS EXPERCENT, CCA.COMP_PERCENT_PROG AS PRPERCENT, CCA.COMPLETE_TOTAL AS TOTAL
+			, CCA.COMP_SCORE_QUIZ AS QUSCORE, CCA.COMP_SCORE_EXAM AS EXSCORE, CCA.COMP_SCORE_PROG AS PRSCORE
+		FROM CB_LEARN_APP AS CLA
+			JOIN CB_CARDINAL AS CCA ON CLA.CARDINAL_ID = CCA.ID
+			JOIN CB_COURSE AS CCB ON CLA.COURSE_ID = CCB.ID
+		WHERE CLA.USER_ID = #{user.id}
+		AND CLA.CARDINAL_ID = #{cardinal.id}
+ 	</select>
+	   
+	<select id="selectUsedPoint" parameterType="LearnAppVO" resultType="String">
+		SELECT			
+			PAY.PAY_CRC_SEQ,
+		    PAY.PAY_INS_DT    
+		FROM CB_LEARN_APP CLA		 
+			LEFT OUTER JOIN CB_CARDINAL CC1
+			ON CLA.CARDINAL_ID = CC1.ID
+			LEFT OUTER JOIN CB_COURSE CC2
+			ON CLA.COURSE_ID = CC2.ID	
+			LEFT OUTER JOIN EDU_USER_PAY_TB PAY 
+		    ON CLA.CARDINAL_ID = SUBSTRING( PAY.PAY_CRC_SEQ , 1 , 10) 
+			AND CLA.COURSE_ID = SUBSTRING( PAY.PAY_CRC_SEQ , 12, 10) 			
+		WHERE PAY.PAY_GB ='F0101'
+		 	AND CLA.ID = #{id}
+			AND CLA.USER_ID = #{user.id}
+			AND PAY.PAY_USER_SEQ = #{pay.pay_user_seq} 
+			AND CLA.PAYMENT_DATE=#{paymentDate}
+	</select>
+	 
+	<select id="getRefundInfo" parameterType="string" resultMap="eduUserRefundMap">
+		SELECT
+			EUPT.REAL_PAY_AMOUNT AS REAL_PAY_AMOUNT, EURT.*
+		FROM	
+			EDU_USER_PAY_TB EUPT, EDU_USER_REFUND_TB EURT
+		WHERE
+			EUPT.PAY_USER_SEQ = EURT.PAY_USER_SEQ
+		AND
+			EURT.PAY_USER_SEQ = #{pay_user_seq}
+	</select>
+	
+	<select id="getEduUserPayInfo" parameterType="string" resultMap="eduUserPayMap">
+		SELECT
+			PAY.PAY_USER_SEQ, PAY.PAY_CRC_SEQ, PAY.PAY_USER_METHOD, PAY.PAY_USER_STATUS
+			, PAY.PAY_USER_ID, PAY.PAY_ACCNUM, PAY.PAY_BANKNAME, PAY.PAY_PRODUCT_NAME
+			, DATE_FORMAT(PAY.PAY_INS_DT, '%Y-%m-%d') AS PAY_INS_DT, PAY.REAL_PAY_AMOUNT, PAY.DIS_POINT, CUR.PAY_CRC_AMOUNT
+		FROM
+			EDU_USER_PAY_TB PAY
+		INNER JOIN
+			EDU_CURRICULUM_PAY_TB CUR
+		ON
+			PAY.PAY_CRC_SEQ = CUR.PAY_CRC_SEQ
+		WHERE
+			PAY.PAY_USER_SEQ = #{pay_user_seq}
+	</select>
+	
+	<update id="payRefundReg" parameterType="hashmap">
+		UPDATE
+			EDU_USER_PAY_TB PAY
+		INNER JOIN
+			EDU_USER_REFUND_TB REFUND
+		ON
+			PAY.PAY_USER_SEQ = REFUND.PAY_USER_SEQ
+		SET
+			PAY.PAY_USER_STATUS = #{pay_user_status}
+			, REFUND.PAY_REFUND_STATUS = #{pay_user_status}
+		WHERE
+			PAY.PAY_USER_SEQ = #{pay_user_seq}
+	</update>
+</mapper>

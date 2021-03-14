@@ -1,0 +1,1845 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.changbi.tt.dev.data.dao.BoardDAO">
+	
+	<!-- 게시물 Map -->
+	<resultMap id="boardMap" type="BoardVO" autoMapping="true">
+		<id	property="category"			column="category" />
+		<id	property="id"				column="M_ID" />
+		<id	property="boardReply.id"	column="S_ID" />
+		<result property="faqCode" column="FAQ_CODE"/>
+		<association property="faq"		column="FAQ_CODE"	javaType="forFaith.dev.vo.CodeVO"		select="forFaith.dev.dao.BaseDAO.codeInfo"  />
+		<association property="regUser" 	column="REG_USER"	jdbcType="VARCHAR"	javaType="forFaith.dev.vo.MemberVO"	select="forFaith.dev.dao.BaseDAO.memberInfo" />
+		<association property="user"		javaType="UserVO">
+			<result	property="id"			column="USER_ID" />
+			<result property="name"			column="USER_NAME" />
+		</association>		
+		<association property="boardReply"	javaType="BoardReplyVO">
+			<result	property="id"			column="S_ID" />
+			<association property="file1" 		column="ATTACH1_FILE"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+			<association property="file2" 		column="ATTACH2_FILE"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		</association>	
+		<association property="file1" 		column="ATTACH1_FILE"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<association property="file2" 		column="ATTACH2_FILE"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+	</resultMap>
+	
+	<resultMap id="boardReplyMap" type="BoardReplyVO" autoMapping="true">
+		<id	property="id"			column="ID" />
+		<result   property="boardId" column="BOARD_ID"/>
+		<association property="file1" 		column="ATTACH1_FILE"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<association property="file2" 		column="ATTACH2_FILE"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+	</resultMap>
+	
+	<!-- 팝업 게시물 Map -->
+	<resultMap id="popupBoardMap" type="BoardVO" autoMapping="true">
+		<id	property="id"				column="ID" />
+		<association property="regUser" column="REG_USER"	jdbcType="VARCHAR"	javaType="forFaith.dev.vo.MemberVO"	select="forFaith.dev.dao.BaseDAO.memberInfo" />
+		<association property="user"	javaType="UserVO">
+			<result	property="id"		column="USER_ID" />
+			<result property="name"		column="USER_NAME" />
+		</association>
+		<association property="boardReply"	javaType="BoardReplyVO">
+			<result	property="id"		column="REPLY_ID" />
+			<result	property="title"	column="REPLY_TITLE" />
+			<result	property="comment"	column="REPLY_COMMENT" />
+			<association property="regUser"	javaType="ManagerVO">
+				<result	property="id"		column="MANAGER_ID" />
+				<result property="name"		column="MANAGER_NAME" />
+			</association>
+		</association>
+	</resultMap>
+	
+	<!-- 연수설문 마스터 Map -->
+	<resultMap id="surveyMap" type="SurveyVO" autoMapping="true">
+		<id	property="id"	column="ID" />
+		<association property="surveyCode"	column="SURVEY_CODE"	javaType="forFaith.dev.vo.CodeVO"		select="forFaith.dev.dao.BaseDAO.codeInfo"  />
+	</resultMap>
+	
+	<!-- 연수설문 문항 Map -->
+	<resultMap id="surveyItemMap" type="SurveyItemVO" autoMapping="true">
+		<id	property="id"				column="ID" />
+		<association property="survey"	column="SURVEY_CODE"	javaType="forFaith.dev.vo.CodeVO"		select="forFaith.dev.dao.BaseDAO.codeInfo"  />
+	</resultMap>
+	
+	<resultMap id="courseBoardMap" type="BoardVO" autoMapping="true">
+		<id property="id" column="ID" />
+		<result property="boardReply.id" column="REPLY_ID" />
+		<result property="boardReply.title" column="REPLY_TITLE" />
+		<result property="boardReply.comment" column="REPLY_COMMENT" />
+		<result property="course.name" column="COURSE_NAME" />
+		<result property="course.cardinalName" column="CARDINAL_NAME" />
+		<association property="user"		javaType="UserVO">
+			<result	property="id"			column="USER_ID" />
+			<result property="name"			column="USER_NAME" />
+		</association>
+		<association property="regUser" 	column="REG_USER"	jdbcType="VARCHAR"	javaType="forFaith.dev.vo.MemberVO"	select="forFaith.dev.dao.BaseDAO.memberInfo" />
+		<association property="file1" 		column="ATTACH1_FILE"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<association property="file2" 		column="ATTACH2_FILE"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+	</resultMap>
+	
+	<!-- 전체 공지사항 resultMap -->
+	<resultMap type="hashmap" id="boardCt">
+		<result javaType="int" column="BOARD_CONTENT_SEQ" property="board_content_seq"/>
+		<result javaType="string" column="BOARD_CONTENT_TITLE" property="board_content_title"/>
+		<result javaType="string" column="BOARD_CONTENT_CT" property="board_content_ct"/>
+		<result javaType="string" column="BOARD_CONTENT_NM" property="board_content_nm"/>
+		<result javaType="int" column="BOARD_CONTENT_HIT" property="board_content_hit"/>
+		<result javaType="date" column="BOARD_CONTENT_INS_DT" property="board_content_ins_dt"/>
+		<result javaType="string" column="BOARD_CONTENT_INS_ID" property="board_content_ins_id"/>
+		<result javaType="date" column="BOARD_CONTENT_UDT_DT" property="board_content_udt_dt"/>
+		<result javaType="string" column="BOARD_CONTENT_UDT_ID" property="board_content_udt_id"/>
+		<result javaType="string" column="BOARD_CONTENT_IMP" property="board_content_imp"/>
+		<association property="boardGt" javaType="java.util.HashMap">
+			<result javaType="int" column="BOARD_SEQ" property="board_seq"/>
+			<result javaType="string" column="BOARD_GB" property="board_gb"/>
+			<result javaType="string" column="BOARD_NM" property="board_nm"/>
+			<result javaType="string" column="BOARD_TP" property="board_tp"/>
+			<result javaType="string" column="BOARD_DETAIL_GB" property="board_detail_gb"/>
+			<result javaType="string" column="BOARD_ICON_PD" property="board_icon_pd"/>
+		</association>
+		<collection property="file" javaType="java.util.ArrayList" resultMap="boardAttachFile"></collection>
+	</resultMap>
+	
+	<resultMap type="hashmap" id="boardAttachFile">
+		<result javaType="int" column="BOARD_FILE_SEQ" property="board_file_seq"/>
+		<result javaType="string" column="BOARD_FILE_SAVED" property="board_file_saved"/>
+		<result javaType="string" column="FILE_NAME" property="file_name"/>
+		<result javaType="string" column="ORIGIN_FILE_NAME" property="origin_file_name"/>
+		<result javaType="string" column="FILE_PATH" property="file_path"/>
+		<result javaType="string" column="FILE_EXT" property="file_ext"/>
+		<result javaType="int" column="FILE_SIZE" property="file_size"/>
+		<result javaType="string" column="URL_PATH" property="url_path"/>
+	</resultMap>
+	
+	<!-- 게시물 리스트 검색조건 -->
+	<sql id="boardCondition">
+		WHERE 1=1
+		AND CB.USE_YN = 'Y'
+		AND CB.BOARD_TYPE = #{boardType}
+		
+		<choose>
+			<when test='boardType.equals("1")'> <!-- 공지사항, 공문 -->
+				<if test="topYn != null and topYn != ''">
+					AND TOP_YN = #{topYn}
+				</if>
+				<choose>
+					<when test="teacherId != '' and teacherId != null">
+						AND TEACHER_ID = #{teacherId}
+					</when>
+					<otherwise>
+						AND (TEACHER_ID IS NULL OR TEACHER_ID = '')
+					</otherwise>
+				</choose>
+				<if test="noticeType != null and noticeType != ''">
+					AND NOTICE_TYPE = #{noticeType}
+				</if>
+				<if test="noticeType == null or noticeType == ''"> 
+					AND NOTICE_TYPE != '7'
+				</if>
+			</when>
+			<when test='boardType.equals("3")'> <!-- FAQ -->
+				<choose>
+					<when test="teacherId != '' and teacherId != null">
+						AND TEACHER_ID = #{teacherId}
+					</when>
+					<otherwise>
+						AND (TEACHER_ID IS NULL OR TEACHER_ID = '')
+					</otherwise>
+				</choose>
+				<if test="faqCode != null and faqCode != ''">
+					<choose>
+						<when test="faqCode != 'all'">
+							AND CB.FAQ_CODE = #{faqCode}
+						</when>
+					</choose>
+				</if>
+			</when>
+		</choose>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'title'">
+					TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+<!-- 		<choose> -->
+<!-- 			<when test="searchCondition == 'title'"> -->
+<!-- 				AND TITLE LIKE CONCAT('%',#{searchKeyword},'%') -->
+<!-- 			</when> -->
+<!-- 		</choose> -->
+	</sql>
+	
+	<!-- 게시판 리스트 조회 -->
+  	<!-- <select id="boardList" parameterType="BoardVO" resultMap="boardMap">
+		SELECT * FROM (
+			SELECT 
+				'M' AS CATEGORY, 
+				CB.ID AS M_ID, 
+				'' AS S_ID, 
+				CB.BOARD_TYPE, 
+				CB.NOTICE_TYPE, 
+				CB.FAQ_CODE, 
+				CB.ATTACH1_FILE, 
+				CB.ATTACH2_FILE, 
+				CB.ICON, 
+				CB.TOP_YN, 
+				CB.TITLE, 
+				CB.COMMENT, 
+				CB.HITS, 
+				CB.RECOMMEND, 
+				CB.NONRECOMMEND, 
+				CB.ORDER_NUM,
+				CB.REG_USER,
+				CB.REG_DATE,
+				CB.UPD_USER,
+				CB.UPD_DATE,
+				CASE  
+					WHEN CB.NOTICE_TYPE = '1' THEN '공지사항'
+					WHEN CB.NOTICE_TYPE = '2' THEN '이벤트'
+					WHEN CB.NOTICE_TYPE = '3' THEN '신설'
+					WHEN CB.NOTICE_TYPE = '4' THEN '필독'
+					WHEN CB.NOTICE_TYPE = '5' THEN '일반'
+					WHEN CB.NOTICE_TYPE = '6' THEN '평가'
+					WHEN CB.NOTICE_TYPE = '7' THEN '공문'
+					ELSE ''
+				END AS NOTICE_TYPE_NAME, AS NOTICE_TYPE_NAME  컬럼에 CASE문에 해당되는 결과값이 박힌다.
+				CM.ID AS USER_ID,
+				CM.NAME AS USER_NAME
+			FROM CB_BOARD CB
+			LEFT OUTER JOIN CB_MEMBER CM  CB_BOARD 테이블은 레코드 무조건 나오고  CB_MEMBER테이블은 공통으로 교집합된 부분만 나옴
+			ON CB.USER_ID = CM.ID USER_ID는 작성자
+			<include refid="boardCondition" />
+			
+			UNION ALL
+			
+			SELECT 
+				'S' AS CATEGORY, 
+				BOARD_ID AS M_ID, 
+				CBR.ID AS S_ID, 
+				'' AS BOARD_TYPE, 
+				'' AS NOTICE_TYPE, 
+				'' AS FAQ_CODE, 
+				CBR.ATTACH1_FILE, 
+				CBR.ATTACH2_FILE, 
+				'' AS ICON, 
+				'' AS TOP_YN, 
+				CBR.TITLE, 
+				CBR.COMMENT, 
+				CBR.HITS, 
+				CBR.RECOMMEND, 
+				CBR.NONRECOMMEND, 
+				CBR.ORDER_NUM,
+				CBR.REG_USER,
+				CBR.REG_DATE,
+				CBR.UPD_USER,
+				CBR.UPD_DATE,
+				'' AS NOTICE_TYPE_NAME,
+				CM.ID AS USER_ID,
+				CM.NAME AS USER_NAME
+			FROM CB_BOARD_REPLY CBR
+			INNER JOIN (SELECT * FROM CB_BOARD CB <include refid="boardCondition" />) CB
+			ON CBR.BOARD_ID = CB.ID
+			LEFT OUTER JOIN CB_MEMBER CM
+			ON CBR.USER_ID = CM.ID
+		) BOARD
+		ORDER BY M_ID DESC, CONVERT(S_ID, UNSIGNED) ASC
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if> 
+	</select> -->
+	
+	<!-- 게시판 리스트 총 갯수 -->
+<!--   	<select id="boardTotalCnt" parameterType="BoardVO" resultType="int">
+		SELECT COUNT(*) FROM (
+			SELECT 
+				'M' AS CATEGORY, 
+				CB.ID AS M_ID, 
+				'' AS S_ID, 
+				CB.BOARD_TYPE, 
+				CB.NOTICE_TYPE, 
+				CB.FAQ_CODE, 
+				CB.ATTACH1_FILE, 
+				CB.ATTACH2_FILE, 
+				CB.ICON, 
+				CB.TOP_YN, 
+				CB.TITLE, 
+				CB.COMMENT, 
+				CB.HITS, 
+				CB.RECOMMEND, 
+				CB.NONRECOMMEND, 
+				CB.ORDER_NUM,
+				CB.REG_USER,
+				CB.REG_DATE,
+				CB.UPD_USER,
+				CB.UPD_DATE,
+				CASE 
+					WHEN CB.NOTICE_TYPE = '1' THEN '모집'
+					WHEN CB.NOTICE_TYPE = '2' THEN '환영'
+					WHEN CB.NOTICE_TYPE = '3' THEN '신설'
+					WHEN CB.NOTICE_TYPE = '4' THEN '필독'
+					WHEN CB.NOTICE_TYPE = '5' THEN '일반'
+					WHEN CB.NOTICE_TYPE = '6' THEN '평가'
+					WHEN CB.NOTICE_TYPE = '7' THEN '공문'
+					ELSE ''
+				END AS NOTICE_TYPE_NAME,
+				CM.ID AS USER_ID,
+				CM.NAME AS USER_NAME
+			FROM CB_BOARD CB
+			LEFT OUTER JOIN CB_MEMBER CM
+			ON CB.USER_ID = CM.ID
+			<include refid="boardCondition" />
+			
+			UNION ALL
+			
+			SELECT 
+				'S' AS CATEGORY, 
+				BOARD_ID AS M_ID, 
+				CBR.ID AS S_ID, 
+				'' AS BOARD_TYPE, 
+				'' AS NOTICE_TYPE, 
+				'' AS FAQ_CODE, 
+				CBR.ATTACH1_FILE, 
+				CBR.ATTACH2_FILE, 
+				'' AS ICON, 
+				'' AS TOP_YN, 
+				CBR.TITLE, 
+				CBR.COMMENT, 
+				CBR.HITS, 
+				CBR.RECOMMEND, 
+				CBR.NONRECOMMEND, 
+				CBR.ORDER_NUM,
+				CBR.REG_USER,
+				CBR.REG_DATE,
+				CBR.UPD_USER,
+				CBR.UPD_DATE,
+				'' AS NOTICE_TYPE_NAME,
+				CM.ID AS USER_ID,
+				CM.NAME AS USER_NAME
+			FROM CB_BOARD_REPLY CBR
+			INNER JOIN (SELECT * FROM CB_BOARD CB <include refid="boardCondition" />) CB
+			ON CBR.BOARD_ID = CB.ID
+			LEFT OUTER JOIN CB_MEMBER CM
+			ON CBR.USER_ID = CM.ID
+		) BOARD
+	</select> -->
+	
+	<!-- 게시물 상세 조회 -->
+<!-- 	<select id="boardInfo" parameterType="BoardVO" resultMap="boardMap">
+		SELECT
+			CB.ID,
+			CB.LANG,
+			CB.BOARD_TYPE,
+			CB.NOTICE_TYPE,
+			CB.FAQ_CODE,
+			CB.CARDINAL_ID,
+			CB.COURSE_ID,
+			CB.TEACHER_ID,
+			CB.USER_ID,
+			CB.ATTACH1_FILE,
+			CB.ATTACH2_FILE,
+			CB.ICON,
+			CB.TOP_YN,
+			CB.TITLE,
+			CB.COMMENT,
+			CB.HITS,
+			CB.RECOMMEND,
+			CB.NONRECOMMEND,
+			CB.SHARE,
+			CB.ORDER_NUM,
+			CB.USE_YN,
+			CB.REG_USER,
+			CB.REG_DATE,
+			CB.UPD_USER,
+			CB.UPD_DATE,
+			CASE 
+				WHEN CB.NOTICE_TYPE = '1' THEN '모집'
+				WHEN CB.NOTICE_TYPE = '2' THEN '환영'
+				WHEN CB.NOTICE_TYPE = '3' THEN '신설'
+				WHEN CB.NOTICE_TYPE = '4' THEN '필독'
+				WHEN CB.NOTICE_TYPE = '5' THEN '일반'
+				WHEN CB.NOTICE_TYPE = '6' THEN '평가'
+				WHEN CB.NOTICE_TYPE = '7' THEN '공문'
+				ELSE ''
+			END AS NOTICE_TYPE_NAME,
+			CM.ID AS USER_ID,
+			CM.NAME AS USER_NAME		
+		FROM 
+		(SELECT * FROM CB_BOARD WHERE ID = #{id}) CB
+		LEFT OUTER JOIN CB_BOARD_REPLY CBR
+		ON CB.ID = CBR.BOARD_ID
+		LEFT OUTER JOIN CB_MEMBER CM
+		ON CB.USER_ID = CM.ID
+	</select> -->
+	
+	<insert id="boardReg" parameterType="BoardVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_BOARD
+		(
+			ID,
+			LANG,
+			BOARD_TYPE,
+			NOTICE_TYPE,
+			FAQ_CODE,
+			CARDINAL_ID,
+			COURSE_ID,
+			TEACHER_ID,
+			USER_ID,
+			ATTACH1_FILE,
+			ATTACH2_FILE,
+			ICON,
+			TOP_YN,
+			TITLE,
+			COMMENT,
+			HITS,
+			RECOMMEND,
+			NONRECOMMEND,
+			SHARE,
+			ORDER_NUM,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE
+		) VALUES (
+			#{id},
+			#{lang},
+			#{boardType},
+			#{noticeType},
+			#{faqCode},
+			#{cardinalId},
+			#{courseId},
+			#{teacherId},
+			#{userId},
+			#{file1.fileId},
+			#{file2.fileId},
+			#{icon},
+			#{topYn},
+			#{title},
+			#{comment},
+			#{hits},
+			#{recommend},
+			#{nonrecommend},
+			#{share},
+			#{orderNum},
+			#{regUser.id},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+			#{updUser.id},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		)
+		ON DUPLICATE KEY UPDATE
+			NOTICE_TYPE = VALUES(NOTICE_TYPE),
+			FAQ_CODE = VALUES(FAQ_CODE),
+			CARDINAL_ID = VALUES(CARDINAL_ID),
+			COURSE_ID = VALUES(COURSE_ID),
+			TEACHER_ID = VALUES(TEACHER_ID),
+			<!-- USER_ID = VALUES(USER_ID), -->
+			ATTACH1_FILE = VALUES(ATTACH1_FILE),
+			ATTACH2_FILE = VALUES(ATTACH2_FILE),
+			ICON = VALUES(ICON),
+			TOP_YN = VALUES(TOP_YN),
+			TITLE = VALUES(TITLE),
+			COMMENT = VALUES(COMMENT),
+			HITS = VALUES(HITS),
+			RECOMMEND = VALUES(RECOMMEND),
+			NONRECOMMEND = VALUES(NONRECOMMEND),
+			SHARE = VALUES(SHARE),
+			ORDER_NUM = VALUES(ORDER_NUM),
+			UPD_USER = VALUES(UPD_USER),
+			UPD_DATE = VALUES(UPD_DATE)
+	</insert>
+
+ 
+	<!-- 답글 상세 조회-->
+	<select id="boardReplyInfo" parameterType="BoardReplyVO" resultMap="boardReplyMap">
+		SELECT
+			ID,
+			BOARD_ID,
+			PARENT_ID,
+			USER_ID,
+			DEPTH,
+			ATTACH1_FILE,
+			ATTACH2_FILE,
+			TITLE,
+			COMMENT,
+			HITS,
+			RECOMMEND,
+			NONRECOMMEND,
+			SHARE,
+			ORDER_NUM,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE	
+		FROM CB_BOARD_REPLY
+		WHERE ID = #{id}
+	</select> 
+
+	<!-- 답글 등록 -->
+	<insert id="boardReplyReg" parameterType="BoardReplyVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_BOARD_REPLY
+		(
+			ID,
+			BOARD_ID,
+			PARENT_ID,
+			USER_ID,
+			DEPTH,
+			ATTACH1_FILE,
+			ATTACH2_FILE,
+			TITLE,
+			COMMENT,
+			HITS,
+			RECOMMEND,
+			NONRECOMMEND,
+			SHARE,
+			ORDER_NUM,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE
+		) VALUES (
+			#{id},
+			#{boardId},
+			#{parentId},
+			#{userId},
+			#{depth},
+			#{file1.fileId},
+			#{file2.fileId},
+			#{title},
+			#{comment},
+			#{hits},
+			#{recommend},
+			#{nonrecommend},
+			#{share},
+			#{orderNum},
+			#{regUser.id},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+			#{updUser.id},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		) ON DUPLICATE KEY UPDATE
+			BOARD_ID = VALUES(BOARD_ID),
+			PARENT_ID = VALUES(PARENT_ID),
+			USER_ID = VALUES(USER_ID),
+			DEPTH = VALUES(DEPTH),
+			ATTACH1_FILE = VALUES(ATTACH1_FILE),
+			ATTACH2_FILE = VALUES(ATTACH2_FILE),
+			TITLE = VALUES(TITLE),
+			COMMENT = VALUES(COMMENT),
+			HITS = VALUES(HITS),
+			RECOMMEND = VALUES(RECOMMEND),
+			NONRECOMMEND = VALUES(NONRECOMMEND),
+			SHARE = VALUES(SHARE),
+			ORDER_NUM = VALUES(ORDER_NUM),
+			UPD_USER = VALUES(UPD_USER),
+			UPD_DATE = VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 본 게시물 삭제 (물리삭제) -->
+	<delete id="boardDel" parameterType="BoardVO">
+		DELETE FROM CB_BOARD
+		WHERE ID = ${id}
+	</delete>
+	
+	<!-- 답글게시물 삭제 (물리삭제) -->
+	<delete id="boardReplyDel" parameterType="BoardReplyVO">
+		DELETE FROM CB_BOARD_REPLY
+		WHERE ID = ${id}
+	</delete>
+	
+	<!-- 팝업 게시판 리스트 조회 -->
+	<!-- <select id="popupBoardList" parameterType="BoardVO" resultMap="popupBoardMap">
+		SELECT M.ID, M.LANG, M.BOARD_TYPE, M.NOTICE_TYPE, M.FAQ_CODE, M.CARDINAL_ID, M.COURSE_ID, M.TEACHER_ID, M.USER_ID
+			 , M.ATTACH1_FILE, M.ATTACH2_FILE, M.ICON, M.TOP_YN, M.SECRET_YN, M.TITLE, M.COMMENT
+			 , M.HITS, M.RECOMMEND, M.NONRECOMMEND, M.SHARE
+			 , M.ORDER_NUM, M.USE_YN, M.REG_USER, M.REG_DATE, M.UPD_USER, M.UPD_DATE
+			 , A.NAME AS USER_NAME, B.ID AS REPLY_ID
+		FROM CB_BOARD M
+		LEFT OUTER JOIN CB_MEMBER A
+		ON M.USER_ID = A.ID
+		LEFT OUTER JOIN CB_BOARD_REPLY B
+		ON M.ID = B.BOARD_ID
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+						SELECT M.ID
+						FROM CB_BOARD M
+						WHERE M.BOARD_TYPE = #{boardType}
+						<if test="useYn != null and useYn != ''">
+							AND M.USE_YN = #{useYn}
+						</if>
+						<if test="noticeType != null and noticeType != ''">
+							AND M.NOTICE_TYPE = #{noticeType}
+						</if>
+						<if test="faqCode != null and faqCode != ''">
+							AND M.FAQ_CODE = #{faqCode}
+						</if>
+						<if test="teacherId != '' and teacherId != null">
+							AND M.TEACHER_ID = #{teacherId}
+						</if>
+						<if test="cardinalId != '' and cardinalId != null">
+							AND M.CARDINAL_ID = #{cardinalId}
+						</if>
+						<if test="courseId != '' and courseId != null">
+							AND M.COURSE_ID = #{courseId}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									M.TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'title'">
+									M.TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.REG_DATE DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.REG_DATE DESC
+	</select> -->
+	
+	<!-- 팝업 게시판 리스트 총 갯수 -->
+	<select id="popupBoardTotalCnt" parameterType="BoardVO" resultType="int">
+		SELECT COUNT(ID)
+		FROM (	SELECT M.ID
+				FROM CB_BOARD M
+				WHERE M.BOARD_TYPE = #{boardType}
+				<if test="useYn != null and useYn != ''">
+					AND M.USE_YN = #{useYn}
+				</if>
+				<if test="noticeType != null and noticeType != ''">
+					AND M.NOTICE_TYPE = #{noticeType}
+				</if>
+				<if test="faqCode != null and faqCode != ''">
+					AND M.FAQ_CODE = #{faqCode}
+				</if>
+				<if test="teacherId != '' and teacherId != null">
+					AND M.TEACHER_ID = #{teacherId}
+				</if>
+				<if test="cardinalId != '' and cardinalId != null">
+					AND M.CARDINAL_ID = #{cardinalId}
+				</if>
+				<if test="courseId != '' and courseId != null">
+					AND M.COURSE_ID = #{courseId}
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
+					AND
+					<choose>
+						<when test="searchCondition == 'all'">
+							M.TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+						<when test="searchCondition == 'title'">
+							M.TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+						</when>
+					</choose>
+				</if>
+				GROUP BY M.ID ) PAGING
+	</select>
+	
+	<!-- 팝업용 게시물 상세 조회 -->
+	<!-- <select id="popupBoardInfo" parameterType="BoardVO" resultMap="popupBoardMap">
+		SELECT M.ID, M.LANG, M.BOARD_TYPE, M.NOTICE_TYPE, M.FAQ_CODE, M.CARDINAL_ID, M.COURSE_ID, M.TEACHER_ID, M.USER_ID
+			 , M.ATTACH1_FILE, M.ATTACH2_FILE, M.ICON, M.TOP_YN, M.SECRET_YN, M.TITLE, M.COMMENT
+			 , M.HITS, M.RECOMMEND, M.NONRECOMMEND, M.SHARE
+			 , M.ORDER_NUM, M.USE_YN, M.REG_USER, M.REG_DATE, M.UPD_USER, M.UPD_DATE
+			 , A.NAME AS USER_NAME, B.REPLY_ID, B.REPLY_TITLE, B.REPLY_COMMENT, B.MANAGER_ID, B.MANAGER_NAME
+		FROM CB_BOARD M
+		LEFT OUTER JOIN CB_MEMBER A
+		ON M.USER_ID = A.ID
+		LEFT OUTER JOIN ( SELECT A.ID AS REPLY_ID, A.BOARD_ID, A.TITLE AS REPLY_TITLE, A.COMMENT AS REPLY_COMMENT
+							   , B.ID AS MANAGER_ID, B.NAME AS MANAGER_NAME
+						  FROM CB_BOARD_REPLY A
+						  INNER JOIN FF_MEMBER B
+						  ON A.REG_USER = B.ID ) B
+		ON M.ID = B.BOARD_ID
+		WHERE M.ID = #{id}
+	</select> -->
+	
+	<!-- 연수설문관리 리스트 검색조건 -->
+	<sql id="surveyCondition">
+		WHERE 1=1
+		<if test="surveyCode != null and surveyCode.code != null and surveyCode.code != ''"> 
+			AND SURVEY_CODE = #{surveyCode.code}
+		</if>
+		<choose>
+			<when test="searchCondition == 'title'">
+				AND TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+		</choose>
+	</sql>
+	
+	<!-- 연수설문관리 리스트 -->
+	<select id="surveyList" parameterType="SurveyVO" resultMap="surveyMap">
+		SELECT
+			CS.SEQ,
+			CS.ID,
+			CS.SURVEY_CODE,
+			CS.TITLE,
+			CS.A_LEAD,
+			CS.ORDER_NUM,
+			CS.USE_YN,
+			CS.REG_USER,
+			CS.REG_DATE,
+			CS.UPD_USER,
+			CS.UPD_DATE,
+			CSC.CONCAT_CARDINAL_ID 
+		FROM (SELECT * FROM CB_SURVEY <include refid="surveyCondition" />) CS
+		LEFT OUTER JOIN (SELECT SURVEY_ID, GROUP_CONCAT(CARDINAL_ID) AS CONCAT_CARDINAL_ID FROM CB_SURVEY_CARDINAL GROUP BY SURVEY_ID) CSC
+		ON CS.ID = CSC.SURVEY_ID
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if>		
+	</select>
+	
+	<!-- 연수설문관리 리스트 총 갯수 -->
+	<select id="surveyTotalCnt" parameterType="SurveyVO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM (SELECT * FROM CB_SURVEY <include refid="surveyCondition"></include>) CS
+		LEFT OUTER JOIN (SELECT SURVEY_ID, GROUP_CONCAT(CARDINAL_ID) AS CONCAT_CARDINAL_ID FROM CB_SURVEY_CARDINAL GROUP BY SURVEY_ID) CSC
+		ON CS.ID = CSC.SURVEY_ID
+	</select>
+	
+	<!-- 연수설문관리 상세 -->
+	<select id="surveyInfo" parameterType="SurveyVO" resultMap="surveyMap">
+		SELECT
+			CS.SEQ,
+			CS.ID,
+			CS.SURVEY_CODE,
+			CS.TITLE,
+			CS.A_LEAD,
+			CS.ORDER_NUM,
+			CS.USE_YN,
+			CS.REG_USER,
+			CS.REG_DATE,
+			CS.UPD_USER,
+			CS.UPD_DATE,
+			CSC.CONCAT_CARDINAL_ID 
+		FROM (SELECT * FROM CB_SURVEY WHERE SEQ = #{seq}) CS
+		LEFT OUTER JOIN (SELECT SURVEY_ID, GROUP_CONCAT(CARDINAL_ID) AS CONCAT_CARDINAL_ID FROM CB_SURVEY_CARDINAL GROUP BY SURVEY_ID) CSC
+		ON CS.ID = CSC.SURVEY_ID
+	</select>
+	
+	<!-- 연수설문과 매핑된 기수리스트 -->
+	<select id="surveyCardinalList" parameterType="SurveyVO" resultType="CardinalVO">
+		SELECT 
+			CC.ID, CC.NAME
+		FROM CB_CARDINAL CC
+		INNER JOIN
+			(SELECT 
+				CSC.CARDINAL_ID
+			FROM CB_SURVEY CS
+			INNER JOIN CB_SURVEY_CARDINAL CSC
+			ON CS.ID = CSC.SURVEY_ID
+			AND CS.SEQ = #{seq}) CS
+		ON CC.ID = CS.CARDINAL_ID	
+	</select>
+	
+	<!-- 연수설문관리 등록 -->
+	<insert id="surveyReg" parameterType="SurveyVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_SURVEY (
+			SEQ,
+			ID,
+			SURVEY_CODE,
+			TITLE,
+			A_LEAD,
+			ORDER_NUM,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE
+		) VALUES (
+			#{seq},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+			#{surveyCode.code},
+			#{title},
+			#{aLead},
+			#{orderNum},
+			#{useYn},
+			#{regUser.id},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+			#{updUser.id},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		) ON DUPLICATE KEY UPDATE
+			SURVEY_CODE = VALUES(SURVEY_CODE),
+			TITLE = VALUES(TITLE),
+			A_LEAD = VALUES(A_LEAD),
+			ORDER_NUM = VALUES(ORDER_NUM),
+			USE_YN = VALUES(USE_YN),
+			UPD_USER = VALUES(UPD_USER),
+			UPD_DATE = VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 연수설문관리 삭제 -->
+	<delete id="surveyDel" parameterType="surveyVO">
+		DELETE FROM CB_SURVEY
+		WHERE seq = #{seq}
+	</delete>
+	
+	<!-- 연수설문 아이템 리스트 -->
+	<select id="surveyItemList" parameterType="SurveyItemVO" resultMap="surveyItemMap">
+		SELECT
+			ID,
+			SURVEY_ID,
+			ITEM_TYPE,
+			SURVEY_CODE,
+			TITLE,
+			EXAM1,
+			EXAM2,
+			EXAM3,
+			EXAM4,
+			EXAM5,
+			EXAM6,
+			EXAM7,
+			EXAM1_YN,
+			EXAM2_YN,
+			EXAM3_YN,
+			EXAM4_YN,
+			EXAM5_YN,
+			EXAM6_YN,
+			EXAM7_YN,
+			ORDER_NUM,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE,
+			CASE 
+				WHEN ITEM_TYPE = '1' THEN '객관식'
+				WHEN ITEM_TYPE = '2' THEN '주관식'
+				WHEN ITEM_TYPE = '3' THEN '객관+주관식'
+				ELSE ''
+			END AS ITEM_TYPE_NAME
+		FROM CB_SURVEY_ITEM
+		WHERE SURVEY_ID = #{surveyId}
+		ORDER BY ORDER_NUM ASC
+	</select>
+	
+	<!-- 연수설문 아이템 상세 -->
+	<select id="surveyItemInfo" parameterType="SurveyItemVO" resultType="SurveyItemVO">
+		SELECT
+			ID,
+			SURVEY_ID,
+			ITEM_TYPE,
+			SURVEY_CODE,
+			TITLE,
+			EXAM1,
+			EXAM2,
+			EXAM3,
+			EXAM4,
+			EXAM5,
+			EXAM6,
+			EXAM7,
+			EXAM1_YN,
+			EXAM2_YN,
+			EXAM3_YN,
+			EXAM4_YN,
+			EXAM5_YN,
+			EXAM6_YN,
+			EXAM7_YN,
+			ORDER_NUM,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE
+		FROM CB_SURVEY_ITEM	
+		WHERE ID = #{id}
+	</select>
+	
+	<!-- 연수설문 아이템 등록(수정) -->
+	<insert id="surveyItemReg" parameterType="SurveyItemVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_SURVEY_ITEM (
+			ID,
+			SURVEY_ID,
+			ITEM_TYPE,
+			SURVEY_CODE,
+			TITLE,
+			EXAM1,
+			EXAM2,
+			EXAM3,
+			EXAM4,
+			EXAM5,
+			EXAM6,
+			EXAM7,
+			EXAM1_YN,
+			EXAM2_YN,
+			EXAM3_YN,
+			EXAM4_YN,
+			EXAM5_YN,
+			EXAM6_YN,
+			EXAM7_YN,
+			ORDER_NUM,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE		
+		) VALUES (
+			#{id},
+			#{surveyId},
+			#{itemType},
+			#{surveyCode},
+			#{title},
+			#{exam1},
+			#{exam2},
+			#{exam3},
+			#{exam4},
+			#{exam5},
+			#{exam6},
+			#{exam7},
+			#{exam1Yn},
+			#{exam2Yn},
+			#{exam3Yn},
+			#{exam4Yn},
+			#{exam5Yn},
+			#{exam6Yn},
+			#{exam7Yn},
+			#{orderNum},
+			#{useYn},
+			#{regUser.id},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+			#{updUser.id},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		) ON DUPLICATE KEY UPDATE
+			ITEM_TYPE = VALUES(ITEM_TYPE),
+			SURVEY_CODE = VALUES(SURVEY_CODE),
+			TITLE = VALUES(TITLE),
+			EXAM1 = VALUES(EXAM1),
+			EXAM2 = VALUES(EXAM2),
+			EXAM3 = VALUES(EXAM3),
+			EXAM4 = VALUES(EXAM4),
+			EXAM5 = VALUES(EXAM5),
+			EXAM6 = VALUES(EXAM6),
+			EXAM7 = VALUES(EXAM7),
+			EXAM1_YN = VALUES(EXAM1_YN),
+			EXAM2_YN = VALUES(EXAM2_YN),
+			EXAM3_YN = VALUES(EXAM3_YN),
+			EXAM4_YN = VALUES(EXAM4_YN),
+			EXAM5_YN = VALUES(EXAM5_YN),
+			EXAM6_YN = VALUES(EXAM6_YN),
+			EXAM7_YN = VALUES(EXAM7_YN),
+			ORDER_NUM = VALUES(ORDER_NUM),
+			USE_YN = VALUES(USE_YN),
+			UPD_USER = VALUES(UPD_USER),
+			UPD_DATE = VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 연수만족도 등록 되어있는지 여부 -->
+	<select id="surveyItemVerification" parameterType="SurveyItemVO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM CB_SURVEY_ITEM
+		WHERE SURVEY_ID = #{surveyId}
+		AND ORDER_NUM = '999'
+	</select>
+	
+	<!-- 연수설문 아이템 삭제 -->
+	<delete id="surveyItemDel" parameterType="SurveyItemVO">
+		DELETE FROM CB_SURVEY_ITEM
+		WHERE ID = #{id}
+		
+		<!-- 마스터 삭제시 -->
+		<!-- <if test="surveyId != null and surveyId != ''">
+			WHERE SURVEY_ID = #{surveyId}
+		</if> -->
+		
+	</delete>
+	
+	<!-- 쪽지 리스트 검색조건 (받은쪽지함), (보낸쪽지함) -->
+	<sql id="noteCondition">
+		WHERE 1=1
+		<choose>
+			<when test="searchCondition == 'receive'">
+				AND TO_USER_ID = 'admin'
+			</when>
+			<when test="searchCondition == 'send'">
+				AND FROM_USER_ID = 'admin'
+			</when>
+		</choose>
+	</sql>
+	
+	<!-- 쪽지 리스트 -->
+	<select id="noteList" parameterType="NoteVO" resultType="NoteVO">
+		SELECT
+			ID,
+			FROM_USER_ID,
+			TO_USER_ID,
+			TITLE,
+			NOTE,
+			SAVE_YN,
+			PROC_YN,
+			FROM_USER_USE_YN,
+			TO_USER_USE_YN,
+			SEND_DATE
+		FROM CB_NOTE
+		<include refid="noteCondition" />
+		ORDER BY PROC_YN ASC, SEND_DATE DESC
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if>	
+	</select>
+	
+	<!-- 쪽지 리스트 총 갯수 -->
+	<select id="noteTotalCnt" parameterType="NoteVO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM CB_NOTE
+		<include refid="noteCondition" />
+	</select>
+	
+	<!-- 쪽지 상세 -->
+	<select id="noteInfo" parameterType="NoteVO" resultType="NoteVO">
+		SELECT
+			ID,
+			FROM_USER_ID,
+			TO_USER_ID,
+			TITLE,
+			NOTE,
+			SAVE_YN,
+			PROC_YN,
+			FROM_USER_USE_YN,
+			TO_USER_USE_YN,
+			SEND_DATE
+		FROM CB_NOTE
+		WHERE ID = #{id}
+	</select>
+	
+	<!-- 쪽지 발송 -->
+	<insert id="noteReg" parameterType="NoteVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_NOTE (
+			FROM_USER_ID,
+			TO_USER_ID,
+			TITLE,
+			NOTE,
+			SAVE_YN,
+			PROC_YN,
+			FROM_USER_USE_YN,
+			TO_USER_USE_YN,
+			SEND_DATE
+		) 
+		SELECT
+			#{fromUserId},
+			CM.ID,
+			#{title},
+			#{note},
+			#{saveYn},
+			#{procYn},
+			#{fromUserUseYn},
+			#{toUserUseYn},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		FROM CB_MEMBER CM
+		WHERE ID IN 
+		<foreach collection="toUserIds" item="id" index="index" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</insert>
+	
+	<!-- 쪽지 읽음 -->
+	<update id="noteReadUdt" parameterType="NoteVO">
+		UPDATE CB_NOTE SET
+			PROC_YN = 'Y'
+		WHERE ID = #{id}		
+	</update>
+	
+	<!-- 과정별 게시물 검색조건 -->
+	<sql id="courseBoardCondition">
+		WHERE 1=1
+		AND CB.USE_YN = 'Y'
+		AND CB.BOARD_TYPE = #{boardType}
+		<if test="courseId != null and courseId != ''">
+			AND CB.COURSE_ID = #{courseId}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					CB.TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'title'">
+					CB.TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+<!-- 		<choose> -->
+<!-- 			<when test="searchCondition == 'title'"> -->
+<!-- 				AND CB.TITLE LIKE CONCAT('%',#{searchKeyword},'%') -->
+<!-- 			</when> -->
+<!-- 		</choose> -->
+	</sql>
+	
+	<!-- 과정별 게시물 리스트 -->
+	<!-- <select id="courseBoardList" parameterType="BoardVO" resultMap="courseBoardMap">
+		SELECT 
+			CB.ID,
+			CB.BOARD_TYPE,
+			CB.NOTICE_TYPE,
+			CB.CARDINAL_ID,
+			CB.COURSE_ID,
+			CC.NAME AS COURSE_NAME,
+			CB.TEACHER_ID,
+			CB.ATTACH1_FILE,
+			CB.ATTACH2_FILE,
+			CB.TITLE,
+			CB.COMMENT,
+			CB.HITS,
+			CB.REG_USER,
+			CB.REG_DATE,
+			CM.ID AS USER_ID,
+			CM.NAME AS USER_NAME,
+			CBR.ID AS REPLY_ID,
+			CBR.BOARD_ID AS REPLY_BOARD_ID,
+			CBR.TITLE AS REPLY_TITLE,
+			CBR.COMMENT AS REPLY_COMMENT
+		FROM CB_BOARD CB
+		INNER JOIN CB_COURSE CC ON CB.COURSE_ID = CC.ID
+		<if test='loginUser != null and loginUser.grade == 1'>
+			<choose>
+				<when test='boardType == "1" or boardType == "2" or boardType == "3"'>
+				INNER JOIN ( SELECT ID FROM CB_BOARD WHERE REG_USER = #{loginUser.id} and BOARD_TYPE = #{boardType} ) CMC
+				ON CB.ID = CMC.ID
+				</when>
+				<when test='boardType == "5" or boardType == "6"'>
+				INNER JOIN ( SELECT COURSE_ID FROM CB_MAN_COURSE WHERE MAN_ID = #{loginUser.id} ) CMC 
+				ON CC.ID = CMC.COURSE_ID
+				</when>
+			</choose>
+		</if>
+		LEFT OUTER JOIN CB_MEMBER CM ON CB.USER_ID = CM.ID
+		LEFT OUTER JOIN CB_BOARD_REPLY CBR ON CB.ID = CBR.BOARD_ID
+		<include refid="courseBoardCondition" />
+		ORDER BY CB.ID DESC
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if> 
+	</select> -->
+	
+	<!-- 과정별 게시물 리스트 카운트 -->
+	<!-- <select id="courseBoardTotalCnt" parameterType="BoardVO" resultType="int">
+		SELECT 
+			COUNT(*)
+		FROM CB_BOARD CB
+		INNER JOIN CB_COURSE CC ON CB.COURSE_ID = CC.ID
+		<if test="loginUser != null and loginUser.grade == 1">
+			<choose>
+				<when test='boardType == "1" or boardType == "2" or boardType == "3"'>
+				INNER JOIN ( SELECT ID FROM CB_BOARD WHERE REG_USER = #{loginUser.id} and BOARD_TYPE = #{boardType} ) CMC
+				ON CB.ID = CMC.ID
+				</when>
+				<when test='boardType == "5" or boardType == "6"'>
+				INNER JOIN ( SELECT COURSE_ID FROM CB_MAN_COURSE WHERE MAN_ID = #{loginUser.id} ) CMC 
+				ON CC.ID = CMC.COURSE_ID
+				</when>
+			</choose>
+		</if>
+		LEFT OUTER JOIN CB_MEMBER CM ON CB.USER_ID = CM.ID
+		LEFT OUTER JOIN CB_BOARD_REPLY CBR ON CB.ID = CBR.BOARD_ID
+		<include refid="courseBoardCondition" />
+	</select> -->
+	
+	<!-- 과정별 게시물 상세 -->
+	<!-- <select id="courseBoardInfo" parameterType="BoardVO" resultMap="courseBoardMap">
+		SELECT 
+			CB.ID,
+			CB.BOARD_TYPE,
+			CB.NOTICE_TYPE,
+			CB.CARDINAL_ID,
+			CB.COURSE_ID,
+			CC.NAME AS COURSE_NAME,
+			CB.TEACHER_ID,
+			CB.ATTACH1_FILE,
+			CB.ATTACH2_FILE,
+			CB.TITLE,
+			CB.COMMENT,
+			CB.HITS,
+			CB.REG_USER,
+			CB.REG_DATE,
+			CM.ID AS USER_ID,
+			CM.NAME AS USER_NAME,
+			CBR.ID AS REPLY_ID,
+			CBR.BOARD_ID AS REPLY_BOARD_ID,
+			CBR.TITLE AS REPLY_TITLE,
+			CBR.COMMENT AS REPLY_COMMENT
+		FROM CB_BOARD CB
+		INNER JOIN CB_COURSE CC ON CB.COURSE_ID = CC.ID
+		LEFT OUTER JOIN CB_MEMBER CM ON CB.USER_ID = CM.ID
+		LEFT OUTER JOIN CB_BOARD_REPLY CBR ON CB.ID = CBR.BOARD_ID
+		WHERe CB.ID = #{id}
+	</select> -->
+	
+	<!-- LMS -->
+	<!-- 게시판 리스트 조회 -->
+  	<select id="boardList" parameterType="BoardVO" resultMap="boardMap">
+		SELECT * FROM (
+			SELECT 
+				'M' AS CATEGORY, 
+				CB.ID AS M_ID, 
+				'' AS S_ID, 
+				CB.BOARD_TYPE, 
+				CB.NOTICE_TYPE, 
+				CB.FAQ_CODE, 
+				CB.ATTACH1_FILE, 
+				CB.ATTACH2_FILE, 
+				CB.ICON, 
+				CB.TOP_YN, 
+				CB.TITLE, 
+				CB.COMMENT, 
+				CB.HITS, 
+				CB.RECOMMEND, 
+				CB.NONRECOMMEND, 
+				CB.ORDER_NUM,
+				CB.REG_USER,
+				CB.REG_DATE,
+				CB.UPD_USER,
+				CB.UPD_DATE,
+				CASE  
+					WHEN CB.NOTICE_TYPE = '1' THEN '공지사항'
+					WHEN CB.NOTICE_TYPE = '2' THEN '이벤트'
+					WHEN CB.NOTICE_TYPE = '3' THEN '신설'
+					WHEN CB.NOTICE_TYPE = '4' THEN '필독'
+					WHEN CB.NOTICE_TYPE = '5' THEN '일반'
+					WHEN CB.NOTICE_TYPE = '6' THEN '평가'
+					WHEN CB.NOTICE_TYPE = '7' THEN '공문'
+					ELSE ''
+				END AS NOTICE_TYPE_NAME, <!-- AS NOTICE_TYPE_NAME  컬럼에 CASE문에 해당되는 결과값이 박힌다. -->
+				CM.USER_ID AS USER_ID,
+				CM.USER_NM AS USER_NAME
+			FROM CB_BOARD CB
+			LEFT OUTER JOIN COM_USER_TB CM  <!-- CB_BOARD 테이블은 레코드 무조건 나오고  CB_MEMBER테이블은 공통으로 교집합된 부분만 나옴 -->
+			ON CB.USER_ID = CM.USER_ID <!-- USER_ID는 작성자 -->
+			<include refid="boardCondition" />
+			
+			UNION ALL
+			
+			SELECT 
+				'S' AS CATEGORY, 
+				BOARD_ID AS M_ID, 
+				CBR.ID AS S_ID, 
+				'' AS BOARD_TYPE, 
+				'' AS NOTICE_TYPE, 
+				'' AS FAQ_CODE, 
+				CBR.ATTACH1_FILE, 
+				CBR.ATTACH2_FILE, 
+				'' AS ICON, 
+				'' AS TOP_YN, 
+				CBR.TITLE, 
+				CBR.COMMENT, 
+				CBR.HITS, 
+				CBR.RECOMMEND, 
+				CBR.NONRECOMMEND, 
+				CBR.ORDER_NUM,
+				CBR.REG_USER,
+				CBR.REG_DATE,
+				CBR.UPD_USER,
+				CBR.UPD_DATE,
+				'' AS NOTICE_TYPE_NAME,
+				CM.USER_ID AS USER_ID,
+				CM.USER_NM AS USER_NAME
+			FROM CB_BOARD_REPLY CBR
+			INNER JOIN (SELECT * FROM CB_BOARD CB <include refid="boardCondition" />) CB
+			ON CBR.BOARD_ID = CB.ID
+			LEFT OUTER JOIN COM_USER_TB CM
+			ON CBR.USER_ID = CM.USER_ID
+		) BOARD
+		ORDER BY M_ID DESC, CONVERT(S_ID, UNSIGNED) ASC
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if> 
+	</select>
+	
+	<!-- 게시판 리스트 총 갯수 -->
+  	<select id="boardTotalCnt" parameterType="BoardVO" resultType="int">
+		SELECT COUNT(*) FROM (
+			SELECT 
+				'M' AS CATEGORY, 
+				CB.ID AS M_ID, 
+				'' AS S_ID, 
+				CB.BOARD_TYPE, 
+				CB.NOTICE_TYPE, 
+				CB.FAQ_CODE, 
+				CB.ATTACH1_FILE, 
+				CB.ATTACH2_FILE, 
+				CB.ICON, 
+				CB.TOP_YN, 
+				CB.TITLE, 
+				CB.COMMENT, 
+				CB.HITS, 
+				CB.RECOMMEND, 
+				CB.NONRECOMMEND, 
+				CB.ORDER_NUM,
+				CB.REG_USER,
+				CB.REG_DATE,
+				CB.UPD_USER,
+				CB.UPD_DATE,
+				CASE 
+					WHEN CB.NOTICE_TYPE = '1' THEN '모집'
+					WHEN CB.NOTICE_TYPE = '2' THEN '환영'
+					WHEN CB.NOTICE_TYPE = '3' THEN '신설'
+					WHEN CB.NOTICE_TYPE = '4' THEN '필독'
+					WHEN CB.NOTICE_TYPE = '5' THEN '일반'
+					WHEN CB.NOTICE_TYPE = '6' THEN '평가'
+					WHEN CB.NOTICE_TYPE = '7' THEN '공문'
+					ELSE ''
+				END AS NOTICE_TYPE_NAME,
+				CM.USER_ID AS USER_ID,
+				CM.USER_NM AS USER_NAME
+			FROM CB_BOARD CB
+			LEFT OUTER JOIN COM_USER_TB CM
+			ON CB.USER_ID = CM.USER_ID
+			<include refid="boardCondition" />
+			
+			UNION ALL
+			
+			SELECT 
+				'S' AS CATEGORY, 
+				BOARD_ID AS M_ID, 
+				CBR.ID AS S_ID, 
+				'' AS BOARD_TYPE, 
+				'' AS NOTICE_TYPE, 
+				'' AS FAQ_CODE, 
+				CBR.ATTACH1_FILE, 
+				CBR.ATTACH2_FILE, 
+				'' AS ICON, 
+				'' AS TOP_YN, 
+				CBR.TITLE, 
+				CBR.COMMENT, 
+				CBR.HITS, 
+				CBR.RECOMMEND, 
+				CBR.NONRECOMMEND, 
+				CBR.ORDER_NUM,
+				CBR.REG_USER,
+				CBR.REG_DATE,
+				CBR.UPD_USER,
+				CBR.UPD_DATE,
+				'' AS NOTICE_TYPE_NAME,
+				CM.USER_ID AS USER_ID,
+				CM.USER_NM AS USER_NAME
+			FROM CB_BOARD_REPLY CBR
+			INNER JOIN (SELECT * FROM CB_BOARD CB <include refid="boardCondition" />) CB
+			ON CBR.BOARD_ID = CB.ID
+			LEFT OUTER JOIN COM_USER_TB CM
+			ON CBR.USER_ID = CM.USER_ID
+		) BOARD
+	</select>
+	
+	<!-- 게시물 상세 조회 -->
+	<select id="boardInfo" parameterType="BoardVO" resultMap="boardMap">
+		SELECT
+			CB.ID,
+			CB.LANG,
+			CB.BOARD_TYPE,
+			CB.NOTICE_TYPE,
+			CB.FAQ_CODE,
+			CB.CARDINAL_ID,
+			CB.COURSE_ID,
+			CB.TEACHER_ID,
+			CB.USER_ID,
+			CB.ATTACH1_FILE,
+			CB.ATTACH2_FILE,
+			CB.ICON,
+			CB.TOP_YN,
+			CB.TITLE,
+			CB.COMMENT,
+			CB.HITS,
+			CB.RECOMMEND,
+			CB.NONRECOMMEND,
+			CB.SHARE,
+			CB.ORDER_NUM,
+			CB.USE_YN,
+			CB.REG_USER,
+			CB.REG_DATE,
+			CB.UPD_USER,
+			CB.UPD_DATE,
+			CASE 
+				WHEN CB.NOTICE_TYPE = '1' THEN '모집'
+				WHEN CB.NOTICE_TYPE = '2' THEN '환영'
+				WHEN CB.NOTICE_TYPE = '3' THEN '신설'
+				WHEN CB.NOTICE_TYPE = '4' THEN '필독'
+				WHEN CB.NOTICE_TYPE = '5' THEN '일반'
+				WHEN CB.NOTICE_TYPE = '6' THEN '평가'
+				WHEN CB.NOTICE_TYPE = '7' THEN '공문'
+				ELSE ''
+			END AS NOTICE_TYPE_NAME,
+			CM.USER_ID AS USER_ID,
+			CM.USER_NM AS USER_NAME		
+		FROM 
+		(SELECT * FROM CB_BOARD WHERE ID = #{id}) CB
+		LEFT OUTER JOIN CB_BOARD_REPLY CBR
+		ON CB.ID = CBR.BOARD_ID
+		LEFT OUTER JOIN COM_USER_TB CM
+		ON CB.USER_ID = CM.USER_ID
+	</select>
+	
+	<!-- 팝업 게시판 리스트 조회 -->
+	<select id="popupBoardList" parameterType="BoardVO" resultMap="popupBoardMap">
+		SELECT M.ID, M.LANG, M.BOARD_TYPE, M.NOTICE_TYPE, M.FAQ_CODE, M.CARDINAL_ID, M.COURSE_ID, M.TEACHER_ID, M.USER_ID
+			 , M.ATTACH1_FILE, M.ATTACH2_FILE, M.ICON, M.TOP_YN, M.SECRET_YN, M.TITLE, M.COMMENT
+			 , M.HITS, M.RECOMMEND, M.NONRECOMMEND, M.SHARE
+			 , M.ORDER_NUM, M.USE_YN, M.REG_USER, M.REG_DATE, M.UPD_USER, M.UPD_DATE
+			 , A.USER_NM AS USER_NAME, B.USER_ID AS REPLY_ID
+		FROM CB_BOARD M
+		LEFT OUTER JOIN COM_USER_TB A
+		ON M.USER_ID = A.USER_ID
+		LEFT OUTER JOIN CB_BOARD_REPLY B
+		ON M.ID = B.BOARD_ID
+		INNER JOIN (	<if test='pagingYn=="Y"'>
+		  					<include refid="forFaith.common.header"/>
+	  					</if>
+						SELECT M.ID
+						FROM CB_BOARD M
+						WHERE M.BOARD_TYPE = #{boardType}
+						<if test="useYn != null and useYn != ''">
+							AND M.USE_YN = #{useYn}
+						</if>
+						<if test="noticeType != null and noticeType != ''">
+							AND M.NOTICE_TYPE = #{noticeType}
+						</if>
+						<if test="faqCode != null and faqCode != ''">
+							AND M.FAQ_CODE = #{faqCode}
+						</if>
+						<if test="teacherId != '' and teacherId != null">
+							AND M.TEACHER_ID = #{teacherId}
+						</if>
+						<if test="cardinalId != '' and cardinalId != null">
+							AND M.CARDINAL_ID = #{cardinalId}
+						</if>
+						<if test="courseId != '' and courseId != null">
+							AND M.COURSE_ID = #{courseId}
+						</if>
+						<if test="searchKeyword != null and searchKeyword != ''">
+							AND
+							<choose>
+								<when test="searchCondition == 'all'">
+									M.TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+								<when test="searchCondition == 'title'">
+									M.TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+								</when>
+							</choose>
+						</if>
+						GROUP BY M.ID
+						ORDER BY M.REG_DATE DESC
+						<if test='pagingYn=="Y"'>
+						  	<include refid="forFaith.common.footer"/>
+					  	</if> ) PAGING
+		ON M.ID = PAGING.ID
+		ORDER BY M.REG_DATE DESC
+	</select>
+	
+	<!-- 팝업용 게시물 상세 조회 -->
+	<select id="popupBoardInfo" parameterType="BoardVO" resultMap="popupBoardMap">
+		SELECT M.ID, M.LANG, M.BOARD_TYPE, M.NOTICE_TYPE, M.FAQ_CODE, M.CARDINAL_ID, M.COURSE_ID, M.TEACHER_ID, M.USER_ID
+			 , M.ATTACH1_FILE, M.ATTACH2_FILE, M.ICON, M.TOP_YN, M.SECRET_YN, M.TITLE, M.COMMENT
+			 , M.HITS, M.RECOMMEND, M.NONRECOMMEND, M.SHARE
+			 , M.ORDER_NUM, M.USE_YN, M.REG_USER, M.REG_DATE, M.UPD_USER, M.UPD_DATE
+			 , A.USER_NM AS USER_NAME, B.REPLY_ID, B.REPLY_TITLE, B.REPLY_COMMENT, B.MANAGER_ID, B.MANAGER_NAME
+		FROM CB_BOARD M
+		LEFT OUTER JOIN COM_USER_TB A
+		ON M.USER_ID = A.USER_ID
+		LEFT OUTER JOIN ( SELECT A.ID AS REPLY_ID, A.BOARD_ID, A.TITLE AS REPLY_TITLE, A.COMMENT AS REPLY_COMMENT
+							   , B.ID AS MANAGER_ID, B.NAME AS MANAGER_NAME
+						  FROM CB_BOARD_REPLY A
+						  INNER JOIN FF_MEMBER B
+						  ON A.REG_USER = B.ID ) B
+		ON M.ID = B.BOARD_ID
+		WHERE M.ID = #{id}
+	</select>
+	
+	<!-- 과정별 게시물 리스트 -->
+	<select id="courseBoardList" parameterType="BoardVO" resultMap="courseBoardMap">
+		SELECT 
+			CB.ID,
+			CB.BOARD_TYPE,
+			CB.NOTICE_TYPE,
+			CB.CARDINAL_ID,
+			CB.COURSE_ID,
+			CC.NAME AS COURSE_NAME,
+			CCA.NAME AS CARDINAL_NAME,
+			CB.TEACHER_ID,
+			CB.ATTACH1_FILE,
+			CB.ATTACH2_FILE,
+			CB.TITLE,
+			CB.COMMENT,
+			CB.HITS,
+			CB.REG_USER,
+			CB.REG_DATE,
+			CM.USER_ID AS USER_ID,
+			CM.USER_NM AS USER_NAME,
+			CBR.ID AS REPLY_ID,
+			CBR.BOARD_ID AS REPLY_BOARD_ID,
+			CBR.TITLE AS REPLY_TITLE,
+			CBR.COMMENT AS REPLY_COMMENT
+		FROM CB_BOARD CB
+		INNER JOIN CB_COURSE CC ON CB.COURSE_ID = CC.ID
+		LEFT OUTER JOIN CB_CARDINAL CCA ON CB.CARDINAL_ID = CCA.ID
+		<if test='loginUser != null and loginUser.grade == 1'>
+			<choose>
+				<when test='boardType == "1" or boardType == "2" or boardType == "3"'>
+				INNER JOIN ( SELECT ID FROM CB_BOARD WHERE REG_USER = #{loginUser.id} and BOARD_TYPE = #{boardType} ) CMC
+				ON CB.ID = CMC.ID
+				</when>
+				<when test='boardType == "5" or boardType == "6"'>
+				INNER JOIN ( SELECT COURSE_ID FROM CB_MAN_COURSE WHERE MAN_ID = #{loginUser.id} ) CMC 
+				ON CC.ID = CMC.COURSE_ID
+				</when>
+			</choose>
+		</if>
+		LEFT OUTER JOIN COM_USER_TB CM ON CB.USER_ID = CM.USER_ID
+		LEFT OUTER JOIN CB_BOARD_REPLY CBR ON CB.ID = CBR.BOARD_ID
+		<include refid="courseBoardCondition" />
+		ORDER BY CB.ID DESC
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if> 
+	</select>
+	
+	<!-- 과정별 게시물 리스트 카운트 -->
+	<select id="courseBoardTotalCnt" parameterType="BoardVO" resultType="int">
+		SELECT 
+			COUNT(*)
+		FROM CB_BOARD CB
+		INNER JOIN CB_COURSE CC ON CB.COURSE_ID = CC.ID
+		<if test="loginUser != null and loginUser.grade == 1">
+			<choose>
+				<when test='boardType == "1" or boardType == "2" or boardType == "3"'>
+				INNER JOIN ( SELECT ID FROM CB_BOARD WHERE REG_USER = #{loginUser.id} and BOARD_TYPE = #{boardType} ) CMC
+				ON CB.ID = CMC.ID
+				</when>
+				<when test='boardType == "5" or boardType == "6"'>
+				INNER JOIN ( SELECT COURSE_ID FROM CB_MAN_COURSE WHERE MAN_ID = #{loginUser.id} ) CMC 
+				ON CC.ID = CMC.COURSE_ID
+				</when>
+			</choose>
+		</if>
+		LEFT OUTER JOIN COM_USER_TB CM ON CB.USER_ID = CM.USER_ID
+		LEFT OUTER JOIN CB_BOARD_REPLY CBR ON CB.ID = CBR.BOARD_ID
+		<include refid="courseBoardCondition" />
+	</select>
+	
+	<!-- 과정별 게시물 상세 -->
+	<select id="courseBoardInfo" parameterType="BoardVO" resultMap="courseBoardMap">
+		SELECT 
+			CB.ID,
+			CB.BOARD_TYPE,
+			CB.NOTICE_TYPE,
+			CB.CARDINAL_ID,
+			CB.COURSE_ID,
+			CC.NAME AS COURSE_NAME,
+			CCA.NAME AS CARDINAL_NAME,
+			CB.TEACHER_ID,
+			CB.ATTACH1_FILE,
+			CB.ATTACH2_FILE,
+			CB.TITLE,
+			CB.COMMENT,
+			CB.HITS,
+			CB.REG_USER,
+			CB.REG_DATE,
+			CM.USER_ID AS USER_ID,
+			CM.USER_NM AS USER_NAME,
+			CBR.ID AS REPLY_ID,
+			CBR.BOARD_ID AS REPLY_BOARD_ID,
+			CBR.TITLE AS REPLY_TITLE,
+			CBR.COMMENT AS REPLY_COMMENT
+		FROM CB_BOARD CB
+		INNER JOIN CB_COURSE CC ON CB.COURSE_ID = CC.ID
+		LEFT OUTER JOIN CB_CARDINAL CCA ON CB.CARDINAL_ID = CCA.ID
+		LEFT OUTER JOIN COM_USER_TB CM ON CB.USER_ID = CM.USER_ID
+		LEFT OUTER JOIN CB_BOARD_REPLY CBR ON CB.ID = CBR.BOARD_ID
+		WHERe CB.ID = #{id}
+	</select>
+	
+	<!-- 댓글: 입력  -->
+	<insert id="boardCommentReg" parameterType="BoardCommentVO">
+		INSERT INTO CB_BOARD_COMMENT (BOARD_ID, USER_ID, COMMENT, CATEGORY)
+		       VALUES(#{boardId},#{regUser.id},#{comment},#{category})		       
+	</insert>	
+	
+	<!-- 댓글:리스트-->
+	<select id="boardCommentList" parameterType="BoardCommentVO"  resultType="BoardCommentVO">
+		SELECT ID, BOARD_ID, USER_ID, COMMENT, CATEGORY
+		  FROM CB_BOARD_COMMENT
+		WHERE BOARD_ID = #{boardId}      
+        	AND CATEGORY = #{category}       
+		ORDER BY ID  
+	</select>
+	 
+	<!-- 댓글:수정  -->
+	<update id="boardCommentUpdate" parameterType="BoardCommentVO">
+		UPDATE CB_BOARD_COMMENT
+		SET COMMENT =#{comment}
+		WHERE ID = #{id}
+	</update>
+		
+	<!-- 댓글:삭제 -->
+	<delete id="boardCommentDel" parameterType="int">
+		DELETE FROM CB_BOARD_COMMENT
+		WHERE ID = #{id}	 
+	</delete>
+
+
+	<!-- 자유게시판 답글 수정 -->
+	<update id="freeBoardReplyUpdate" parameterType="BoardReplyVO" >	 
+		 UPDATE CB_BOARD_REPLY
+			   SET 	
+			USER_ID = #{userId},
+			DEPTH = #{depth},
+			ATTACH1_FILE = #{file1.fileId}, 
+			ATTACH2_FILE = #{file2.fileId},
+			TITLE = #{title},
+			COMMENT = #{comment},
+			HITS = #{hits},
+			RECOMMEND = #{recommend},
+			NONRECOMMEND =#{nonrecommend},
+			SHARE = #{share},
+			ORDER_NUM =#{orderNum},
+			UPD_USER = #{updUser.id},
+		    UPD_DATE = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		 WHERE ID = #{id}
+	</update>
+	 
+	<!-- FAQ 리스트 가져오기 -->
+ 	<select id="getFaqList" parameterType="hashmap" resultType="hashmap">
+ 		SELECT
+ 			CFT.CONSULTING_SEQ
+ 			,CFT.CONSULTING_TP
+			,CFT.CONSULTING_TYPE
+		    ,CFT.CONSULTING_TITLE
+		    ,CFT.CONSULTING_CT
+            ,FM.NAME
+		    ,CFT.CONSULTING_INS_ID
+		    ,CFT.CONSULTING_INS_DT
+		    ,CFT.CONSULTING_UDT_DT
+		    ,CFT.CONSULTING_UDT_ID
+		FROM
+			COM_FAQ_TB CFT
+		LEFT JOIN FF_MEMBER FM ON CFT.consulting_ins_id = FM.ID
+		WHERE 1=1
+		AND
+			CFT.CONSULTING_TP IN('A0505', 'A0506')
+		<if test="consulting_seq != null">
+			AND
+				CFT.CONSULTING_SEQ = #{consulting_seq}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(CFT.CONSULTING_TITLE LIKE CONCAT('%',#{searchKeyword},'%') || CFT.CONSULTING_CT LIKE CONCAT('%',#{searchKeyword},'%'))
+				</when>
+				<when test="searchCondition == 'title'">
+					CFT.CONSULTING_TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'content'">
+					CFT.CONSULTING_CT LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+ 	</select>
+ 	<delete id="deleteFaq" parameterType="hashmap">
+ 		DELETE FROM COM_FAQ_TB
+ 		WHERE
+ 			CONSULTING_SEQ = #{consulting_seq}
+ 	</delete>
+ 	<insert id="insertFaq" parameterType="hashmap">
+ 		INSERT INTO COM_FAQ_TB (
+ 			CONSULTING_SEQ
+ 			,CONSULTING_TP
+			,CONSULTING_TYPE
+		    ,CONSULTING_TITLE
+		    ,CONSULTING_CT
+		    ,CONSULTING_INS_ID
+		    ,CONSULTING_INS_DT
+		    ,CONSULTING_UDT_ID
+		    ,CONSULTING_UDT_DT
+ 		) VALUES (
+ 			#{consulting_seq}
+ 			,#{consulting_tp}
+ 			,#{consulting_type}
+ 			,#{consulting_title}
+ 			,#{consulting_ct}
+ 			,#{user_id}
+ 			,now()
+ 			,#{user_id}
+ 			,now()
+ 		)
+ 		ON DUPLICATE KEY UPDATE
+ 			CONSULTING_TP = VALUES(CONSULTING_TP)
+ 			,CONSULTING_TYPE = VALUES(CONSULTING_TYPE)
+ 			,CONSULTING_TITLE = VALUES(CONSULTING_TITLE)
+ 			,CONSULTING_CT = VALUES(CONSULTING_CT)
+ 			,CONSULTING_UDT_ID = VALUES(CONSULTING_UDT_ID)
+ 			,CONSULTING_UDT_DT = NOW()
+ 	</insert>
+ 	
+	<!-- 전체 공지사항 리스트 가져오기 -->
+ 	<select id="selectNotice" parameterType="hashmap" resultMap="boardCt">
+ 		SELECT
+ 			CT.BOARD_CONTENT_SEQ
+            ,GT.BOARD_SEQ
+            ,GT.BOARD_GB
+            ,GT.BOARD_NM
+            ,GT.BOARD_TP
+            ,GT.BOARD_DETAIL_GB
+            ,GT.BOARD_ICON_PD
+			,FT.BOARD_FILE_SEQ
+            ,FT.BOARD_FILE_SAVED
+            ,FAFD.FILE_NAME
+            ,FAFD.ORIGIN_FILE_NAME
+            ,FAFD.FILE_PATH
+            ,FAFD.FILE_EXT
+            ,FAFD.FILE_SIZE
+            ,FAFD.URL_PATH
+ 			,CT.BOARD_CONTENT_TITLE
+ 			,CT.BOARD_CONTENT_CT
+ 			,CT.BOARD_CONTENT_NM
+ 			,CT.BOARD_CONTENT_INS_DT
+ 			,CT.BOARD_CONTENT_INS_ID
+ 			,CT.BOARD_CONTENT_UDT_DT
+ 			,CT.BOARD_CONTENT_UDT_ID
+ 			,CT.BOARD_CONTENT_IMP
+ 		FROM
+ 			COM_BOARD_CONTENT_TB CT
+ 		LEFT JOIN COM_BOARD_GROUP_TB GT ON CT.BOARD_SEQ = GT.BOARD_SEQ
+        LEFT JOIN COM_BOARD_FILE_TB FT ON CT.BOARD_CONTENT_SEQ = FT.BOARD_CONTENT_SEQ
+        LEFT JOIN FF_ATTACH_FILE_DETAIL FAFD ON FT.BOARD_FILE_SAVED = FAFD.FILE_ID
+        WHERE
+ 			1=1
+ 		AND 
+ 			GT.BOARD_GB IN ('A0301','A0306', 'A0307')
+ 		<if test="board_content_seq != null">
+ 			AND
+ 				CT.BOARD_CONTENT_SEQ = #{board_content_seq}
+ 		</if>
+ 		<if test="board_content_imp != null and board_content_imp != ''">
+ 			AND
+ 				CT.BOARD_CONTENT_IMP = #{board_content_imp}
+ 		</if>
+ 		<if test="board_tp != null and board_tp != ''">
+ 			AND
+ 				GT.BOARD_TP = #{board_tp}
+ 		</if>
+ 		<if test="board_gb != null and board_gb != ''">
+ 			AND
+ 				GT.BOARD_GB = #{board_gb}
+ 		</if>
+ 		<if test="board_detail_gb != null and board_detail_gb != ''">
+ 			AND
+ 				GT.BOARD_DETAIL_GB = #{board_detail_gb}
+ 		</if>
+ 		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(CT.BOARD_CONTENT_TITLE LIKE CONCAT('%',#{searchKeyword},'%') || CT.BOARD_CONTENT_CT LIKE CONCAT('%',#{searchKeyword},'%'))
+				</when>
+				<when test="searchCondition == 'title'">
+					CT.BOARD_CONTENT_TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'content'">
+					CT.BOARD_CONTENT_CT LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'author'">
+					CT.BOARD_CONTENT_NM LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+		ORDER BY CT.BOARD_CONTENT_INS_DT DESC
+ 	</select>
+	<!-- 공지사항 신규생성 -->
+ 	<insert id="insertNotice" parameterType="hashmap">
+ 		INSERT INTO COM_BOARD_CONTENT_TB(
+ 			BOARD_CONTENT_SEQ
+ 			,BOARD_SEQ
+ 			,BOARD_CONTENT_TITLE
+ 			,BOARD_CONTENT_CT
+ 			,BOARD_CONTENT_NM
+ 			,BOARD_CONTENT_INS_DT
+ 			,BOARD_CONTENT_INS_ID
+ 			,BOARD_CONTENT_UDT_DT
+ 			,BOARD_CONTENT_UDT_ID
+ 			,BOARD_CONTENT_IMP
+ 		) VALUES (
+ 			#{board_content_seq}
+ 			,(	SELECT 
+ 					BOARD_SEQ 
+ 				FROM 
+ 					COM_BOARD_GROUP_TB
+ 				WHERE
+ 					BOARD_GB = #{board_gb}
+ 					AND
+ 					BOARD_TP = #{board_tp}
+ 					AND
+ 					BOARD_DETAIL_GB = #{board_detail_gb}
+ 			)
+ 			,#{board_content_title}
+ 			,#{board_content_ct}
+ 			,(	SELECT
+ 					NAME
+ 				FROM 
+ 					FF_MEMBER
+ 				WHERE
+ 					ID = #{user_id}
+ 			)
+ 			, NOW()
+ 			,#{user_id}
+ 			, NOW()
+ 			,#{user_id}
+ 			,#{board_content_imp}
+ 		)
+ 		ON DUPLICATE KEY UPDATE
+ 			BOARD_CONTENT_TITLE = VALUES(BOARD_CONTENT_TITLE)
+ 			, BOARD_CONTENT_CT = VALUES(BOARD_CONTENT_CT)
+ 			, BOARD_CONTENT_NM = VALUES(BOARD_CONTENT_NM)
+ 			, BOARD_CONTENT_UDT_DT= NOW()
+ 			, BOARD_CONTENT_UDT_ID = VALUES(BOARD_CONTENT_UDT_ID)
+ 			, BOARD_CONTENT_IMP = VALUES(BOARD_CONTENT_IMP)
+ 		<selectKey keyProperty="board_content_seq" resultType="int" order="AFTER">
+	 		<if test="board_content_seq == null or board_content_seq == ''">
+	 			SELECT LAST_INSERT_ID()
+	 		</if>
+ 		</selectKey>
+ 	</insert>
+	<!-- 공지사항 삭제 -->
+ 	<delete id="deleteNotice" parameterType="hashmap">
+ 		DELETE CBC,FAF,FAFD FROM COM_BOARD_CONTENT_TB CBC
+ 		LEFT JOIN COM_BOARD_FILE_TB CBFT ON CBFT.BOARD_CONTENT_SEQ = CBC.BOARD_CONTENT_SEQ
+ 		LEFT JOIN FF_ATTACH_FILE FAF ON FAF.FILE_ID = CBFT.BOARD_FILE_SAVED
+ 		LEFT JOIN FF_ATTACH_FILE_DETAIL FAFD ON FAFD.FILE_ID = FAF.FILE_ID
+ 		WHERE 
+ 			CBC.BOARD_CONTENT_SEQ = #{board_content_seq}
+ 	</delete>
+<!--  공지사항 첨부파일 정보 insert -->
+	<insert id="insertNoticeFileInfo" parameterType="hashmap">
+		INSERT INTO COM_BOARD_FILE_TB(
+			BOARD_FILE_SEQ
+			,BOARD_CONTENT_SEQ
+			,BOARD_FILE_SAVED
+			,BOARD_FILE_ORIGIN
+			,BOARD_FILE_INS_DT
+			,BOARD_FILE_INS_ID
+			,BOARD_FILE_UDT_DT
+			,BOARD_FILE_UDT_ID
+		) VALUES(
+			#{board_file_seq}
+			,#{board_content_seq}
+			,#{board_file_saved}
+			,#{board_file_origin}
+			,NOW()
+			,#{user_id}
+			,NOW()
+			,#{user_id}
+		)
+		ON DUPLICATE KEY UPDATE
+			BOARD_FILE_SAVED = VALUES(BOARD_FILE_SAVED)
+			,BOARD_FILE_ORIGIN = VALUES(BOARD_FILE_ORIGIN)
+			,BOARD_FILE_UDT_DT = NOW()
+			,BOARD_FILE_UDT_ID = VALUES(BOARD_FILE_UDT_ID)
+	</insert>
+</mapper>

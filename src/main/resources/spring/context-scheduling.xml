@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+							http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+<!-- 
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="logAggregationTrigger" />
+				<ref bean="drmntAccntTrigger" />
+				<ref bean="oprtPrcssTrigger" />
+				<ref bean="createTableTrigger" />
+				<ref bean="userInfoInterfaceTrigger" />
+			</list>
+		</property>
+	</bean>	
+	
+	로그집계 스켸줄러
+	<bean id="logAggregationTrigger" 
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		p:jobDetail-ref="logAggregationDetail"
+		p:cronExpression="00 00 00 * * ? *" /> 초,분,시,일,월,주의일,년도
+	 
+	<bean id="logAggregationDetail" 
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean"
+		p:jobClass="forFaith.core.scheduling.job.LogAggregationJob">
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="scheduleJobService"	value-ref="logAggregationService" />
+			</map>
+		</property>
+		<property name="durability" value="true">
+		</property>
+	</bean>
+	<bean id="logAggregationService" class="forFaith.core.scheduling.service.impl.LogAggregationServiceImpl" >
+		<property name="hostCheckIp">
+			<list>
+				<value>127.0.0.1</value>
+				<value>119.203.167.14</value>
+			</list>
+		</property>
+	</bean>	
+	
+	휴면계정으로 전환 스켸줄러	
+	<bean id="drmntAccntTrigger" 
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		p:jobDetail-ref="drmntAccntDetail"
+		p:cronExpression="00 00 00 * * ? *" /> 초,분,시,일,월,주의일,년도
+	 
+	<bean id="drmntAccntDetail" 
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean"
+		p:jobClass="forFaith.core.scheduling.job.DrmntAccntJob">
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="scheduleJobService"	value-ref="drmntAccntService" />
+			</map>
+		</property>
+		<property name="durability" value="true">
+		</property>
+	</bean>
+	<bean id="drmntAccntService" class="forFaith.core.scheduling.service.impl.DrmntAccntServiceImpl" >
+		<property name="hostCheckIp">
+			<list>
+				<value>127.0.0.1</value>
+				<value>119.203.167.14</value>
+			</list>
+		</property>
+	</bean>	
+	
+	운영메시지 발송 스켸줄러	
+	<bean id="oprtPrcssTrigger" 
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		p:jobDetail-ref="oprtPrcssDetail"
+		p:cronExpression="00 00 02 * * ? *" /> 초,분,시,일,월,주의일,년도
+	 
+	<bean id="oprtPrcssDetail" 
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean"
+		p:jobClass="forFaith.core.scheduling.job.OprtPrcssJob">
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="scheduleJobService"	value-ref="oprtPrcssService" />
+			</map>
+		</property>
+		<property name="durability" value="true">
+		</property>
+	</bean>
+	<bean id="oprtPrcssService" class="forFaith.core.scheduling.service.impl.OprtPrcssServiceImpl" >
+		<property name="hostCheckIp">
+			<list>
+				<value>127.0.0.1</value>
+				<value>119.203.167.14</value>
+			</list>
+		</property>
+	</bean>	
+
+	CMS 테이블 생성 스켸줄러
+	<bean id="createTableTrigger" 
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		p:jobDetail-ref="createTableDetail"
+		p:cronExpression="00 00 00 * 12 ? *" /> 초,분,시,일,월,주의일,년도
+	 
+	<bean id="createTableDetail" 
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean"
+		p:jobClass="forFaith.core.scheduling.job.CreateTableJob">
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="scheduleJobService"	value-ref="createTableService" />
+			</map>
+		</property>
+		<property name="durability" value="true">
+		</property>
+	</bean>	
+	<bean id="createTableService" class="forFaith.core.scheduling.service.impl.CreateTableServiceImpl" >
+		<property name="hostCheckIp">
+			<list>
+				<value>127.0.0.1</value>
+				<value>119.203.167.14</value>
+			</list>
+		</property>
+	</bean>	
+	
+	사용자정보 연동 스케쥴러	
+	<bean id="userInfoInterfaceTrigger" 
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		p:jobDetail-ref="userInfoInterfaceDetail"
+		p:cronExpression="00 00 02 * * ? *" /> 초,분,시,일,월,주의일,년도
+	<bean id="userInfoInterfaceDetail" 
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean"
+		p:jobClass="forFaith.core.scheduling.job.UserInfoInterfaceJob">
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="scheduleJobService" value-ref="userInfoInterfaceService" />
+			</map>
+		</property>
+		<property name="durability" value="true" />
+	</bean>
+	<bean id="userInfoInterfaceService" class="forFaith.core.scheduling.service.impl.UserInfoInterfaceServiceImpl">
+		<property name="hostCheckIp">
+			<list>
+				<value>127.0.0.1</value>
+				<value>119.203.167.14</value>
+			</list>
+		</property>
+	</bean>
+ -->
+</beans>

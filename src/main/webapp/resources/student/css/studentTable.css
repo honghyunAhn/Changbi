@@ -1,0 +1,39 @@
+@charset "UTF-8";
+
+/***** 학적부 상세, 수정 페이지에서 사용하는 서식 *****/
+
+/* 테이블 여백 관련 서식 */
+.left_td td{
+	text-align: left;
+	padding-left: 30px;
+}
+.left_td input{
+	vertical-align: baseline;
+}
+.left_td textarea{
+	vertical-align: middle;
+}
+.stuTb_small_table td{
+	padding-left: 0px;
+}
+.stuTb_small_table input{
+	vertical-align: baseline;
+}
+.stuTb_small_table select{
+	vertical-align: baseline;
+}
+.stuTb_small_table button{
+	vertical-align: middle;
+}
+
+
+/* 퇴교생 정보 입력 서식 */
+canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+		display: inline-block;
+	}
+.drop_tr{
+    display: none;
+}

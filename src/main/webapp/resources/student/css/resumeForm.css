@@ -1,0 +1,498 @@
+@charset "UTF-8";
+/* ----------------------------------------------------------------
+  >> TABLE OF CONTENTS:                   담당자 : 성지민
+	1.0 Plugin 관련
+    2.0 Layout Desgin - Common Style
+        - 2.1 z-index
+        - 2.2 icon
+        - 2.3 text
+        - 2.4 button
+        - 2.5 color
+        - 2.6 ETC function
+    3.0 Main Page Design
+        - 3.1 header
+        - 3.2 footer
+        - 3.3 main
+    4.0 Contents Design - common
+    5.0 Contents Design for Page (페이지별 개별화 된 콘텐츠 디자인)
+    6.0 Popup Design - modal popup layer
+----------------------------------------------------------------*/
+/*--------------------------------------------------------------
+  >> 1.0 Plugin 관련
+----------------------------------------------------------------*/
+
+/*--------------------------------------------------------------
+  >> 2.0 Layout Desgin - Common Style
+----------------------------------------------------------------*/
+/* 2.1 z-index */
+.resumePhotoWrap>.imgBtnWrap>.imgBtn>.resumePhoto{
+    z-index: -1;
+}
+.resumePhotoWrap>.imgBox>.imgGuide{
+    z-index: -1;
+}
+.rsm_evidence>.resumeSection>.resumeFormContainer>.resumeFormWrapper>.resumeFormWrap .rsm_fileUpload>.resumeEvidence_file{
+    z-index: 5;
+}
+.rsm_evidence .resumeFormWrapper>.resumeForm_noticeWrap{
+    z-index: 10;
+}
+/* 2.2 icon */
+/* 20-08-31 icon관련 스타일 모두 삭제 */
+/* .img-icon {
+    background-image: url('../img/img-icon.png');
+    overflow: hidden;
+    background-repeat: no-repeat;
+    width: 20px; height: 20px;
+}
+.question-circle{background-position: 0 0;}
+.times-circle{background-position: -20px 0;}
+.plus-circle{background-position: -40px 0;}
+.plus-circle-gray{background-position: -60px 0;}
+.plus-circle-navy{background-position: -80px 0;}
+.minus-circle-gray{background-position: -100px 0;}
+.minus-circle-navy{background-position: -120px 0;}
+.graduation-cap{background-position: -140px 0;}
+.briefcase-gray{background-position: -160px 0;}
+.briefcase,
+.briefcase-gray.iconHover{background-position: -180px 0;}
+.book-open-gray{background-position:-200px 0;}
+.book-open,
+.book-open-gray.iconHover{background-position:-220px 0;}
+.globe-gray{background-position:-240px 0;}
+.globe,
+.globe-gray.iconHover{background-position:-260px 0;}
+.file-certificate-gray{background-position:-280px 0;}
+.file-certificate,
+.file-certificate-gray.iconHover{background-position:-300px 0;}
+.user-friends{background-position:-320px 0;}
+.atlas{background-position:-340px 0;}
+.plane-gray{background-position:-360px 0;}
+.plane,
+.plane-gray.iconHover{background-position:-380px 0;}
+.pen-nib{background-position: 0 -20px;}
+.upload{background-position: -20px -20px;} */
+
+/* 2.3 text */
+/* 2.4 button */
+/* 2.5 color */
+.cRed{
+    color: #C13831;
+}
+.cGray{
+    color: #9B9EA0;
+}
+.cNavy{
+    color: #11283b;
+}
+/* 2.6 ETC function */
+/* - modal popup layer 활성화시 바디 스크롤 없애기 */
+.not-scroll {
+    position: fixed;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+/*--------------------------------------------------------------
+  >> 4.0 Main Page Design
+----------------------------------------------------------------*/
+/* content */
+.container{}
+/* content_header */
+.container>.resumeHeader{
+    width: 100%;
+    border-bottom: 10px solid #11283B;
+}
+/* 김성미 : width 1200px --> 1100px로 수정. 지원서 인쇄창에 맞게 줄였습니다. */
+.container>.resumeHeader>.h2,
+.container>.resumeContent{
+    width: 1100px;
+    margin: 0 auto;
+}
+.container>.resumeHeader>.h2{
+    text-align: center;
+    line-height: 70px;
+    color: #11283B;
+}
+/* content_section */
+
+.container>.resumeContent>.resumeSection{
+    width: 980px;
+}
+.container>.resumeContent>.resumeSection .resumeMsg{
+    line-height: 40px;
+    text-align: right;
+}
+/* 2020.09.17 김성미 : 바로 위에 있는 코드에서 선택자만 약간 바꿔서 추가하였습니다. */
+.resumeContent>.resumeSection .resumeMsg{
+    line-height: 40px;
+    text-align: right;
+}
+/* content_resumeForm */
+
+/* 김성미 : 인쇄용에 맞게 마진을 대폭 줄였습니다. 80px -> 15px */
+.resumeWrap{
+    margin: 15px 0;
+}
+
+/* content_resumeForm_title */
+ .resumeWrap .resumeTitle{
+    border-bottom: 2px solid #11283b;
+}
+/* 김성미 : 인쇄용으로 마진 줄임. 40px -> 15px */
+.resumeWrap:nth-child(1)~* >.resumeTitle{
+    margin-top: 15px;
+}
+ .resumeWrap .resumeTitle>.h3{
+    line-height: 38px;
+}
+ .resumeWrap .resumeTitle>.cGray{
+    padding: 10px 0 0 10px;
+}
+/* content_resumeForm_section */
+.resumeWrap>.resumeSection{}
+.resumeFormWrap{
+    width: 100%;
+}
+.resumeFormWrap>.row:nth-child(1)~*{
+    margin-top: 10px;
+}
+.resumeFormWrap>.resumeForm>.resumeForm_text{
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    margin-right: 10px;
+}
+.resumeFormWrap>.resumeForm>.resumeForm_load{
+    background-color: #f7f7f7;
+    cursor: default;
+}
+/* 정보입력칸 너비 */
+.resumeFormWrap>.resumeForm>.resumeForm_text.form100{
+    width: 100%;
+}
+/* 2020.09.20 김성미 : form80 추가하였습니다. */
+.resumeFormWrap>.resumeForm>.resumeForm_text.form80{
+    width: calc(80%);
+}
+.resumeFormWrap>.resumeForm>.resumeForm_text.form50{
+    width: calc(50% - 5px);
+}
+.resumeFormWrap>.resumeForm>.resumeForm_text.form33{
+    width:calc(33.33% - 6.6px);
+}
+.resumeFormWrap>.resumeForm>.resumeForm_text.form25{
+    width:calc(25% - 7.5px);
+}
+.resumeFormWrap>.resumeForm>.resumeForm_text.form20{
+    width: calc(20% - 8px);
+}
+.resumeFormWrap>.resumeForm>.resumeForm_text:last-child{
+    margin-right: 0;
+}
+.resumeFormWrap>.resumeForm>.resumeForm_text>.rsm_label{
+    color: #9B9EA0;
+}
+.resumeFormWrap>.resumeForm>.resumeForm_text>.rsm_input,
+.resumeFormWrap>.resumeForm>.resumeForm_text>.rsm_selectBox{
+    width: 100%;
+    height: 20px;
+    /* font-size: 16px; */
+    font-size: 1.143rem;
+    color: #777;
+    border: 0;
+    margin-top: 8px;
+}
+.resumeFormWrap>.resumeForm>.resumeForm_text>.rsm_input>.rsm_radio{
+    margin-right: 10px;
+}
+.resumeFormWrap>.resumeForm>.resumeForm_text>.rsm_input>.rsm_radio:last-child{
+    margin-right: 0;
+}
+.resumeForm_addBtn,
+.resumeForm_delBtn,
+.resumeForm_necessary,
+.imgBtn.delImg,
+.serchaddressBtn,
+.resumeForm_ntcBtn{
+    cursor: pointer;
+}
+
+.resumeSection>.resumeForm_addBtn{
+    padding: 10px;
+    justify-content: center;
+    margin-top: 10px;
+    background: linear-gradient(#f7f7f7, rgba(255,255,255,0));
+}
+.resumeSection>.resumeForm_addBtn>.img-icon{}
+.resumeSection>.resumeForm_addBtn>.h4{
+    color: #11283B;
+    margin-left: 5px;
+    line-height: 20px;
+}
+.resumeSection>.resumeFormContainer>.resumeFormWrapper{
+    position: relative;
+    margin: 20px 0;
+    width: 100%;
+}
+/* 김성미 : 지원서 인쇄양식에 맞추어 자기소개서 부분 bottom마진만 따로 지정함 */
+.resumeSection>.resumeFormContainer>.introducction_wrapper{
+    position: relative;
+    margin: 20px 0 60px 0;
+    width: 100%;
+}
+.resumeSection>.resumeFormContainer>.resumeFormWrapper:not(.necessary){
+    display: none;
+}
+/* 항목 추가될 때 적용되는 style */
+.resumeSection>.resumeFormContainer>.resumeFormWrapper:nth-child(1)~*{
+    border-top:1px solid #9B9EA0;
+    padding-top: 20px;
+}
+
+.resumeSection>.resumeFormContainer>.resumeFormWrapper>.img-icon{
+    position: absolute;
+    right: 10px; top: -10px;
+}
+.resumeSection>.resumeFormContainer>.resumeForm_addStyle>.resumeForm_delBtn{
+    top: 10px;
+}
+
+/* content_resumeForm_section > profile 기본정보 */
+/* 김성미 : 인쇄용에 맞게 마진을 대폭 줄였습니다. 80px -> 15px */
+.resumeWrap.rsm_profile{
+    margin: 0 0 15px;
+}
+.resumeWrap.rsm_profile>.resumeSection{
+    padding: 20px 0 0;
+}
+.resumePhotoWrap{
+    width: 150px;
+    margin-right: 10px;
+}
+.resumePhotoWrap>.imgBox{
+    position: relative;
+    width: 150px;
+    height: 200px;
+}
+.resumePhotoWrap>.imgBox>.imgGuide,
+.resumePhotoWrap>.imgBox>.imgHere{
+    position: absolute;
+    width: 150px;
+    height: 200px;
+}
+.resumePhotoWrap>.imgBox>.imgGuide{
+    background-image: url('../img/resume_imgGuide.jpg');
+    border: 1px solid #ddd;
+
+}
+.resumePhotoWrap>.imgBox>.imgHere{
+    overflow: hidden;
+}
+.resumePhotoWrap>.imgBox>.imgHere>img{
+    max-width: 100%;
+    height: auto;
+}
+.resumePhotoWrap>.imgBtnWrap{
+    width: 150px;
+}
+.resumePhotoWrap>.imgBtnWrap>.imgBtn{}
+.resumePhoto{
+    width: .1px;
+    height: .1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+}
+
+.resumePhotoWrap>.imgBtnWrap>.imgBtn>.resumePhoto+label{
+    display: inline-block;
+    width: 75px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #112831;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+}
+.resumePhotoWrap>.imgBtnWrap>.imgBtn.delImg{
+    background-color: #9B9EA0;
+    width: 75px;
+    height: 40px;
+    line-height: 40px;
+    color: #fff;
+    text-align: center;
+}
+.rsm_profile>.resumeSection>.resumeFormWrap{
+    width: 820px;
+}
+.rsm_profile .resumeFormWrap>.resumeForm>.resumeForm_text>.rsm_input>.rsm_radio>.rsm_input{
+    width: calc(100% - 60px);
+    border: 1px solid #ddd;
+}
+.rsm_profile .resumeFormWrap>.resumeForm>.resumeForm_text>.rsm_input>.rsm_radio:last-child{
+    width: calc(100% - 250px);
+}
+/* 주소입력 */
+.rsm_profile .resumeForm>.rsmForm_address>.rsm_txt{
+    width: calc(100% - 85px)
+}
+.rsm_profile .resumeForm>.rsmForm_address>.rsm_txt>.rsmForm_addressDiv>*{
+    width: calc(33.3% - 5px);
+    border: 1px solid #ddd;
+    margin-top: 8px;
+    height: 20px;
+}
+
+.rsm_profile .resumeForm>.rsmForm_address>.searchAddressBtn{
+    background-color:#9B9EA0;
+    width: 75px;
+    color: #fff;
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+    cursor: pointer;
+}
+
+/* content_resumeForm_section > education 학력사항 */
+/* content_resumeForm_section > career 경력사항 */
+/* content_resumeForm_section > learn 교육이수 경력 */
+/* content_resumeForm_section > language 언어능력 */
+/* content_resumeForm_section > Certificate 자격증 */
+/* content_resumeForm_section > participation 본 과정 응시 여부 */
+/* content_resumeForm_section > kmove K-MOVE스쿨 참여여부 */
+/* content_resumeForm_section > experience 해외체류 경험 */
+/* content_resumeForm_section > introduction 자기소개서 */
+.rsm_introduction .resumeForm>.resumeForm_text>.rsm_input{
+    margin-top: 0;
+}
+.rsm_introduction .resumeForm>.rsm_textarea{
+    resize: none;
+    width: calc(100% - 22px);
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+/* content_resumeForm_section > evidence 증빙자료 업로드 */
+.rsm_evidence .resumeFormWrapper{
+    position: relative;
+}
+.rsm_evidence .resumeFormWrapper>.resumeForm_noticeWrap{
+    position: absolute;
+    top: -50px;
+    right: 0;
+}
+
+.rsm_evidence .resumeFormWrapper>.resumeForm_noticeWrap>.resumeForm_notice{
+    display: none;
+    width: 600px;
+    height: 400px;
+    overflow-y: scroll;
+    border: 5px solid #ddd;
+    background-color: #fff;
+    box-shadow: 2px 2px 5px rgba(0,0,0,.3);
+    margin-right: 10px;
+    padding: 10px;
+}
+.rsm_evidence .resumeFormWrapper>.resumeForm_noticeWrap>.resumeForm_notice>.rsm_noticeList:nth-child(1)~*{
+    margin-top: 10px;
+    border-top: 1px solid #ddd;
+}
+.rsm_evidence .resumeFormWrapper>.resumeForm_noticeWrap>.resumeForm_notice>.rsm_noticeList>li{
+    padding: 2.5px;
+}
+
+/* 파일선택 버튼 */
+.rsm_evidence>.resumeSection>.resumeFormContainer>.resumeFormWrapper>.resumeFormWrap .rsm_fileUpload{
+    display: inline-block;
+    width: 75px;
+    height: 25px;
+    line-height: 25px;
+    background-color: #112831;
+    color: #fff;
+    text-align: center;
+    margin-top: 8px;
+    position: relative;
+}
+.rsm_evidence>.resumeSection>.resumeFormContainer>.resumeFormWrapper>.resumeFormWrap .rsm_fileUpload>.resumeEvidence_file{
+    position: absolute;
+	top: 0;
+	left: 0;
+	height: 25px;
+    width: 75px;
+    overflow: hidden;
+	opacity: 0;
+	filter: alpha(opacity=0);
+}
+.rsm_evidence>.resumeSection>.resumeFormContainer>.resumeFormWrapper>.resumeFormWrap .resumeEvidence_url{
+    border: 1px solid #ddd;
+    height: 25px;
+    width: calc(100% - 80px);
+    cursor: default;
+}
+
+/* resumeBtn 지원하기 버튼 */
+.container>.resumeContent>.resumeSection .resumeBtn{
+    background-color: #11283B;
+    line-height: 100px;
+    border-radius: 10px;
+    color: #fff;
+}
+
+/* resumeNav */
+.resumeAside{
+    width: 200px;
+    margin-left: 20px;
+    position: relative;
+}
+/* 2020.09.16 김성미 : top 120px -> 210px로 수정하였습니다. */
+.resumeNav{
+    border: 1px solid #ddd;
+    position: fixed;
+    top: 210px;
+    width: 200px;
+    padding: 15px 10px;
+
+}
+.resumeNav>.resumeNav_header{
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    line-height: 25px;
+    color: #9B9EA0;
+    text-align: center;
+    height: 30px;
+}
+.resumeNav>.resumeNav_content{
+    padding: 5px 0;
+}
+.resumeNav>.resumeNav_content>.resumeNav_listWrap{}
+.resumeNav>.resumeNav_content>.resumeNav_listWrap>li.d-flex{
+    padding: 5px 0;
+}
+.resumeNav>.resumeNav_content>.resumeNav_listWrap>li.d-flex>.img-icon{
+    margin-right: 5px;
+}
+.resumeNav>.resumeNav_content>.resumeNav_listWrap>li.d-flex>a{
+    width: auto;
+    color: #11283B;
+    /* font-weight: bold; */
+}
+.resumeNav>.resumeNav_content>.resumeNav_listWrap>li.d-flex>.img-icon{
+    cursor: pointer;
+}
+.resumeNav>.resumeNav_content>.resumeNav_listWrap>li.d-flex>.img-icon.minus-circle-gray{
+    cursor: default;
+}
+/* 비활성화 */
+.resumeNav>.resumeNav_content>.resumeNav_listWrap>li.d-flex>.passive{}
+.resumeNav>.resumeNav_content>.resumeNav_listWrap>li.d-flex>.passive>a{
+    color: #ccc;
+}
+
+.resumeNav_button{
+    width: 100%;
+    text-align: center;
+    background-color: #11283b;
+    color: #fff;
+    line-height: 40px;
+    cursor: pointer;
+}

@@ -1,0 +1,925 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.changbi.tt.dev.data.dao.BasicDAO">
+	
+	<!-- 학교 resultMap -->
+	<resultMap id="schoolMap" 				type="SchoolVO">
+		<id	property="id"				column="ID" />
+		<association property="region"		column="REGION_CODE"	javaType="forFaith.dev.vo.CodeVO"		select="forFaith.dev.dao.BaseDAO.codeInfo"  />
+	</resultMap>
+
+	<!-- 이벤트 resultMap -->
+	<resultMap id="eventMap" 				type="EventVO">
+		<id	property="id"				column="ID" />
+		<association property="img1" 		column="ATTACH1_FILE"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<association property="img2" 		column="ATTACH2_FILE"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+	</resultMap>
+	
+	<!-- 배너 resultMap -->
+	<resultMap id="bannerMap" 				type="BannerVO">
+		<id	property="id"				column="ID" />
+		<association property="img1" 		column="ATTACH1_FILE"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+		<association property="img2" 		column="ATTACH2_FILE"		javaType="forFaith.dev.vo.AttachFileVO"	select="forFaith.dev.dao.AttachFileDAO.attachFileInfo" />
+	</resultMap>
+	
+	<!-- 연수자IP resultMap -->
+	<resultMap id="ipAddressMap" 			type="IpAddressVO">
+		<id		property="user.id"				column="ID" />
+		<result	property="user.name"		column="NAME" />
+	</resultMap>
+	
+	<!-- 학교 리스트 검색조건 -->
+	<sql id="schoolCondition">
+		WHERE 1=1
+		<choose>
+			<when test="searchCondition == 'name'">
+				AND NAME LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+			<when test="searchCondition == 'addr'">
+				AND CONCAT(ADDR1, ADDR2) LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+			<when test="searchCondition == 'jurisdiction'">
+				AND JURISDICTION LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+		</choose>
+		<if test="regionCode != null and regionCode != ''">
+			AND REGION_CODE = #{regionCode}
+		</if>
+		<if test="eType != null and eType != ''">
+			AND E_TYPE = #{eType}
+		</if>
+		<if test="sType != null and sType != ''">
+			AND S_TYPE = #{sType}
+		</if>	
+	</sql>
+	
+	<!-- 학교 리스트 -->
+	<select id="schoolList" parameterType="SchoolVO" resultMap="schoolMap">
+		SELECT
+			ID,
+			S_TYPE,
+			E_TYPE,
+			NAME,
+			REGION_CODE,
+			JURISDICTION,
+			TEL,
+			FAX,
+			POST_CODE,
+			ADDR1,
+			ADDR2,
+			CASE 
+				WHEN S_TYPE = '1' THEN '초등'
+				WHEN S_TYPE = '2' THEN '중학교'
+				WHEN S_TYPE = '3' THEN '고등학교'
+				WHEN S_TYPE = '4' THEN '유치원'
+				WHEN S_TYPE = '5' THEN '특수학교'
+				WHEN S_TYPE = '6' THEN '기관'
+			END S_TYPE_NAME,
+			CASE 
+				WHEN E_TYPE = '1' THEN '국립'
+				WHEN E_TYPE = '2' THEN '공립'
+				WHEN E_TYPE = '3' THEN '사립'
+			END E_TYPE_NAME
+		FROM CB_SCHOOL
+		<include refid="schoolCondition"></include>
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if> 
+	</select>
+	
+	<!-- 학교 리스트 총 갯수 -->
+	<select id="schoolTotalCnt" parameterType="SchoolVO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM CB_SCHOOL
+		<include refid="schoolCondition"></include>
+	</select>
+	
+	<!-- 학교 상세 조회 -->
+	<select id="schoolInfo" parameterType="SchoolVO" resultType="SchoolVO">
+		SELECT
+			ID,
+			S_TYPE,
+			E_TYPE,
+			NAME,
+			REGION_CODE,
+			JURISDICTION,
+			TEL,
+			FAX,
+			POST_CODE,
+			ADDR1,
+			ADDR2,
+			CASE 
+				WHEN S_TYPE = '1' THEN '초등'
+				WHEN S_TYPE = '2' THEN '중학교'
+				WHEN S_TYPE = '3' THEN '고등학교'
+				WHEN S_TYPE = '4' THEN '유치원'
+				WHEN S_TYPE = '5' THEN '특수학교'
+				WHEN S_TYPE = '6' THEN '기관'
+			END S_TYPE_NAME,
+			CASE 
+				WHEN E_TYPE = '1' THEN '국립'
+				WHEN E_TYPE = '2' THEN '공립'
+				WHEN E_TYPE = '3' THEN '사립'
+			END E_TYPE_NAME
+		FROM CB_SCHOOL
+		WHERE ID = #{id}
+	</select>
+	
+	<!-- 학교 등록 -->
+	<insert id="schoolReg" parameterType="SchoolVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_SCHOOL
+		(
+			ID,
+			S_TYPE,
+			E_TYPE,
+			NAME,
+			REGION_CODE,
+			JURISDICTION,
+			TEL,
+			FAX,
+			POST_CODE,
+			ADDR1,
+			ADDR2
+		) VALUES (
+			#{id},
+			#{sType},
+			#{eType},
+			#{name},
+			#{regionCode},
+			#{jurisdiction},
+			#{tel},
+			#{fax},
+			#{postCode},
+			#{addr1},
+			#{addr2}
+		) ON DUPLICATE KEY UPDATE
+			S_TYPE = VALUES(S_TYPE),
+			E_TYPE = VALUES(E_TYPE),
+			NAME = VALUES(NAME),
+			REGION_CODE = VALUES(REGION_CODE),
+			JURISDICTION = VALUES(JURISDICTION),
+			TEL = VALUES(TEL),
+			FAX = VALUES(FAX),
+			POST_CODE = VALUES(POST_CODE),
+			ADDR1 = VALUES(ADDR1),
+			ADDR2 = VALUES(ADDR2)
+	</insert>
+	
+	<sql id="ipCondition">
+		WHERE 1=1	
+	</sql>
+	
+	<!-- 연수자 IP 리스트 -->
+	<select id="ipList" parameterType="IpAddressVO" resultMap="ipAddressMap">
+		SELECT
+			CM.ID,
+			CM.NAME,
+			GROUP_CONCAT(IP) AS IP
+		FROM CB_IP_ADDRESS CIA
+		INNER JOIN CB_MEMBER CM
+		ON CIA.USER_ID = CM.ID
+		<include refid="ipCondition" />
+		GROUP BY CIA.USER_ID
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if>		
+	</select>
+	
+	<!-- 연수자 IP 리스트 총 갯수 -->
+	<select id="ipTotalCnt" parameterType="IpAddressVO" resultType="int">
+		SELECT COUNT(*) FROM
+		(
+			SELECT
+				CM.ID,
+				CM.NAME,
+				GROUP_CONCAT(IP) AS IP
+			FROM CB_IP_ADDRESS CIA
+			INNER JOIN CB_MEMBER CM
+			ON CIA.USER_ID = CM.ID
+			<include refid="ipCondition" />
+			GROUP BY CIA.USER_ID
+		) T
+	</select>
+	
+	<!-- 연수자 IP 상세 리스트 -->
+	<select id="ipInfoList" parameterType="IpAddressVO" resultMap="ipAddressMap">
+		SELECT
+			CM.ID,
+			CM.NAME,
+			CIA.IP
+		FROM CB_IP_ADDRESS CIA
+		INNER JOIN CB_MEMBER CM
+		ON CIA.USER_ID = CM.ID
+		AND CIA.USER_ID = #{user.id}
+	</select>
+	
+	<delete id="ipDel" parameterType="IpAddressVO">
+		DELETE FROM CB_IP_ADDRESS
+		WHERE USER_ID = #{user.id}
+		AND IP = #{ip}
+	</delete>
+	
+	<!-- 포인트 정책 정보 조회 -->
+	<select id="policyPointInfo" parameterType="PolicyPointVO" resultType="policyPointVO">
+		SELECT
+			ID,
+			SAVE_JOIN_POINT,
+			SAVE_JOIN_USE,
+			SAVE_LECTURE_POINT,
+			SAVE_LECTURE_TYPE,
+			SAVE_LECTURE_USE,
+			SAVE_TRAIN_POINT,
+			SAVE_TRAIN_USE,
+			USE_LECTURE_POINT,
+			USE_LECTURE_UNIT,
+			USE_LECTURE_USE,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE
+		FROM CB_POLICY_POINT
+		limit 1
+	</select>
+	
+	<!-- 포인트 정책 정보 등록(수정) -->
+	<insert id="policyPointReg" parameterType="PolicyPointVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_POLICY_POINT
+		(
+			ID,
+			SAVE_JOIN_POINT,
+			SAVE_JOIN_USE,
+			SAVE_LECTURE_POINT,
+			SAVE_LECTURE_TYPE,
+			SAVE_LECTURE_USE,
+			SAVE_TRAIN_POINT,
+			SAVE_TRAIN_USE,
+			USE_LECTURE_POINT,
+			USE_LECTURE_UNIT,
+			USE_LECTURE_USE,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE
+		) VALUES (
+			#{id},
+			#{saveJoinPoint},
+			#{saveJoinUse},
+			#{saveLecturePoint},
+			#{saveLectureType},
+			#{saveLectureUse},
+			#{saveTrainPoint},
+			#{saveTrainUse},
+			#{useLecturePoint},
+			#{useLectureUnit},
+			#{useLectureUse},
+			#{useYn},
+			#{regUser.id},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+			#{updUser.id},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		) ON DUPLICATE KEY UPDATE
+			SAVE_JOIN_POINT = VALUES(SAVE_JOIN_POINT),
+			SAVE_JOIN_USE = VALUES(SAVE_JOIN_USE),
+			SAVE_LECTURE_POINT = VALUES(SAVE_LECTURE_POINT),
+			SAVE_LECTURE_TYPE = VALUES(SAVE_LECTURE_TYPE),
+			SAVE_LECTURE_USE = VALUES(SAVE_LECTURE_USE),
+			SAVE_TRAIN_POINT = VALUES(SAVE_TRAIN_POINT),
+			SAVE_TRAIN_USE = VALUES(SAVE_TRAIN_USE),
+			USE_LECTURE_POINT = VALUES(USE_LECTURE_POINT),
+			USE_LECTURE_UNIT = VALUES(USE_LECTURE_UNIT),
+			USE_LECTURE_USE = VALUES(USE_LECTURE_USE),
+			USE_YN = VALUES(USE_YN),
+			UPD_USER = VALUES(UPD_USER),
+			UPD_DATE = VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 수강 연기/취소 정책 정보 조회 -->
+	<select id="policyDelayCancelInfo" parameterType="PolicyDelayCancelVO" resultType="PolicyDelayCancelVO">
+		SELECT
+			ID,
+			DELAY_COURSE_DAY,
+			DELAY_TRAIN_DAY,
+			CANCEL_COURSE_DAY,
+			CANCEL_TRAIN_DAY,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE
+		FROM CB_POLICY_DELAY_CANCEL
+		WHERE ID = #{id}
+	</select>
+	
+	<!-- 수강 연기/취소 정책 정보 등록(수정) -->
+	<insert id="policyDelayCancelReg" parameterType="PolicyDelayCancelVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_POLICY_DELAY_CANCEL
+		(
+			ID,
+			DELAY_COURSE_DAY,
+			DELAY_TRAIN_DAY,
+			CANCEL_COURSE_DAY,
+			CANCEL_TRAIN_DAY,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE		
+		) VALUES (
+			#{id},
+			#{delayCourseDay},
+			#{delayTrainDay},
+			#{cancelCourseDay},
+			#{cancelTrainDay},
+			#{useYn},
+			#{regUser.id},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+			#{updUser.id},
+			DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+		) ON DUPLICATE KEY UPDATE
+			DELAY_COURSE_DAY = VALUES(DELAY_COURSE_DAY),
+			DELAY_TRAIN_DAY = VALUES(DELAY_TRAIN_DAY),
+			CANCEL_COURSE_DAY = VALUES(CANCEL_COURSE_DAY),
+			CANCEL_TRAIN_DAY = VALUES(CANCEL_TRAIN_DAY),
+			USE_YN = VALUES(USE_YN),
+			UPD_USER = VALUES(UPD_USER),
+			UPD_DATE = VALUES(UPD_DATE)
+	</insert>
+	
+	<sql id="eventCondition">
+		WHERE 1=1
+		<choose>
+			<when test="searchCondition == 'title'">
+				AND TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+		</choose>
+		<if test="search.approvalStatus != null and search.approvalStatus != ''">
+			AND APPROVAL_STATUS = #{search.approvalStatus}
+		</if>
+	</sql>
+	
+	<!-- 이벤트 정보 리스트 -->
+	<select id="eventList" parameterType="EventVO" resultMap="eventMap">
+		SELECT
+			ID,
+			TITLE,
+			COMMENT,
+			USER_ID,
+			START_DATE,
+			END_DATE,
+			ATTACH1_FILE,
+			ATTACH2_FILE,
+			APPROVAL_STATUS,
+			ORDER_NUM,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE,
+			CASE 
+				WHEN APPROVAL_STATUS = '1' THEN '노출보류'
+				WHEN APPROVAL_STATUS = '2' THEN '서비스'
+			END APPROVAL_STATUS_NAME
+		FROM CB_EVENT
+		<include refid="eventCondition"></include>
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if> 
+	</select>
+	
+	<!-- 이벤트 정보 리스트 총 갯수 -->
+	<select id="eventTotalCnt" parameterType="EventVO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM CB_EVENT
+		<include refid="eventCondition"></include>	
+	</select>
+	
+	<!-- 이벤트 정보 상세 -->
+	<select id="eventInfo" parameterType="EventVO" resultMap="eventMap">
+		SELECT
+			ID,
+			TITLE,
+			COMMENT,
+			USER_ID,
+			START_DATE,
+			END_DATE,
+			ATTACH1_FILE,
+			ATTACH2_FILE,
+			APPROVAL_STATUS,
+			ORDER_NUM,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE
+		FROM CB_EVENT
+		WHERE ID = #{id}
+	</select>
+	
+	<!-- 이벤트 정보 등록 -->
+	<insert id="eventReg" parameterType="EventVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_EVENT
+		(
+			ID,
+			TITLE,
+			COMMENT,
+			USER_ID,
+			START_DATE,
+			END_DATE,
+			ATTACH1_FILE,
+			ATTACH2_FILE,
+			APPROVAL_STATUS,
+			ORDER_NUM,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE
+		) VALUES (
+			#{id},
+			#{title},
+			#{comment},
+			#{userId},
+			#{startDate},
+			#{endDate},
+			#{img1.fileId},
+			#{img2.fileId},
+			#{approvalStatus},
+			#{orderNum},
+			#{useYn},
+			#{regUser.id},
+			NOW(),
+			#{updUser.id},
+			NOW()
+		) ON DUPLICATE KEY UPDATE
+			TITLE = VALUES(TITLE),
+			COMMENT = VALUES(COMMENT),
+			USER_ID = VALUES(USER_ID),
+			START_DATE = VALUES(START_DATE),
+			END_DATE = VALUES(END_DATE),
+			ATTACH1_FILE = VALUES(ATTACH1_FILE),
+			ATTACH2_FILE = VALUES(ATTACH2_FILE),
+			APPROVAL_STATUS = VALUES(APPROVAL_STATUS),
+			ORDER_NUM = VALUES(ORDER_NUM),
+			USE_YN = VALUES(USE_YN),
+			UPD_USER = VALUES(UPD_USER),
+			UPD_DATE = VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 이벤트 정보 삭제 -->
+	<delete id="eventDel" parameterType="EventVO">
+		DELETE FROM CB_EVENT
+		WHERE ID = #{id}	
+	</delete>
+	
+	<!-- 배너 검색조건 -->
+	<!-- 
+	<sql id="bannerCondition">
+		<choose>
+			<when test="searchCondition == 'title'">
+				AND TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+			</when>
+		</choose>
+	</sql>
+	 -->
+	<sql id="bannerCondition">
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+			<choose>
+				<when test="searchCondition == 'all'">
+					(TITLE LIKE CONCAT('%',#{searchKeyword},'%'))
+				</when>
+				<when test="searchCondition == 'title'">
+					TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+			</choose>
+		</if>
+	</sql>
+	
+	<!-- 배너 정보 리스트 -->
+	<select id="bannerList" parameterType="BannerVO" resultMap="bannerMap">
+		SELECT
+			ID,
+			POSITION,
+			TITLE,
+			URL,
+			TARGET,
+			ATTACH1_FILE,
+			ATTACH2_FILE,
+			USER_ID,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE,
+			OD
+		FROM CB_BANNER
+		WHERE 
+			USE_YN = #{useYn}
+		<include refid="bannerCondition"></include>
+		<choose>
+			<when test='useYn=="Y"'>
+				ORDER BY OD ASC
+			</when>
+			<otherwise>
+				ORDER BY ID DESC
+			</otherwise>
+		</choose>
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if>	  	
+	</select>
+	
+	<!-- 배너 정보 리스트 총 갯수 -->
+	<select id="bannerTotalCnt" parameterType="BannerVO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM CB_BANNER
+		WHERE 
+			USE_YN = 'N'
+		<include refid="bannerCondition"></include>	
+	</select>
+	
+	<!-- 메인 배너 순서 출력  -->
+	<select id="bannerOdList" resultType="Integer">
+		SELECT
+			OD
+		FROM
+			CB_BANNER
+		WHERE
+			USE_YN = 'Y'
+		ORDER BY
+			OD ASC
+	</select>
+	
+	<!-- 메인 배너 순서 변경 시작 -->
+	<update id="bannerOdUpdate" parameterType="hashmap">
+		UPDATE
+			CB_BANNER
+		SET
+			OD = #{od}
+		WHERE
+			id = #{id}
+	</update>
+	
+	<!-- 배너 사용여부, 순서 변경 -->
+	<update id="bannerState" parameterType="BannerVO">
+		UPDATE CB_BANNER
+		SET
+			<if test='useYn=="Y"'>
+				OD = 0
+				, USE_YN = 'N'
+			</if>
+			<if test='useYn=="N"'>
+				OD = #{od}
+				, USE_YN = 'Y'
+			</if>
+		WHERE
+			ID = #{id} 	
+	</update>
+	
+	<!-- 배너 상세 -->
+	<select id="bannerInfo" parameterType="BannerVO" resultMap="bannerMap">
+		SELECT
+			ID,
+			POSITION,
+			TITLE,
+			URL,
+			TARGET,
+			ATTACH1_FILE,
+			ATTACH2_FILE,
+			USER_ID,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE
+		FROM CB_BANNER
+		WHERE ID = #{id}
+	</select>
+	
+	<!-- 배너 정보 등록 -->
+	<insert id="bannerReg" parameterType="BannerVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_BANNER (
+			ID,
+			POSITION,
+			TITLE,
+			URL,
+			TARGET,
+			ATTACH1_FILE,
+			ATTACH2_FILE,
+			USER_ID,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE
+		) VALUES (
+			#{id},
+			#{position},
+			#{title},
+			#{url},
+			#{target},
+			#{img1.fileId},
+			#{img2.fileId},
+			#{userId},
+			'N',
+			#{regUser.id},
+			NOW(),
+			#{updUser.id},
+			NOW()
+		) ON DUPLICATE KEY UPDATE
+			POSITION = VALUES(POSITION),
+			TITLE = VALUES(TITLE),
+			URL = VALUES(URL),
+			TARGET = VALUES(TARGET),
+			ATTACH1_FILE = VALUES(ATTACH1_FILE),
+			ATTACH2_FILE = VALUES(ATTACH2_FILE),
+			USER_ID = VALUES(USER_ID),
+			USE_YN = #{useYn},
+			UPD_USER = VALUES(UPD_USER),
+			UPD_DATE = VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 배너 정보 삭제 -->
+	<delete id="bannerDel" parameterType="BannerVO">
+		DELETE FROM CB_BANNER
+		WHERE ID = #{id}	
+	</delete>
+	
+	<!-- 안내페이지 검색 조건 -->
+	<sql id="infoCondition">
+		WHERE 1=1
+		<choose>
+			<!-- <when test="searchCondition == 'title'">
+				AND TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+			</when> -->
+		</choose>
+		<if test="search.approvalStatus != null and search.approvalStatus != ''">
+			AND APPROVAL_STATUS = #{search.approvalStatus}
+		</if>
+	</sql>
+	
+	<!-- 안내페이지 정보 리스트 -->
+	<select id="infoList" parameterType="InfoVO" resultType="InfoVO">
+		SELECT
+			ID,
+			THEMA_TYPE,
+			SHOW_ORDER_NUM,
+			SHOW_START_DATE,
+			SHOW_END_DATE,
+			APPROVAL_STATUS,
+			CONTENTS,
+			USER_ID,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE,
+			CASE
+				WHEN THEMA_TYPE = '1' THEN '회원약관'
+				WHEN THEMA_TYPE = '2' THEN '개인정보보호정책'
+				WHEN THEMA_TYPE = '3' THEN '소개'
+				WHEN THEMA_TYPE = '4' THEN '연혁'
+				WHEN THEMA_TYPE = '5' THEN '조직도'
+				WHEN THEMA_TYPE = '6' THEN '찾아오시는길'
+				WHEN THEMA_TYPE = '7' THEN '규정'
+				WHEN THEMA_TYPE = '8' THEN '교육부인가서' 
+			END AS THEMA_TYPE_NAME,
+			CASE 
+				WHEN APPROVAL_STATUS = '1' THEN '노출보류'
+				WHEN APPROVAL_STATUS = '2' THEN '서비스'
+			END APPROVAL_STATUS_NAME 		
+		FROM CB_INFO 
+		<include refid="infoCondition"></include>
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if> 
+	</select>
+	
+	<!-- 안내페이지 정보 리스트 총 갯수 -->
+	<select id="infoTotalCnt" parameterType="InfoVO" resultType="int">
+		SELECT
+			COUNT(*)		
+		FROM CB_INFO 
+		<include refid="infoCondition"></include>
+	</select>
+	
+	<!-- 안내페이지 정보 상세 -->
+	<select id="infoInfo" parameterType="InfoVO" resultType="InfoVO">
+		SELECT
+			ID,
+			THEMA_TYPE,
+			SHOW_ORDER_NUM,
+			SHOW_START_DATE,
+			SHOW_END_DATE,
+			APPROVAL_STATUS,
+			CONTENTS,
+			USER_ID,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE		
+		FROM CB_INFO 
+		WHERE ID = #{id} 	
+	</select>
+	
+	<!-- 안내페이지 정보 등록 -->
+	<insert id="infoReg" parameterType="InfoVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO CB_INFO (
+			ID,
+			THEMA_TYPE,
+			SHOW_ORDER_NUM,
+			SHOW_START_DATE,
+			SHOW_END_DATE,
+			APPROVAL_STATUS,
+			CONTENTS,
+			USER_ID,
+			USE_YN,
+			REG_USER,
+			REG_DATE,
+			UPD_USER,
+			UPD_DATE
+		) VALUES (
+			#{id},
+			#{themaType},
+			#{showOrderNum},
+			#{showStartDate},
+			#{showEndDate},
+			#{approvalStatus},
+			#{contents},
+			#{userId},
+			#{useYn},
+			#{regUser.id},
+			NOW(),
+			#{updUser.id},
+			NOW()
+		) ON DUPLICATE KEY UPDATE
+			THEMA_TYPE = VALUES(THEMA_TYPE),
+			SHOW_ORDER_NUM = VALUES(SHOW_ORDER_NUM),
+			SHOW_START_DATE = VALUES(SHOW_START_DATE),
+			SHOW_END_DATE = VALUES(SHOW_END_DATE),
+			APPROVAL_STATUS = VALUES(APPROVAL_STATUS),
+			CONTENTS = VALUES(CONTENTS),
+			USER_ID = VALUES(USER_ID),
+			USE_YN = VALUES(USE_YN),
+			UPD_USER = VALUES(UPD_USER),
+			UPD_DATE = VALUES(UPD_DATE)
+	</insert>
+	
+	<!-- 안내페이지 정보 삭제 -->
+	<delete id="infoDel" parameterType="InfoVO">
+		DELETE FROM CB_INFO
+		WHERE ID = #{id}	
+	</delete>
+	
+	<!-- 공통코드 resultMap -->
+	<resultMap id="comCodeMap" 				type="ComCodeGroupVO">
+		<id	property="group_id"				column="GROUP_ID" />
+		<result property="group_nm"			column="GROUP_NM"/>
+		<result property="group_detail"		column="GROUP_DETAIL"/>
+		<collection property="codeList" 	ofType="ComCodeVO" resultMap="codeMap"/>
+	</resultMap>
+
+	<resultMap id="codeMap" 			type="ComCodeVO">
+		<id property="code_seq"			column="CODE_SEQ"/>
+		<result property="group_id"		column="GROUP_ID"/>
+		<result property="code"			column="CODE"/>
+		<result property="code_nm"		column="CODE_NM"/>
+		<result property="code_nm_ja"	column="CODE_NM_JA"/>
+		<result property="code_nm_en"	column="CODE_NM_EN"/>
+		<result property="code_detail"	column="CODE_DETAIL"/>
+	</resultMap>
+	
+	<select id="comCodeList" parameterType="ComCodeGroupVO" resultMap="comCodeMap">
+		SELECT
+			A.GROUP_ID
+			,GROUP_NM
+	        ,GROUP_DETAIL
+	        ,CODE_SEQ
+	        ,B.GROUP_ID
+	        ,CODE
+	        ,CODE_NM
+	        ,CODE_NM_JA
+	        ,CODE_NM_EN
+	        ,CODE_DETAIL
+	    FROM 
+			COM_CODE_GROUP_TB A
+		LEFT JOIN COM_CODE_TB B
+	    ON A.GROUP_ID = B.GROUP_ID
+	    WHERE 1=1
+	    <if test="group_id != null and group_id != ''">
+	    	AND A.GROUP_ID = #{group_id}
+	    </if>
+	    <if test="code_group != null and code_group != ''">
+	    	AND A.GROUP_ID LIKE CONCAT(#{code_group}, '%')
+	    </if>
+	    <if test="searchKeyword != null and searchKeyword != ''">
+	    	AND
+	    	<choose>
+				<when test="searchCondition == 'all'">
+					(	GROUP_NM LIKE CONCAT('%',#{searchKeyword},'%')
+						OR CODE_NM LIKE CONCAT('%',#{searchKeyword},'%')
+						OR B.GROUP_ID LIKE CONCAT('%',(SELECT SUBSTR(#{searchKeyword}, 1, 3) FROM DUAL),'%') )
+				</when>
+				<when test="searchCondition == 'group_nm'">
+					GROUP_NM LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'code_nm'">
+					CODE_NM LIKE CONCAT('%',#{searchKeyword},'%')
+				</when>
+				<when test="searchCondition == 'com_code'">
+					B.GROUP_ID LIKE CONCAT('%',(SELECT SUBSTR(#{searchKeyword}, 1, 3) FROM DUAL),'%')
+					<if test="com_code_length > 3">
+						AND CODE LIKE (SELECT SUBSTR(#{searchKeyword}, 4, 2) FROM DUAL)
+					</if>
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	<insert id="insertGroupCode" parameterType="ComCodeGroupVO">
+		INSERT INTO COM_CODE_GROUP_TB(
+			GROUP_ID
+			,GROUP_NM
+			,GROUP_DETAIL
+			,GROUP_INS_ID
+			,GROUP_INS_DT
+			,GROUP_UDT_ID
+			,GROUP_UDT_DT
+		)VALUES(
+			(	SELECT 	CONCAT( IF(<![CDATA[NO < 10]]>, CONCAT(#{group_id},0), #{group_id}) , NO )
+				FROM
+						( 	SELECT	SUBSTR(GROUP_ID,2)+1 AS NO
+							FROM 	COM_CODE_GROUP_TB a 
+							WHERE 	GROUP_ID LIKE CONCAT(#{group_id},'%') ORDER BY GROUP_ID DESC limit 1) t	)
+			,#{group_nm}
+			,#{group_detail}
+			,#{group_ins_id}
+			,NOW()
+			,#{group_udt_id}
+			,NOW()
+		)
+	</insert>
+	
+	<update id="updateGroupCode" parameterType="ComCodeGroupVO">
+		UPDATE COM_CODE_GROUP_TB
+		SET
+			GROUP_NM = #{group_nm}
+			,GROUP_DETAIL = #{group_detail}
+			,GROUP_UDT_ID = #{group_udt_id}
+			,GROUP_UDT_DT = NOW()
+		WHERE
+			GROUP_ID = #{group_id}
+	</update>
+	
+	<update id="updateComCode" parameterType="ComCodeVO">
+		UPDATE COM_CODE_TB
+		SET
+			CODE = #{code}
+			,CODE_NM = #{code_nm}
+			,CODE_NM_JA = #{code_nm_ja}
+			,CODE_NM_EN = #{code_nm_en}
+			,CODE_DETAIL = #{code_detail}
+			,CODE_UDT_ID = #{code_udt_id}
+			,CODE_UDT_DT = NOW()
+		WHERE
+			CODE_SEQ = #{code_seq}
+	</update>
+	
+	<delete id="deleteComCode" parameterType="ComCodeVO">
+		DELETE 	FROM COM_CODE_TB
+    	WHERE	GROUP_ID = #{group_id} AND CODE = #{code}
+	</delete>
+	
+	<insert id="insertComCode" parameterType="ComCodeVO">
+		INSERT COM_CODE_TB(
+			GROUP_ID
+			,CODE
+			,CODE_NM
+			,CODE_NM_JA
+			,CODE_NM_EN
+			,CODE_DETAIL
+			,CODE_INS_ID
+			,CODE_INS_DT
+			,CODE_UDT_ID
+			,CODE_UDT_DT
+		)VALUES(
+			#{group_id}
+			,#{code}
+			,#{code_nm}
+			,#{code_nm_ja}
+			,#{code_nm_en}
+			,#{code_detail}
+			,#{code_ins_id}
+			,NOW()
+			,#{code_udt_id}
+			,NOW()
+		)
+	</insert>
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+<!-- 업소관리 -->
+<form-validation>
+
+    <formset>
+
+        <form name="gameCoupon">
+			<field property="gcupnNm" depends="required, maxlength">
+        		<arg0 key="쿠폰이름" resource="false" />
+        		<arg1 key="60" resource="false"/>
+			</field>
+			<field property="compId" depends="required">
+        		<arg0 key="업소ID" resource="false" />
+			</field>
+		</form>
+    </formset>
+
+</form-validation>

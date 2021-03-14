@@ -1,0 +1,72 @@
+ALTER TABLE BOGUN.T_IP_ADDRESS
+ DROP PRIMARY KEY CASCADE;
+
+DROP TABLE BOGUN.T_IP_ADDRESS CASCADE CONSTRAINTS;
+
+CREATE TABLE BOGUN.T_IP_ADDRESS
+(
+  SEQ       NUMBER(12)                          NOT NULL,
+  USER_ID   VARCHAR2(100 BYTE)                  DEFAULT NULL,
+  IP        VARCHAR2(100 BYTE)                  DEFAULT NULL,
+  REG_USER  VARCHAR2(100 BYTE)                  DEFAULT NULL,
+  REG_DATE  DATE                                DEFAULT SYSDATE
+)
+TABLESPACE BOGUN
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+MONITORING;
+
+COMMENT ON TABLE BOGUN.T_IP_ADDRESS IS '사용자등록아이피';
+
+COMMENT ON COLUMN BOGUN.T_IP_ADDRESS.SEQ IS '아이피SEQ';
+
+COMMENT ON COLUMN BOGUN.T_IP_ADDRESS.USER_ID IS '사용자ID';
+
+COMMENT ON COLUMN BOGUN.T_IP_ADDRESS.IP IS '등록아이피';
+
+COMMENT ON COLUMN BOGUN.T_IP_ADDRESS.REG_USER IS '등록자 ID';
+
+COMMENT ON COLUMN BOGUN.T_IP_ADDRESS.REG_DATE IS '등록일시';
+
+
+--  There is no statement for index BOGUN.SYS_C0010403.
+--  The object is created when the parent object is created.
+
+ALTER TABLE BOGUN.T_IP_ADDRESS ADD (
+  PRIMARY KEY
+  (SEQ)
+  USING INDEX
+    TABLESPACE BOGUN
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+                BUFFER_POOL      DEFAULT
+               )
+  ENABLE VALIDATE);
+  
+  DROP SEQUENCE SEQ_IP_ADDRESS;
+  
+  CREATE SEQUENCE SEQ_IP_ADDRESS INCREMENT BY 1 START WITH 1;

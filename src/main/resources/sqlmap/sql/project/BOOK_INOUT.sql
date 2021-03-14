@@ -1,0 +1,9 @@
+-- DATETIME에 DEFAULT CURRENT_TIMESTAMP 는 mysql 5.6버전 이상부터 가능
+-- AUTO_INCREMENT 와 DEFAULT 는 5버전 이상부터는 같이 사용 불가
+CREATE TABLE CB_BOOK_INOUT (
+	ID					INT(12)			AUTO_INCREMENT	PRIMARY KEY	COMMENT '교재 입출고관리 ID',
+	BOOK_ID				INT(12)			NOT NULL					COMMENT '교재ID',
+	INOUT_DATE			VARCHAR(10)									COMMENT '입출입 날짜',
+	INPUT				INT(3)			DEFAULT 0					COMMENT '입고수량',
+	OUTPUT				INT(3)			DEFAULT 0					COMMENT '출고수량'
+) COMMENT='교재 입출고 관리 테이블';
