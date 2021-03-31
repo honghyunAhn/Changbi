@@ -80,7 +80,6 @@ public class CommonLogInterceptor implements Interceptor{
 		
 		logger.debug("전체활동 로그찍기 intercept 메소드 종료");
 		
-		
 		return result;
 	}
 
@@ -106,7 +105,7 @@ public class CommonLogInterceptor implements Interceptor{
 		String sql = "";
 		
 		try {
-			sql = getParameterBindingSQL(boundSql, invocation.getArgs()[1]).replaceAll("\n", "").replaceAll("\t", " ");
+			sql = getParameterBindingSQL(boundSql, invocation.getArgs()[1]).replaceAll("\n", "").replaceAll("\t", " ") + "\n";
 			logger.debug("파라미터 바인딩 SQL : {}", getParameterBindingSQL(boundSql, invocation.getArgs()[1]));
 		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException
 				| JsonProcessingException e) {

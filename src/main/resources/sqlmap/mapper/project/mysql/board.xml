@@ -112,6 +112,23 @@
 		<result javaType="string" column="URL_PATH" property="url_path"/>
 	</resultMap>
 	
+	<resultMap type="hashmap" id="boardContentMap">
+		<id property="board_content_seq" column="board_content_seq" />
+		<result property="board_seq" column="board_seq" />
+		<result property="board_content_title" column="board_content_title" />
+		<result property="board_content_ct" column="board_content_ct" />
+		<result property="board_content_nm" column="board_content_nm" />
+		<result property="board_content_hit" column="board_content_hit" />
+		<result property="board_content_imp" column="board_content_imp" />
+		<result property="board_content_udt_dt" column="board_content_udt_dt" />
+		<collection property="fileList" javaType="java.util.ArrayList" resultMap="boardContentFile" />
+	</resultMap>
+	
+	<resultMap type="hashmap" id="boardContentFile">
+		<id property="board_file_seq" column="board_file_seq" />
+		<result property="board_file_saved" column="board_file_saved" />
+		<result property="board_file_origin" column="board_file_origin" />
+	</resultMap>
 	<!-- 게시물 리스트 검색조건 -->
 	<sql id="boardCondition">
 		WHERE 1=1
@@ -1842,4 +1859,237 @@
 			,BOARD_FILE_UDT_DT = NOW()
 			,BOARD_FILE_UDT_ID = VALUES(BOARD_FILE_UDT_ID)
 	</insert>
+	
+	<select id="allBoardList" parameterType="hashmap" resultType="hashmap">
+		SELECT
+			BOARD_SEQ
+			,BOARD_GB
+			,BOARD_NM
+			,BOARD_TP
+			,BOARD_DETAIL_GB
+			,BOARD_ICON_PD
+			,BOARD_INS_ID
+			,BOARD_INS_DT
+			,BOARD_UDT_ID
+			,BOARD_UDT_DT
+		FROM
+			COM_BOARD_GROUP_TB
+		WHERE
+			1=1
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+				BOARD_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+		</if>
+		ORDER BY BOARD_SEQ DESC
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if>
+	</select>
+	
+	<select id="allBoardListTotalCnt" parameterType="hashmap" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM
+			COM_BOARD_GROUP_TB
+		WHERE
+			1=1
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+				BOARD_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+		</if>
+	</select>
+	<select id="boardListBySeq" parameterType="hashmap" resultType="hashmap">
+		SELECT
+			BOARD_CONTENT_SEQ
+			,BOARD_SEQ
+			,BOARD_CONTENT_TITLE
+			,BOARD_CONTENT_CT
+			,BOARD_CONTENT_NM
+			,BOARD_CONTENT_HIT
+			,BOARD_CONTENT_INS_DT
+			,BOARD_CONTENT_INS_ID
+			,BOARD_CONTENT_UDT_DT
+			,BOARD_CONTENT_UDT_ID
+			,BOARD_CONTENT_IMP
+		FROM
+			COM_BOARD_CONTENT_TB
+		WHERE
+			1=1
+		<if test="board_seq != null and board_seq != ''">
+			AND
+				BOARD_SEQ = #{board_seq}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+				BOARD_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+		</if>
+		ORDER BY BOARD_CONTENT_INS_DT DESC
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if>
+	</select>
+	<select id="boardListBySeqTotalCnt" parameterType="hashmap" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM
+			COM_BOARD_CONTENT_TB
+		WHERE
+			1=1
+		<if test="board_seq != null and board_seq != ''">
+			AND
+				BOARD_SEQ = #{board_seq}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+				BOARD_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+		</if>
+	</select>
+	
+	<select id="boardDetail" parameterType="hashmap" resultMap="boardContentMap">
+		select
+			content.board_seq
+			,content.board_content_seq
+			,content.board_content_title
+		    ,content.board_content_ct
+			,content.board_content_nm
+			,content.board_content_hit
+			,content.board_content_imp
+			,DATE_FORMAT(content.board_content_udt_dt, '%Y-%m-%d') as board_content_udt_dt
+		    ,file.board_file_seq
+		    ,file.board_file_saved
+		    ,file.board_file_origin
+		from
+			com_board_content_tb content
+		left join
+			com_board_file_tb file
+		on
+			content.board_content_seq = file.board_content_seq
+		where
+			content.board_content_seq = #{board_content_seq}
+	</select>
+	
+	<!-- 관리자 게시판 조회수 증가 시작 -->
+	<update id="board_contents_hit_update" parameterType="int">
+		update
+			com_board_content_tb
+		set
+			board_content_hit = board_content_hit + 1
+		where
+			board_content_seq = #{board_content_seq}
+	</update>	
+	<!-- 관리자 게시판 조회수 증가 종료 -->
+	
+	<select id="boardFile" parameterType="hashmap" resultType="hashmap">
+	
+	 SELECT board_file_seq, board_content_seq, board_file_saved,board_file_origin,board_file_ins_dt,board_file_ins_id,board_file_udt_dt,board_file_udt_id
+	 FROM COM_BOARD_FILE_TB
+	 WHERE board_content_seq=#{boardSeq}
+	</select>
+
+     <select id="boardFileDetail" parameterType="hashmap" resultType="hashmap">
+	
+	 SELECT board_file_seq, board_content_seq, board_file_saved,board_file_origin,board_file_ins_dt,board_file_ins_id,board_file_udt_dt,board_file_udt_id
+	 FROM COM_BOARD_FILE_TB
+	 WHERE board_file_seq=#{fileSeq}
+	</select>
+	
+	<!-- 관리자 게시판 게시판 구분, 타입 검색 시작 -->
+	<select id="board_gb_search" parameterType="hashmap" resultType="hashmap">
+		select
+			board_seq,
+			board_nm,
+			board_gb,
+			board_tp
+		from
+			com_board_group_tb
+		where
+			board_seq = #{board_seq}
+	</select>
+	<!-- 관리자 게시판 게시판 구분, 타입 검색 종료 -->
+	<!-- 관리자 게시판 세부내용 등록 시작 -->
+	<insert id="board_contents_insert" parameterType="hashmap" useGeneratedKeys="true" keyProperty="board_content_seq">
+		insert into
+			com_board_content_tb
+			(
+				board_seq
+				,board_content_title
+				,board_content_ct
+				,board_content_nm
+				,board_content_hit
+				,board_content_ins_dt
+				,board_content_ins_id
+				,board_content_udt_dt
+				,board_content_udt_id
+			)values(
+				#{board_seq}
+				,#{board_content_title}
+				,#{board_content_ct}
+				,#{board_content_nm}
+				,#{board_content_hit}
+				,now()
+				,#{board_content_nm}
+				,now()
+				,#{board_content_nm}
+			)
+	</insert>
+	<!-- 관리자 게시판 세부내용 등록 종료 -->
+	
+	<!-- 관리자 게시판 세부내용 수정 시작 -->
+	<update id="board_contents_update" parameterType="hashmap">
+		update
+			com_board_content_tb
+		set
+			board_content_title = #{board_content_title}
+			,board_content_ct = #{board_content_ct}
+			,board_content_udt_dt = now()
+		where
+			board_content_seq = #{board_content_seq}
+	</update>
+	<!-- 관리자 게시판 세부내용 수정 종료 -->
+    
+    <!-- 관리자 게시판 세부내용 삭제 시작 -->
+    <update id="board_contents_delete" parameterType="int">
+        delete from
+            com_board_content_tb
+        where
+            board_content_seq = #{board_content_seq}
+    </update>
+    <!-- 관리자 게시판 세부내용 수정 종료 -->
+	
+	<!-- 관리자 게시판 세부내용 파일 삭제 시작 -->
+	<delete id="board_contents_file_delete" parameterType="hashmap">
+		delete from
+			com_board_file_tb
+		where
+			board_content_seq = #{board_content_seq}
+	</delete>
+	<!-- 관리자 게시판 세부내용 파일 삭제 종료 -->
+	
+	<!-- 관리자 게시판 세부내용 파일 등록 시작 -->
+	<insert id="board_contents_file_insert" parameterType="hashmap">
+		insert into
+			com_board_file_tb
+			(
+				board_content_seq
+				,board_file_saved
+				,board_file_origin
+				,board_file_ins_dt
+				,board_file_ins_id
+				,board_file_udt_dt
+				,board_file_udt_id
+			)values
+			<foreach item="file" index="index" collection="list" open=" " separator="," close=" ">
+			(
+				#{board_content_seq}
+				,#{file.board_file_saved}
+				,#{file.board_file_origin}
+				,now()
+				,#{id}
+				,now()
+				,#{id}
+			)
+			</foreach>
+	</insert>
+	<!-- 관리자 게시판 세부내용 파일 등록 종료 -->
+	
 </mapper>

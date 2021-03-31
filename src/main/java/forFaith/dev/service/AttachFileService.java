@@ -5,6 +5,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -13,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import forFaith.dev.dao.AttachFileDAO;
 import forFaith.dev.vo.AttachFileVO;
@@ -108,4 +115,92 @@ public class AttachFileService {
 			e.printStackTrace();
 		}
 	}
+	public String saveFile(MultipartFile mfile, String uploadPath) {
+		//업로드된 파일이 없거나 크기가 0이면 저장하지 않고 null을 리턴
+		if (mfile == null || mfile.isEmpty() || mfile.getSize() == 0) {
+			return null;
+		}
+		
+		//저장 폴더가 없으면 생성
+		//리눅스 용도
+		uploadPath = "/usr/local/"+uploadPath;
+		
+		File path = new File(uploadPath);
+		if (!path.isDirectory()) {
+			path.mkdirs();
+		}
+		
+		//원본 파일명
+		String originalFilename = mfile.getOriginalFilename();
+		
+		//저장할 파일명을 오늘 날짜의 년월일로 생성
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String savedFilename = sdf.format(new Date());
+		
+		//원본 파일의 확장자
+		String ext;
+		int lastIndex = originalFilename.lastIndexOf('.');
+		//확장자가 없는 경우
+		if (lastIndex == -1) {
+			ext = "";
+		}
+		//확장자가 있는 경우
+		else {
+			ext = "." + originalFilename.substring(lastIndex + 1);
+		}
+
+		//저장할 전체 경로를 포함한 File 객체
+		File serverFile = null;
+		
+		//같은 이름의 파일이 있는 경우의 처리
+		while (true) {
+			serverFile = new File(uploadPath + "/" + savedFilename + ext);
+			//같은 이름의 파일이 없으면 나감.
+			if ( !serverFile.isFile()) break;	
+			//같은 이름의 파일이 있으면 이름 뒤에 long 타입의 시간정보를 덧붙임.
+			savedFilename = savedFilename + new Date().getTime();	
+		}		
+		
+		//파일 저장
+		try {
+			mfile.transferTo(serverFile);
+		} catch (Exception e) {
+			savedFilename = null;
+			e.printStackTrace();
+		}
+		
+		return savedFilename + ext;
+	}
+	public ArrayList<HashMap<String, String>> temporarilySaveAll(MultipartHttpServletRequest request , String temporarilyPath){
+		ArrayList<HashMap<String, String>> result=new ArrayList<HashMap<String, String>>();
+		
+		List<MultipartFile> mps =  request.getFiles("files");
+		
+		
+		for(MultipartFile mp:mps){
+			HashMap<String, String> map = new HashMap<>();
+			String savedfile =  saveFile(mp, temporarilyPath);
+			map.put("originalfile", mp.getOriginalFilename());
+			map.put("savedfile", savedfile);
+			result.add(map);
+		}
+		
+		
+		return result;
+	}
+	public HashMap<String, String> temporarilySave(MultipartHttpServletRequest request , String temporarilyPath){
+		HashMap<String, String> result = new HashMap<>();
+		Iterator<String> itr =  request.getFileNames();
+		
+        if(itr.hasNext()) {
+            MultipartFile mpf = request.getFile(itr.next());
+    		if (!mpf.isEmpty()) {
+    			String savedfile = saveFile(mpf, temporarilyPath);
+    			result.put("originalfile", mpf.getOriginalFilename());
+    			result.put("savedfile", savedfile);
+    		}
+        } 
+		return result;
+	}
+	
 }

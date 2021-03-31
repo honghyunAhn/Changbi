@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.changbi.tt.dev.data.dao.BoardDAO;
@@ -28,7 +29,96 @@ public class BoardService {
 	
 	@Autowired
     private AttachFileDAO fileDao;
+	/**
+	 * file.propertices 의 등록된 도서관리 사진 게시판 파일 경로
+	 */
+	@Value("#{props['edu.book.board_photo']}")
+	private String eduBookBoardPhoto;
 
+	/**
+	 * file.propertices 의 등록된 도서관리 질문 게시판 파일 경로
+	 */
+	@Value("#{props['edu.book.board_question']}")
+	private String eduBookBoardQuestion;
+
+	/**
+	 * file.propertices 의 등록된 모집홍보 공지사항 파일 경로
+	 */
+	@Value("#{props['edu.apply.board_file']}")
+	private String eduApplyBoardFile;
+
+	/**
+	 * file.propertices 의 등록된 모집홍보 동영상 게시판 파일 경로
+	 */
+	@Value("#{props['edu.apply.board_movie']}")
+	private String eduApplyBoardMovie;
+
+	/**
+	 * file.propertices 의 등록된 모집홍보 사진 게시판 파일 경로
+	 */
+	@Value("#{props['edu.apply.board_photo']}")
+	private String eduApplyBoardPhoto;
+
+	/**
+	 * file.propertices 의 등록된 모집홍보 질문 게시판 파일 경로
+	 */
+	@Value("#{props['edu.apply.board_question']}")
+	private String eduApplyBoardQuestion;
+
+	/**
+	 * file.propertices 의 등록된 과정 기수 등록 이미지 파일 경로
+	 */
+	@Value("#{props['edu.apply.curriculum_gisu_insert_image']}")
+	private String eduApplyCurriculumGisuInsertImage;
+	
+	/**
+	 * file.propertices 의 등록된 서브 배너 등록 이미지 파일 경로
+	 */
+	@Value("#{props['edu.admin.subbanner_save_image']}")
+	private String eduAdminSubbanerSaveImage;
+	
+	/**
+	 * file.propertices 의 등록된 배너 등록 이미지 파일 경로
+	 */
+	@Value("#{props['edu.admin.banner_save_image']}")
+	private String eduAdminBannerSaveImage;
+	
+	/**
+	 * file.propertices 의 등록된 과정 기수 세부 등록 이미지 파일 경로
+	 */
+	@Value("#{props['edu.admin.curriculum_gisu_insert_image']}")
+	private String eduAdminCurriculumGisuInsertImage;
+	
+	/**
+	 * file.propertices 의 등록된 메일 관련 파일 경로
+	 */
+	@Value("#{props['edu.apply.mail']}")
+	private String eduApplyMailPath;
+
+	/**
+	 * file.propertices 의 등록된 잡페어 기업메인 공지사항 파일
+	 */
+	@Value("#{props['fap.company.board_file']}")
+	private String fapCompanyBoardFile;
+	
+	/**
+	 * file.propertices 의 등록된 잡페어 기업메인 공지사항 동영상
+	 */
+	@Value("#{props['fap.company.board_movie']}")
+	private String fapCompanyBoardMovie;
+	
+	/**
+	 * file.propertices 의 등록된 잡페어 기업메인 공지사항 사진
+	 */
+	@Value("#{props['fap.company.board_photo']}")
+	private String fapCompanyBoardPhoto;
+	
+	/**
+	 * file.propertices 의 등록된 잡페어 기업메인 공지사항 질문
+	 */
+	@Value("#{props['fap.company.board_question']}")
+	private String fapCompanyBoardQuestion;
+	
 	// 게시판관리 목록
 	public List<BoardVO> boardList(BoardVO board) throws Exception{
 		return boardDao.boardList(board);
@@ -264,5 +354,85 @@ public class BoardService {
 	//전체 공지사항 첨부파일 정보생성
 	public int insertNoticeFileInfo(HashMap<String, Object> params) throws Exception {
 		return boardDao.insertNoticeFileInfo(params);
+	}
+	public List<HashMap<String, Object>> allBoardList(HashMap<String, Object> params) throws Exception {
+		return boardDao.allBoardList(params);
+	}
+	
+	public int allBoardListTotalCnt(HashMap<String, Object> params) throws Exception {
+		return boardDao.allBoardListTotalCnt(params);
+	}
+	public List<HashMap<String, Object>> boardListBySeq(HashMap<String, Object> params) throws Exception {
+		return boardDao.boardListBySeq(params);
+	}
+	
+	public int boardListBySeqTotalCnt(HashMap<String, Object> params) throws Exception {
+		return boardDao.boardListBySeqTotalCnt(params);
+	}
+	public HashMap<String, Object> board_gb_search(HashMap<String, Object> params) throws Exception {
+		return boardDao.board_gb_search(params);
+	}
+	//게시글 상세
+	public HashMap<String, Object> boardDetail(HashMap<String, Object> params) throws Exception {
+		return boardDao.boardDetail(params);
+	}
+	
+	//조회수 업데이트
+	public int board_contents_hit_update(HashMap<String, Object> params) throws Exception {
+		return boardDao.board_contents_hit_update(params);
+	}
+	
+	public ArrayList<HashMap<String, Object>> boardFiles(String seq) {
+
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		param.put("boardSeq", seq);
+		return boardDao.boardFile(param);
+	}
+
+	public HashMap<String, Object> boardFileDetail(String seq) {
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		param.put("fileSeq", seq);
+		return boardDao.boardFileDetail(param);
+	}
+	
+	/**
+	 * @Method Name : findPath
+	 * @Date : 2017. 9. 20.
+	 * @User : 이종호
+	 * @Param : 공통 그룹코드(공지사항 그룹, 공지사항 타입)
+	 * @Return : 해당 게시판의 파일 저장 경로
+	 * @Method 설명 : 각각의 파일을 저장할 경로를 구하는 함수
+	 */
+	public String findPath(String gb, String tp) {
+		String path = "";
+		// FS
+		if (gb.equals("A0300")) {
+
+		}
+		// 모집홍보
+		else if (gb.equals("A0301")) {
+			// 공지사항
+			if (tp.equals("A0400")) {
+				path = eduApplyBoardFile;
+			}
+			// 동영상
+			else if (tp.equals("A0401")) {
+				path = eduApplyBoardMovie;
+			}
+			// 사진
+			else if (tp.equals("A0402")) {
+				path = eduApplyBoardPhoto;
+			}
+			// 질문
+			else if (tp.equals("A0403")) {
+				path = eduApplyBoardQuestion;
+			}
+		}
+		return path;
+	}
+	
+	//게시글 삭제
+	public int board_contents_delete(int board_content_seq) {
+		return boardDao.board_contents_delete(board_content_seq);
 	}
 }

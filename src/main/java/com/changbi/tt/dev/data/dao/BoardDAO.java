@@ -1,5 +1,6 @@
 package com.changbi.tt.dev.data.dao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -140,4 +141,33 @@ public interface BoardDAO {
 	//전체 공지사항 첨부파일 정보생성
 	int insertNoticeFileInfo(HashMap<String, Object> params) throws Exception;
 
+	//게시판 관리
+	List<HashMap<String, Object>> allBoardList(HashMap<String, Object> params) throws Exception;
+	
+	//게시판 갯수
+	int allBoardListTotalCnt(HashMap<String, Object> params) throws Exception;
+	
+	//세부 게시판 게시글 리스트
+	List<HashMap<String, Object>> boardListBySeq(HashMap<String, Object> params) throws Exception;
+	
+	//세부 게시판 게시글 리스트 갯수
+	int boardListBySeqTotalCnt(HashMap<String, Object> params) throws Exception;
+	
+	//게시판 구분, 타입 검색
+	HashMap<String, Object> board_gb_search(HashMap<String, Object> params) throws Exception;
+	
+	//게시글 상세
+	HashMap<String, Object> boardDetail(HashMap<String, Object> params) throws Exception;
+	
+	//조회수 업데이트
+	int board_contents_hit_update(HashMap<String, Object> params) throws Exception;
+	
+	//게시글 파일 조회
+	public ArrayList<HashMap<String, Object>> boardFile(HashMap<String, Object> param);
+	
+	//게시글 파일 상세정보
+	public HashMap<String, Object> boardFileDetail(HashMap<String, Object> param);
+	
+	//게시글 삭제
+	public int board_contents_delete(int board_content_seq);
 }

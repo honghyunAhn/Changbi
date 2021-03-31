@@ -28,6 +28,7 @@ import com.changbi.tt.dev.data.vo.UserVO;
 
 import forFaith.dev.service.BaseService;
 import forFaith.dev.vo.CodeVO;
+import forFaith.util.AESEncryptor;
 import forFaith.util.StringUtil;
 
 // Controller value는 중복되면 안된다. value 값을 지정하지 않으면 클래스명이 value가 되므로 같은 클래스명이 존재하면 중복으로 인식
@@ -50,6 +51,9 @@ public class LearnAppController {
 	
 	@Autowired
 	private MemberService memberService;
+	
+	@Autowired
+	private AESEncryptor aesEncryptor;
 	
     /**
      * log를 남기는 객체 생성
@@ -92,6 +96,7 @@ public class LearnAppController {
     			
     			if(refund != null) {
     				logger.debug("Refund Check : " + refund.toString());
+    				refund.setPay_refund_accnum(aesEncryptor.decrypt(refund.getPay_refund_accnum()));
     				model.addAttribute("refundInfo", refund);
     			}
     			if(pay != null) {

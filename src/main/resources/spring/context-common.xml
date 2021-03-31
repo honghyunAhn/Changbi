@@ -88,6 +88,8 @@
 
     <!-- jsp에서 글로벌값 참조를 위해 추가 -->
 	<util:properties id="config" location="classpath:/props/globals.properties" />
+	<util:properties id="props" location="classpath:/props/file.properties" />
+	
 
 	<!-- front단 비밀번호 해시 설정 -->
 	<bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">

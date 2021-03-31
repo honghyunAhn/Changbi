@@ -49,7 +49,6 @@ $(document).ready(function () {
 			, url : listTestUrl
 			, data 	: $("form[name='searchForm']").serialize()
 			, success : function(data) {
-				
 				var sb = new StringBuilder();
 				if(data.list && data.list.length > 0) {
 					var dataList = data.list;

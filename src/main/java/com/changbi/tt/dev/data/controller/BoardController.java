@@ -5,20 +5,18 @@
 
 package com.changbi.tt.dev.data.controller;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +32,6 @@ import com.changbi.tt.dev.data.vo.BoardVO;
 import com.changbi.tt.dev.data.vo.NoteVO;
 import com.changbi.tt.dev.data.vo.SurveyItemVO;
 import com.changbi.tt.dev.data.vo.SurveyVO;
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
 import forFaith.dev.util.LoginHelper;
@@ -553,4 +550,57 @@ public class BoardController {
 
         return new ModelAndView("/error/exception").addObject("msg", e.getMessage());
     }
+    
+    @RequestMapping(value = "/allBoardList", method = RequestMethod.POST)
+    public @ResponseBody Object allBoardList(@RequestParam HashMap<String, Object> params) throws Exception {
+    	// 일반 게시물 리스트 가져오기
+    	DataList<HashMap<String, Object>> boardList = new DataList<HashMap<String, Object>>();
+    	int pageNo = Integer.parseInt((String) params.get("pageNo"));
+    	params.put("numOfRows", 10);
+    	params.put("firstIndex", (pageNo-1)* 10);
+		boardList.setNumOfRows(10);
+		boardList.setPageNo(pageNo);
+		boardList.setTotalCount(boardService.allBoardListTotalCnt(params));
+
+		// 결과 리스트를 저장
+		boardList.setList(boardService.allBoardList(params));
+		
+    	return boardList;
+    }
+    @RequestMapping(value = "/boardListBySeq", method = RequestMethod.POST)
+    public @ResponseBody Object boardListBySeq(@RequestParam HashMap<String, Object> params) throws Exception {
+    	// 일반 게시물 리스트 가져오기
+    	DataList<HashMap<String, Object>> boardList = new DataList<HashMap<String, Object>>();
+    	int pageNo = Integer.parseInt((String) params.get("pageNo"));
+    	params.put("numOfRows", 10);
+    	params.put("firstIndex", (pageNo-1)* 10);
+		boardList.setNumOfRows(10);
+		boardList.setPageNo(pageNo);
+		boardList.setTotalCount(boardService.boardListBySeqTotalCnt(params));
+
+		// 결과 리스트를 저장
+		boardList.setList(boardService.boardListBySeq(params));
+		
+    	return boardList;
+    }
+    
+    @Transactional
+	@RequestMapping(value = "/boardDelete", method = RequestMethod.POST)
+	public int board_contents_delete(int board_content_seq) {
+		logger.debug("모집홍보 관리자 게시글 삭제 컨트롤러 시작");
+
+		int result = 0;
+		result = boardService.board_contents_delete(board_content_seq);
+
+		logger.debug("모집홍보 관리자 게시글 삭제 컨트롤러 종료");
+		return result;
+	}
+    
+    @ResponseBody
+    @RequestMapping(value = "/boardInsert", method = RequestMethod.POST)
+	public void boardInsert(@RequestParam HashMap<String, Object> params, Model model){
+		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 컨트롤러 시작");
+		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 컨트롤러 종료");
+		
+	}
 }

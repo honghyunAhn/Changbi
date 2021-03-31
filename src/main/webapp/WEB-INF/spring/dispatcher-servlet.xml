@@ -46,6 +46,11 @@
 	<!-- 비밀번호 암호화 -->
 	<beans:bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 	
+	<!-- AES 모듈(양방향 암호화)-->
+	<beans:bean id="aesEncryptor" class="forFaith.util.AESEncryptor">
+		<beans:constructor-arg name="key" value="QtCqeCO7rvzRDOtcq7hHZxNzUSbpnSg7STQbZNKfb0WgC"/>
+	</beans:bean>
+	
 	<!-- Locale 변경 가능 cookie 이용 -->
 	<!-- <beans:bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" >
 		<beans:property name="cookieName" value="localeLanguage"/>

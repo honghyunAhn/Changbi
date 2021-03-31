@@ -18,7 +18,7 @@ public class GradeInterceptor extends HandlerInterceptorAdapter{
 			throws Exception {
 		logger.debug("접근제어 interceptor : " + request.getRequestURI() + " ? " + request.getQueryString());
 		MemberVO member = (MemberVO) request.getSession().getAttribute("loginUser");
-		if(!(member.getGrade() == 9 || member.getGrade() == 8)) {
+		if(!(member.getGrade() == 9)) {
 			response.sendRedirect("/forFaith/base/main");
 			
 			return false;

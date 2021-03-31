@@ -24,10 +24,16 @@
 <link href="<c:url value="/resources/css/project/admin/accordion.css"/>" rel="stylesheet" type="text/css">
 
 <!-- jQuery -->
-<script src="<c:url value="/resources/js/ext/jquery/jquery-1.11.0.min.js"/>"></script>
-
+<script src="<c:url value="/resources/student/js/jquery-3.5.1.js"/>"></script>
+<script src="<c:url value="/resources/student/js/jquery-ui.js" />"></script>
+<script src="<c:url value="/resources/js/ext/bootstrap-datetimepicker/datepicker.js" />"></script>
 <!-- angular.js 추가 / kim --> 
 <script src="<c:url value="/resources/student/js/angular.js" />"></script>
+
+<link href="<c:url value="/resources/css/jquery-ui/jquery-ui.min.css"/>"rel="stylesheet">
+
+<!-- ckeditor -->
+<script src="<c:url value="/resources/ckeditor/ckeditor.js" />"></script>
 
 <!-- 차트 -->
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -214,8 +220,156 @@ function funLoad() {
 window.onload = funLoad;
 window.onresize = funLoad;
 
+//timestamp -> date 형식 바꿔주는 함수
+function getDateFormat(timestamp) {
+	
+	var dateVal = new Date(timestamp);
+	var year = dateVal.getFullYear();
+	var month = dateVal.getMonth() + 1;
+	var day = dateVal.getDate();
+	var time = dateVal.getHours();
+	var min = dateVal.getMinutes();
+	var sec = dateVal.getSeconds();
+	var formattedVal = year + '-' + month + '-' + day + ' ' + time + ':' + min + ':' + sec;
+	
+	return formattedVal;
+}
 </script>
+<script type="text/javascript">
+$(function() {
+	cleanDatepicker();
+	$(".admin_expired_st").datepicker();
+	$(".admin_expired_et").datepicker();
+	$("#pageSelect").change(function(){
+		
+		var pageCount = $(this).val();
+		var searchName = $("#name").val();
+		location.href="/edu/admin/admin_info_setting_form?searchName="+searchName+"&pageCount="+pageCount+"&curPage=${map.adminPager.curPage}";
+	});
+});
+function cleanDatepicker() {
 
+	var original_gotoToday = $.datepicker._gotoToday;
+
+	$.datepicker._gotoToday = function(id) {
+		var target = $(id), inst = this._getInst(target[0]);
+
+		original_gotoToday.call(this, id);
+		this._selectDate(id, this._formatDate(inst, inst.selectedDay,
+				inst.drawMonth, inst.drawYear));
+		target.blur();
+	}
+
+	var old_fn = $.datepicker._updateDatepicker;
+
+	$.datepicker._updateDatepicker = function(inst) {
+		old_fn.call(this, inst);
+
+		var buttonPane = $(this).datepicker("widget").find(".ui-datepicker-buttonpane");
+
+		$(	"<button type='button' class='ui-datepicker-clean ui-state-default ui-priority-primary ui-corner-all'>clear</button>").appendTo(buttonPane).click(function(ev) {
+					$.datepicker._clearDate(inst.input);
+		});
+	}
+}
+
+var myApp = angular.module('myapp', []);
+
+myApp.controller('AdminController', ['$scope','$compile','$http', function($scope,$compile,$http){
+	
+	$scope.admin_info = JSON.parse('${admin_info_list_json}');
+	
+	$scope.update = function($event){
+
+		var _row  = angular.element($event.currentTarget).closest(".admin_row");
+		var _admin_id = _row.find(".admin_id").text();
+		var _admin_grade = _row.find(".admin_grade").val();
+		var _admin_state = _row.find(".admin_state").val();
+		var _admin_project = _row.find(".admin_project").val();
+		var _admin_expired_st = _row.find(".admin_expired_st").val();
+		var _admin_expired_et = _row.find(".admin_expired_et").val();
+
+	 	$http({
+			method: 'POST',
+			url: '/edu/admin/admin_info_update',
+			params : {
+				admin_id : _admin_id,
+				admin_grade : _admin_grade,
+				admin_state : _admin_state,
+				admin_project : _admin_project,
+				admin_expired_st : _admin_expired_st,
+				admin_expired_et : _admin_expired_et
+			}
+		}).then(function successCallback(response) {
+    		alert("정보 수정 완료 하였습니다.");
+		}, function errorCallback(response) {
+			console.log(response);
+			alert("정보 수정 실패 하였습니다.");
+		});
+		
+	}
+}]);
+
+myApp.directive('code', ['$http',function($http){
+	return {
+		restrict: "E",
+		replace: true,
+		scope : {
+			value : '@'
+		},
+		controller: function ($scope, $element, $attrs) {
+			$http({
+				method: 'POST',
+				url: '/codeconverter',
+		  		responseType: 'text',
+				params : {
+					code : $attrs.value
+				}
+			}).then(function successCallback(response) {
+	    		$scope.filterParams = response.data;
+			}, function errorCallback(response) {
+				console.log(response);
+			});
+		}
+		,template: "<span>{{filterParams}}</span>"
+	}
+}]);
+
+myApp.directive('selectcode', [ '$http', function($http) {
+	return {
+		restrict : "A",
+		replace : true,
+		scope : {
+			value : '@'
+		},
+		controller : function($scope, $element, $attrs) {
+			$http({
+				method : 'POST',
+				url : '/codeconverter',
+				responseType : 'text',
+				params : {
+					code : $attrs.value
+				}
+			}).then(function successCallback(response) {
+				$scope.filterParams = response.data;
+			}, function errorCallback(response) {
+				console.log(response);
+			});
+		},
+		template : "<option>{{filterParams}}</option>"
+	}
+} ]);
+	// **원하는 페이지로 이동시 검색조건, 키워드 값을 유지하기 위해 
+	function ilist(page){
+	    location.href="/edu/admin/admin_info_setting_form?curPage="+page+"&pageCount=${map.pageCount}";
+	}
+
+	function search_name(){
+		var searchName = $("#name").val();
+		location.href="/edu/admin/admin_info_setting_form?searchName="+searchName+"&curPage=${map.adminPager.curPage}&pageCount=${map.pageCount}";
+	}
+    
+</script>
 </head>
 
 <body style="overflow-y: scroll;">
@@ -255,6 +409,13 @@ window.onresize = funLoad;
 		<ul id="my-accordion" class="accordionjs">
 		<c:choose>
 			<c:when test="${loginUser.grade eq 8 or loginUser.grade eq 9}">
+			<li>
+				<a href="javascript:void(0);">관리자 설정</a>
+				<ul class="acc_content">
+					<li><a href="javascript:contentLoad('관리자 설정','/admin/adminManagement/adminManagementForm', {'pageNo' : 1, 'numOfRows' : 1});">관리자 설정</a></li>
+					<li><a href="javascript:contentLoad('권한 설정 내역','/admin/adminManagement/adminManagementHistory');">권한 설정 내역</a></li>
+				</ul>
+			</li>
 			<li>
 				<a href="javascript:void(0);">수강관리</a>
 				<ul class="acc_content">
@@ -407,7 +568,8 @@ window.onresize = funLoad;
 				<ul class="acc_content">
 					<li><a href="javascript:contentLoad('FAQ분류 등록','/forFaith/base/code', {'codeGroup.id':'faq'});">FAQ분류 등록</a></li>
 <!-- 					<li><a href="javascript:contentLoad('전체 공지사항','/admin/board/boardList', {'boardType':1});">전체 공지사항</a></li> -->
-					<li><a href="javascript:contentLoad('전체 공지사항','/admin/board/noticeList');">전체 공지사항</a></li>
+					<li><a href="javascript:contentLoad('게시판 관리','/admin/board/allBoardList');">게시판 관리</a></li>
+<!-- 					<li><a href="javascript:contentLoad('전체 공지사항','/admin/board/noticeList');">전체 공지사항</a></li> -->
 					<li><a href="javascript:contentLoad('과정별 공지사항','/admin/board/courseBoardList', {'boardType':1});">과정별 공지사항</a></li>
 					<!-- <li><a href="javascript:contentLoad('전체 자료실관리','/admin/board/boardList', {'boardType':2});">전체 자료실관리</a></li>-->
 					<li><a href="javascript:contentLoad('과정별 자료실관리','/admin/board/courseBoardList', {'boardType':2});">과정별 자료실관리</a></li>

@@ -120,7 +120,7 @@ function actionLogin() {
                         <c:if test="${not empty member.msg}">
 							<div style="color: #ff0000; margin-top: 10px;"><c:out value="${member.msg}"/></div>
 						</c:if>
-                    </div>                    
+                    </div>
                 </div>
             </div>
     </div>

@@ -15,6 +15,7 @@
 	// 파일
 	file_object[0] = { maxCount : 1, maxSize : 100, maxTotalSize : 100, accept : 'all'};
 	file_object[1] = { maxCount : 1, maxSize : 100, maxTotalSize : 100, accept : 'all'};
+	file_object[2] = { maxCount : 1, maxSize : 100, maxTotalSize : 100, accept : 'all'};
 	
 	// 에디터, 언어 선택 기능 초기화
 	setPageInit(editor_object, file_object);

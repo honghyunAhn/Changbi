@@ -34,6 +34,7 @@ $(document).ready(function () {
 			url		: listUrl,
 			data 	: $("form[name='searchForm']").serialize(),
 			success	: function(result) {
+				console.log(result);
 				var sb = new StringBuilder();
 				
 				// 일반 게시물 
