@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.changbi.tt.dev.data.controller.BoardController;
 import com.changbi.tt.dev.data.dao.BoardDAO;
 import com.changbi.tt.dev.data.vo.BoardCommentVO;
 import com.changbi.tt.dev.data.vo.BoardReplyVO;
@@ -23,6 +26,8 @@ import forFaith.util.StringUtil;
 
 @Service(value="data.boardService")
 public class BoardService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
 
 	@Autowired
 	private BoardDAO boardDao;
@@ -431,8 +436,10 @@ public class BoardService {
 		return path;
 	}
 	
-	//게시글 삭제
-	public int board_contents_delete(int board_content_seq) {
-		return boardDao.board_contents_delete(board_content_seq);
+	public int boardInsert(HashMap<String, Object> params) {
+		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 서비스 시작");
+		int result = boardDao.boardInsert(params);
+		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 서비스 종료");
+		return result;
 	}
 }

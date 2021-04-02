@@ -2047,15 +2047,6 @@
 	</update>
 	<!-- 관리자 게시판 세부내용 수정 종료 -->
     
-    <!-- 관리자 게시판 세부내용 삭제 시작 -->
-    <update id="board_contents_delete" parameterType="int">
-        delete from
-            com_board_content_tb
-        where
-            board_content_seq = #{board_content_seq}
-    </update>
-    <!-- 관리자 게시판 세부내용 수정 종료 -->
-	
 	<!-- 관리자 게시판 세부내용 파일 삭제 시작 -->
 	<delete id="board_contents_file_delete" parameterType="hashmap">
 		delete from
@@ -2091,5 +2082,33 @@
 			</foreach>
 	</insert>
 	<!-- 관리자 게시판 세부내용 파일 등록 종료 -->
+	
+	<!-- 관리자 게시판 세부내용 등록 시작 -->
+	<insert id="boardInsert" parameterType="hashmap" useGeneratedKeys="true" keyProperty="board_content_seq">
+		insert into
+			com_board_content_tb
+			(
+				board_seq
+				,board_content_title
+				,board_content_ct
+				,board_content_nm
+				,board_content_hit
+				,board_content_ins_dt
+				,board_content_ins_id
+				,board_content_udt_dt
+				,board_content_udt_id
+			)values(
+				#{board_seq}
+				,#{board_content_title}
+				,#{board_content_ct}
+				,#{board_content_nm}
+				,#{board_content_hit}
+				,now()
+				,#{board_content_nm}
+				,now()
+				,#{board_content_nm}
+			)
+	</insert>
+	<!-- 관리자 게시판 세부내용 등록 종료 -->
 	
 </mapper>

@@ -8,16 +8,22 @@
 		//변수영역
 		var boardListUrl = "<c:url value='/admin/board/boardListBySeq' />";
 		var deleteUrl = "<c:url value='/data/board/boardDelete' />";
+		var board_seq = $("#board_seq").val();
+		var board_nm = $("#board_nm").val();
 		// 삭제하기
 		$("#boardDeleteBtn").on("click", function() {
+			var board_content_seq = $("#bd_board_content_seq").val();
 			if (confirm("삭제하시겠습니까?")) {
 				$.ajax({
 					type	: "post",
-					url		: deleteUrl,
-					data 	: params,
-					async: false,
+					url : "/data/board/boardDelete",
+					data 	: {"board_content_seq" : board_content_seq},
 					success	: function(result) {
-						detail = result[0];
+						if(result > 0){
+							var params = $('form[name=searchForm]').serializeObject();
+							// ajax로 load
+							contentLoad('${board_gb.board_nm}', boardListUrl, params);
+						}
 					},
 					error	: function(request, status, error) {
 						alert("code : "+request.status+"\n\n"+"message : "+request.responseText+"\n\n"+"error : "+error);
@@ -106,6 +112,7 @@
 	</table>
 		
 	<div class="boardManagerDiv">
+		<input type="hidden" name="bd_board_content_seq" id="bd_board_content_seq" value="${boardDetail.board_content_seq}">
 		<a class="btn btn-danger" id="boardDeleteBtn">삭제하기</a>
 		<a class="btn btn-primary" id="boardUpdateBtn">수정하기</a>
 		<a class="btn" id="boardManagerBtn">목록으로</a>

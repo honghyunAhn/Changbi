@@ -168,6 +168,6 @@ public interface BoardDAO {
 	//게시글 파일 상세정보
 	public HashMap<String, Object> boardFileDetail(HashMap<String, Object> param);
 	
-	//게시글 삭제
-	public int board_contents_delete(int board_content_seq);
+	//게시글 등록
+	int boardInsert(HashMap<String, Object> params);
 }
