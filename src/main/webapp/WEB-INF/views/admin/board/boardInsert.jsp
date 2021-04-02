@@ -26,27 +26,25 @@
 		CKEDITOR.replace('board_content_ct', {
 			filebrowserUploadUrl : '/board/imageUpload',
 		});
+		//목록으로
+		$("#boardManagerBtn").on("click", function() {
+			$("#boardHiddenManagerForm").submit();
+		});
 	})
 	function gotolist() {
 		$("#boardHiddenManagerForm").submit();
 	}
-	
-	/* 게시판 관리 페이지 이동 */
+		$(".dataListBody").on("click", function() {
+		var board_seq = $("#board_seq").val();
+		var board_nm = $(this).text();
+		// ajax로 load
+		contentLoad(board_nm, boardListUrl, {'board_seq' : board_seq});
+	});
 	$('.allBoardList').on('click', function() {
 		var params = $('form[name="searchForm"]').serializeObject();
 		// ajax로 load
 		contentLoad('게시글 상세', allBoardListUrl, params);
 	});
-	
-	/* 게시판 상세 페이지 이동 */
-	$(".dataListBody").on("click", function() {
-		var board_seq = $("#board_seq").val();
-		var board_nm = $("#board_nm").val();
-		// ajax로 load
-		contentLoad(board_nm, boardListUrl, {'board_seq' : board_seq});
-	});
-	
-	/* 게시판 등록 페이지 이동 */
 	$('.boardInsertBtn').on('click', function(){
 		var board_seq = $("#board_seq").val();
 		// ajax로 load
@@ -140,7 +138,7 @@
 		</table>
 		<div class="boardManagerDiv">
 			<a class="btn btn-primary" id="boardInsertBtn">등록하기</a>
-			<a class="btn dataListBody">목록으로</a>
+			<a class="btn" id="boardManagerBtn">목록으로</a>
 		</div>
 		<input type="hidden" name="board_nm" value="${board_gb.board_nm }" />
         <input type="hidden" name="board_gb" id="board_gb" value="${board_gb.board_gb}"/>
