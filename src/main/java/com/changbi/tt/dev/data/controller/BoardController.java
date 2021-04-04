@@ -585,6 +585,16 @@ public class BoardController {
     }
     
     @ResponseBody
+	@RequestMapping(value = "/boardDelete", method = RequestMethod.POST)
+	public int board_contents_delete(int board_content_seq) {
+		logger.debug("모집홍보 관리자 게시글 삭제 컨트롤러 시작");
+		int result = 0;
+		result = boardService.board_contents_delete(board_content_seq);
+		logger.debug("모집홍보 관리자 게시글 삭제 컨트롤러 종료");
+		return result;
+	}
+    
+    @ResponseBody
     @RequestMapping(value = "/boardInsert", method = RequestMethod.POST)
 	public int boardInsert(@RequestParam HashMap<String, Object> params, Model model){
 		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 컨트롤러 시작");

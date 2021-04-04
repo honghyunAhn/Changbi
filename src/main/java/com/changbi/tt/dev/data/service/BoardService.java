@@ -436,6 +436,12 @@ public class BoardService {
 		return path;
 	}
 	
+	//게시글 삭제
+	public int board_contents_delete(int board_content_seq) {
+		return boardDao.board_contents_delete(board_content_seq);
+	}
+	
+	//게시글 등록
 	public int boardInsert(HashMap<String, Object> params) {
 		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 서비스 시작");
 		int result = boardDao.boardInsert(params);
