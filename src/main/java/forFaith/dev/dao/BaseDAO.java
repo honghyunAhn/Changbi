@@ -44,6 +44,9 @@ public interface BaseDAO {
 	
 	// 관리자 로그인 히스토리 저장
 	void memberLoginHistory(MemberVO member) throws Exception;
+	
+	//관리자 비밀번호 변경
+	int memberPwUpd(MemberVO member) throws Exception;
 
 	// 코드분류 그룹리스트
     List<CodeGroupVO> codeGroupList(CodeGroupVO codeGroup) throws Exception;
@@ -91,4 +94,6 @@ public interface BaseDAO {
 
     // 코드 사용 유무 변경
     int codeUseChange(List<CodeVO> codeList) throws Exception;
+
+
 }

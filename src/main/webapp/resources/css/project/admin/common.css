@@ -70,7 +70,7 @@ label>input{margin-right: 3px;}
 .tableWrapperScr{overflow-x:scroll;}
 .tableWrapperScr>table{width:3500px;}
 .content_wraper table th{background-color: #f5f5f5; text-align:center}
-.content_wraper table th,.content_wraper table td{height: 40px; line-height: 40px; border-right: 1px solid #d0d0d0; border-bottom: 1px solid #d0d0d0;}
+.content_wraper table th,.content_wraper table td{height: 40px; border-right: 1px solid #d0d0d0; border-bottom: 1px solid #d0d0d0;}
 
 /* 상세 페이지 이동 */
 .member_edit, .popup_content_edit, .content_edit { cursor: pointer; color: #0000ff; }

@@ -168,4 +168,8 @@ public class BaseService {
     public int codeUseChange(List<CodeVO> codeList) throws Exception {
         return baseDao.codeUseChange(codeList);
     }
+    //비밀번호 업데이트
+	public int memberPwUpd(MemberVO member) throws Exception {
+		return baseDao.memberPwUpd(member);
+	}
 }

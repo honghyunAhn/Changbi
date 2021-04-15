@@ -97,23 +97,23 @@ $(document).ready(function () {
 	<h3></h3>
 	<div class="tab_body">
 		<!-- searchForm start -->
-       	<form name="searchForm" method="post">
-       		<div>
-        		<table class="searchTable">
-	        		<tr>
-	        			<th>키워드검색</th>
-	        			<td>
-							<input type="text" placeholder="검색어입력" name="searchKeyword" value="<c:out value="${search.searchKeyword}" />">
-	        			</td>
-	        		</tr>
-		       		<tr>
-		        		<td class="buttonTd" colspan="2">
-		        			<button id='searchBtn' class="btn-primary" type="button">검색</button>
-		        		</td>
-		        	</tr>
-	        	</table>
-	        </div>
-		</form>
+<!--        	<form name="searchForm" method="post"> -->
+<!--        		<div> -->
+<!--         		<table class="searchTable"> -->
+<!-- 	        		<tr> -->
+<!-- 	        			<th>키워드검색</th> -->
+<!-- 	        			<td> -->
+<%-- 							<input type="text" placeholder="검색어입력" name="searchKeyword" value="<c:out value="${search.searchKeyword}" />"> --%>
+<!-- 	        			</td> -->
+<!-- 	        		</tr> -->
+<!-- 		       		<tr> -->
+<!-- 		        		<td class="buttonTd" colspan="2"> -->
+<!-- 		        			<button id='searchBtn' class="btn-primary" type="button">검색</button> -->
+<!-- 		        		</td> -->
+<!-- 		        	</tr> -->
+<!-- 	        	</table> -->
+<!-- 	        </div> -->
+<!-- 		</form> -->
 		<!-- //searchForm end -->
 		
 		<table style="border-collapse: collapse;">
@@ -121,7 +121,7 @@ $(document).ready(function () {
 			<tr>
 				<th>번호</th>
                 <th>아이디</th>
-                <th>권한</th>
+                <th>상태</th>
 				<th>생성자</th>
 				<th>생성일</th>
 				<th>권한부여자</th>

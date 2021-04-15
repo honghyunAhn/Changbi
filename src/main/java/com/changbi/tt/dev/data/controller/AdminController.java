@@ -50,9 +50,7 @@ public class AdminController {
 	
 	@ResponseBody
 	@RequestMapping(value = "/adminReg")
-	public Object adminReg(MemberVO member) throws Exception {
-		int result = 0;
-		
+	public void adminReg(MemberVO member) throws Exception {
 		// 로그인 된 정보
 		MemberVO loginUser = (MemberVO) LoginHelper.getLoginInfo();
 		
@@ -61,8 +59,27 @@ public class AdminController {
 		
 		member.setPw(passwordEncoder.encode(member.getPw()));
 		
-		result = baseService.memberReg(member);
-		return result;
+		baseService.memberReg(member);
 	}
-	
+	@ResponseBody
+	@RequestMapping(value = "/pwUpd")
+	public void pwUpd(MemberVO member) throws Exception {
+		// 로그인 된 정보
+		MemberVO loginUser = (MemberVO) LoginHelper.getLoginInfo();
+		
+		member.setRegUser(loginUser);
+		member.setUpdUser(loginUser);
+		
+		member.setPw(passwordEncoder.encode(member.getPw()));
+		
+		baseService.memberPwUpd(member);
+	}
+	@ResponseBody
+	@RequestMapping(value = "/isPwSame")
+	public Object isPwSame(MemberVO member) throws Exception {
+		if(passwordEncoder.matches(member.getPw(), member.getPwBefore())) {
+			return true;
+		}
+		return false;
+	}
 }

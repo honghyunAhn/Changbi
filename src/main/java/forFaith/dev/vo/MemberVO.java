@@ -1,5 +1,6 @@
 package forFaith.dev.vo;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,6 +28,7 @@ public class MemberVO extends CommonVO {
     // 사용자 정보(고객, 관리자 공통)
 	private String id;	    					// 사용자 접속 ID
 	private String pw;							// 사용자 비밀번호
+	private String pwBefore;					// 직전 사용비밀번호
 	private String name;						// 사용자 명
 	private String locale;						// 사용자언어(ko/en/ch/ja default ko)
 	private String snsCd;						// SNS 서비스(페북 : fb / 인스타그램 : ig / 카카오스토리 : ks / 트위터 : tw / 구글플러스 : gp / 네이버 : nv / 제주올레 jo)
@@ -52,14 +54,58 @@ public class MemberVO extends CommonVO {
 	private String belongTo;					// 소속단체 명
 	private String profile;						// 약력
 	private String ipAddress;					// 접속 IP 주소
+	private String authExpiredSt;				// 권한 시작일
+	private String authExpiredEt;				// 권한 만료일
+	private String pwExpiredSt;					// 비밀번호 사용기한 시작일
+	private String pwExpiredEt;					// 비밀번호 사용기한 만료일
 
 	private AttachFileVO photoFile;				// 사진 파일
 	private CodeVO courseCode;					// 과정분류
 	private CodeVO deptCode;                    // 관리자인 경우 부서 코드
 
 	private List<CodeVO> memberGroupList;		// 멤버 그룹 코드 리스트
+	
+    public String getPwBefore() {
+		return pwBefore;
+	}
 
-    public MemberVO getSearch() {
+	public void setPwBefore(String pwBefore) {
+		this.pwBefore = pwBefore;
+	}
+
+	public String getPwExpiredSt() {
+		return pwExpiredSt;
+	}
+
+	public void setPwExpiredSt(String pwExpiredSt) {
+		this.pwExpiredSt = pwExpiredSt;
+	}
+
+	public String getPwExpiredEt() {
+		return pwExpiredEt;
+	}
+
+	public void setPwExpiredEt(String pwExpiredEt) {
+		this.pwExpiredEt = pwExpiredEt;
+	}
+
+	public String getAuthExpiredSt() {
+		return authExpiredSt;
+	}
+
+	public void setAuthExpiredSt(String authExpiredSt) {
+		this.authExpiredSt = authExpiredSt;
+	}
+
+	public String getAuthExpiredEt() {
+		return authExpiredEt;
+	}
+
+	public void setAuthExpiredEt(String authExpiredEt) {
+		this.authExpiredEt = authExpiredEt;
+	}
+
+	public MemberVO getSearch() {
         return search;
     }
 

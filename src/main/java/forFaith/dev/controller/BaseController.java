@@ -1,7 +1,9 @@
 package forFaith.dev.controller;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -133,7 +135,23 @@ public class BaseController extends CommonController {
 				e.printStackTrace();
 			}
 			if (loginInfo != null && !StringUtil.isEmpty(loginInfo.getId())) {
-
+				
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+				
+				//권한 만료 알림
+				Date authExpiredEt = fmt.parse(loginInfo.getAuthExpiredEt());
+				Date today = new Date();
+				
+				if(authExpiredEt.compareTo(today) < 0) {
+					member.setMsg("접근권한이 만료되었습니다. 관리자에게 문의하시기 바랍니다.");
+					redirectAttr.addFlashAttribute("member", member);
+					return "redirect:/forFaith/base/login";
+				}
+				if(loginInfo.getUseYn().equals("N")) {
+					member.setMsg("접근권한이 없습니다. 관리자에게 문의하시기 바랍니다.");
+					redirectAttr.addFlashAttribute("member", member);
+					return "redirect:/forFaith/base/login";
+				}
 				if (passwordEncoder.matches(member.getPw(), loginInfo.getPw())) {
 
 					// 접근 주소 저장
@@ -147,7 +165,17 @@ public class BaseController extends CommonController {
 
 					// 모든 경우에 로그인 history 저장
 					baseService.memberLoginHistory(loginInfo);
-
+					
+					Date pwExpiredEt = fmt.parse(loginInfo.getPwExpiredEt());
+					
+					int pwRemaining = pwExpiredEt.compareTo(today);
+					
+					//비밀번호 기한이 7일 이하이면 남은 기한정보를 화면으로 보냄
+					if(pwRemaining <= 7) {
+						member.setMsg(String.valueOf(pwRemaining));
+						redirectAttr.addFlashAttribute("member", member);
+					}
+					
 					return "redirect:"
 							+ (StringUtil.isEmpty(member.getLink()) ? "/forFaith/base/main" : member.getLink());
 

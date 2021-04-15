@@ -1117,17 +1117,17 @@ function saveCategory(obj){
 					alert("totals 합 : " + parseFloat(totals[j]+Number(categoryRateList[i].value)));
 					alert("카테고리 타입 : "+typeof Number(categoryRateList[i].value));
 					alert("토탈 타입 : "+ typeof totals[j]);  */
-					totals[j] =  parseFloat(totals[j]+Number(categoryRateList[i].value));
-					checking[j] -= 1;
-					break;
-				}
-			}
+// 					totals[j] =  parseFloat(totals[j]+Number(categoryRateList[i].value));
+// 					checking[j] -= 1;
+// 					break;
+// 				}
+// 			}
 			
-		} else if (id == 'smallC') {
-			categoryInfo.upper_cat_seq = "2";
-		}
-		categoryList.push(categoryInfo);
-	}
+// 		} else if (id == 'smallC') {
+// 			categoryInfo.upper_cat_seq = "2";
+// 		}
+// 		categoryList.push(categoryInfo);
+// 	}
 	for (var i = 0; i < totals.length; i++) {
 		if ((totals[i] > 100 || totals[i] < 99.99) && id != 'bigC') {
 			alert(totals[i]+" 안맞습니다.");

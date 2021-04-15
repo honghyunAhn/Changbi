@@ -24,16 +24,10 @@
 <link href="<c:url value="/resources/css/project/admin/accordion.css"/>" rel="stylesheet" type="text/css">
 
 <!-- jQuery -->
-<script src="<c:url value="/resources/student/js/jquery-3.5.1.js"/>"></script>
-<script src="<c:url value="/resources/student/js/jquery-ui.js" />"></script>
-<script src="<c:url value="/resources/js/ext/bootstrap-datetimepicker/datepicker.js" />"></script>
+<script src="<c:url value="/resources/js/ext/jquery/jquery-1.11.0.min.js"/>"></script>
+
 <!-- angular.js 추가 / kim --> 
 <script src="<c:url value="/resources/student/js/angular.js" />"></script>
-
-<link href="<c:url value="/resources/css/jquery-ui/jquery-ui.min.css"/>"rel="stylesheet">
-
-<!-- ckeditor -->
-<script src="<c:url value="/resources/ckeditor/ckeditor.js" />"></script>
 
 <!-- 차트 -->
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -70,7 +64,6 @@
 
 <link rel="stylesheet" href="/resources/css/project/admin/admin_02_classManagement_style.css">
 <script src="/resources/js/project/admin_02_classManagement_script.js"></script>
-
 
 <script type="text/javascript">
 /* 사용자 드랍다운 레이어	*/
@@ -236,129 +229,129 @@ function getDateFormat(timestamp) {
 }
 </script>
 <script type="text/javascript">
-$(function() {
-	cleanDatepicker();
-	$(".admin_expired_st").datepicker();
-	$(".admin_expired_et").datepicker();
-	$("#pageSelect").change(function(){
+// $(function() {
+// 	cleanDatepicker();
+// 	$(".admin_expired_st").datepicker();
+// 	$(".admin_expired_et").datepicker();
+// 	$("#pageSelect").change(function(){
 		
-		var pageCount = $(this).val();
-		var searchName = $("#name").val();
-		location.href="/edu/admin/admin_info_setting_form?searchName="+searchName+"&pageCount="+pageCount+"&curPage=${map.adminPager.curPage}";
-	});
-});
-function cleanDatepicker() {
+// 		var pageCount = $(this).val();
+// 		var searchName = $("#name").val();
+// 		location.href="/edu/admin/admin_info_setting_form?searchName="+searchName+"&pageCount="+pageCount+"&curPage=${map.adminPager.curPage}";
+// 	});
+// });
+// function cleanDatepicker() {
 
-	var original_gotoToday = $.datepicker._gotoToday;
+// 	var original_gotoToday = $.datepicker._gotoToday;
 
-	$.datepicker._gotoToday = function(id) {
-		var target = $(id), inst = this._getInst(target[0]);
+// 	$.datepicker._gotoToday = function(id) {
+// 		var target = $(id), inst = this._getInst(target[0]);
 
-		original_gotoToday.call(this, id);
-		this._selectDate(id, this._formatDate(inst, inst.selectedDay,
-				inst.drawMonth, inst.drawYear));
-		target.blur();
-	}
+// 		original_gotoToday.call(this, id);
+// 		this._selectDate(id, this._formatDate(inst, inst.selectedDay,
+// 				inst.drawMonth, inst.drawYear));
+// 		target.blur();
+// 	}
 
-	var old_fn = $.datepicker._updateDatepicker;
+// 	var old_fn = $.datepicker._updateDatepicker;
 
-	$.datepicker._updateDatepicker = function(inst) {
-		old_fn.call(this, inst);
+// 	$.datepicker._updateDatepicker = function(inst) {
+// 		old_fn.call(this, inst);
 
-		var buttonPane = $(this).datepicker("widget").find(".ui-datepicker-buttonpane");
+// 		var buttonPane = $(this).datepicker("widget").find(".ui-datepicker-buttonpane");
 
-		$(	"<button type='button' class='ui-datepicker-clean ui-state-default ui-priority-primary ui-corner-all'>clear</button>").appendTo(buttonPane).click(function(ev) {
-					$.datepicker._clearDate(inst.input);
-		});
-	}
-}
+// 		$(	"<button type='button' class='ui-datepicker-clean ui-state-default ui-priority-primary ui-corner-all'>clear</button>").appendTo(buttonPane).click(function(ev) {
+// 					$.datepicker._clearDate(inst.input);
+// 		});
+// 	}
+// }
 
-var myApp = angular.module('myapp', []);
+// var myApp = angular.module('myapp', []);
 
-myApp.controller('AdminController', ['$scope','$compile','$http', function($scope,$compile,$http){
+// myApp.controller('AdminController', ['$scope','$compile','$http', function($scope,$compile,$http){
 	
-	$scope.admin_info = JSON.parse('${admin_info_list_json}');
+// 	$scope.admin_info = JSON.parse('${admin_info_list_json}');
 	
-	$scope.update = function($event){
+// 	$scope.update = function($event){
 
-		var _row  = angular.element($event.currentTarget).closest(".admin_row");
-		var _admin_id = _row.find(".admin_id").text();
-		var _admin_grade = _row.find(".admin_grade").val();
-		var _admin_state = _row.find(".admin_state").val();
-		var _admin_project = _row.find(".admin_project").val();
-		var _admin_expired_st = _row.find(".admin_expired_st").val();
-		var _admin_expired_et = _row.find(".admin_expired_et").val();
+// 		var _row  = angular.element($event.currentTarget).closest(".admin_row");
+// 		var _admin_id = _row.find(".admin_id").text();
+// 		var _admin_grade = _row.find(".admin_grade").val();
+// 		var _admin_state = _row.find(".admin_state").val();
+// 		var _admin_project = _row.find(".admin_project").val();
+// 		var _admin_expired_st = _row.find(".admin_expired_st").val();
+// 		var _admin_expired_et = _row.find(".admin_expired_et").val();
 
-	 	$http({
-			method: 'POST',
-			url: '/edu/admin/admin_info_update',
-			params : {
-				admin_id : _admin_id,
-				admin_grade : _admin_grade,
-				admin_state : _admin_state,
-				admin_project : _admin_project,
-				admin_expired_st : _admin_expired_st,
-				admin_expired_et : _admin_expired_et
-			}
-		}).then(function successCallback(response) {
-    		alert("정보 수정 완료 하였습니다.");
-		}, function errorCallback(response) {
-			console.log(response);
-			alert("정보 수정 실패 하였습니다.");
-		});
+// 	 	$http({
+// 			method: 'POST',
+// 			url: '/edu/admin/admin_info_update',
+// 			params : {
+// 				admin_id : _admin_id,
+// 				admin_grade : _admin_grade,
+// 				admin_state : _admin_state,
+// 				admin_project : _admin_project,
+// 				admin_expired_st : _admin_expired_st,
+// 				admin_expired_et : _admin_expired_et
+// 			}
+// 		}).then(function successCallback(response) {
+//     		alert("정보 수정 완료 하였습니다.");
+// 		}, function errorCallback(response) {
+// 			console.log(response);
+// 			alert("정보 수정 실패 하였습니다.");
+// 		});
 		
-	}
-}]);
+// 	}
+// }]);
 
-myApp.directive('code', ['$http',function($http){
-	return {
-		restrict: "E",
-		replace: true,
-		scope : {
-			value : '@'
-		},
-		controller: function ($scope, $element, $attrs) {
-			$http({
-				method: 'POST',
-				url: '/codeconverter',
-		  		responseType: 'text',
-				params : {
-					code : $attrs.value
-				}
-			}).then(function successCallback(response) {
-	    		$scope.filterParams = response.data;
-			}, function errorCallback(response) {
-				console.log(response);
-			});
-		}
-		,template: "<span>{{filterParams}}</span>"
-	}
-}]);
+// myApp.directive('code', ['$http',function($http){
+// 	return {
+// 		restrict: "E",
+// 		replace: true,
+// 		scope : {
+// 			value : '@'
+// 		},
+// 		controller: function ($scope, $element, $attrs) {
+// 			$http({
+// 				method: 'POST',
+// 				url: '/codeconverter',
+// 		  		responseType: 'text',
+// 				params : {
+// 					code : $attrs.value
+// 				}
+// 			}).then(function successCallback(response) {
+// 	    		$scope.filterParams = response.data;
+// 			}, function errorCallback(response) {
+// 				console.log(response);
+// 			});
+// 		}
+// 		,template: "<span>{{filterParams}}</span>"
+// 	}
+// }]);
 
-myApp.directive('selectcode', [ '$http', function($http) {
-	return {
-		restrict : "A",
-		replace : true,
-		scope : {
-			value : '@'
-		},
-		controller : function($scope, $element, $attrs) {
-			$http({
-				method : 'POST',
-				url : '/codeconverter',
-				responseType : 'text',
-				params : {
-					code : $attrs.value
-				}
-			}).then(function successCallback(response) {
-				$scope.filterParams = response.data;
-			}, function errorCallback(response) {
-				console.log(response);
-			});
-		},
-		template : "<option>{{filterParams}}</option>"
-	}
-} ]);
+// myApp.directive('selectcode', [ '$http', function($http) {
+// 	return {
+// 		restrict : "A",
+// 		replace : true,
+// 		scope : {
+// 			value : '@'
+// 		},
+// 		controller : function($scope, $element, $attrs) {
+// 			$http({
+// 				method : 'POST',
+// 				url : '/codeconverter',
+// 				responseType : 'text',
+// 				params : {
+// 					code : $attrs.value
+// 				}
+// 			}).then(function successCallback(response) {
+// 				$scope.filterParams = response.data;
+// 			}, function errorCallback(response) {
+// 				console.log(response);
+// 			});
+// 		},
+// 		template : "<option>{{filterParams}}</option>"
+// 	}
+// } ]);
 	// **원하는 페이지로 이동시 검색조건, 키워드 값을 유지하기 위해 
 	function ilist(page){
 	    location.href="/edu/admin/admin_info_setting_form?curPage="+page+"&pageCount=${map.pageCount}";
