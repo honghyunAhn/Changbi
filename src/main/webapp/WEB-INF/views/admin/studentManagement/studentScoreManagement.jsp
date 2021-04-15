@@ -1050,7 +1050,7 @@ function saveCategory(obj){
 	alert("토탈 상위카테고리 별 하위 카테고리 개수 모임 : " + sbss.ToString());
 	alert(id);  */
 	
-	 	if (id=='bigC') {
+ 	if (id=='bigC') {
 	 		categoryNameList = $("input[name$=bigCategoryName]");
 	 		categoryRateList = $("input[name$=bigCategoryRate]");
 	 		categorySeqList = $("input[name$=bigCategorySeq]");
@@ -1069,7 +1069,6 @@ function saveCategory(obj){
 		midCategorySeq = $("input[name$=midCategorySeqInSmall]");
 	}
 	
-	/* 
 	
 	var categoryInfo = new Object();
 	var categoryList = new Array();
@@ -1111,29 +1110,22 @@ function saveCategory(obj){
 					if(id == 'smallC') {
 						categoryInfo.mid_cat_seq = midCategorySeq[j].value;
 					}
-					/* alert("checking["+j+"] : " + checking[j]);
-					alert(j + " 번째 카테고리리스트: " + parseFloat(Number(categoryRateList[i].value)));
-					alert(j + "번째 total : " + parseFloat(totals[j]));
-					alert("totals 합 : " + parseFloat(totals[j]+Number(categoryRateList[i].value)));
-					alert("카테고리 타입 : "+typeof Number(categoryRateList[i].value));
-					alert("토탈 타입 : "+ typeof totals[j]);  */
-// 					totals[j] =  parseFloat(totals[j]+Number(categoryRateList[i].value));
-// 					checking[j] -= 1;
-// 					break;
-// 				}
-// 			}
+// 					alert("checking["+j+"] : " + checking[j]);
+// 					alert(j + " 번째 카테고리리스트: " + parseFloat(Number(categoryRateList[i].value)));
+// 					alert(j + "번째 total : " + parseFloat(totals[j]));
+// 					alert("totals 합 : " + parseFloat(totals[j]+Number(categoryRateList[i].value)));
+// 					alert("카테고리 타입 : "+typeof Number(categoryRateList[i].value));
+// 					alert("토탈 타입 : "+ typeof totals[j]);
+					totals[j] =  parseFloat(totals[j]+Number(categoryRateList[i].value));
+					checking[j] -= 1;
+					break;
+				}
+			}
 			
-// 		} else if (id == 'smallC') {
-// 			categoryInfo.upper_cat_seq = "2";
-// 		}
-// 		categoryList.push(categoryInfo);
-// 	}
-	for (var i = 0; i < totals.length; i++) {
-		if ((totals[i] > 100 || totals[i] < 99.99) && id != 'bigC') {
-			alert(totals[i]+" 안맞습니다.");
-			//alert("totals 배율이 안맞습니다. 확인해주세요.");	
-			return;
+		} else if (id == 'smallC') {
+			categoryInfo.upper_cat_seq = "2";
 		}
+		categoryList.push(categoryInfo);
 	}
 	if ((total > 100 || total < 99.99) && id == 'bigC') {
 		alert("배율이 안맞습니다. 확인해주세요.");
@@ -1148,12 +1140,11 @@ function saveCategory(obj){
 		contentType: 'application/json; charset=UTF-8',
 		data: jsonStr,
 		success:function(result){
-			
-				alert("저장을 성공하였습니다.");
-				createUpperCategory();
+			alert("저장을 성공하였습니다.");
+			createUpperCategory();
 		},
-		error:function(error){
-			alert(error.statusText);
+		error:function(e){
+			console.log(e);
 		}
 	});
 }
@@ -1319,8 +1310,8 @@ function createUpperCategory(){
 					}
 				} */
 		},
-		error:function(error){
-			alert(error.statusText);
+		error:function(e){
+			console.log(e);
 		},
 		complete:function(){
 			reloadData();
@@ -2391,8 +2382,8 @@ function updateTestData(seq, mode){
 				complete:function(){
 					createUpperCategory();
 				},
-				error:function(error){
-					alert(error.statusText);
+				error:function(e){
+					console.log(e);
 				}
 			});
 		}
@@ -2517,8 +2508,8 @@ function saveClassInfo(){
 				alert("저장을 성공하였습니다.");
 			
 		},
-		error:function(error){
-			alert(error.statusText);
+		error:function(e){
+			console.log(e);
 		},
 		complete:function(){
 			searchClassList();
@@ -2596,7 +2587,8 @@ function searchClassList(){
 				
 			
 		},
-		error:function(error){
+		error:function(e){
+			console.log(e);
 		},
 		complete:function(){
 			selectableUser();
@@ -2837,8 +2829,8 @@ function selectableUser(){
 			$("#hdrdd").html('');
 			$("#hdrdd").html($("#selectClasss option:selected").text());
 		},
-		error:function(error){
-			alert(error.statusText);
+		error:function(e){
+			console.log(e);
 		},
 		complete:function(){
 		}

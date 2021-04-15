@@ -13,12 +13,14 @@ import org.springframework.stereotype.Service;
 import com.changbi.tt.dev.data.controller.BoardController;
 import com.changbi.tt.dev.data.dao.BoardDAO;
 import com.changbi.tt.dev.data.vo.BoardCommentVO;
+import com.changbi.tt.dev.data.vo.BoardFile;
 import com.changbi.tt.dev.data.vo.BoardReplyVO;
 import com.changbi.tt.dev.data.vo.BoardVO;
 import com.changbi.tt.dev.data.vo.CardinalVO;
 import com.changbi.tt.dev.data.vo.NoteVO;
 import com.changbi.tt.dev.data.vo.SurveyItemVO;
 import com.changbi.tt.dev.data.vo.SurveyVO;
+import com.changbi.tt.dev.util.FileService;
 
 import forFaith.dev.dao.AttachFileDAO;
 import forFaith.dev.vo.AttachFileVO;
@@ -34,18 +36,31 @@ public class BoardService {
 	
 	@Autowired
     private AttachFileDAO fileDao;
+	
+	/**
+	 * file.propertices 의 등록된 도서관리 공지사항 파일 경로
+	 */
+	@Value("#{props['edu.book.board_file']}")
+	private String eduBookBoardFile;
+	
+	/**
+	 * file.propertices 의 등록된 도서관리 동영상 게시판 파일 경로
+	 */
+	@Value("#{props['edu.book.board_movie']}")
+	private String eduBookBoardMovie;
+	
 	/**
 	 * file.propertices 의 등록된 도서관리 사진 게시판 파일 경로
 	 */
 	@Value("#{props['edu.book.board_photo']}")
 	private String eduBookBoardPhoto;
-
+	
 	/**
 	 * file.propertices 의 등록된 도서관리 질문 게시판 파일 경로
 	 */
 	@Value("#{props['edu.book.board_question']}")
 	private String eduBookBoardQuestion;
-
+	
 	/**
 	 * file.propertices 의 등록된 모집홍보 공지사항 파일 경로
 	 */
@@ -443,9 +458,108 @@ public class BoardService {
 	
 	//게시글 등록
 	public int boardInsert(HashMap<String, Object> params) {
-		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 서비스 시작");
+		logger.debug("게시글 세부 내용 등록 폼 이동 서비스 시작");
 		int result = boardDao.boardInsert(params);
-		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 서비스 종료");
+		logger.debug("게시글 세부 내용 등록 폼 이동 서비스 종료");
 		return result;
+	}
+
+	public String findPath(Object gb, Object tp) {
+		logger.debug("PATH 시작");
+		String path = "";
+		// FS
+		if (gb.equals("A0300")) {
+
+		}
+		// 모집홍보
+		else if (gb.equals("A0301")) {
+			// 공지사항
+			if (tp.equals("A0400")) {
+				path = eduApplyBoardFile;
+			}
+			// 동영상
+			else if (tp.equals("A0401")) {
+				path = eduApplyBoardMovie;
+			}
+			// 사진
+			else if (tp.equals("A0402")) {
+				path = eduApplyBoardPhoto;
+			}
+			// 질문
+			else if (tp.equals("A0403")) {
+				path = eduApplyBoardQuestion;
+			}
+		}
+		// 도서관리
+		else if (gb.equals("A0302")) {
+			// 공지사항
+			if (tp.equals("A0400")) {
+				path = eduBookBoardFile;
+			}
+			// 동영상
+			else if (tp.equals("A0401")) {
+				path = eduBookBoardMovie;
+			}
+			// 사진
+			else if (tp.equals("A0402")) {
+				path = eduBookBoardPhoto;
+			}
+			// 질문
+			else if (tp.equals("A0403")) {
+				path = eduBookBoardQuestion;
+			}
+		}
+		// 공인시험센터
+		else if (gb.equals("A0303")) {
+		 
+		//잡페어
+		}else if(gb.equals("A0305")) {
+			// 공지사항
+			if (tp.equals("A0400")) {
+				path = fapCompanyBoardFile;
+			}
+			// 동영상
+			else if (tp.equals("A0401")) {
+				path = fapCompanyBoardMovie;
+			}
+			// 사진
+			else if (tp.equals("A0402")) {
+				path = fapCompanyBoardPhoto;
+			}
+			// 질문
+			else if (tp.equals("A0403")) {
+				path = fapCompanyBoardQuestion;
+			}
+		}
+		logger.debug("PATH 종료");
+		return path;
+	}
+
+	public void board_file_insert(String path, BoardFile boardFile, Object board_seq) {
+		logger.debug("해당 게시글 파일 정보 등록 서비스 함수 시작");
+		// 해당 게시글 파일 정보 체크
+		ArrayList<Integer> removeArr = new ArrayList<>();
+		for (BoardFile fileObj : boardFile.getBoardFileList()) {
+
+			if ((fileObj.getBoard_file_origin() == null) && (fileObj.getBoard_file_saved() != null)) {
+				FileService.deleteFile(fileObj.getBoard_file_saved(), path);
+			}
+
+			if (fileObj.getBoard_file() != null && !fileObj.getBoard_file().isEmpty()) {
+				String boardOrigin = fileObj.getBoard_file().getOriginalFilename();
+				try {
+					String boardSaved = FileService.saveFile(fileObj.getBoard_file(), path);
+					fileObj.setBoard_file_saved(boardSaved);
+					fileObj.setBoard_file_origin(boardOrigin);
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+				}
+			} else {
+				if (fileObj.getBoard_file_origin() == null) {
+					removeArr.add(boardFile.getBoardFileList().indexOf(fileObj));
+				}
+			}
+		}
+		logger.debug("해당 게시글 파일 정보 등록 서비스 함수 종료");
 	}
 }

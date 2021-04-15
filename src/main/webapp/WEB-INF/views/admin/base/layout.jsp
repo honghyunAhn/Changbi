@@ -65,6 +65,8 @@
 <link rel="stylesheet" href="/resources/css/project/admin/admin_02_classManagement_style.css">
 <script src="/resources/js/project/admin_02_classManagement_script.js"></script>
 
+<!-- CKEditor -->
+<script src="<c:url value="/resources/ckeditor/ckeditor.js" />"></script>
 <script type="text/javascript">
 /* 사용자 드랍다운 레이어	*/
 $(document).ready(function (e) {

@@ -5,15 +5,19 @@
 
 package com.changbi.tt.dev.data.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -23,10 +27,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.changbi.tt.dev.data.service.BoardService;
 import com.changbi.tt.dev.data.vo.BoardCommentVO;
+import com.changbi.tt.dev.data.vo.BoardFile;
 import com.changbi.tt.dev.data.vo.BoardReplyVO;
 import com.changbi.tt.dev.data.vo.BoardVO;
 import com.changbi.tt.dev.data.vo.NoteVO;
@@ -34,6 +41,7 @@ import com.changbi.tt.dev.data.vo.SurveyItemVO;
 import com.changbi.tt.dev.data.vo.SurveyVO;
 import com.google.gson.Gson;
 
+import forFaith.dev.service.AttachFileService;
 import forFaith.dev.util.LoginHelper;
 import forFaith.dev.vo.MemberVO;
 import forFaith.util.DataList;
@@ -51,6 +59,12 @@ public class BoardController {
      * @author : 김준석(2018-02-17)
      */
     private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
+    
+    @Autowired
+	AttachFileService fileService;
+    
+    @Value("#{props['edu.apply.ckeditor']}")
+	private String eduApplyCkeditor;
 
     /**
      * 게시물 리스트
@@ -596,9 +610,45 @@ public class BoardController {
     
     @ResponseBody
     @RequestMapping(value = "/boardInsert", method = RequestMethod.POST)
-	public int boardInsert(@RequestParam HashMap<String, Object> params, Model model){
+	public int boardInsert(@RequestParam HashMap<String, Object> params, MultipartHttpServletRequest multiRequest) throws IOException{
 		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 컨트롤러 시작");
+		logger.debug("anh288-params" + params);
+		logger.debug("anh288-multiRequest"+ multiRequest);
 		int result = boardService.boardInsert(params);
+		
+		List<MultipartFile> fileList = multiRequest.getFiles("uploadFile");
+		//업로드한 파일이 없으면 실행되지 않음
+		if(fileList != null){
+		 //파일이 저장될 경로 설정
+		 String path = "/upload/board/files";
+		 File dir = new File(path);
+		 if(!dir.isDirectory()){
+			 dir.mkdirs();
+		 }
+		
+		 if(!fileList.isEmpty()){
+		 //넘어온 파일을 리스트로 저장
+			 for(int i = 0; i < fileList.size() ; i++){
+				 //파일 중복명 처리
+				 String random = UUID.randomUUID().toString();
+				 //원래 파일명
+				 String board_file_origin = fileList.get(i).getOriginalFilename();
+				 //저장되는 파일이름
+				 String saveFileName = random + "_"+ board_file_origin;
+				//저장될 파일 경로
+				 String board_file_saved = path + saveFileName;
+				 //파일사이즈
+//				 int fileSize = (int) fileList.get(i).getSize();
+				 //파일 저장
+				 fileList.get(i).transferTo(new File(board_file_saved));
+				 BoardFile boardFile = new BoardFile();
+				 boardFile.setBoard_content_seq((int)params.get("Board_content_seq"));
+				 boardFile.setBoard_file_origin(board_file_origin);
+				 boardFile.setBoard_file_saved(board_file_saved);
+				 logger.debug("anh288-file", boardFile);
+			}
+		}
+		}
 		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 컨트롤러 종료");
 		return result;
 	}
