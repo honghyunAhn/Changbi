@@ -610,46 +610,122 @@ public class BoardController {
     
     @ResponseBody
     @RequestMapping(value = "/boardInsert", method = RequestMethod.POST)
-	public int boardInsert(@RequestParam HashMap<String, Object> params, MultipartHttpServletRequest multiRequest) throws IOException{
+	public int boardInsert(@RequestParam HashMap<String, Object> params) throws IOException{
 		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 컨트롤러 시작");
 		logger.debug("anh288-params" + params);
-		logger.debug("anh288-multiRequest"+ multiRequest);
+//		logger.debug("anh288-multiRequest"+ multiRequest);
 		int result = boardService.boardInsert(params);
 		
-		List<MultipartFile> fileList = multiRequest.getFiles("uploadFile");
+//		List<MultipartFile> fileList = multiRequest.getFiles("uploadFile");
+//		logger.debug("anh288-fileList"+ fileList);
+//		//업로드한 파일이 없으면 실행되지 않음
+//		if(fileList != null){
+//		 //파일이 저장될 경로 설정
+//		 String path = "/upload/board/files";
+//		 File dir = new File(path);
+//			 if(!dir.isDirectory()){
+//				 dir.mkdirs();
+//			 }
+//			
+//			 if(!fileList.isEmpty()){
+//			 //넘어온 파일을 리스트로 저장
+//				 for(int i = 0; i < fileList.size() ; i++){
+//					 //파일 중복명 처리
+//					 String random = UUID.randomUUID().toString();
+//					 //원래 파일명
+//					 String board_file_origin = fileList.get(i).getOriginalFilename();
+//					 //저장되는 파일이름
+//					 String saveFileName = random + "_"+ board_file_origin;
+//					//저장될 파일 경로
+//					 String board_file_saved = path + saveFileName;
+//					 //파일사이즈
+//	//				 int fileSize = (int) fileList.get(i).getSize();
+//					 //파일 저장
+//					 fileList.get(i).transferTo(new File(board_file_saved));
+//					 BoardFile boardFile = new BoardFile();
+//					 boardFile.setBoard_content_seq(Integer.parseInt(String.valueOf(params.get("board_content_seq"))));
+//					 boardFile.setBoard_file_origin(board_file_origin);
+//					 boardFile.setBoard_file_saved(board_file_saved);
+//					 logger.debug("anh288-file" + i + " : " + boardFile);
+//				}
+//			}
+//		}
+//		
+		
+//		List<MultipartFile> fileList = mtfRequest.getFiles("file");
+////        String src = mtfRequest.getParameter("src");
+////        System.out.println("src value : " + src);
+//		System.out.println("fileList : " + fileList);
+//        String path = "/upload/board/files/";
+//
+//        for (MultipartFile mf : fileList) {
+//            String board_file_origin = mf.getOriginalFilename(); // 원본 파일 명
+////            long fileSize = mf.getSize(); // 파일 사이즈
+////
+//            System.out.println("board_file_origin : " + board_file_origin);
+////            System.out.println("fileSize : " + fileSize);
+//            
+//            String board_file_saved = path + System.currentTimeMillis() + board_file_origin;
+//            System.out.println("board_file_saved : " + board_file_saved);
+////            System.out.println("mf"+mf);
+//            try {
+//                mf.transferTo(new File(board_file_saved));
+//                BoardFile boardFile = new BoardFile();
+//                boardFile.setBoard_content_seq(Integer.parseInt(String.valueOf(params.get("board_content_seq"))));
+//				boardFile.setBoard_file_origin(board_file_origin);
+//				boardFile.setBoard_file_saved(board_file_saved);
+//				System.out.println("anh288 - boardFile : " + boardFile);
+//            } catch (IllegalStateException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//        }
+		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 컨트롤러 종료");
+		return result;
+	}
+    @ResponseBody
+    @RequestMapping(value = "/bordFileInsert", method = RequestMethod.POST)
+    public int bordFileInsert(MultipartHttpServletRequest multiRequest) throws IOException{
+    	logger.debug("모집홍보 관리자 게시글 파일 업로드 컨트롤러 시작");
+    	logger.debug("anh288-multiRequest"+ multiRequest);
+    	List<MultipartFile> fileList = multiRequest.getFiles("file");
+		logger.debug("anh288-fileList"+ fileList);
 		//업로드한 파일이 없으면 실행되지 않음
 		if(fileList != null){
 		 //파일이 저장될 경로 설정
 		 String path = "/upload/board/files";
 		 File dir = new File(path);
-		 if(!dir.isDirectory()){
-			 dir.mkdirs();
-		 }
-		
-		 if(!fileList.isEmpty()){
-		 //넘어온 파일을 리스트로 저장
-			 for(int i = 0; i < fileList.size() ; i++){
-				 //파일 중복명 처리
-				 String random = UUID.randomUUID().toString();
-				 //원래 파일명
-				 String board_file_origin = fileList.get(i).getOriginalFilename();
-				 //저장되는 파일이름
-				 String saveFileName = random + "_"+ board_file_origin;
-				//저장될 파일 경로
-				 String board_file_saved = path + saveFileName;
-				 //파일사이즈
-//				 int fileSize = (int) fileList.get(i).getSize();
-				 //파일 저장
-				 fileList.get(i).transferTo(new File(board_file_saved));
-				 BoardFile boardFile = new BoardFile();
-				 boardFile.setBoard_content_seq((int)params.get("Board_content_seq"));
-				 boardFile.setBoard_file_origin(board_file_origin);
-				 boardFile.setBoard_file_saved(board_file_saved);
-				 logger.debug("anh288-file", boardFile);
+			 if(!dir.isDirectory()){
+				 dir.mkdirs();
+			 }
+			
+			 if(!fileList.isEmpty()){
+			 //넘어온 파일을 리스트로 저장
+				 for(int i = 0; i < fileList.size() ; i++){
+					 //파일 중복명 처리
+					 String random = UUID.randomUUID().toString();
+					 //원래 파일명
+					 String board_file_origin = fileList.get(i).getOriginalFilename();
+					 //저장되는 파일이름
+					 String saveFileName = random + "_"+ board_file_origin;
+					//저장될 파일 경로
+					 String board_file_saved = path + saveFileName;
+					 //파일사이즈
+	//				 int fileSize = (int) fileList.get(i).getSize();
+					 //파일 저장
+					 fileList.get(i).transferTo(new File(board_file_saved));
+					 BoardFile boardFile = new BoardFile();
+//					 boardFile.setBoard_content_seq(Integer.parseInt(String.valueOf(params.get("board_content_seq"))));
+					 boardFile.setBoard_file_origin(board_file_origin);
+					 boardFile.setBoard_file_saved(board_file_saved);
+					 logger.debug("anh288-file" + i + " : " + boardFile);
+				}
 			}
 		}
-		}
-		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 컨트롤러 종료");
-		return result;
-	}
+		logger.debug("모집홍보 관리자 게시글 파일 업로드 컨트롤러 종료");
+    	return 0;
+    }
 }

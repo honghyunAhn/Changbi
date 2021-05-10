@@ -9,7 +9,7 @@
 	var insertUrl = "<c:url value='/admin/board/boardInsert' />";
 	
 	
-	// 네이버 스마트 에디터 저장 객체
+ 	/* // 네이버 스마트 에디터 저장 객체
 	var editor_object = [];
 	
 	
@@ -20,16 +20,20 @@
 	// 파일
 	file_object[0] = { maxCount : 1, maxSize : 100, maxTotalSize : 100, accept : 'all'};
 	file_object[1] = { maxCount : 1, maxSize : 100, maxTotalSize : 100, accept : 'all'};
-	file_object[2] = { maxCount : 1, maxSize : 100, maxTotalSize : 100, accept : 'all'};
+	file_object[2] = { maxCount : 1, maxSize : 100, maxTotalSize : 100, accept : 'all'}; 
 	
 	
 	// 에디터, 언어 선택 기능 초기화
-	setPageInit(editor_object, file_object);
+	setPageInit(editor_object); */
 	
 	$(function() {
 		/* CKEditor */
 		CKEDITOR.replace('board_content_ct', {
-			filebrowserUploadUrl : '${pageContext.request.contextPath}/data/board/imageUpload',
+			filebrowserUploadUrl : '/board/imageUpload',
+			enterMode: CKEDITOR.ENTER_BR,
+			shiftEnterMode:  CKEDITOR.ENTER_P,
+			fullPage: true,
+			allowedContent:  true
 		});
 		window.parent.CKEDITOR.tools.callFunction(1, "${url}", "전송완료");
 	
@@ -49,7 +53,7 @@
 			// ajax로 load
 			contentLoad(board_nm, boardListUrl, {'board_seq' : board_seq});
 		});
-		
+
 		
 		/* 게시판 등록 페이지 이동 */
 		$('.boardInsertBtn').on('click', function(){
@@ -58,178 +62,158 @@
 			contentLoad('게시글 작성', insertUrl, {'board_seq' : board_seq});
 		});
 		
-		
-		$("#file_add").on('click',function(){ $('#multi-add').click(); });
-		var $fileListArr = new Array();
-		var $totSize = 0;
-		var $keyNum = 0;
-		var $limit = 0;
-		$("#multi-add").on('change',function(){
-			var files = $(this)[0].files;
-
-			var fileArr = new Array();
-
-			fileArr = $fileListArr;
-			$limit = $totSize;
-			for(var i = 0 ; i < files.length ; i++){
-				$limit = $limit + files[i].size;
-				if($limit > 100000000){
-					alert("첨부파일 용량은 100MB를 넘길수 없습니다.");
-					return false;
-				}
-			}
-			////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			for(var i = 0 ; i < files.length ; i++){
-				 $('#file_table').append("<tr id=file"+ $keyNum +"><td class='txt-c'><button type='button' style='color: #A4A4A4; font-size: large;' class='deleteFile' >&#8861;</button></td>"+
-							"<td>"+ files[i].name +"</td>"+
-							"<td id='fileSize "+ $keyNum +"'><p class=file"+ $keyNum +">"+ Math.floor(files[i].size / 1000) +" KB</p></td>"+
-							"</tr>");
-				 $keyNum++;
-				 fileArr.push(files[i]);
-				 $totSize = $totSize + files[i].size;
-			}
-			$fileListArr = new Array();
-			$fileListArr = fileArr;
-			$('#totSize').text("");
-			$('#totSize').text(Math.floor($totSize / 1000000));
-		});
-		
-		//파일 delete
-		$(document).on("click" , '.deleteFile', function(){
-			//삭제할 파일의 아이디
-			var DeleteID = $(this).parent().parent().attr('id');
-
-			//삭제하려는 파일의 크기값(텍스트)
-			var DeleteFileSize = $(this).parent().next().next().children('p').text();
-
-			//삭제하는 파일의 크기값(바이트)
-			var fileSizeByteArr = new Array();
-			fileSizeByteArr = DeleteFileSize.split(' ');
-			var fileSize = Number(fileSizeByteArr[0]) * 1000;
-
-			//배열에서 삭제를 위한 번호
-			var DeleteArrNum = DeleteID.substring(DeleteID.length , DeleteID.length -1);
-
-			var fileArr = $fileListArr;
-
-			fileArr.splice(DeleteArrNum , 1);
-			$keyNum = 0
-			$fileListArr = new Array();
-			$('#file_table').children().remove();
-			 $totSize = 0;
-			for(var i = 0 ; i < fileArr.length ; i++){
-
-				 $('#file_table').append("<tr id=file"+ $keyNum +"><td class='txt-c'><button type='button' style='color:  #A4A4A4; font-size: large;' class='deleteFile' >&#8861;</button></td>"+
-							"<td>"+ fileArr[i].name +"</td>"+
-							"<td id='fileSize "+ $keyNum +"'><p class=file"+ $keyNum +">"+ Math.floor(fileArr[i].size / 1000) +" KB</p></td>"+
-							"</tr>");
-				 $keyNum++;
-				 $fileListArr.push(fileArr[i]);
-				 $totSize = $totSize + fileArr[i].size;
-			}
-
-			$limit = $totSize;
-			$('#totSize').text("");
-			$('#totSize').text(Math.floor($totSize / 1000000));
-
-		});
-		
-		function formCheck() {
-			/* var formData = $("#boardInsertForm").serialize(); */
-			var form = $("#boardInsertForm")[0];        
-	        var formData = new FormData(form);
-			
-			var board_content_hit = $("input[name=board_content_hit]").val();
-			var board_content_nm = $("input[name=board_content_nm]").val();
-			var board_content_title = $("#board_content_title").val();
-			var board_content_ct = CKEDITOR.instances['board_content_ct'].getData()
-			var board_seq = $("#board_seq").val();
-			var board_nm = $("#board_nm").val();
-			var board_gb = $("#board_gb").val();
-			var board_tp = $("#board_tp").val();
-			
-			var board_content_ct = CKEDITOR.instances['board_content_ct'].getData()
-			
-			if (board_content_title.length == 0) {
-				alert("제목을 입력해 주세요.");
-				return false;
-			}
-			var check = confirm("등록하시겠습니까?");
-			if (!check) {
-				return false;
-			}
-			
-			$.ajax({
-				cache : false,
-	            url : "/data/board/boardInsert",
-	            type : 'POST',
-	            processData: false,
-	            contentType: false,
-	            data : /* {
-	            	"board_content_hit" : board_content_hit,
-	            	"board_content_nm" : board_content_nm,
-	            	"board_content_title" : board_content_title,
-	            	"board_content_ct" : board_content_ct,
-	            	"board_seq" : board_seq,
-	            	"board_nm" : board_nm,
-	            	"board_gb" : board_gb,
-	            	"board_tp" : board_tp
-	            }, */
-	            formData,
-	            success : function(result) {
-	            	if(result > 0){
-	            		var board_seq = $("#board_seq").val();
-	        			var board_nm = $("#board_nm").val();
-	            		contentLoad(board_nm, boardListUrl, {'board_seq' : board_seq});
-	            	} else {
-						alert("등록실패했습니다.");
-					}
-	            }, 
-	            error	: function(request, status, error) {
-					alert("code : "+request.status+"\n\n"+"message : "+request.responseText+"\n\n"+"error : "+error);
-				}
-	        });
-			return true;
+		function gotolist() {
+			$("#boardHiddenManagerForm").submit();
 		}
-
-		$("#boardInsertForm").submit(function() {
-			var board_content_title = $("#board_content_title").val();
-			if (board_content_title.length == 0) {
-				alert("제목을 입력해 주세요.");
-				return false;
-			}
-			var check = confirm("등록하시겠습니까?");
-			if (!check) {
-				return false;
-			}
-			$.ajaxSubmit({
-	            url : "/data/board/boardInsert",
-	            type : 'POST',
-	            success : function(result) {
-	            	if(result > 0){
-	            		var board_seq = $("#board_seq").val();
-	        			var board_nm = $("#board_nm").val();
-	        			alert(board_seq);
-	        			alert(board_nm);
-	            		contentLoad(board_nm, boardListUrl, {'board_seq' : board_seq});
-	            	} else {
-						alert("등록실패했습니다.");
-					}
-	            }, 
-	            error	: function(request, status, error) {
-					alert("code : "+request.status+"\n\n"+"message : "+request.responseText+"\n\n"+"error : "+error);
-				}
-			});
-		});
 	});
-	
-	
-	
-	function gotolist() {
-		$("#boardHiddenManagerForm").submit();
-	}
 </script>
 
+<script>
+$("#file_add").on('click',function(){ $('#multi-add').click(); });
+var $fileListArr = new Array();
+var $totSize = 0;
+var $keyNum = 0;
+var $limit = 0;
+$("#multi-add").on('change',function(){
+	var files = $(this)[0].files;
+
+	var fileArr = new Array();
+
+	fileArr = $fileListArr;
+	$limit = $totSize;
+	for(var i = 0 ; i < files.length ; i++){
+		$limit = $limit + files[i].size;
+		if($limit > 100000000){
+			alert("첨부파일 용량은 100MB를 넘길수 없습니다.");
+			return false;
+		}
+	}
+	for(var i = 0 ; i < files.length ; i++){
+		 $('#file_table').append("<tr id=file"+ $keyNum +"><td class='txt-c'><button type='button' style='color: #A4A4A4; font-size: large;' class='deleteFile' >&#8861;</button></td>"+
+					"<td>"+ files[i].name +"</td>"+
+					"<td id='fileSize "+ $keyNum +"'><p class=file"+ $keyNum +">"+ Math.floor(files[i].size / 1000) +" KB</p></td>"+
+					"</tr>");
+		 $keyNum++;
+		 fileArr.push(files[i]);
+		 $totSize = $totSize + files[i].size;
+	}
+	$fileListArr = new Array();
+	$fileListArr = fileArr;
+	$('#totSize').text("");
+	$('#totSize').text(Math.floor($totSize / 1000000));
+});
+
+//파일 delete
+$(document).on("click" , '.deleteFile', function(){
+	//삭제할 파일의 아이디
+	var DeleteID = $(this).parent().parent().attr('id');
+
+	//삭제하려는 파일의 크기값(텍스트)
+	var DeleteFileSize = $(this).parent().next().next().children('p').text();
+
+	//삭제하는 파일의 크기값(바이트)
+	var fileSizeByteArr = new Array();
+	fileSizeByteArr = DeleteFileSize.split(' ');
+	var fileSize = Number(fileSizeByteArr[0]) * 1000;
+
+	//배열에서 삭제를 위한 번호
+	var DeleteArrNum = DeleteID.substring(DeleteID.length , DeleteID.length -1);
+
+	var fileArr = $fileListArr;
+
+	fileArr.splice(DeleteArrNum , 1);
+	$keyNum = 0
+	$fileListArr = new Array();
+	$('#file_table').children().remove();
+	 $totSize = 0;
+	for(var i = 0 ; i < fileArr.length ; i++){
+
+		 $('#file_table').append("<tr id=file"+ $keyNum +"><td class='txt-c'><button type='button' style='color:  #A4A4A4; font-size: large;' class='deleteFile' >&#8861;</button></td>"+
+					"<td>"+ fileArr[i].name +"</td>"+
+					"<td id='fileSize "+ $keyNum +"'><p class=file"+ $keyNum +">"+ Math.floor(fileArr[i].size / 1000) +" KB</p></td>"+
+					"</tr>");
+		 $keyNum++;
+		 $fileListArr.push(fileArr[i]);
+		 $totSize = $totSize + fileArr[i].size;
+	}
+
+	$limit = $totSize;
+	$('#totSize').text("");
+	$('#totSize').text(Math.floor($totSize / 1000000));
+});
+function formCheck(){
+	var board_seq = $("#board_seq").val();
+	var board_content_title = $("#board_content_title").val();
+	var board_content_ct = CKEDITOR.instances.board_content_ct.getData();
+	var board_content_nm = $("#board_content_nm").val();
+	var board_content_hit = $("#board_content_hit").val();
+	/* var formData = new FormData($("#boardInsertForm")[0]); */
+	
+	var formData = new FormData();
+	for(var i = 0; i < $fileListArr.length ; i++){
+		formData.append("uploadFile" , $fileListArr[i]);
+	}
+	for (var pair of formData.entries()){
+		console.log(pair[0]+ ', ' + pair[1]);
+	}
+	for (var key in formData){ alert("attr: " + key + ", value: " + formData[key]); }
+	if (board_content_title.length == 0) {
+		alert("제목을 입력해 주세요.");
+		return false;
+	}
+	var check = confirm("등록하시겠습니까?");
+	if (!check) {
+		return false;
+	}
+	$.ajax({
+        url : "/data/board/boardInsert",
+        type : 'POST',
+        data : {
+        	"board_seq" : board_seq,
+        	"board_content_title" : board_content_title,
+        	"board_content_ct" : board_content_ct,
+        	"board_content_nm" : board_content_nm,
+        	"board_content_hit" : board_content_hit
+        },
+        success : function(result) {
+        	if(result > 0){
+        		if($fileListArr.length != 0){
+            		alert("파일 등록 시작");
+            		$.ajax({
+    	        		url : "/data/board/bordFileInsert",
+    	                type : 'POST',
+    	                processData : false,
+    	    			contentType : false,
+    	                data : formData,
+    	                success : function(result) {
+    	                	if(result > 0){
+    	                		alert("파일 등록 완료");
+    	                		var board_nm = $("#board_nm").val();
+        	            		contentLoad(board_nm, boardListUrl, {'board_seq' : board_seq});
+    	                	} else {
+    	                		alert("파일 등록실패했습니다.");
+    	                	}
+    	                }, 
+    	                error	: function(request, status, error) {
+    	        			alert("code : "+request.status+"\n\n"+"message : "+request.responseText+"\n\n"+"error : "+error);
+    	        		}
+            		});
+        		} else {
+        			alert("내용 입력 완료");
+            		var board_nm = $("#board_nm").val();
+            		contentLoad(board_nm, boardListUrl, {'board_seq' : board_seq});
+        		}
+        	} else {
+				alert("등록실패했습니다.");
+			}
+        }, 
+        error	: function(request, status, error) {
+			alert("code : "+request.status+"\n\n"+"message : "+request.responseText+"\n\n"+"error : "+error);
+		}
+	});
+	return true;
+}
+</script>
 <div class="content_wraper">
 	<h3>게시글 작성</h3>
 	<div style="justify-content: center;">
@@ -239,7 +223,7 @@
 		<strong>></strong>
 		<span class="detailTd boardInsertBtn">게시글 작성</span>
 	</div>
-	<form action="/data/board/boardInsert" method="post" enctype="multipart/form-data" id="boardInsertForm" onsubmit="return formCheck()">
+	<form action="/data/board/boardInsert" method="post" id="boardInsertForm" enctype="multipart/form-data">
 		<table class="board_view">
 			<colgroup>
 				<col width="15%" />
@@ -252,10 +236,10 @@
 					<th scope="row">조회수</th>
 					<td>
 						조회수 : 0
-						<input type="hidden" name="board_content_hit" value="0">
+						<input type="hidden" name="board_content_hit" id="board_content_hit" value="0">
 					</td>
 					<th scope="row">작성자</th>
-					<td>${board_content_nm}<input type="hidden" name="board_content_nm" value="${board_content_nm}">
+					<td>${board_content_nm}<input type="hidden" name="board_content_nm" id="board_content_nm" value="${board_content_nm}">
 					</td>
 				</tr>
 				<%-- <tr>
@@ -301,15 +285,17 @@
 					</td>
 				</tr> --%>
 				<tr>
-					<th scope="row" rowspan="2">첨부파일</th>
+					<th scope="row">첨부파일</th>
 					<td colspan="3">
 					<input type="file" id="multi-add" class="btn-add" multiple style="display: none;" multiple="multiple" name="file" >
 					<button type="button" class="btn-add" id="file_add">파일추가</button>
+					<span class='file_upload_info'>(파일크기 : 100M )</span>
 					</td>
 				</tr>
-				<tr>
-					<td colspan="3"  id="file_table"></td>
-				</tr>
+		</table>
+		<table id="file_table"></table>
+		<table class="board_view">
+			<tbody>
 				<tr>
 					<th scope="row">제목</th>
 					<td colspan="3">
@@ -326,7 +312,7 @@
 			</tbody>
 		</table>
 		<div class="boardManagerDiv">
-		<input type="submit" class="btn btn-primary" value="등록하기">
+			<input type="button" value="등록하기" class="btn btn-primary" onclick="formCheck(); return false;">
 			<a class="btn dataListBody">목록으로</a>
 		</div>
 		<input type="hidden" name="board_seq" id="board_seq" value="${board_gb.board_seq}" />
@@ -334,6 +320,7 @@
         <input type="hidden" name="board_gb" id="board_gb" value="${board_gb.board_gb}"/>
         <input type="hidden" name="board_tp" id="board_tp" value="${board_gb.board_tp}"/>
 	</form>
+	
 	<form action="/edu/admin/board_contents_search" id="boardHiddenManagerForm" method="post">
 		<input type="hidden" name="board_seq" id="board_seq" value="${board_gb.board_seq}" />
 		<input type="hidden" name="board_nm" id="board_nm" value="${board_gb.board_nm}" />

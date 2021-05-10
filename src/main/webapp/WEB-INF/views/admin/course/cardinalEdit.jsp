@@ -53,14 +53,6 @@ $(document).ready(function () {
 		} else if(!$(":text[name='price']").val()) {
 			alert("금액을 입력해주세요.");
 			$(":text[name='price']").focus();
-		} else if($(':checkbox[name=classDay]:checked').length == 0) {
-			alert("수업일을 선택해주세요.");
-		} else if(!$('#classStartTime').val()) {
-			alert('수업 시작시간을 선택해주세요.');
-			$('#classStartTime').focus();
-		} else if(!$('#classEndTime').val()) {
-			alert('수업 종료시간을 선택해주세요.');
-			$('#classEndTime').focus();
 		} else if(confirm(_title+"하시겠습니까?")) {
 			// 모든 에디터 내용을 textarea Contents로 업데이트 시킴
 			$("textarea.editor").each(function(i) {
@@ -306,7 +298,7 @@ function setCourse(course) {
 	                        <span class='glyphicon glyphicon-calendar'></span>
 	                    </span>
 	                </div>
-					이수발급일 : 
+					이수발급일 : (JPT 특별시험의 경우 시험일)
 					<div class='input-group date datetimepicker' id='issueDate'>
 	                    <input type='text' name='issueDate' class='form-control' value='<c:out value="${cardinal.issueDate}" />' />
 	                    <span class='input-group-addon'>
