@@ -208,6 +208,10 @@
 			alert("일정 설정이 잘못되었습니다..");
 			return false;
 		}
+		if ($("#startDate").val() == '' || $("#endDate").val() == '') {
+			alert("일정을 입력해주세요.");
+			return false;
+		}
 		if ($("#gisuList").val() == null || $("#gisuList").val() == '' || $("#gisuValue").val() == null || $("#gisuValue").val() == '') {
 			alert('과정과 기수 설정이 안되있습니다.');
 			return false;
@@ -2300,17 +2304,19 @@
 								</c:forEach>
 							</select>
 						</dd>
-						<dt>시험 일정</dt>
+						<dt>시험 일정
+							<span class='require'>*</span>
+						</dt>
 						<dd>
 							<div class='input-group date datetimepicker'  id="appStartDate" style="width: 40%;margin-right: 1%;">
-								<input type='text' name='appStartDate' id="startDate" class='form-control'/>
+								<input type='text' name='appStartDate' id="startDate" class='form-control' placeholder="yyyy-mm-dd 형태로 입력: 예시) 1999-01-01"/>
 								<span class='input-group-addon' id="startDate2">
 									<span class='glyphicon glyphicon-calendar' id="startDate3" ></span>
 								</span>
 							</div>
 							~
 							<div class='input-group date datetimepicker' id='appEndDate' style="width: 40%;margin-left: 1%">
-								<input type='text' name='appEndDate' id="endDate" class='form-control'/>
+								<input type='text' name='appEndDate' id="endDate" class='form-control' placeholder="yyyy-mm-dd 형태로 입력: 예시) 1999-01-01"/>
 								<span class='input-group-addon'>
 									<span class='glyphicon glyphicon-calendar'></span>
 								</span>

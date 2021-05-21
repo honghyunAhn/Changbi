@@ -18,9 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -610,11 +610,82 @@ public class BoardController {
     
     @ResponseBody
     @RequestMapping(value = "/boardInsert", method = RequestMethod.POST)
-	public int boardInsert(@RequestParam HashMap<String, Object> params) throws IOException{
+	public int boardInsert(@RequestParam HashMap<String, Object> param, MultipartHttpServletRequest multiRequest, Authentication auth) throws IOException{
 		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 컨트롤러 시작");
-		logger.debug("anh288-params" + params);
-//		logger.debug("anh288-multiRequest"+ multiRequest);
-		int result = boardService.boardInsert(params);
+		int result = boardService.boardInsert(param);
+		List<MultipartFile> fileList = multiRequest.getFiles("uploadFile");
+		//업로드한 파일이 없으면 실행되지 않음
+		if(fileList != null){
+		 //파일이 저장될 경로 설정
+		 String path = "/upload/board/files";
+		 File dir = new File(path);
+			 if(!dir.isDirectory()){
+				 dir.mkdirs();
+			 }
+			
+			 if(!fileList.isEmpty()){
+			 //넘어온 파일을 리스트로 저장
+				 for(int i = 0; i < fileList.size() ; i++){
+					 //파일 중복명 처리
+					 String random = UUID.randomUUID().toString();
+					 //원래 파일명
+					 String board_file_origin = fileList.get(i).getOriginalFilename();
+					 //저장되는 파일이름
+					 String saveFileName = random + "_"+ board_file_origin;
+					 //저장될 파일 경로
+					 String board_file_saved = path + saveFileName;
+					 //파일 저장
+					 fileList.get(i).transferTo(new File(board_file_saved));
+					 BoardFile boardFile = new BoardFile();
+					 boardFile.setBoard_file_origin(board_file_origin);
+					 boardFile.setBoard_file_saved(board_file_saved);
+//					 boardFile.setBoard_content_seq(Integer.parseInt(String.valueOf(param.get("board_content_seq"))));
+					 boardFile.setBoard_ins_id(String.valueOf(param.get("board_content_nm")));
+					 boardFile.setBoard_udt_id(String.valueOf(param.get("board_content_nm")));
+					 System.out.println("anh288-file" + i + " : " + boardFile);
+					 boardService.board_file_insert(path, boardFile, param.get("board_content_seq"));
+				}
+			}
+		}
+
+		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 컨트롤러 종료");
+		return result;
+	}
+    @ResponseBody
+    @RequestMapping(value = "/bordFileInsert", method = RequestMethod.POST)
+    public int bordFileInsert(MultipartHttpServletRequest multiRequest) throws IOException{
+    	logger.debug("모집홍보 관리자 게시글 파일 업로드 컨트롤러 시작");
+    	List<MultipartFile> fileList = multiRequest.getFiles("uploadFile");
+		//업로드한 파일이 없으면 실행되지 않음
+		if(fileList != null){
+		 //파일이 저장될 경로 설정
+		 String path = "/upload/board/files";
+		 File dir = new File(path);
+			 if(!dir.isDirectory()){
+				 dir.mkdirs();
+			 }
+			
+			 if(!fileList.isEmpty()){
+			 //넘어온 파일을 리스트로 저장
+				 for(int i = 0; i < fileList.size() ; i++){
+					 //파일 중복명 처리
+					 String random = UUID.randomUUID().toString();
+					 //원래 파일명
+					 String board_file_origin = fileList.get(i).getOriginalFilename();
+					 //저장되는 파일이름
+					 String saveFileName = random + "_"+ board_file_origin;
+					 //저장될 파일 경로
+					 String board_file_saved = path + saveFileName;
+					 //파일 저장
+					 fileList.get(i).transferTo(new File(board_file_saved));
+					 BoardFile boardFile = new BoardFile();
+//					 boardFile.setBoard_content_seq(Integer.parseInt(String.valueOf(params.get("board_content_seq"))));
+					 boardFile.setBoard_file_origin(board_file_origin);
+					 boardFile.setBoard_file_saved(board_file_saved);
+					 logger.debug("anh288-file" + i + " : " + boardFile);
+				}
+			}
+		}
 		
 //		List<MultipartFile> fileList = multiRequest.getFiles("uploadFile");
 //		logger.debug("anh288-fileList"+ fileList);
@@ -683,48 +754,6 @@ public class BoardController {
 //                e.printStackTrace();
 //            }
 //        }
-		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 컨트롤러 종료");
-		return result;
-	}
-    @ResponseBody
-    @RequestMapping(value = "/bordFileInsert", method = RequestMethod.POST)
-    public int bordFileInsert(MultipartHttpServletRequest multiRequest) throws IOException{
-    	logger.debug("모집홍보 관리자 게시글 파일 업로드 컨트롤러 시작");
-    	logger.debug("anh288-multiRequest"+ multiRequest);
-    	List<MultipartFile> fileList = multiRequest.getFiles("file");
-		logger.debug("anh288-fileList"+ fileList);
-		//업로드한 파일이 없으면 실행되지 않음
-		if(fileList != null){
-		 //파일이 저장될 경로 설정
-		 String path = "/upload/board/files";
-		 File dir = new File(path);
-			 if(!dir.isDirectory()){
-				 dir.mkdirs();
-			 }
-			
-			 if(!fileList.isEmpty()){
-			 //넘어온 파일을 리스트로 저장
-				 for(int i = 0; i < fileList.size() ; i++){
-					 //파일 중복명 처리
-					 String random = UUID.randomUUID().toString();
-					 //원래 파일명
-					 String board_file_origin = fileList.get(i).getOriginalFilename();
-					 //저장되는 파일이름
-					 String saveFileName = random + "_"+ board_file_origin;
-					//저장될 파일 경로
-					 String board_file_saved = path + saveFileName;
-					 //파일사이즈
-	//				 int fileSize = (int) fileList.get(i).getSize();
-					 //파일 저장
-					 fileList.get(i).transferTo(new File(board_file_saved));
-					 BoardFile boardFile = new BoardFile();
-//					 boardFile.setBoard_content_seq(Integer.parseInt(String.valueOf(params.get("board_content_seq"))));
-					 boardFile.setBoard_file_origin(board_file_origin);
-					 boardFile.setBoard_file_saved(board_file_saved);
-					 logger.debug("anh288-file" + i + " : " + boardFile);
-				}
-			}
-		}
 		logger.debug("모집홍보 관리자 게시글 파일 업로드 컨트롤러 종료");
     	return 0;
     }
