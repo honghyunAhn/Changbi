@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.changbi.tt.dev.data.vo.BoardCommentVO;
+import com.changbi.tt.dev.data.vo.BoardFileVO;
 import com.changbi.tt.dev.data.vo.BoardReplyVO;
 import com.changbi.tt.dev.data.vo.BoardVO;
 import com.changbi.tt.dev.data.vo.CardinalVO;
@@ -173,4 +174,7 @@ public interface BoardDAO {
 	
 	//게시글 등록
 	int boardInsert(HashMap<String, Object> params);
+	
+	//	게시글 파일 등로
+	void board_file_insert(BoardFileVO boardFile);
 }

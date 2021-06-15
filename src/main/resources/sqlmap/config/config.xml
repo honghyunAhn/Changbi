@@ -42,6 +42,7 @@
     	<typeAlias alias="CouponVO"				type="com.changbi.tt.dev.data.vo.CouponVO"/>			<!-- 쿠폰 관리 정보 -->
     	<typeAlias alias="BoardVO" 				type="com.changbi.tt.dev.data.vo.BoardVO"/> 			<!-- 게시판 정보 -->
     	<typeAlias alias="BoardReplyVO" 		type="com.changbi.tt.dev.data.vo.BoardReplyVO"/> 		<!-- 게시판 댓글정보 -->
+    	<typeAlias alias="BoardFileVO"			type="com.changbi.tt.dev.data.vo.BoardFileVO"/>			<!-- 게시판 파일정보 -->
     	<typeAlias alias="AttLecHistoryVO"		type="com.changbi.tt.dev.data.vo.AttLecHistoryVO"/> 	<!-- 수강이력 히스토리 정보 -->
     	<typeAlias alias="GroupLearnAppVO"		type="com.changbi.tt.dev.data.vo.GroupLearnAppVO"/> 	<!-- 단체결제 관리 정보 -->
     	<typeAlias alias="SchoolVO"				type="com.changbi.tt.dev.data.vo.SchoolVO"/>			<!-- 학교정보 -->

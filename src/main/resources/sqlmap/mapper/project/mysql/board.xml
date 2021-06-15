@@ -2120,4 +2120,27 @@
 	</insert>
 	<!-- 관리자 게시판 세부내용 등록 종료 -->
 	
+	<!-- 관리자 게시판 파일 등록 시작 -->
+	<insert id="board_file_insert" parameterType="BoardFileVO">
+		insert into
+			com_board_file_tb (
+				board_content_seq
+				, board_file_saved
+				, board_file_origin
+				, board_file_ins_id
+				, board_file_ins_dt
+				, board_file_udt_id
+				, board_file_udt_dt
+			) values (
+				#{board_content_seq}
+				, #{board_file_saved}
+				, #{board_file_origin}
+				, #{board_ins_id}
+				, now()
+				, #{board_udt_id}
+				, now()
+			)
+	</insert>
+	<!-- 관리자 게시판 파일 등록 종료 -->
+	
 </mapper>

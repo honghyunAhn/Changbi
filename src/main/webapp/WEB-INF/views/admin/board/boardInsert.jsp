@@ -30,8 +30,12 @@
 		/* CKEditor */
 		CKEDITOR.replace('board_content_ct', {
 			filebrowserUploadUrl : '/board/imageUpload',
+			enterMode: CKEDITOR.ENTER_BR,
+			shiftEnterMode:  CKEDITOR.ENTER_P,
+			fullPage: true,
+			allowedContent:  true
 		});
-
+		window.parent.CKEDITOR.tools.callFunction("1", "/edu/apply/ckeditor/20210604.jpg", '파일 전송 완료');
 		/* 게시판 관리 페이지 이동 */
 		$('.allBoardList').on('click', function() {
 			var params = $('form[name="searchForm"]').serializeObject();
@@ -167,7 +171,6 @@
 	        data : formData,
 	        success : function(result){
 	        	if(result > 0){
-	        		alert("등록완료");
 	         		contentLoad(formData.get("board_nm"), boardListUrl, {'board_seq' : formData.get("board_seq")});
 	        	} else{
 	        		alert("등록실패했습니다.");
@@ -216,48 +219,6 @@
 						</div>
 					</td>
 				</tr>
-				<%-- <tr>
-					<th scope="row">첨부파일1</th>
-					<td colspan="3">
-						<div class='attach_file_area' style="clear: both; flex: auto;">
-							<!-- fileId 세팅(저장 시 가지고 가야 할 ID) -->
-							<input type='hidden' class='attach_file_id'	name='file1.fileId' value='<c:out value="${board.file1.fileId}" default="" />' />
-							<input type='hidden' class='upload_dir' name='upload_dir'	value='/upload/board/files' />
-							<div class='file_upload_btn_area' style="clear: both;">
-								<input type='button' class='file_upload_btn' style="cursor: pointer; margin: 5px;" value='파일검색' />
-								<span class='file_upload_info'>(파일갯수 : 1개, 파일크기 : 100M )</span>
-							</div>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row">첨부파일2</th>
-					<td colspan="3">
-						<div class='attach_file_area' style="clear: both; flex: auto;">
-							<!-- fileId 세팅(저장 시 가지고 가야 할 ID) -->
-							<input type='hidden' class='attach_file_id'	name='file2.fileId' value='<c:out value="${board.file2.fileId}" default="" />' />
-							<input type='hidden' class='upload_dir' name='upload_dir'	value='/upload/board/files' />
-							<div class='file_upload_btn_area' style="clear: both;">
-								<input type='button' class='file_upload_btn' style="cursor: pointer; margin: 5px;" value='파일검색' />
-								<span class='file_upload_info'>(파일갯수 : 1개, 파일크기 : 100M )</span>
-							</div>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row">첨부파일3</th>
-					<td colspan="3">
-						<div class='attach_file_area' style="clear: both; flex: auto;">
-							<!-- fileId 세팅(저장 시 가지고 가야 할 ID) -->
-							<input type='hidden' class='attach_file_id'	name='file3.fileId' value='<c:out value="${board.file3.fileId}" default="" />' />
-							<input type='hidden' class='upload_dir' name='upload_dir'	value='/upload/board/files' />
-							<div class='file_upload_btn_area' style="clear: both;">
-								<input type='button' class='file_upload_btn' style="cursor: pointer; margin: 5px;" value='파일검색' />
-								<span class='file_upload_info'>(파일갯수 : 1개, 파일크기 : 100M )</span>
-							</div>
-						</div>
-					</td>
-				</tr> --%>
 				<tr>
 					<th scope="row" style="width: 20%;">첨부파일</th>
 					<td colspan="3">

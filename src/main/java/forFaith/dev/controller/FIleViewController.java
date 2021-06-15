@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.changbi.tt.dev.util.FileService;
 import com.lms.student.util.PathConstants;
 
 import forFaith.dev.service.AttachFileService;
@@ -48,14 +49,17 @@ public class FIleViewController implements PathConstants {
 		fileService.fileDownload(response, origin, saved, path);
 	}
 	
+	/*
+	 * CKEditor 이미지 등록
+	 */
 	@RequestMapping(value = "/board/imageUpload", method = RequestMethod.POST)
-    public String communityImageUpload(MultipartHttpServletRequest request, Model model,String CKEditorFuncNum) {
- 
-		HashMap<String, String> result = fileService.temporarilySave(request,eduApplyCkeditor);
+	public String communityImageUpload(MultipartHttpServletRequest request, Model model,String CKEditorFuncNum) {
+		
+		HashMap<String, String> result = FileService.temporarilySave(request,eduApplyCkeditor);
 		
 		model.addAttribute("file_path", eduApplyCkeditor+"/"+result.get("savedfile"));
 		model.addAttribute("CKEditorFuncNum", CKEditorFuncNum);
-
-        return "segroup/society/edu/admin/board_ckeditor";
-    }
+		
+		return "/admin/board/board_ckeditor";
+	}
 }
