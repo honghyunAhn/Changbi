@@ -7,25 +7,7 @@
 	var allBoardListUrl = "<c:url value='/admin/board/allBoardList' />";
 	var boardListUrl = "<c:url value='/admin/board/boardListBySeq' />";
 	var insertUrl = "<c:url value='/admin/board/boardInsert' />";
-	
-	
- 	/* // 네이버 스마트 에디터 저장 객체
-	var editor_object = [];
-	
-	
-	// 파일 업로드 정보 객체 생성 및 전달
-	var file_object = [];
-	
-	
-	// 파일
-	file_object[0] = { maxCount : 1, maxSize : 100, maxTotalSize : 100, accept : 'all'};
-	file_object[1] = { maxCount : 1, maxSize : 100, maxTotalSize : 100, accept : 'all'};
-	file_object[2] = { maxCount : 1, maxSize : 100, maxTotalSize : 100, accept : 'all'}; 
-	
-	
-	// 에디터, 언어 선택 기능 초기화
-	setPageInit(editor_object); */
-	
+	window.parent.CKEDITOR.tools.callFunction('${CKEditorFuncNum}', '${file_path}', '파일 전송 완료.');
 	$(function() {
 		/* CKEditor */
 		CKEDITOR.replace('board_content_ct', {
@@ -171,6 +153,7 @@
 	        data : formData,
 	        success : function(result){
 	        	if(result > 0){
+	        		CKEDITOR.instances.board_content_ct.destroy();
 	         		contentLoad(formData.get("board_nm"), boardListUrl, {'board_seq' : formData.get("board_seq")});
 	        	} else{
 	        		alert("등록실패했습니다.");

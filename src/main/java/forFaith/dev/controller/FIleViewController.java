@@ -3,6 +3,7 @@
  */
 package forFaith.dev.controller;
 
+import java.io.PrintWriter;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletResponse;
@@ -53,13 +54,26 @@ public class FIleViewController implements PathConstants {
 	 * CKEditor 이미지 등록
 	 */
 	@RequestMapping(value = "/board/imageUpload", method = RequestMethod.POST)
-	public String communityImageUpload(MultipartHttpServletRequest request, Model model,String CKEditorFuncNum) {
+	public void communityImageUpload(MultipartHttpServletRequest request, Model model,String CKEditorFuncNum, HttpServletResponse response) {
 		
 		HashMap<String, String> result = FileService.temporarilySave(request,eduApplyCkeditor);
+		PrintWriter printWriter = null;
+		response.setCharacterEncoding("utf-8");
+		response.setContentType("text/html;charset=utf-8");
 		
-		model.addAttribute("file_path", eduApplyCkeditor+"/"+result.get("savedfile"));
-		model.addAttribute("CKEditorFuncNum", CKEditorFuncNum);
+		String fileUrl = eduApplyCkeditor+"/"+result.get("savedfile");
+		String callback = CKEditorFuncNum;
 		
-		return "/admin/board/board_ckeditor";
+		try {
+			printWriter = response.getWriter();
+			printWriter.println("<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction("+ callback+ ",'"+ fileUrl+"','파일 전송 완료.'"+ ")</script>");
+			printWriter.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (printWriter != null) {
+				printWriter.close();
+			}
+		}
 	}
 }
