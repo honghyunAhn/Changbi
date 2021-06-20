@@ -20,6 +20,7 @@ import com.changbi.tt.dev.data.vo.CardinalVO;
 import com.changbi.tt.dev.data.vo.NoteVO;
 import com.changbi.tt.dev.data.vo.SurveyItemVO;
 import com.changbi.tt.dev.data.vo.SurveyVO;
+import com.changbi.tt.dev.util.FileService;
 
 import forFaith.dev.dao.AttachFileDAO;
 import forFaith.dev.vo.AttachFileVO;
@@ -468,5 +469,16 @@ public class BoardService {
 		logger.debug("해당 게시글 파일 정보 등록 서비스 함수 시작");
 		boardDao.board_file_insert(boardFile);
 		logger.debug("해당 게시글 파일 정보 등록 서비스 함수 종료");
+	}
+	
+	//	게시글 파일 삭제
+	public void board_file_delete(ArrayList<Integer> board_file_seq_list, ArrayList<String> board_file_saved_list) {
+		logger.debug("모집홍보 관리자 게시글 파일 삭제 서비스 시작");
+		String path = "edu/apply/board_file";
+		for(int i=0; i<board_file_seq_list.size(); i++){
+			FileService.deleteFile(board_file_saved_list.get(i), path);
+			boardDao.delete_board_file(board_file_seq_list.get(i));
+		}
+		logger.debug("모집홍보 관리자 게시글 파일 삭제 서비스 종료");
 	}
 }

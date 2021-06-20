@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +38,6 @@ import com.changbi.tt.dev.data.vo.SurveyItemVO;
 import com.changbi.tt.dev.data.vo.SurveyVO;
 import com.changbi.tt.dev.util.FileService;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import forFaith.dev.service.AttachFileService;
 import forFaith.dev.util.LoginHelper;
@@ -609,17 +607,7 @@ public class BoardController {
 
 		return boardList;
 	}
-
-	@ResponseBody
-	@RequestMapping(value = "/boardDelete", method = RequestMethod.POST)
-	public int board_contents_delete(int board_content_seq) {
-		logger.debug("모집홍보 관리자 게시글 삭제 컨트롤러 시작");
-		int result = 0;
-		result = boardService.board_contents_delete(board_content_seq);
-		logger.debug("모집홍보 관리자 게시글 삭제 컨트롤러 종료");
-		return result;
-	}
-
+	
 	/*
 	 * 게시글 등록
 	 */
@@ -655,8 +643,32 @@ public class BoardController {
 				}
 			}
 		}
-
 		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 컨트롤러 종료");
 		return result;
 	}
+	/*
+	 * 게시글 파일 삭제
+	 */
+	@ResponseBody
+	@RequestMapping(value = "boardFileDelete", method = RequestMethod.POST)
+	public void delete_board_file(@RequestParam(defaultValue="") ArrayList<Integer> board_file_seq_list, 
+			@RequestParam(defaultValue="") ArrayList<String> board_file_saved_list){
+		logger.debug("모집홍보 관리자 게시글 파일 삭제 컨트롤러 시작");
+		boardService.board_file_delete(board_file_seq_list, board_file_saved_list);
+		logger.debug("모집홍보 관리자 게시글 파일 삭제 컨트롤러 종료");
+	}
+	/*
+	 * 게시글 삭제
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/boardDelete", method = RequestMethod.POST)
+	public int board_contents_delete(int board_content_seq) {
+		logger.debug("모집홍보 관리자 게시글 삭제 컨트롤러 시작");
+		int result = boardService.board_contents_delete(board_content_seq);
+		logger.debug("모집홍보 관리자 게시글 삭제 컨트롤러 종료");
+		return result;
+	}
+	
+	
+	
 }

@@ -17,7 +17,6 @@
 			fullPage: true,
 			allowedContent:  true
 		});
-		window.parent.CKEDITOR.tools.callFunction("1", "/edu/apply/ckeditor/20210604.jpg", '파일 전송 완료');
 		/* 게시판 관리 페이지 이동 */
 		$('.allBoardList').on('click', function() {
 			var params = $('form[name="searchForm"]').serializeObject();
@@ -29,6 +28,8 @@
 		$(".dataListBody").on("click", function() {
 			var board_seq = $("#board_seq").val();
 			var board_nm = $("#board_nm").val();
+			alert(board_seq);
+			alert(board_nm);
 			// ajax로 load
 			contentLoad(board_nm, boardListUrl, {'board_seq' : board_seq});
 		});
@@ -126,7 +127,8 @@
 		$('#totSize').text("");
 		$('#totSize').text(Math.floor($totSize / 1000000));
 	});
-
+	
+	//게시판 등록
 	function formCheck(){
 		var form = $("form")[0];        
 	    var formData = new FormData(form);

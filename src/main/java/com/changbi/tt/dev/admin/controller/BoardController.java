@@ -408,4 +408,8 @@ public class BoardController {
 		
  		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 폼 이동 컨트롤러 종료");
  	}
+    @RequestMapping(value="/boardUpdate")
+    public void boardUpdate(@RequestParam HashMap<String, Object> params, ModelMap model) throws Exception{
+		model.addAttribute("search", params);
+    }
 }

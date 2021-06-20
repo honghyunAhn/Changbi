@@ -6,14 +6,68 @@
 <script>
 	$(function() {
 		//변수영역
+		var allBoardListUrl = "<c:url value='/admin/board/allBoardList' />";
 		var boardListUrl = "<c:url value='/admin/board/boardListBySeq' />";
-		var deleteUrl = "<c:url value='/data/board/boardDelete' />";
-		var board_seq = $("#board_seq").val();
-		var board_nm = $("#board_nm").val();
+		var boardUpdateUrl = "<c:url value='/admin/board/boardUpdate' />";
+
+		/* 게시판 관리 페이지 이동 */
+		$('.allBoardList').on('click', function() {
+			var params = $('form[name="searchForm"]').serializeObject();
+			// ajax로 load
+			contentLoad('게시글 관리', allBoardListUrl, params);
+		});
+		
+		/* 게시판 내용 페이지(목록으로) 이동 */
+		$(".dataListBody").on("click", function() {
+			var board_seq = $("#board_seq").val();
+			var board_nm = $("#board_nm").val();
+			alert(board_seq);
+			alert(board_nm);
+			contentLoad(board_nm, boardListUrl, {'board_seq' : board_seq});
+		});
+		
 		// 삭제하기
 		$("#boardDeleteBtn").on("click", function() {
 			var board_content_seq = $("#bd_board_content_seq").val();
+			var board_file_seq_list = [];
+			var board_file_saved_list = []; 
+			
+			$("input:hidden[name=board_file_seq]").each(function(index, item){
+				board_file_seq_list.push($(item).val());
+			});
+			
+			$("input:hidden[name=board_file_saved]").each(function(index, item){
+				board_file_saved_list.push($(item).val());
+			});
+			
+			jQuery.ajaxSettings.traditional = true;
+			
 			if (confirm("삭제하시겠습니까?")) {
+				console.log(board_file_seq_list);
+				console.log(board_file_saved_list);
+				if(board_file_seq_list.length > 0){
+					$.ajax({
+							beforeSend: function(xhr) {
+							     xhr.setRequestHeader("AJAX", true);
+							}
+							, type: "post"
+							, url : '/data/board/boardFileDelete'
+							, type : 'post'
+							, data : {
+								board_file_seq_list : board_file_seq_list,
+								board_file_saved_list : board_file_saved_list
+							}
+							, success : function() {
+							
+							}
+							, error: function(e) {
+								if(e.status == 403){
+									alert('<spring:message code="com.login.ajaxSesstion" javaScriptEscape="true" />');
+									location.href = "/fap/admin/admin_login";
+								}
+							}
+					});
+				}
 				$.ajax({
 					type	: "post",
 					url : "/data/board/boardDelete",
@@ -34,7 +88,8 @@
 		});
 		//수정하기
 		$("#boardUpdateBtn").on("click", function() {
-			$("#boardHiddenForm_update").submit();
+			var params = $("#boardHiddenForm_update").serializeObject(); 
+			contentLoad("게시판 수정", boardUpdateUrl, params);
 		});
 		//목록으로
 		$("#boardManagerBtn").on("click", function() {
@@ -49,9 +104,11 @@
 <div class="content_wraper">
 	<h3></h3>
 	<div style="justify-content: center;">
-		<span class="detailTd">게시판 관리</span>
+		<span class="detailTd allBoardList">게시판 관리</span>
 		<strong>></strong>
-		<span class="detailTd">${board_gb.board_nm}</span>
+		<span class="detailTd dataListBody">${board_gb.board_nm}</span>
+		<strong>></strong>
+		<span class="detailTd boardInsertBtn">게시글 작성</span>
 	</div>
 	<br>
 	<form name="searchForm">
@@ -92,6 +149,8 @@
 					<strong>${data.board_file_origin }</strong>
 				</a>
 				<img class="boardImage" alt="" src="${path }/${data.board_file_saved }"> <br/>
+				<input type="hidden" class="board_file_seq" name="board_file_seq" value="${data.board_file_seq }">
+				<input type="hidden" class="board_file_saved" name="board_file_saved" value="${data.board_file_saved }">
 			</c:forEach>
 		    </td>
 		</tr>
