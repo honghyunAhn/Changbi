@@ -8,6 +8,7 @@
 		//변수영역
 		var allBoardListUrl = "<c:url value='/admin/board/allBoardList' />";
 		var boardListUrl = "<c:url value='/admin/board/boardListBySeq' />";
+		var detailUrl = "<c:url value='/admin/board/boardDetail' />";
 		var boardUpdateUrl = "<c:url value='/admin/board/boardUpdate' />";
 
 		/* 게시판 관리 페이지 이동 */
@@ -19,14 +20,29 @@
 		
 		/* 게시판 내용 페이지(목록으로) 이동 */
 		$(".dataListBody").on("click", function() {
-			var board_seq = $("#board_seq").val();
-			var board_nm = $("#board_nm").val();
-			alert(board_seq);
-			alert(board_nm);
-			contentLoad(board_nm, boardListUrl, {'board_seq' : board_seq});
+			var params = $("#boardMoveHidden").serializeObject(); 
+			contentLoad(params.board_nm, boardListUrl, params);
 		});
 		
-		// 삭제하기
+		/* 게시판 상세 페이지 이동 */
+		$(".boardDetailMove").on("click", function() {
+			var params = $("#boardMoveHidden").serializeObject(); 
+			contentLoad(params.board_nm, detailUrl, params);
+		});
+		
+		//수정하기 버튼
+		$("#boardUpdateBtn").on("click", function() {
+			var params = $("#boardMoveHidden").serializeObject();
+			contentLoad("게시판 수정", boardUpdateUrl, params);
+		});
+		
+		//목록으로 버튼
+		$("#boardManagerBtn").on("click", function() {
+			var params = $("#boardMoveHidden").serializeObject(); 
+			contentLoad(params.board_nm, boardListUrl, params);
+		});
+		
+		// 삭제하기 버튼
 		$("#boardDeleteBtn").on("click", function() {
 			var board_content_seq = $("#bd_board_content_seq").val();
 			var board_file_seq_list = [];
@@ -86,17 +102,7 @@
 			}
 			return false;
 		});
-		//수정하기
-		$("#boardUpdateBtn").on("click", function() {
-			var params = $("#boardHiddenForm_update").serializeObject(); 
-			contentLoad("게시판 수정", boardUpdateUrl, params);
-		});
-		//목록으로
-		$("#boardManagerBtn").on("click", function() {
-			var params = $('form[name=searchForm]').serializeObject();
-			// ajax로 load
-			contentLoad('${board_gb.board_nm}', boardListUrl, params);
-		});
+		
 		// 컨텐츠 타이틀
 		$('.content_wraper').children('h3').eq(0).html($('title').text());
 	})
@@ -108,7 +114,7 @@
 		<strong>></strong>
 		<span class="detailTd dataListBody">${board_gb.board_nm}</span>
 		<strong>></strong>
-		<span class="detailTd boardInsertBtn">게시글 작성</span>
+		<span class="detailTd boardDetailMove">게시글 상세</span>
 	</div>
 	<br>
 	<form name="searchForm">
@@ -188,6 +194,11 @@
     </form>
     <form action="/data/board/boardDelete" id="boardHiddenForm_delete" method="post">
         <input type="hidden" name="board_content_seq" value="${boardDetail.board_content_seq }" />
+    </form>
+    <form action="/data/board/boardDelete" id="boardMoveHidden" method="post">
+        <input type="hidden" name="board_seq" value="${search.board_seq}" />
+        <input type="hidden" name="board_nm" value="${search.board_nm}" />
+        <input type="hidden" name="board_content_seq" value="${search.board_content_seq}" />
     </form>
 	</div>
 </div>

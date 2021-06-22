@@ -7,7 +7,10 @@
 	var allBoardListUrl = "<c:url value='/admin/board/allBoardList' />";
 	var boardListUrl = "<c:url value='/admin/board/boardListBySeq' />";
 	var insertUrl = "<c:url value='/admin/board/boardInsert' />";
+	var params = $('form[name="searchForm"]').serializeObject();
+	
 	window.parent.CKEDITOR.tools.callFunction('${CKEditorFuncNum}', '${file_path}', '파일 전송 완료.');
+	
 	$(function() {
 		/* CKEditor */
 		CKEDITOR.replace('board_content_ct', {
@@ -17,6 +20,7 @@
 			fullPage: true,
 			allowedContent:  true
 		});
+		
 		/* 게시판 관리 페이지 이동 */
 		$('.allBoardList').on('click', function() {
 			var params = $('form[name="searchForm"]').serializeObject();
@@ -26,25 +30,23 @@
 		
 		/* 게시판 내용 페이지(목록으로) 이동 */
 		$(".dataListBody").on("click", function() {
-			var board_seq = $("#board_seq").val();
-			var board_nm = $("#board_nm").val();
-			alert(board_seq);
-			alert(board_nm);
+			var params = $('#boardHiddenManagerForm').serializeObject();
 			// ajax로 load
-			contentLoad(board_nm, boardListUrl, {'board_seq' : board_seq});
+			contentLoad(params.board_nm, boardListUrl, params);
 		});
 
 		/* 게시판 등록 페이지 이동 */
 		$('.boardInsertBtn').on('click', function(){
-			var board_seq = $("#board_seq").val();
+			var params = $('#boardHiddenManagerForm').serializeObject();
 			// ajax로 load
-			contentLoad('게시글 작성', insertUrl, {'board_seq' : board_seq});
+			contentLoad('게시글 작성', insertUrl, params);
 		});
 		
 		function gotolist() {
 			$("#boardHiddenManagerForm").submit();
 		}
 	});
+	
 	$("#file_add").on('click',function(){ $('#multi-add').click(); });
 	var $fileListArr = new Array();
 	var $totSize = 0;
@@ -156,7 +158,8 @@
 	        success : function(result){
 	        	if(result > 0){
 	        		CKEDITOR.instances.board_content_ct.destroy();
-	         		contentLoad(formData.get("board_nm"), boardListUrl, {'board_seq' : formData.get("board_seq")});
+	        		var params = $("#boardHiddenManagerForm").serializeObject();
+	         		contentLoad(formData.get("board_nm"), boardListUrl, params);
 	        	} else{
 	        		alert("등록실패했습니다.");
 	        	}

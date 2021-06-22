@@ -70,9 +70,13 @@
 		$("#dataListBody").on("click", ".board_nm", function() {
 			var board_seq = $(this).closest('tr').find(':hidden[name=board_seq]').val();
 			var board_nm = $(this).text();
+			
 			var params = $('form[name=searchForm]').serializeObject();
+			params.board_seq = board_seq;
+			params.board_nm = board_nm;
+			
 			// ajax로 load
-			contentLoad(board_nm, boardListUrl, {'board_seq' : board_seq});
+			contentLoad(board_nm, boardListUrl, params);
 		});
 		/** 페이지 시작 **/
 		// 최초 리스트 페이지 호출 한다.

@@ -370,7 +370,6 @@ public class BoardController {
     	 
     	model.addAttribute("board_gb", boardService.board_gb_search(params));
     	model.addAttribute("search", params);
-    	
 		try{
 			boardService.board_contents_hit_update(params);
 		}catch(Exception e){
