@@ -175,9 +175,12 @@ public interface BoardDAO {
 	//게시글 등록
 	int boardInsert(HashMap<String, Object> params);
 	
-	//	게시글 파일 등록
+	//게시글 파일 등록
 	void board_file_insert(BoardFileVO boardFile);
 
-	//	게시글 파일 삭제
+	//게시글 파일 삭제
 	void delete_board_file(Integer integer);
+	
+	//게시글 수정
+	int board_content_update(HashMap<String, Object> param);
 }

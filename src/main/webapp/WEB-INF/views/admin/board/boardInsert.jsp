@@ -145,6 +145,7 @@
 			alert("제목을 입력해 주세요.");
 			return false;
 		}
+		
 		var check = confirm("등록하시겠습니까?");
 		if (!check) {
 			return false;

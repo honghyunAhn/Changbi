@@ -27,13 +27,13 @@
 		/* 게시판 상세 페이지 이동 */
 		$(".boardDetailMove").on("click", function() {
 			var params = $("#boardMoveHidden").serializeObject(); 
-			contentLoad(params.board_nm, detailUrl, params);
+			contentLoad("게시글 상세", detailUrl, params);
 		});
 		
 		//수정하기 버튼
 		$("#boardUpdateBtn").on("click", function() {
 			var params = $("#boardMoveHidden").serializeObject();
-			contentLoad("게시판 수정", boardUpdateUrl, params);
+			contentLoad(params.board_nm, boardUpdateUrl, params);
 		});
 		
 		//목록으로 버튼
@@ -90,7 +90,7 @@
 					data 	: {"board_content_seq" : board_content_seq},
 					success	: function(result) {
 						if(result > 0){
-							var params = $('form[name=searchForm]').serializeObject();
+							var params = $('#boardMoveHidden').serializeObject();
 							// ajax로 load
 							contentLoad('${board_gb.board_nm}', boardListUrl, params);
 						}

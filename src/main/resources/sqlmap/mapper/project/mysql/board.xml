@@ -2142,16 +2142,27 @@
         where
             board_content_seq = #{board_content_seq}
     </delete>
-    <!-- 관리자 게시판 세부내용 수정 종료 -->
+    <!-- 관리자 게시판 세부내용 삭제 종료 -->
     
     
-    <!-- 관리자 게시판 세부내용 삭제 시작 -->
+    <!-- 관리자 게시판 세부내용 파일 삭제 시작 -->
     <delete id="delete_board_file" parameterType="int">
         delete from
             com_board_file_tb
         where
             board_file_seq = #{board_file_seq}
     </delete>
+    <!-- 관리자 게시판 세부내용 파일 삭제 종료 -->
+    
+    <!-- 관리자 게시판 세부내용 수정 시작 -->
+    <update id="board_content_update" parameterType="map">
+        update com_board_content_tb 
+        set
+        	board_content_title = #{board_content_title},
+			board_content_ct = #{board_content_ct}
+        where
+            board_content_seq = #{board_content_seq}
+    </update>
     <!-- 관리자 게시판 세부내용 수정 종료 -->
 	
 </mapper>

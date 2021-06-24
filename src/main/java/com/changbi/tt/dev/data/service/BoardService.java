@@ -451,16 +451,11 @@ public class BoardService {
 		return path;
 	}
 	
-	//게시글 삭제
-	public int board_contents_delete(int board_content_seq) {
-		return boardDao.board_contents_delete(board_content_seq);
-	}
-	
 	//게시글 등록
 	public int boardInsert(HashMap<String, Object> params) {
-		logger.debug("게시글 세부 내용 등록 폼 이동 서비스 시작");
+		logger.debug("게시글 세부 내용 등록 서비스 시작");
 		int result = boardDao.boardInsert(params);
-		logger.debug("게시글 세부 내용 등록 폼 이동 서비스 종료");
+		logger.debug("게시글 세부 내용 등록 서비스 종료");
 		return result;
 	}
 	
@@ -471,14 +466,43 @@ public class BoardService {
 		logger.debug("해당 게시글 파일 정보 등록 서비스 함수 종료");
 	}
 	
-	//	게시글 파일 삭제
+	//게시글 삭제
+	public int board_contents_delete(int board_content_seq) {
+		logger.debug("게시글 세부 내용 삭제 서비스 시작");
+		int result = boardDao.board_contents_delete(board_content_seq);
+		logger.debug("게시글 세부 내용 삭제 서비스 시작");
+		return result;
+	}
+		
+	//	게시글 파일 리스트 삭제
 	public void board_file_delete(ArrayList<Integer> board_file_seq_list, ArrayList<String> board_file_saved_list) {
-		logger.debug("모집홍보 관리자 게시글 파일 삭제 서비스 시작");
+		logger.debug("모집홍보 관리자 게시글 파일 리스트 삭제 서비스 시작");
 		String path = "edu/apply/board_file";
 		for(int i=0; i<board_file_seq_list.size(); i++){
 			FileService.deleteFile(board_file_saved_list.get(i), path);
 			boardDao.delete_board_file(board_file_seq_list.get(i));
 		}
-		logger.debug("모집홍보 관리자 게시글 파일 삭제 서비스 종료");
+		logger.debug("모집홍보 관리자 게시글 파일 리스트 삭제 서비스 종료");
 	}
+	
+	/*
+	 * 게시글 파일 삭제
+	 */
+	public void delete_board_file(int board_file_seq, String board_file_saved) {
+		logger.debug("모집홍보 관리자 게시글 파일 삭제 서비스 시작");
+		String path = "edu/apply/board_file";
+		FileService.deleteFile(board_file_saved, path);
+		boardDao.delete_board_file(board_file_seq);
+		logger.debug("모집홍보 관리자 게시글 파일 삭제 서비스 시작");
+	}
+	
+	//게시글 수정
+	public int board_content_update(HashMap<String, Object> param) {
+		logger.debug("게시글 세부 내용 수정 서비스 시작");
+		int result = boardDao.board_content_update(param);
+		logger.debug("게시글 세부 내용 수정 서비스 종료");
+		return result;
+	}
+
+	
 }

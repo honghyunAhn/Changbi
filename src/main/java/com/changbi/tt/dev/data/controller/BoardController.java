@@ -646,17 +646,30 @@ public class BoardController {
 		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 컨트롤러 종료");
 		return result;
 	}
+	
 	/*
-	 * 게시글 파일 삭제
+	 * 게시글 파일 리스트삭제
 	 */
 	@ResponseBody
 	@RequestMapping(value = "boardFileDelete", method = RequestMethod.POST)
 	public void delete_board_file(@RequestParam(defaultValue="") ArrayList<Integer> board_file_seq_list, 
 			@RequestParam(defaultValue="") ArrayList<String> board_file_saved_list){
-		logger.debug("모집홍보 관리자 게시글 파일 삭제 컨트롤러 시작");
+		logger.debug("모집홍보 관리자 게시글 파일 리스트 삭제 컨트롤러 시작");
 		boardService.board_file_delete(board_file_seq_list, board_file_saved_list);
-		logger.debug("모집홍보 관리자 게시글 파일 삭제 컨트롤러 종료");
+		logger.debug("모집홍보 관리자 게시글 파일 리스트 삭제 컨트롤러 종료");
 	}
+	
+	/*
+	 * 게시글 파일 삭제
+	 */
+	@ResponseBody
+	@RequestMapping(value = "boardFileDel", method = RequestMethod.POST)
+	public void delete_board_file(int board_file_seq, String board_file_saved){
+		logger.info("모집홍보 관리자 게시글 파일 삭제 컨트롤러 시작");		
+		boardService.delete_board_file(board_file_seq, board_file_saved);		
+		logger.info("모집홍보 관리자 게시글 파일 삭제 컨트롤러 종료");
+	}
+	
 	/*
 	 * 게시글 삭제
 	 */
@@ -669,6 +682,43 @@ public class BoardController {
 		return result;
 	}
 	
-	
-	
+	/*
+	 * 게시글 수정
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/boardUpdate", method = RequestMethod.POST)
+	public int board_content_update(@RequestParam HashMap<String, Object> param, MultipartHttpServletRequest multiRequest,
+			Authentication auth) throws Exception {
+		logger.debug("모집홍보 관리자 게시글 세부 내용 수정 컨트롤러 시작");
+		int result = boardService.board_content_update(param);
+		List<MultipartFile> fileList = multiRequest.getFiles("uploadFile");
+		
+		// 업로드한 파일이 없으면 실행되지 않음
+		if (fileList != null) {
+			// 파일이 저장될 경로 설정
+			String path = "edu/apply/board_file";
+
+			if (!fileList.isEmpty()) {
+				// 넘어온 파일을 리스트로 저장
+				for (int i = 0; i < fileList.size(); i++) {
+					// 원래 파일명
+					String board_file_origin = fileList.get(i).getOriginalFilename();
+					// 파일 저장
+					String board_file_saved = FileService.saveFile(fileList.get(i), path);
+
+					BoardFileVO boardFile = new BoardFileVO();
+					boardFile.setBoard_content_seq(Integer.parseInt(String.valueOf(param.get("board_content_seq"))));
+					boardFile.setBoard_file_saved(board_file_saved);
+					boardFile.setBoard_file_origin(board_file_origin);
+					boardFile.setBoard_ins_id(String.valueOf(param.get("board_content_nm")));
+					boardFile.setBoard_udt_id(String.valueOf(param.get("board_content_nm")));
+					boardFile.setBoard_file(fileList.get(i));
+
+					boardService.board_file_insert(boardFile);
+				}
+			}
+		}
+		logger.debug("모집홍보 관리자 게시글 세부 내용 수정 컨트롤러 종료");
+		return result;
+	}
 }

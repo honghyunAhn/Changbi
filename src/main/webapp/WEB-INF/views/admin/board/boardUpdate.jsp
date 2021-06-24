@@ -6,9 +6,16 @@
 <script type="text/javascript">
 	var allBoardListUrl = "<c:url value='/admin/board/allBoardList' />";
 	var boardListUrl = "<c:url value='/admin/board/boardListBySeq' />";
-	var insertUrl = "<c:url value='/admin/board/boardInsert' />";
+	var detailUrl = "<c:url value='/admin/board/boardDetail' />";
+	var boardUpdateUrl = "<c:url value='/admin/board/boardUpdate' />";
+	
 	window.parent.CKEDITOR.tools.callFunction('${CKEditorFuncNum}', '${file_path}', '파일 전송 완료.');
+	
 	$(function() {
+		var search = $("#search").val();
+		var files = $("#files").val();
+		var boardDetail = $("#boardDetail").val();
+		
 		/* CKEditor */
 		CKEDITOR.replace('board_content_ct', {
 			filebrowserUploadUrl : '/board/imageUpload',
@@ -17,7 +24,7 @@
 			fullPage: true,
 			allowedContent:  true
 		});
-		window.parent.CKEDITOR.tools.callFunction("1", "/edu/apply/ckeditor/20210604.jpg", '파일 전송 완료');
+		
 		/* 게시판 관리 페이지 이동 */
 		$('.allBoardList').on('click', function() {
 			var params = $('form[name="searchForm"]').serializeObject();
@@ -27,23 +34,33 @@
 		
 		/* 게시판 내용 페이지(목록으로) 이동 */
 		$(".dataListBody").on("click", function() {
-			var board_seq = $("#board_seq").val();
-			var board_nm = $("#board_nm").val();
-			// ajax로 load
-			contentLoad(board_nm, boardListUrl, {'board_seq' : board_seq});
+			var params = $("#boardMoveHidden").serializeObject(); 
+			contentLoad(params.board_nm, boardListUrl, params);
 		});
-
-		/* 게시판 등록 페이지 이동 */
-		$('.boardInsertBtn').on('click', function(){
-			var board_seq = $("#board_seq").val();
-			// ajax로 load
-			contentLoad('게시글 작성', insertUrl, {'board_seq' : board_seq});
+		
+		/* 게시판 상세 페이지 이동 */
+		$(".boardDetailMove").on("click", function() {
+			var params = $("#boardMoveHidden").serializeObject(); 
+			contentLoad("게시글 상세", detailUrl, params);
+		});
+		
+		//수정하기 버튼
+		$("#boardUpdateBtn").on("click", function() {
+			var params = $("#boardMoveHidden").serializeObject();
+			contentLoad(params.board_nm, boardUpdateUrl, params);
+		});
+		
+		//목록으로 버튼
+		$("#boardManagerBtn").on("click", function() {
+			var params = $("#boardMoveHidden").serializeObject(); 
+			contentLoad(params.board_nm, boardListUrl, params);
 		});
 		
 		function gotolist() {
 			$("#boardHiddenManagerForm").submit();
 		}
 	});
+	
 	$("#file_add").on('click',function(){ $('#multi-add').click(); });
 	var $fileListArr = new Array();
 	var $totSize = 0;
@@ -60,10 +77,9 @@
 		content += "<p class=file"+ keyNum +" style='margin-bottom: 0;'>"+ Math.floor(size / 1000) +" KB</p>";
 		content += "</td>";
 		content += "</tr>";
-		
 		return content;
 	}
-
+	
 	//파일 add
 	$("#multi-add").on('change',function(){
 		var files = $(this)[0].files;
@@ -91,6 +107,32 @@
 		$('#totSize').text(Math.floor($totSize / 1000000));
 	});
 
+	//기존 파일 delete
+	$('.delBtn').on("click" , function(){
+		$(this).parent().parent().remove();
+		
+		var board_file_seq = $(this).parent().next().next().children('.board_file_seq').attr('value');
+		var board_file_saved = $(this).parent().next().next().children('.board_file_saved').attr('value');
+		
+		var check = confirm("파일을 삭제 하시겠습니까?");
+		if (!check) {
+			return false;
+		}
+		$.ajax({
+			beforeSend: function(xhr) {
+			     xhr.setRequestHeader("AJAX", true);
+			}
+			, type : "POST"
+			, url : "/data/board/boardFileDel"
+			, data : {board_file_seq : board_file_seq, board_file_saved : board_file_saved}
+			, success : function(data) {
+			},
+			error : function(e) {
+				console.log(e);
+			}
+		});
+	});
+	
 	//파일 delete
 	$(document).on("click" , '.deleteFile', function(){
 		//삭제할 파일의 아이디
@@ -115,7 +157,6 @@
 		$('#file_table').children().remove();
 		 $totSize = 0;
 		for(var i = 0 ; i < fileArr.length ; i++){
-
 			 $('#file_table').append(content($keyNum, fileArr[i].name, fileArr[i].size));
 			 $keyNum++;
 			 $fileListArr.push(fileArr[i]);
@@ -132,7 +173,6 @@
 	    var formData = new FormData(form);
 	    var board_content_ct = CKEDITOR.instances.board_content_ct.getData();
 	    formData.set("board_content_ct", board_content_ct);
-	    
 		for(var i = 0; i < $fileListArr.length ; i++){
 			formData.append("uploadFile" , $fileListArr[i]);
 		}
@@ -141,12 +181,12 @@
 			alert("제목을 입력해 주세요.");
 			return false;
 		}
-		var check = confirm("등록하시겠습니까?");
+		var check = confirm("수정하시겠습니까?");
 		if (!check) {
 			return false;
 		}
 		$.ajax({
-	        url : "/data/board/boardInsert",
+	        url : "/data/board/boardUpdate",
 	        processData: false,
 	        contentType: false,
 	        type : 'POST',
@@ -154,7 +194,8 @@
 	        success : function(result){
 	        	if(result > 0){
 	        		CKEDITOR.instances.board_content_ct.destroy();
-	         		contentLoad(formData.get("board_nm"), boardListUrl, {'board_seq' : formData.get("board_seq")});
+	        		var params = $("#boardMoveHidden").serializeObject(); 
+	         		contentLoad(params.board_nm, boardListUrl, params);
 	        	} else{
 	        		alert("등록실패했습니다.");
 	        	}
@@ -167,15 +208,17 @@
 	}
 </script>
 <div class="content_wraper">
-	<h3>게시글 작성</h3>
+	<h3>게시글 수정</h3>
 	<div style="justify-content: center;">
 		<span class="detailTd allBoardList">게시판 관리</span>
 		<strong>></strong>
 		<span class="detailTd dataListBody">${board_gb.board_nm}</span>
 		<strong>></strong>
-		<span class="detailTd boardInsertBtn">게시글 작성</span>
+		<span class="detailTd boardDetailMove">게시글 상세</span>
+		<strong>></strong>
+		<span class="detailTd boardUpdateBtn">게시글 수정</span>
 	</div>
-	<form action="/data/board/boardInsert" method="post" id="boardInsertForm" enctype="multipart/form-data">
+	<form enctype="multipart/form-data">
 		<table class="board_view">
 			<colgroup>
 				<col width="15%" />
@@ -187,18 +230,17 @@
 				<tr>
 					<th scope="row" style="width: 20%;">조회수</th>
 					<td>
-						0
-						<input type="hidden" name="board_content_hit" id="board_content_hit" value="0">
+						${boardDetail.board_content_hit}
 					</td>
 					<th scope="row" style="width: 20%;">작성자</th>
-					<td>${board_content_nm}<input type="hidden" name="board_content_nm" id="board_content_nm" value="${board_content_nm}">
-					</td>
+					<td><input type="hidden" name="board_content_nm" id="board_content_nm" value="">
+					${boardDetail.board_content_nm}</td>
 				</tr>
 				<tr>
 					<th scope="row" style="width: 20%;">제목</th>
 					<td colspan="3" style="width: 80%;">
 						<div style="padding: 0px 5px 0px 5px;">
-							<input type="text" name="board_content_title" id="board_content_title" style="width: 100%;  border: none;"/>
+							<input type="text"  name="board_content_title" value="${boardDetail.board_content_title}" id="board_content_title" style="width: 100%;  border: none;"/>
 						</div>
 					</td>
 				</tr>
@@ -209,33 +251,50 @@
 					<button type="button" class="btn-add" id="file_add">파일추가</button>
 					<span class='file_upload_info'>(파일크기 : 100M )</span>
 					</td>
+					
 				</tr>
+		</table>
+		<table id="detail_file_table">
+			<c:forEach var="data" items="${files}" varStatus="status">
+				<tr id='file${data.board_file_seq}'>
+					<td class='txt-c' style='width: 5%;'>
+						<button class="delBtn" type='button' style='color: #A4A4A4; font-size: large; border: none;'>&#8861;</button>
+					</td>
+					<td style='width: 80%;'>
+						<a href="/forFaith/file/file_download?origin=${data.board_file_origin}&saved=${data.board_file_saved }&path=edu/apply/board_file">
+							<strong>${data.board_file_origin }</strong>
+						</a>
+					</td>
+					<td style='width: 15%;'>
+						<input type="hidden" class="board_file_seq" name="boardFileList[${status.index}].board_file_seq" value="${data.board_file_seq }">	
+						<input type="hidden" name="boardFileList[${status.index}].board_file_origin" value="${data.board_file_origin }">
+						<input type="hidden"  class="board_file_saved" name="boardFileList[${status.index}].board_file_saved" value="${data.board_file_saved }">
+					</td>
+				</tr>
+			</c:forEach>
 		</table>
 		<table id="file_table"></table>
 		<table class="board_view" style="border-top: none;">
 			<tbody>
-				
 				<tr>
 					<td colspan="4" class="view_text">
-						<textarea id="board_content_ct" name="board_content_ct" rows="40" cols="60"></textarea>
+						<textarea id="board_content_ct" name="board_content_ct" rows="40" cols="60">${boardDetail.board_content_ct}</textarea>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 		<div class="boardManagerDiv">
-			<input type="button" value="등록하기" class="btn btn-primary" onclick="formCheck(); return false;">
+			<input type="button" value="수정하기" class="btn btn-primary" onclick="formCheck(); return false;">
 			<a class="btn dataListBody">목록으로</a>
 		</div>
-		<input type="hidden" name="board_seq" id="board_seq" value="${board_gb.board_seq}" />
-		<input type="hidden" name="board_nm" value="${board_gb.board_nm }" />
-        <input type="hidden" name="board_gb" id="board_gb" value="${board_gb.board_gb}"/>
-        <input type="hidden" name="board_tp" id="board_tp" value="${board_gb.board_tp}"/>
+		<input type="hidden" name="board_content_seq" value="${search.board_content_seq}">
 	</form>
 	
-	<form action="/edu/admin/board_contents_search" id="boardHiddenManagerForm" method="post">
-		<input type="hidden" name="board_seq" id="board_seq" value="${board_gb.board_seq}" />
-		<input type="hidden" name="board_nm" id="board_nm" value="${board_gb.board_nm}" />
-        <input type="hidden" name="board_gb" id="board_gb" value="${board_gb.board_gb}"/>
-        <input type="hidden" name="board_tp" id="board_tp" value="${board_gb.board_tp}"/>
-	</form>
+	<form action="/data/board/boardDelete" id="boardMoveHidden" method="post">
+		<input type="hidden" name="board_seq" value="${search.board_seq}" />
+        <input type="hidden" name="board_nm" value="${search.board_nm}" />
+        <input type="hidden" name="board_content_seq" value="${search.board_content_seq}" />
+        <input type="hidden" name="files" id="files" value="${files}" />
+        <input type="hidden" name="search" id="search" value="${search}" />
+    </form>
 </div>
