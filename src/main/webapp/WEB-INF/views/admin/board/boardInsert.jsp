@@ -9,8 +9,6 @@
 	var insertUrl = "<c:url value='/admin/board/boardInsert' />";
 	var params = $('form[name="searchForm"]').serializeObject();
 	
-	window.parent.CKEDITOR.tools.callFunction('${CKEditorFuncNum}', '${file_path}', '파일 전송 완료.');
-	
 	$(function() {
 		/* CKEditor */
 		CKEDITOR.replace('board_content_ct', {

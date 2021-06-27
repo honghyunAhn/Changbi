@@ -651,7 +651,7 @@ public class BoardController {
 	 * 게시글 파일 리스트삭제
 	 */
 	@ResponseBody
-	@RequestMapping(value = "boardFileDelete", method = RequestMethod.POST)
+	@RequestMapping(value = "/boardFileDelete", method = RequestMethod.POST)
 	public void delete_board_file(@RequestParam(defaultValue="") ArrayList<Integer> board_file_seq_list, 
 			@RequestParam(defaultValue="") ArrayList<String> board_file_saved_list){
 		logger.debug("모집홍보 관리자 게시글 파일 리스트 삭제 컨트롤러 시작");
@@ -663,7 +663,7 @@ public class BoardController {
 	 * 게시글 파일 삭제
 	 */
 	@ResponseBody
-	@RequestMapping(value = "boardFileDel", method = RequestMethod.POST)
+	@RequestMapping(value = "/boardFileDel", method = RequestMethod.POST)
 	public void delete_board_file(int board_file_seq, String board_file_saved){
 		logger.info("모집홍보 관리자 게시글 파일 삭제 컨트롤러 시작");		
 		boardService.delete_board_file(board_file_seq, board_file_saved);		
