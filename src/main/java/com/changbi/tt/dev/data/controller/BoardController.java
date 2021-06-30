@@ -615,7 +615,7 @@ public class BoardController {
 	@ResponseBody
 	public int boardInsert(@RequestParam HashMap<String, Object> param, MultipartHttpServletRequest multiRequest,
 			Authentication auth) throws Exception {
-		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 컨트롤러 시작");
+		logger.debug("공지사항 게시판의 게시글 세부 내용 등록 컨트롤러 시작");
 		int result = boardService.boardInsert(param);
 		List<MultipartFile> fileList = multiRequest.getFiles("uploadFile");
 		// 업로드한 파일이 없으면 실행되지 않음
@@ -643,7 +643,7 @@ public class BoardController {
 				}
 			}
 		}
-		logger.debug("모집홍보 관리자 게시글 세부 내용 등록 컨트롤러 종료");
+		logger.debug("공지사항 게시판의 게시글 세부 내용 등록 컨트롤러 종료");
 		return result;
 	}
 	
@@ -654,9 +654,9 @@ public class BoardController {
 	@RequestMapping(value = "/boardFileDelete", method = RequestMethod.POST)
 	public void delete_board_file(@RequestParam(defaultValue="") ArrayList<Integer> board_file_seq_list, 
 			@RequestParam(defaultValue="") ArrayList<String> board_file_saved_list){
-		logger.debug("모집홍보 관리자 게시글 파일 리스트 삭제 컨트롤러 시작");
+		logger.debug("공지사항 게시판의 게시글 파일 리스트 삭제 컨트롤러 시작");
 		boardService.board_file_delete(board_file_seq_list, board_file_saved_list);
-		logger.debug("모집홍보 관리자 게시글 파일 리스트 삭제 컨트롤러 종료");
+		logger.debug("공지사항 게시판의 게시글 파일 리스트 삭제 컨트롤러 종료");
 	}
 	
 	/*
@@ -665,9 +665,9 @@ public class BoardController {
 	@ResponseBody
 	@RequestMapping(value = "/boardFileDel", method = RequestMethod.POST)
 	public void delete_board_file(int board_file_seq, String board_file_saved){
-		logger.info("모집홍보 관리자 게시글 파일 삭제 컨트롤러 시작");		
+		logger.info("공지사항 게시판의 게시글 파일 삭제 컨트롤러 시작");		
 		boardService.delete_board_file(board_file_seq, board_file_saved);		
-		logger.info("모집홍보 관리자 게시글 파일 삭제 컨트롤러 종료");
+		logger.info("공지사항 게시판의 게시글 파일 삭제 컨트롤러 종료");
 	}
 	
 	/*
@@ -676,9 +676,9 @@ public class BoardController {
 	@ResponseBody
 	@RequestMapping(value = "/boardDelete", method = RequestMethod.POST)
 	public int board_contents_delete(int board_content_seq) {
-		logger.debug("모집홍보 관리자 게시글 삭제 컨트롤러 시작");
+		logger.debug("공지사항 게시판의 게시글 삭제 컨트롤러 시작");
 		int result = boardService.board_contents_delete(board_content_seq);
-		logger.debug("모집홍보 관리자 게시글 삭제 컨트롤러 종료");
+		logger.debug("공지사항 게시판의 게시글 삭제 컨트롤러 종료");
 		return result;
 	}
 	
@@ -689,7 +689,7 @@ public class BoardController {
 	@RequestMapping(value = "/boardUpdate", method = RequestMethod.POST)
 	public int board_content_update(@RequestParam HashMap<String, Object> param, MultipartHttpServletRequest multiRequest,
 			Authentication auth) throws Exception {
-		logger.debug("모집홍보 관리자 게시글 세부 내용 수정 컨트롤러 시작");
+		logger.debug("공지사항 게시판의 게시글 수정 컨트롤러 시작");
 		int result = boardService.board_content_update(param);
 		List<MultipartFile> fileList = multiRequest.getFiles("uploadFile");
 		
@@ -718,7 +718,7 @@ public class BoardController {
 				}
 			}
 		}
-		logger.debug("모집홍보 관리자 게시글 세부 내용 수정 컨트롤러 종료");
+		logger.debug("공지사항 게시판의 게시글 수정 컨트롤러 종료");
 		return result;
 	}
 }

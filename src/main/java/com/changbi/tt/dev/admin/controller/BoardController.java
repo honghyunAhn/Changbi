@@ -371,13 +371,11 @@ public class BoardController {
 	@RequestMapping(value = "/allBoardList")
 	public void allBoardList(@RequestParam HashMap<String, Object> params, ModelMap model) throws Exception {
 		model.addAttribute("search", params);
-		logger.debug("allBoardList : " + params);
 	}
 
 	@RequestMapping(value = "/boardListBySeq")
 	public void boardListByBoardSeq(@RequestParam HashMap<String, Object> params, ModelMap model) throws Exception {
 		model.addAttribute("search", params);
-		logger.debug("boardListBySeq : " +params);
 	}
 	
 	
@@ -397,12 +395,7 @@ public class BoardController {
 		files = boardService.boardFiles(detail.get("board_content_seq").toString());
 
 		model.addAttribute("board_gb", boardService.board_gb_search(params));
-		model.addAttribute("board_content_seq", params.get("board_content_seq"));
-		logger.debug("boardDetail - board_content_seq1 : " + params.get("board_content_seq"));
-		params.remove("board_content_seq");
-		logger.debug("boardDetail - board_content_seq2 : " + params.get("board_content_seq"));
 		model.addAttribute("search", params);
-		logger.debug("boardDetail : " +params);
 		model.addAttribute("boardDetail", detail);
 		model.addAttribute("files", files);
 		model.addAttribute("path", eduApplyBoardFile);
@@ -415,7 +408,6 @@ public class BoardController {
 		logger.debug("공지사항 게시판의 게시글 세부 내용 등록 폼 이동 컨트롤러 시작");
 
 		HashMap<String, Object> board_gb;
-		logger.debug("boardInsert : " + params);
 		try {
 			board_gb = boardService.board_gb_search(params);
 			String path = boardService.findPath((String) board_gb.get("board_gb"), (String) board_gb.get("board_tp"));
@@ -423,6 +415,7 @@ public class BoardController {
 			model.addAttribute("path", path);
 			model.addAttribute("board_gb", board_gb);
 			model.addAttribute("board_content_nm", admin);
+			model.addAttribute("search", params);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -432,8 +425,7 @@ public class BoardController {
 
 	@RequestMapping(value = "/boardUpdate")
 	public void boardUpdate(@RequestParam HashMap<String, Object> params, Model model) throws Exception {
-		logger.debug("공지사항 게시판의 게시글 세부 내용 수정 폼 이동 컨트롤러 종료");
-		logger.debug("boardUpdate : " + params);
+		logger.debug("공지사항 게시판의 게시글 세부 내용 수정 폼 이동 컨트롤러 시작");
 		try {
 			boardService.board_contents_hit_update(params);
 		} catch (Exception e) {

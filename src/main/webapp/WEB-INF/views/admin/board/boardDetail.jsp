@@ -38,8 +38,7 @@
 		
 		//목록으로 버튼
 		$("#boardManagerBtn").on("click", function() {
-			var params = $("#boardMoveHidden").serializeObject(); 
-			console.log(params);
+			var params = $("#boardMoveHidden").serializeObject();
 			contentLoad(params.board_nm, boardListUrl, params);
 		});
 		
@@ -183,29 +182,15 @@
 		<a class="btn btn-primary" id="boardUpdateBtn">수정하기</a>
 		<a class="btn" id="boardManagerBtn">목록으로</a>
 	</div>
-	
-    <form action="/edu/admin/board_contents_update_form" id="boardHiddenForm_update" method="post">
-        <input type="hidden" name="search_division" id="search_division" value="${search_division}" />
-        <input type="hidden" name="search_type" id="search_type" value="${search_type}" />
-        <input type="hidden" name="board_nm" id="board_nm" value="${boardGroup.board_nm}"/>
-        <input type="hidden" name="board_seq" id="board_seq" value="${boardGroup.board_seq }" />
-        <input type="hidden" name="board_gb" id="board_gb" value="${boardGroup.board_gb}"/>
-        <input type="hidden" name="board_tp" id="board_tp" value="${boardGroup.board_tp}"/>
-        <input type="hidden" name="board_content_seq" value="${contentDetail.board_content_seq }" />
-    </form>
-    
-    <form action="/data/board/boardDelete" id="boardHiddenForm_delete" method="post">
-        <input type="hidden" name="board_content_seq" value="${boardDetail.board_content_seq }" />
-    </form>
     
     <form action="/data/board/boardDelete" id="boardMoveHidden" method="post">
-	    <input type="hidden" name="board_seq" value="${search.searchCondition}" />
-	    <input type="hidden" name="board_seq" value="${search.searchKeyword}" />
-	    <input type="hidden" name="board_seq" value="${search.pagingYn}" />
-	    <input type="hidden" name="board_seq" value="${search.pageNo}" />
+	    <input type="hidden" name="searchCondition" value="${search.searchCondition}" />
+	    <input type="hidden" name="searchKeyword" value="${search.searchKeyword}" />
+	    <input type="hidden" name="pagingYn" value="${search.pagingYn}" />
+	    <input type="hidden" name="pageNo" value="${search.pageNo}" />
         <input type="hidden" name="board_seq" value="${search.board_seq}" />
         <input type="hidden" name="board_nm" value="${search.board_nm}" />
-        <input type="hidden" name="board_content_seq" value="${board_content_seq}" />
+        <input type="hidden" name="board_content_seq" value="${search.board_content_seq}" />
     </form>
 	</div>
 </div>

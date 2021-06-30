@@ -9,8 +9,6 @@
 	var detailUrl = "<c:url value='/admin/board/boardDetail' />";
 	var boardUpdateUrl = "<c:url value='/admin/board/boardUpdate' />";
 	
-	window.parent.CKEDITOR.tools.callFunction('${CKEditorFuncNum}', '${file_path}', '파일 전송 완료.');
-	
 	$(function() {
 		var search = $("#search").val();
 		var files = $("#files").val();
@@ -22,7 +20,8 @@
 			enterMode: CKEDITOR.ENTER_BR,
 			shiftEnterMode:  CKEDITOR.ENTER_P,
 			fullPage: true,
-			allowedContent:  true
+			allowedContent:  true,
+			removeButtons: 'Save'
 		});
 		
 		/* 게시판 관리 페이지 이동 */
@@ -291,10 +290,12 @@
 	</form>
 	
 	<form action="/data/board/boardDelete" id="boardMoveHidden" method="post">
-		<input type="hidden" name="board_seq" value="${search.board_seq}" />
+		<input type="hidden" name="searchCondition" value="${search.searchCondition}" />
+	    <input type="hidden" name="searchKeyword" value="${search.searchKeyword}" />
+	    <input type="hidden" name="pagingYn" value="${search.pagingYn}" />
+	    <input type="hidden" name="pageNo" value="${search.pageNo}" />
+        <input type="hidden" name="board_seq" value="${search.board_seq}" />
         <input type="hidden" name="board_nm" value="${search.board_nm}" />
         <input type="hidden" name="board_content_seq" value="${search.board_content_seq}" />
-        <input type="hidden" name="files" id="files" value="${files}" />
-        <input type="hidden" name="search" id="search" value="${search}" />
     </form>
 </div>

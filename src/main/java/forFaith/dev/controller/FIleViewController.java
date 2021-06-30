@@ -3,12 +3,11 @@
  */
 package forFaith.dev.controller;
 
+import java.io.PrintWriter;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -30,8 +29,6 @@ import forFaith.dev.service.AttachFileService;
  */
 @Controller
 public class FIleViewController implements PathConstants {
-	
-	private static final Logger logger = LoggerFactory.getLogger(FIleViewController.class);
 	
 	@Value("#{props['temporarilyPath']}")
 	private String temporarilyPath;
@@ -57,14 +54,26 @@ public class FIleViewController implements PathConstants {
 	 * CKEditor 이미지 등록
 	 */
 	@RequestMapping(value = "/board/imageUpload", method = RequestMethod.POST)
-	public String communityImageUpload(MultipartHttpServletRequest request, Model model,String CKEditorFuncNum, HttpServletResponse response) {
-		logger.info("FAP 기업 메인 페이지 컨트롤러 시작");
+	public void communityImageUpload(MultipartHttpServletRequest request, Model model,String CKEditorFuncNum, HttpServletResponse response) {
+		
 		HashMap<String, String> result = FileService.temporarilySave(request,eduApplyCkeditor);
+		PrintWriter printWriter = null;
+		response.setCharacterEncoding("utf-8");
+		response.setContentType("text/html;charset=utf-8");
 		
-		model.addAttribute("file_path", eduApplyCkeditor+"/"+result.get("savedfile"));
-		model.addAttribute("CKEditorFuncNum", CKEditorFuncNum);
+		String fileUrl = eduApplyCkeditor+"/"+result.get("savedfile");
+		String callback = CKEditorFuncNum;
 		
-		logger.info("FAP 기업 메인 페이지 컨트롤러 시작");
-		return "admin/board/board_ckeditor";
+		try {
+			printWriter = response.getWriter();
+			printWriter.println("<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction("+ callback+ ",'"+ fileUrl+"','파일 전송 완료.'"+ ")</script>");
+			printWriter.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (printWriter != null) {
+				printWriter.close();
+			}
+		}
 	}
 }
