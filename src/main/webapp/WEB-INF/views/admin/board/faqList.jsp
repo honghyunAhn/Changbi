@@ -111,6 +111,7 @@
 		});
 		$('#searchBtn').on('click', function() {
 			var params = $('form[name=searchForm]').serializeObject();
+			console.log(params);
 			contentLoad('FAQ검색',listPageUrl, params);
 		});
 		//검색어 치고 엔터 눌렀을 때

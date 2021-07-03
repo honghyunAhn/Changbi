@@ -2164,5 +2164,34 @@
             board_content_seq = #{board_content_seq}
     </update>
     <!-- 관리자 게시판 세부내용 수정 종료 -->
-	
+    
+    <!-- 온라인 상담 목록 시작 -->
+    <select id="onlineConsultingList" parameterType="hashmap" resultType="hashmap">
+        select *
+		from COM_ONLINE_TB
+		WHERE
+			1=1
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+				CONSULTING_TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
+		</if>
+		ORDER BY CONSULTING_INS_DT DESC
+		<if test='pagingYn=="Y"'>
+		  	<include refid="forFaith.common.footer"/>
+	  	</if>
+    </select>
+    <!-- 온라인 상담 목록 종료 -->
+    
+    <select id="onlineConsultingListCnt" parameterType="hashmap" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM
+			COM_ONLINE_TB
+		WHERE
+			1=1
+		<if test="searchKeyword != null and searchKeyword != ''">
+			AND
+				CONSULTING_TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
+		</if>
+	</select>
 </mapper>

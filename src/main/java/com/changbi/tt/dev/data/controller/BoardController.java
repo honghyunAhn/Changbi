@@ -34,6 +34,7 @@ import com.changbi.tt.dev.data.vo.BoardFileVO;
 import com.changbi.tt.dev.data.vo.BoardReplyVO;
 import com.changbi.tt.dev.data.vo.BoardVO;
 import com.changbi.tt.dev.data.vo.NoteVO;
+import com.changbi.tt.dev.data.vo.OnlineConsultingVO;
 import com.changbi.tt.dev.data.vo.SurveyItemVO;
 import com.changbi.tt.dev.data.vo.SurveyVO;
 import com.changbi.tt.dev.util.FileService;
@@ -720,5 +721,26 @@ public class BoardController {
 		}
 		logger.debug("공지사항 게시판의 게시글 수정 컨트롤러 종료");
 		return result;
+	}
+	
+	/*
+	 * 온라인 상담 목록
+	 */
+	@RequestMapping(value = "/onlineConsultingList", method = RequestMethod.POST)
+	public @ResponseBody Object onlineConsultingList(@RequestParam HashMap<String, Object> params) throws Exception {
+		logger.debug("온라인 상담 관리 목록 컨트롤러 시작");
+		// 일반 게시물 리스트 가져오기
+		DataList<HashMap<String, Object>> consulting = new DataList<HashMap<String, Object>>();
+		int pageNo = Integer.parseInt((String) params.get("pageNo"));
+		params.put("numOfRows", 10);
+		params.put("firstIndex", (pageNo - 1) * 10);
+		consulting.setNumOfRows(10);
+		consulting.setPageNo(pageNo);
+		consulting.setTotalCount(boardService.onlineConsultingListCnt(params));
+
+		// 결과 리스트를 저장
+		consulting.setList(boardService.onlineConsultingList(params));
+		logger.debug("온라인 상담 관리 목록 컨트롤러 종료");
+		return consulting;
 	}
 }

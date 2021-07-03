@@ -83,6 +83,7 @@
     	<typeAlias alias="EduUserPayVO"             type="com.changbi.tt.dev.data.vo.EduUserPayVO"/>
     	<typeAlias alias="ToeflVO"             		type="com.changbi.tt.dev.data.vo.ToeflVO"/>					<!-- 모의토플 정보 -->
     	<typeAlias alias="ToeflPayVO"             	type="com.changbi.tt.dev.data.vo.ToeflPayVO"/>				<!-- 모의토플 결제 정보 -->
+    	<typeAlias alias="OnlineConsultingVO"		type="com.changbi.tt.dev.data.vo.OnlineConsultingVO"/>
     	
     </typeAliases>
     

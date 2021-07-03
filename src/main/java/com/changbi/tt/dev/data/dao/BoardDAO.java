@@ -10,6 +10,7 @@ import com.changbi.tt.dev.data.vo.BoardReplyVO;
 import com.changbi.tt.dev.data.vo.BoardVO;
 import com.changbi.tt.dev.data.vo.CardinalVO;
 import com.changbi.tt.dev.data.vo.NoteVO;
+import com.changbi.tt.dev.data.vo.OnlineConsultingVO;
 import com.changbi.tt.dev.data.vo.SurveyItemVO;
 import com.changbi.tt.dev.data.vo.SurveyVO;
 
@@ -183,4 +184,10 @@ public interface BoardDAO {
 	
 	//게시글 수정
 	int board_content_update(HashMap<String, Object> param);
+	
+	//온라인 상담 목록
+	ArrayList<HashMap<String, Object>> onlineConsultingList(HashMap<String, Object> params);
+	
+	//온라인 상담 목록 카운트
+	int onlineConsultingListCnt(HashMap<String, Object> params);
 }

@@ -18,6 +18,7 @@ import com.changbi.tt.dev.data.vo.BoardReplyVO;
 import com.changbi.tt.dev.data.vo.BoardVO;
 import com.changbi.tt.dev.data.vo.CardinalVO;
 import com.changbi.tt.dev.data.vo.NoteVO;
+import com.changbi.tt.dev.data.vo.OnlineConsultingVO;
 import com.changbi.tt.dev.data.vo.SurveyItemVO;
 import com.changbi.tt.dev.data.vo.SurveyVO;
 import com.changbi.tt.dev.util.FileService;
@@ -496,13 +497,30 @@ public class BoardService {
 		logger.debug("모집홍보 관리자 게시글 파일 삭제 서비스 시작");
 	}
 	
-	//게시글 수정
+	/*
+	 * 게시글 수정
+	 */
 	public int board_content_update(HashMap<String, Object> param) {
 		logger.debug("게시글 세부 내용 수정 서비스 시작");
 		int result = boardDao.board_content_update(param);
 		logger.debug("게시글 세부 내용 수정 서비스 종료");
 		return result;
 	}
-
 	
+	/*
+	 * 온라인 상담 목록
+	 */
+	public ArrayList<HashMap<String, Object>> onlineConsultingList(HashMap<String, Object> params) {
+		logger.debug("온라인 상담 관리 목록 서비스 시작");
+		ArrayList<HashMap<String, Object>> result = boardDao.onlineConsultingList(params);
+		logger.debug("온라인 상담 관리 목록 서비스 종료");
+		return result;
+	}
+
+	public int onlineConsultingListCnt(HashMap<String, Object> params) {
+		logger.debug("온라인 상담 관리 목록 카운트 서비스 시작");
+		int result = boardDao.onlineConsultingListCnt(params);
+		logger.debug("온라인 상담 관리 목록 카운트 서비스 종료");
+		return result;
+	}
 }

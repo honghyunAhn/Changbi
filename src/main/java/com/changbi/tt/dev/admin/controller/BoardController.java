@@ -445,4 +445,11 @@ public class BoardController {
 
 		logger.debug("공지사항 게시판의 게시글 세부 내용 수정 폼 이동 컨트롤러 종료");
 	}
+	
+	@RequestMapping(value = "/onlineConsulting")
+	public void onlineConsulting(@RequestParam HashMap<String, Object> params, ModelMap model) throws Exception {
+		logger.debug("온라인 상담 관리 이동 컨트롤러 시작");
+		model.addAttribute("search", params);
+		logger.debug("온라인 상담 관리 이동 컨트롤러 종료");
+	}
 }
