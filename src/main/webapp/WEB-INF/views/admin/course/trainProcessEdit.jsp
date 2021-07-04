@@ -606,7 +606,7 @@ $(document).ready(function () {
 	});
 
 	// 기수 상세페이지로 이동
-	$(document).on("click", ".content_edit", function() {
+	$(document).on("click", ".content_edit_cardinal", function() {
 		var data = new Object();
 		data.id = $(this).find('input').val();
 		contentLoad("기수관리상세", "<c:url value='/admin/course/cardinalEdit' />", data);
@@ -1323,7 +1323,7 @@ function surveyDetail(seq){
 							<c:if test="${not empty cardinal.id}">
 							<tr>
 								<td><input type='checkbox' name='chkCardinalId' value='<c:out value="${cardinal.id}" />' /></td>
-								<td class="content_edit">
+								<td class="content_edit_cardinal">
 									<input type='hidden' name='cardinalList[<c:out value="${status.index}" />].id' value='<c:out value="${cardinal.id}" />' readonly="readonly" />
 									${cardinal.id}
 								</td>

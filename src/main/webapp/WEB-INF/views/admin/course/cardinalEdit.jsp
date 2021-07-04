@@ -116,7 +116,7 @@ $(document).ready(function () {
 	});
 	
 	// 과정 상세페이지 이동
-	$(document).on("click", ".content_edit", function() {
+	$(document).on("click", ".content_edit_course", function() {
 		var data = new Object();
 		data.id = $(this).text();
 		contentLoad("학습과정관리", "<c:url value='/admin/course/trainProcessEdit' />", data);
@@ -411,7 +411,7 @@ function setCourse(course) {
 						<tr>
 							<!--  <td><input type='checkbox' name='chkCourseId' value='<c:out value="${course.id}" />' /></td>	-->						
 							<!-- <td><input type='text' name='courseList[<c:out value="${status.index}" />].id' value='<c:out value="${course.id}" />' readonly="readonly" /></td> -->
-							<td class="content_edit"><c:out value="${course.id}" /></td> 
+							<td class="content_edit_course"><c:out value="${course.id}" /></td> 
 							<td><c:out value="${course.name}" default="" /></td>
 							<td><c:out value="${course.completeTime}" default="0" />시간</td>
 							<td>

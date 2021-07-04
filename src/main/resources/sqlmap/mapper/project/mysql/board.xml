@@ -2182,6 +2182,7 @@
     </select>
     <!-- 온라인 상담 목록 종료 -->
     
+    <!-- 온라인 상담 목록 카운트 시작 -->
     <select id="onlineConsultingListCnt" parameterType="hashmap" resultType="int">
 		SELECT
 			COUNT(*)
@@ -2194,4 +2195,15 @@
 				CONSULTING_TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
 		</if>
 	</select>
+	<!-- 온라인 상담 목록 카운트 종류 -->
+	
+	<!-- 온라인 상담 내용 불러오기 시작 -->
+	<select id="onlineConsultingEdit" parameterType="int" resultType="hashmap">
+		select * from
+            COM_ONLINE_TB
+        where
+            CONSULTING_SEQ = #{consulting_seq}
+	</select>
+	<!-- 온라인 상담 내용 불러오기 종료 -->
+	
 </mapper>

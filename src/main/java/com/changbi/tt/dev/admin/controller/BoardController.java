@@ -452,4 +452,12 @@ public class BoardController {
 		model.addAttribute("search", params);
 		logger.debug("온라인 상담 관리 이동 컨트롤러 종료");
 	}
+	
+	@RequestMapping(value = "/onlineConsultingEdit")
+	public void onlineConsultingEdit(@RequestParam HashMap<String, Object> params, ModelMap model) throws Exception {
+		logger.debug("온라인 상담 작성 이동 컨트롤러 시작");
+		
+		model.addAttribute("search", params);
+		logger.debug("온라인 상담 작성 이동 컨트롤러 종료");
+	}
 }

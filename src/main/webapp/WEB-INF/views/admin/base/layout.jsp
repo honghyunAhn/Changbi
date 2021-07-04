@@ -23,8 +23,11 @@
 <link href="<c:url value="/resources/css/project/admin/common.css"/>" rel="stylesheet" type="text/css">
 <link href="<c:url value="/resources/css/project/admin/accordion.css"/>" rel="stylesheet" type="text/css">
 
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
 <!-- jQuery -->
 <script src="<c:url value="/resources/js/ext/jquery/jquery-1.11.0.min.js"/>"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <!-- angular.js 추가 / kim --> 
 <script src="<c:url value="/resources/student/js/angular.js" />"></script>
@@ -52,7 +55,7 @@
 <script src="<c:url value="/resources/js/project/changbi.js"/>"></script>
 
 <!-- Daum 우편번호 서비스 -->
-<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+<!-- <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script> -->
 
 <!-- 구글 차트 -->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -68,6 +71,13 @@
 <!-- CKEditor -->
 <script src="<c:url value="/resources/ckeditor/ckeditor.js" />"></script>
 <script type="text/javascript">
+
+$(document).ajaxStart(function(){
+	sendRequest().dialog("open");
+})
+.ajaxStop(function(){
+	sendRequest().dialog("close");
+});
 /* 사용자 드랍다운 레이어	*/
 $(document).ready(function (e) {
     function t(t) {
@@ -138,37 +148,6 @@ $(document).ready(function (e) {
 	}
 });
 
-
-/* angular module추가 / kim */
-//var myApp = angular.module('myapp', []);
-
-/* myApp.directive('selectcode', [ '$http', function($http) {
-	return {
-		restrict : "A",
-		replace : true,
-		scope : {
-			value : '@'
-		},
-		controller : function($scope, $element, $attrs) {
-			$http({
-				method : 'POST',
-				url : '/codeconverter',
-				responseType : 'text',
-				params : {
-					code : $attrs.value
-				}
-			}).then(function successCallback(response) {
-				$scope.filterParams = response.data;
-			}, function errorCallback(response) {
-				console.log(response);
-			});
-		},
-		template : "<option>{{filterParams}}</option>"
-	}
-} ]);
- */
-
-
 function mainPageLoad() {
 	$("#my-accordion li").removeClass("acc_active");
 	$(".acc_content li a").removeClass("active");
@@ -179,7 +158,8 @@ function mainPageLoad() {
 }
 
 function contentLoad(title, contentUrl, data) {
-	
+	console.log(title + ' / ' + contentUrl);
+	console.log(data);
 	$("title").html(title ? title : "메인");
 	
 	// contentUrl이 없다면 targetUrl이 있는지 체크해서 targetUrl로 가든지 메인으로 가든지
@@ -229,131 +209,6 @@ function getDateFormat(timestamp) {
 	
 	return formattedVal;
 }
-</script>
-<script type="text/javascript">
-// $(function() {
-// 	cleanDatepicker();
-// 	$(".admin_expired_st").datepicker();
-// 	$(".admin_expired_et").datepicker();
-// 	$("#pageSelect").change(function(){
-		
-// 		var pageCount = $(this).val();
-// 		var searchName = $("#name").val();
-// 		location.href="/edu/admin/admin_info_setting_form?searchName="+searchName+"&pageCount="+pageCount+"&curPage=${map.adminPager.curPage}";
-// 	});
-// });
-// function cleanDatepicker() {
-
-// 	var original_gotoToday = $.datepicker._gotoToday;
-
-// 	$.datepicker._gotoToday = function(id) {
-// 		var target = $(id), inst = this._getInst(target[0]);
-
-// 		original_gotoToday.call(this, id);
-// 		this._selectDate(id, this._formatDate(inst, inst.selectedDay,
-// 				inst.drawMonth, inst.drawYear));
-// 		target.blur();
-// 	}
-
-// 	var old_fn = $.datepicker._updateDatepicker;
-
-// 	$.datepicker._updateDatepicker = function(inst) {
-// 		old_fn.call(this, inst);
-
-// 		var buttonPane = $(this).datepicker("widget").find(".ui-datepicker-buttonpane");
-
-// 		$(	"<button type='button' class='ui-datepicker-clean ui-state-default ui-priority-primary ui-corner-all'>clear</button>").appendTo(buttonPane).click(function(ev) {
-// 					$.datepicker._clearDate(inst.input);
-// 		});
-// 	}
-// }
-
-// var myApp = angular.module('myapp', []);
-
-// myApp.controller('AdminController', ['$scope','$compile','$http', function($scope,$compile,$http){
-	
-// 	$scope.admin_info = JSON.parse('${admin_info_list_json}');
-	
-// 	$scope.update = function($event){
-
-// 		var _row  = angular.element($event.currentTarget).closest(".admin_row");
-// 		var _admin_id = _row.find(".admin_id").text();
-// 		var _admin_grade = _row.find(".admin_grade").val();
-// 		var _admin_state = _row.find(".admin_state").val();
-// 		var _admin_project = _row.find(".admin_project").val();
-// 		var _admin_expired_st = _row.find(".admin_expired_st").val();
-// 		var _admin_expired_et = _row.find(".admin_expired_et").val();
-
-// 	 	$http({
-// 			method: 'POST',
-// 			url: '/edu/admin/admin_info_update',
-// 			params : {
-// 				admin_id : _admin_id,
-// 				admin_grade : _admin_grade,
-// 				admin_state : _admin_state,
-// 				admin_project : _admin_project,
-// 				admin_expired_st : _admin_expired_st,
-// 				admin_expired_et : _admin_expired_et
-// 			}
-// 		}).then(function successCallback(response) {
-//     		alert("정보 수정 완료 하였습니다.");
-// 		}, function errorCallback(response) {
-// 			console.log(response);
-// 			alert("정보 수정 실패 하였습니다.");
-// 		});
-		
-// 	}
-// }]);
-
-// myApp.directive('code', ['$http',function($http){
-// 	return {
-// 		restrict: "E",
-// 		replace: true,
-// 		scope : {
-// 			value : '@'
-// 		},
-// 		controller: function ($scope, $element, $attrs) {
-// 			$http({
-// 				method: 'POST',
-// 				url: '/codeconverter',
-// 		  		responseType: 'text',
-// 				params : {
-// 					code : $attrs.value
-// 				}
-// 			}).then(function successCallback(response) {
-// 	    		$scope.filterParams = response.data;
-// 			}, function errorCallback(response) {
-// 				console.log(response);
-// 			});
-// 		}
-// 		,template: "<span>{{filterParams}}</span>"
-// 	}
-// }]);
-
-// myApp.directive('selectcode', [ '$http', function($http) {
-// 	return {
-// 		restrict : "A",
-// 		replace : true,
-// 		scope : {
-// 			value : '@'
-// 		},
-// 		controller : function($scope, $element, $attrs) {
-// 			$http({
-// 				method : 'POST',
-// 				url : '/codeconverter',
-// 				responseType : 'text',
-// 				params : {
-// 					code : $attrs.value
-// 				}
-// 			}).then(function successCallback(response) {
-// 				$scope.filterParams = response.data;
-// 			}, function errorCallback(response) {
-// 				console.log(response);
-// 			});
-// 		},
-// 		template : "<option>{{filterParams}}</option>"
-// 	}
-// } ]);
 	// **원하는 페이지로 이동시 검색조건, 키워드 값을 유지하기 위해 
 	function ilist(page){
 	    location.href="/edu/admin/admin_info_setting_form?curPage="+page+"&pageCount=${map.pageCount}";
@@ -363,7 +218,34 @@ function getDateFormat(timestamp) {
 		var searchName = $("#name").val();
 		location.href="/edu/admin/admin_info_setting_form?searchName="+searchName+"&curPage=${map.adminPager.curPage}&pageCount=${map.pageCount}";
 	}
-    
+	
+	function sendRequest(){
+
+		var messageDiv = '',
+		$messageDiv = $('#messageDiv');
+
+		if($messageDiv.length === 0){
+			messageDiv += '<div id="messageDiv" title="서버 통신">';
+			messageDiv += '<br><span style="font-size:20pt;"><img src="resources/images/spinner.png" width="50"/>처리 중입니다...</span>';
+			messageDiv += '</div>';
+
+			$messageDiv = $(messageDiv);
+			$(document.body).prepend($messageDiv);
+
+			$messageDiv.dialog({
+				minHeight : 150,
+				maxHeight : 150,
+				width : 300,
+				modal : true,
+				closeOnEscape : false,
+				open : function(event , ui){
+					$(".ui-dialog-titlebar-close").hide();
+				}
+			})
+			.dialog("option", "resizable", false);
+		}
+		return $messageDiv;
+	}
 </script>
 </head>
 
@@ -570,7 +452,6 @@ function getDateFormat(timestamp) {
 					<li><a href="javascript:contentLoad('과정별 자료실관리','/admin/board/courseBoardList', {'boardType':2});">과정별 자료실관리</a></li>
 					<!-- <li><a href="javascript:contentLoad('자유게시판 관리','/admin/board/freeBoardList', {'boardType':8});">자유게시판 관리</a></li> -->
 					<li><a href="javascript:contentLoad('자주묻는질문','/admin/board/faqList');">FAQ 관리</a></li>
-					<li><a href="javascript:contentLoad('온라인 상담 관리','/admin/board/onlineConsulting');">온라인 상담 관리</a></li>
 <!-- 					<li><a href="javascript:contentLoad('자주묻는질문','/admin/board/boardList', {'boardType':3});">FAQ 관리</a></li> -->
 					<!-- <li><a href="javascript:contentLoad('1:1상담관리','/admin/board/boardList', {'boardType':4});">1:1상담관리</a></li> -->
 					<li><a href="javascript:contentLoad('과정별 질의응답관리','/admin/board/courseBoardList', {'boardType':6});">과정별 질의응답관리</a></li>

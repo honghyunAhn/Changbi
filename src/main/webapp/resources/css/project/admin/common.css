@@ -73,7 +73,7 @@ label>input{margin-right: 3px;}
 .content_wraper table th,.content_wraper table td{height: 40px; border-right: 1px solid #d0d0d0; border-bottom: 1px solid #d0d0d0;}
 
 /* 상세 페이지 이동 */
-.member_edit, .popup_content_edit, .content_edit { cursor: pointer; color: #0000ff; }
+.member_edit, .popup_content_edit, .content_edit, .content_edit_cardinal, .content_edit_course { cursor: pointer; color: #0000ff; }
 
 .tab{ display: inline-block; border-bottom: 1px solid #d0d0d0;}
 .tab_head{font-size:0px; display: flex; justify-content: space-between;}

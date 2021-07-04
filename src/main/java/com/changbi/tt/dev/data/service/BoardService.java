@@ -18,7 +18,6 @@ import com.changbi.tt.dev.data.vo.BoardReplyVO;
 import com.changbi.tt.dev.data.vo.BoardVO;
 import com.changbi.tt.dev.data.vo.CardinalVO;
 import com.changbi.tt.dev.data.vo.NoteVO;
-import com.changbi.tt.dev.data.vo.OnlineConsultingVO;
 import com.changbi.tt.dev.data.vo.SurveyItemVO;
 import com.changbi.tt.dev.data.vo.SurveyVO;
 import com.changbi.tt.dev.util.FileService;

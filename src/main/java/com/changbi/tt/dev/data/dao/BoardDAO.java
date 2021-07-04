@@ -10,7 +10,6 @@ import com.changbi.tt.dev.data.vo.BoardReplyVO;
 import com.changbi.tt.dev.data.vo.BoardVO;
 import com.changbi.tt.dev.data.vo.CardinalVO;
 import com.changbi.tt.dev.data.vo.NoteVO;
-import com.changbi.tt.dev.data.vo.OnlineConsultingVO;
 import com.changbi.tt.dev.data.vo.SurveyItemVO;
 import com.changbi.tt.dev.data.vo.SurveyVO;
 
@@ -190,4 +189,7 @@ public interface BoardDAO {
 	
 	//온라인 상담 목록 카운트
 	int onlineConsultingListCnt(HashMap<String, Object> params);
+	
+	//온라인 상담 상세 내용 불러오기
+	HashMap<String, Object> onlineConsultingEdit(int consulting_seq);
 }

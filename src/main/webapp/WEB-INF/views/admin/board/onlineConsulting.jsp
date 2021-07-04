@@ -8,9 +8,16 @@
 .fa-caret-down {
 	cursor: pointer;
 }
+.consultinglist {
+	cursor: pointer;
+}
+.dataListBody tr:hover {
+	background-color: #f5f5f5;
+}
 </style>
 <script type="text/javascript">
-	
+	var params = $('form[name=searchForm]').serializeObject();
+	console.log(params);
 	//변수
 	var dataListUrl = "<c:url value='/data/board/onlineConsultingList' />";
 	var onlineadviceUrl = '<c:url value="/admin/board/onlineConsulting"/>';
@@ -36,26 +43,25 @@
 				data 	: params,
 				async: false,
 				success	: function(result) {
-					console.log(result.list);
 					var content = '';
 					if(result.list != null && result.list.length != 0) {
 						$.each(result.list, function(index,data) {
-							content += '<tr>';
+							content += '<tr onclick="onlineConsultingEdit('+data.CONSULTING_SEQ+')">';
 							content += '<input type="hidden" value="'+data.CONSULTING_SEQ+'"/>';
-							content += '<td style="text-align: center;">'+(index + 1)+'</td>';
-							content += '<td style="text-align: center;">'+data.CONSULTING_TITLE+'</td>';
-							content += '<td style="text-align: center;">'+data.CONSULTING_INS_ID+'</td>';
-							content += '<td style="text-align: center;">'+data.CONSULTING_HIT+'</td>';
-							content += '<td style="text-align: center;">'+getDateFormat(data.CONSULTING_INS_DT)+'</td>';
-							content += '<td style="text-align: center;">'+getDateFormat(data.CONSULTING_UDT_DT)+'</td>';
-							content += '<td style="text-align: center;">';
+							content += '<td class="consultinglist" style="text-align: center; border-right: none;">'+(index + 1)+'</td>';
+							content += '<td class="consultinglist" style="text-align: center; border-right: none;">'+data.CONSULTING_TITLE+'</td>';
+							content += '<td class="consultinglist" style="text-align: center; border-right: none;">'+data.CONSULTING_INS_ID+'</td>';
+							content += '<td class="consultinglist" style="text-align: center; border-right: none;">'+data.CONSULTING_HIT+'</td>';
+							content += '<td class="consultinglist" style="text-align: center; border-right: none;">'+getDateFormat(data.CONSULTING_INS_DT)+'</td>';
+							content += '<td class="consultinglist" style="text-align: center; border-right: none;">'+getDateFormat(data.CONSULTING_UDT_DT)+'</td>';
+							content += '<td class="consultinglist" style="text-align: center; border-right: none;">';
 							if(data.CONSULTING_OPEN == 0){
 								content += '공개';
 							}else {
 								content += '비공개';
 							}
 							content += '</td>';
-							content += '<td style="text-align: center;">';  
+							content += '<td class="consultinglist" style="text-align: center; border-right: none;">';  
 							if(data.CONSULTING_CHECK == 0){
 								content += '공개';
 							}else if(data.CONSULTING_CHECK == 1){
@@ -69,7 +75,7 @@
 					} else {
 						content += '<tr><td colspan="10">조회된 결과가 없습니다.</td></tr>';
 					}
-					$('#dataListBody').html(content);
+					$('.dataListBody').html(content);
 					// 페이징 처리
 					pagingNavigation.setData(result);	// 데이터 전달
 					// 페이징(콜백함수 숫자 클릭 시)
@@ -103,26 +109,16 @@
 		
 		
 	});
-	
-	var trOnclick = $("#dataListBody tr");
-	trOnclick.click(function(){
+	function onlineConsultingEdit(consulting_seq){
 		var params = $('form[name=searchForm]').serializeObject();
-		var consulting_seq = $(this).children("input[type=hidden]").val();
-		alert(consulting_seq);
 		params.consulting_seq = consulting_seq;
 		contentLoad('온라인 상담 상세',editUrl, params);
-	});
-	
-	$('#addBtn').on('click', function(){
-		var params = {"consulting_seq" : 0};
-		contentLoad('온라인 상담 작성',editUrl, params);
-	});
+	};
+
 	$('#searchBtn').on('click', function() {
 		var params = $('form[name=searchForm]').serializeObject();
-		console.log(params);
 		contentLoad('온라인 상담 검색',onlineadviceUrl, params);
 	});
-	
 	
 	//timestamp -> date 형식 바꿔주는 함수
 	function getDateFormat(timestamp) {
@@ -173,21 +169,21 @@
 		</form>
 		<!-- //searchForm end -->
 		
-		<table style="border-collapse: collapse;">
+		<table style="border-collapse: collapse; border: none;">
 			<thead>
 			<tr>
-				<th style="width :5%;">번호</th>
-				<th style="width :34%;">제목</th>
-				<th style="width :7%;">작성자</th>
-				<th style="width :5%;">조회수</th>
-				<th style="width :13%;">작성일 <i class="fa fa-caret-down" aria-hidden="true"></i></th>
-				<th style="width :13%;">수정일 <i class="fa fa-caret-down" aria-hidden="true"></i></th>
-				<th style="width :7%;">공개여부 <i class="fa fa-caret-down" aria-hidden="true"></i></th>
-				<th style="width :7%;">처리상태 <i class="fa fa-caret-down" aria-hidden="true"></i></th>
+				<th style="width :5%; border-right: none;">번호</th>
+				<th style="width :43%; border-right: none;">제목</th>
+				<th style="width :7%; border-right: none;">작성자</th>
+				<th style="width :5%; border-right: none;">조회수</th>
+				<th style="width :13%; border-right: none;">작성일 <i class="fa fa-caret-down" aria-hidden="true"></i></th>
+				<th style="width :13%; border-right: none;">수정일 <i class="fa fa-caret-down" aria-hidden="true"></i></th>
+				<th style="width :7%; border-right: none;">공개여부 <i class="fa fa-caret-down" aria-hidden="true"></i></th>
+				<th style="width :7%; border-right: none;">처리상태 <i class="fa fa-caret-down" aria-hidden="true"></i></th>
 			</tr>
 			</thead>
 			<tbody id="topDataListBody"></tbody>
-			<tbody id="dataListBody"></tbody>
+			<tbody class="dataListBody"></tbody>
 		</table>
 		<div class="pagination"></div>
 		<div class="paging">
