@@ -23,9 +23,7 @@ import com.changbi.tt.dev.data.vo.SurveyVO;
 import com.changbi.tt.dev.util.FileService;
 
 import forFaith.dev.dao.AttachFileDAO;
-import forFaith.dev.util.LoginHelper;
 import forFaith.dev.vo.AttachFileVO;
-import forFaith.dev.vo.MemberVO;
 import forFaith.util.StringUtil;
 
 @Service(value="data.boardService")
@@ -556,11 +554,24 @@ public class BoardService {
 		logger.debug("온라인 상담 상세 수정 서비스 종료");
 		return result;
 	}
-
+	
+	/*
+	 * 온라인상담 답변 세부내용 등록
+	 */
 	public int onlineConsultingInsertForm(HashMap<String, Object> params) {
 		logger.debug("온라인상담 답변 세부내용 등록 서비스 시작");
 		int result = boardDao.onlineConsultingInsertForm(params);
 		logger.debug("온라인상담 답변 세부내용 등록 서비스 종료");
+		return result;
+	}
+
+	/*
+	 * 온라인상담 답변 세부내용 수정
+	 */
+	public int onlineConsultingUpdateForm(HashMap<String, Object> params) {
+		logger.debug("온라인상담 답변 세부내용 수정 서비스 시작");
+		int result = boardDao.onlineConsultingUpdateForm(params);
+		logger.debug("온라인상담 답변 세부내용 수정 서비스 종료");
 		return result;
 	}
 }

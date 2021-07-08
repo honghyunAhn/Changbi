@@ -1921,7 +1921,7 @@
 		</if>
 		<if test="searchKeyword != null and searchKeyword != ''">
 			AND
-				BOARD_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+				BOARD_CONTENT_TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
 		</if>
 		ORDER BY BOARD_CONTENT_INS_DT DESC
 		<if test='pagingYn=="Y"'>
@@ -1941,7 +1941,7 @@
 		</if>
 		<if test="searchKeyword != null and searchKeyword != ''">
 			AND
-				BOARD_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+				BOARD_CONTENT_TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
 		</if>
 	</select>
 	
@@ -2232,4 +2232,33 @@
 			consulting_seq = #{consulting_seq}
 	</update>
 	<!-- 온라인 상담 게시판 글 강제수정(관리자용) 종료 -->
+	
+	<!-- 온라인상담 답변 세부내용 등록 시작 -->
+	<update id="onlineConsultingInsertForm" parameterType="hashmap">
+		update
+			com_online_tb
+		set
+			consulting_check = 2
+			,re_ct = #{re_ct}
+			,re_ins_dt = now()
+			,re_ins_id = #{re_ins_id}
+			,re_udt_dt = now()
+			,re_udt_id = #{re_ins_id}
+		where
+			consulting_seq = #{consulting_seq}
+	</update>
+	<!-- 온라인상담 답변 세부내용 등 종료 -->
+	
+	<!-- 온라인상담 답변내용 수정 시작 -->
+	<update id="onlineConsultingUpdateForm" parameterType="hashmap">
+		update
+			com_online_tb
+		set
+			re_ct = #{re_ct}
+			,re_udt_dt = now()
+			,re_udt_id = #{re_udt_id}
+		where
+			consulting_seq = #{consulting_seq}
+	</update>
+	<!-- 온라인상담 답변내용 수정 종료 -->
 </mapper>

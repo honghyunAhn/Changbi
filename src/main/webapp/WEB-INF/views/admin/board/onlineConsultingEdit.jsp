@@ -155,7 +155,7 @@ function onlineConsultingInsert(){
         data : onlineConsultingInsertForm,
         success : function(result){
         	if(result > 0){
-        		CKEDITOR.instances.consulting_ct.destroy();
+        		CKEDITOR.instances.re_ct.destroy();
         		var params = $('form[name=searchForm]').serializeObject();
          		contentLoad('온라인 상담 관리', onlineadviceUrl, params);
         	} else{
@@ -168,6 +168,39 @@ function onlineConsultingInsert(){
 	});
 	return true;
 };
+
+//상담내용 답변 수정
+function onlineConsultingUpdate(){
+	var onlineConsultingUpdateForm = $("#onlineConsultingUpdateForm").serializeObject();
+	console.log(onlineConsultingUpdateForm);
+	var re_ct = CKEDITOR.instances.re_ct.getData();
+	onlineConsultingUpdateForm.re_ct = re_ct;
+	console.log(onlineConsultingUpdateForm);
+	var check = confirm("답변을 수정 하시겠습니까?");
+	if (!check) {
+		return false;
+	}
+	
+	$.ajax({
+        url : "/data/board/onlineConsultingUpdateForm",
+        type : 'POST',
+        data : onlineConsultingUpdateForm,
+        success : function(result){
+        	if(result > 0){
+        		CKEDITOR.instances.re_ct.destroy();
+        		var params = $('form[name=searchForm]').serializeObject();
+         		contentLoad('온라인 상담 관리', onlineadviceUrl, params);
+        	} else{
+        		alert("등록실패했습니다.");
+        	}
+        },
+		error	: function(request, status, error) {
+			alert("code : "+request.status+"\n\n"+"message : "+request.responseText+"\n\n"+"error : "+error);
+		}
+	});
+	return true;
+};
+
 //컨텐츠 타이틀
 $('.content_wraper').children('h3').eq(0).html($('title').text());
 
@@ -249,7 +282,7 @@ $('.onlineConsultingEdit').on('click', function() {
     <br><br>
 	<c:if test="${result.RE_INS_ID == null}">
 	    <form id="onlineConsultingInsertForm" style="width: 100%; text-align:center;">
-	    <table style="border: none; width:100%; margin-right:auto; text-align:center;">
+	    <table style="width:100%; margin-right:auto; text-align:center;">
 	        <thead>
 	            <tr>
 	                <th scope="col" style="text-align:center; width: 100%">온라인상담 답변작성란</th>
@@ -275,7 +308,7 @@ $('.onlineConsultingEdit').on('click', function() {
 	</c:if>
 	<c:if test="${result.RE_INS_ID != null}">
 	    <form id="onlineConsultingUpdateForm" style="width: 100%; text-align:center;" >
-	    <table style="border: none; width:100%; margin-right:auto; text-align:center;">
+	    <table style="width:100%; margin-right:auto; text-align:center;">
 	        <thead>
 	            <tr>
 	                <th scope="col" style="text-align:center; width: 100%;">온라인상담 답변작성란</th>
@@ -299,7 +332,7 @@ $('.onlineConsultingEdit').on('click', function() {
 		style="color:white;font-weight:bold;font-size:120%;background-color:#3af;border:none;padding:5px;width:180px;height:50px;margin-top:15px;margin-bottom:30px;"/>
 		<input type="button" class="onlineConsulting" value="목록보기" 
 		style="color:white;font-weight:bold;font-size:120%;background-color:#ff5252;border:none;padding:5px;width:180px;height:50px;margin-top:15px;margin-bottom:30px;"/>
-	    <input type="hidden" name="consulting_seq" value="${result.CONSULTING_SEQ}}">
+	    <input type="hidden" name="consulting_seq" value="${result.CONSULTING_SEQ}">
 	    </form>
 	</c:if>
 	<input type="hidden" id="consulting_seq" name="consulting_seq" value="${result.CONSULTING_SEQ}">

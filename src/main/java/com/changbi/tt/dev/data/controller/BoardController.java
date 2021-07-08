@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -734,6 +733,7 @@ public class BoardController {
 		int pageNo = Integer.parseInt((String) params.get("pageNo"));
 		params.put("numOfRows", 10);
 		params.put("firstIndex", (pageNo - 1) * 10);
+		
 		consulting.setNumOfRows(10);
 		consulting.setPageNo(pageNo);
 		consulting.setTotalCount(boardService.onlineConsultingListCnt(params));
@@ -760,7 +760,7 @@ public class BoardController {
 	}
 	
 	/*
-	 * 온라인상담 답변 세부내용 등록 시작
+	 * 온라인상담 답변 세부내용 등록
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/onlineConsultingInsertForm", method = RequestMethod.POST)
@@ -768,9 +768,24 @@ public class BoardController {
 		logger.debug("온라인상담 답변 세부내용 등록 컨트롤러 시작");
 		MemberVO loginUser = (MemberVO) LoginHelper.getLoginInfo();
 		String user_id = loginUser.getId();
-		params.put("consulting_udt_id", user_id);
+		params.put("re_ins_id", user_id);
 		int result = boardService.onlineConsultingInsertForm(params);
 		logger.debug("온라인상담 답변 세부내용 등록 컨트롤러 종료");
+		return result;
+	}
+	
+	/*
+	 * 온라인상담 답변 세부내용 수정
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/onlineConsultingUpdateForm", method = RequestMethod.POST)
+	public int onlineConsultingUpdateForm(@RequestParam HashMap<String, Object> params) throws Exception {
+		logger.debug("온라인상담 답변 세부내용 수정 컨트롤러 시작");
+		MemberVO loginUser = (MemberVO) LoginHelper.getLoginInfo();
+		String user_id = loginUser.getId();
+		params.put("re_udt_id", user_id);
+		int result = boardService.onlineConsultingUpdateForm(params);
+		logger.debug("온라인상담 답변 세부내용 수정 컨트롤러 종료");
 		return result;
 	}
 }

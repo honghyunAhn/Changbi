@@ -386,7 +386,7 @@ public class BoardController {
 	@RequestMapping(value = "/boardDetail")
 	public void boardDetail(@RequestParam HashMap<String, Object> params, ModelMap model) throws Exception {
 		logger.debug("공지사항 게시판의 게시글 세부 내용을 호출하는 컨트롤러 시작");
-		
+		System.out.println("anh288" + params);
 		try {
 			boardService.board_contents_hit_update(params);
 		} catch (Exception e) {
