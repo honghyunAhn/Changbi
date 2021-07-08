@@ -23,7 +23,9 @@ import com.changbi.tt.dev.data.vo.SurveyVO;
 import com.changbi.tt.dev.util.FileService;
 
 import forFaith.dev.dao.AttachFileDAO;
+import forFaith.dev.util.LoginHelper;
 import forFaith.dev.vo.AttachFileVO;
+import forFaith.dev.vo.MemberVO;
 import forFaith.util.StringUtil;
 
 @Service(value="data.boardService")
@@ -515,11 +517,50 @@ public class BoardService {
 		logger.debug("온라인 상담 관리 목록 서비스 종료");
 		return result;
 	}
-
+	
+	/*
+	 * 온라인 상담 목록 카운트
+	 */
 	public int onlineConsultingListCnt(HashMap<String, Object> params) {
 		logger.debug("온라인 상담 관리 목록 카운트 서비스 시작");
 		int result = boardDao.onlineConsultingListCnt(params);
 		logger.debug("온라인 상담 관리 목록 카운트 서비스 종료");
+		return result;
+	}
+	
+	/*
+	 * 온라인 상담 상세 내용 불러오기
+	 */
+	public HashMap<String, Object> onlineConsultingEdit(int consulting_seq) {
+		logger.debug("온라인 상담 관리 목록 서비스 시작");
+		HashMap<String, Object> result = boardDao.onlineConsultingEdit(consulting_seq);
+		logger.debug("온라인 상담 관리 목록 서비스 종료");
+		return result;
+	}
+	
+	/*
+	 * 온라인 상담 상세 내용 조회수
+	 */
+	public void onlineConsultingHit(int consulting_seq) {
+		logger.debug("온라인 상담 상세 조회수 증가 서비스 시작");
+		boardDao.onlineConsultingHit(consulting_seq);
+		logger.debug("온라인 상담 상세 조회수 증가 서비스 종료");
+	}
+	
+	/*
+	 * 온라인 상담 상세 내용 수정
+	 */
+	public int onlineUpdateForm(HashMap<String, Object> params) {
+		logger.debug("온라인 상담 상세 수정 서비스 시작");
+		int result = boardDao.onlineUpdateForm(params);
+		logger.debug("온라인 상담 상세 수정 서비스 종료");
+		return result;
+	}
+
+	public int onlineConsultingInsertForm(HashMap<String, Object> params) {
+		logger.debug("온라인상담 답변 세부내용 등록 서비스 시작");
+		int result = boardDao.onlineConsultingInsertForm(params);
+		logger.debug("온라인상담 답변 세부내용 등록 서비스 종료");
 		return result;
 	}
 }

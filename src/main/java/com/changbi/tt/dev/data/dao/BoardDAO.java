@@ -192,4 +192,12 @@ public interface BoardDAO {
 	
 	//온라인 상담 상세 내용 불러오기
 	HashMap<String, Object> onlineConsultingEdit(int consulting_seq);
+	
+	//온라인 상담 상세 조회수 증가
+	void onlineConsultingHit();
+	
+	//온라인 상담 내용 수정
+	int onlineUpdateForm(HashMap<String, Object> params);
+
+	void onlineConsultingHit(int consulting_seq);
 }

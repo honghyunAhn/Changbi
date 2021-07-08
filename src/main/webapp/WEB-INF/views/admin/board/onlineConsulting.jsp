@@ -63,9 +63,9 @@
 							content += '</td>';
 							content += '<td class="consultinglist" style="text-align: center; border-right: none;">';  
 							if(data.CONSULTING_CHECK == 0){
-								content += '공개';
+								content += '삭제글';
 							}else if(data.CONSULTING_CHECK == 1){
-								content += '비공개';
+								content += '답변대기';
 							} else{
 								content += '답변완료';
 							}
@@ -186,8 +186,5 @@
 			<tbody class="dataListBody"></tbody>
 		</table>
 		<div class="pagination"></div>
-		<div class="paging">
-		<a id="addBtn" class="btn align_right primary">신규등록</a>
-		</div>
 	</div>
 </div>

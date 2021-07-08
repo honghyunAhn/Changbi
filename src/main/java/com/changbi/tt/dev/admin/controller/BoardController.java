@@ -378,7 +378,11 @@ public class BoardController {
 		model.addAttribute("search", params);
 	}
 	
-	
+	/**
+	 * 게시판 게시글 세부 내용 이동
+	 * 
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/boardDetail")
 	public void boardDetail(@RequestParam HashMap<String, Object> params, ModelMap model) throws Exception {
 		logger.debug("공지사항 게시판의 게시글 세부 내용을 호출하는 컨트롤러 시작");
@@ -402,7 +406,12 @@ public class BoardController {
 
 		logger.debug("공지사항 게시판의 게시글 세부 내용을 호출하는 컨트롤러 종료");
 	}
-
+	
+	/**
+	 * 게시판 게시글 세부 내용 동록 폼 이동
+	 * 
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/boardInsert")
 	public void boardInsert(@RequestParam HashMap<String, Object> params, Model model) {
 		logger.debug("공지사항 게시판의 게시글 세부 내용 등록 폼 이동 컨트롤러 시작");
@@ -422,7 +431,12 @@ public class BoardController {
 
 		logger.debug("공지사항 게시판의 게시글 세부 내용 등록 폼 이동 컨트롤러 종료");
 	}
-
+	
+	/**
+	 * 게시판 세부 내용 수정 폼 이동
+	 * 
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/boardUpdate")
 	public void boardUpdate(@RequestParam HashMap<String, Object> params, Model model) throws Exception {
 		logger.debug("공지사항 게시판의 게시글 세부 내용 수정 폼 이동 컨트롤러 시작");
@@ -446,18 +460,33 @@ public class BoardController {
 		logger.debug("공지사항 게시판의 게시글 세부 내용 수정 폼 이동 컨트롤러 종료");
 	}
 	
+	/**
+	 * 온라인 상담 관리 이동
+	 * 
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/onlineConsulting")
-	public void onlineConsulting(@RequestParam HashMap<String, Object> params, ModelMap model) throws Exception {
+	public void onlineConsulting(@RequestParam HashMap<String, Object> params, Model model) throws Exception {
 		logger.debug("온라인 상담 관리 이동 컨트롤러 시작");
 		model.addAttribute("search", params);
 		logger.debug("온라인 상담 관리 이동 컨트롤러 종료");
 	}
 	
+	/**
+	 * 온라인 상담 작성 이동
+	 * 
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/onlineConsultingEdit")
-	public void onlineConsultingEdit(@RequestParam HashMap<String, Object> params, ModelMap model) throws Exception {
+	public void onlineConsultingEdit(@RequestParam HashMap<String, Object> params, Model model) throws Exception {
 		logger.debug("온라인 상담 작성 이동 컨트롤러 시작");
 		
+		int consulting_seq = Integer.parseInt((String) params.get("consulting_seq"));
+		HashMap<String, Object> result = boardService.onlineConsultingEdit(consulting_seq);
+		boardService.onlineConsultingHit(consulting_seq);
+		
 		model.addAttribute("search", params);
+		model.addAttribute("result", result);
 		logger.debug("온라인 상담 작성 이동 컨트롤러 종료");
 	}
 }

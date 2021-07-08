@@ -158,8 +158,6 @@ function mainPageLoad() {
 }
 
 function contentLoad(title, contentUrl, data) {
-	console.log(title + ' / ' + contentUrl);
-	console.log(data);
 	$("title").html(title ? title : "메인");
 	
 	// contentUrl이 없다면 targetUrl이 있는지 체크해서 targetUrl로 가든지 메인으로 가든지
@@ -452,6 +450,7 @@ function getDateFormat(timestamp) {
 					<li><a href="javascript:contentLoad('과정별 자료실관리','/admin/board/courseBoardList', {'boardType':2});">과정별 자료실관리</a></li>
 					<!-- <li><a href="javascript:contentLoad('자유게시판 관리','/admin/board/freeBoardList', {'boardType':8});">자유게시판 관리</a></li> -->
 					<li><a href="javascript:contentLoad('자주묻는질문','/admin/board/faqList');">FAQ 관리</a></li>
+					<li><a href="javascript:contentLoad('온라인 상담 관리','/admin/board/onlineConsulting');">온라인 상담 관리</a></li>
 <!-- 					<li><a href="javascript:contentLoad('자주묻는질문','/admin/board/boardList', {'boardType':3});">FAQ 관리</a></li> -->
 					<!-- <li><a href="javascript:contentLoad('1:1상담관리','/admin/board/boardList', {'boardType':4});">1:1상담관리</a></li> -->
 					<li><a href="javascript:contentLoad('과정별 질의응답관리','/admin/board/courseBoardList', {'boardType':6});">과정별 질의응답관리</a></li>

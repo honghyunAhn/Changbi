@@ -2206,4 +2206,30 @@
 	</select>
 	<!-- 온라인 상담 내용 불러오기 종료 -->
 	
+	<!-- 온라인 상담 상세 조회수 증가 시작 -->
+	<update id="onlineConsultingHit" parameterType="int">
+		update
+			com_online_tb
+		set
+			consulting_hit = consulting_hit + 1
+		where
+			consulting_seq = #{consulting_seq}
+	</update>	
+	<!-- 온라인 상담 상세 조회수 증가 종료 -->
+	
+	<!-- 온라인 상담 게시판 글 강제수정(관리자용) 시작 -->
+	<update id="onlineUpdateForm" parameterType="hashmap">
+		update
+			com_online_tb
+		set
+			consulting_title = #{consulting_title}
+			,consulting_ct = #{consulting_ct}
+			,consulting_open = #{consulting_open}
+			,consulting_check = #{consulting_check}
+			,consulting_udt_dt = now()
+			,consulting_udt_id = #{consulting_udt_id}
+		where
+			consulting_seq = #{consulting_seq}
+	</update>
+	<!-- 온라인 상담 게시판 글 강제수정(관리자용) 종료 -->
 </mapper>
