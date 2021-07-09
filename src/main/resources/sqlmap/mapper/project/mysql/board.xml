@@ -1921,7 +1921,7 @@
 		</if>
 		<if test="searchKeyword != null and searchKeyword != ''">
 			AND
-				BOARD_CONTENT_TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
+				BOARD_NM LIKE CONCAT('%', #{searchKeyword}, '%')
 		</if>
 		ORDER BY BOARD_CONTENT_INS_DT DESC
 		<if test='pagingYn=="Y"'>
@@ -1941,7 +1941,7 @@
 		</if>
 		<if test="searchKeyword != null and searchKeyword != ''">
 			AND
-				BOARD_CONTENT_TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
+				BOARD_NM LIKE CONCAT('%', #{searchKeyword}, '%')
 		</if>
 	</select>
 	

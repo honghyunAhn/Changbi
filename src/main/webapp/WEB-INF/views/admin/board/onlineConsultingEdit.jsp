@@ -282,7 +282,7 @@ $('.onlineConsultingEdit').on('click', function() {
     <br><br>
 	<c:if test="${result.RE_INS_ID == null}">
 	    <form id="onlineConsultingInsertForm" style="width: 100%; text-align:center;">
-	    <table style="width:100%; margin-right:auto; text-align:center;">
+	    <table style="border: none; width:100%; margin-right:auto; text-align:center;">
 	        <thead>
 	            <tr>
 	                <th scope="col" style="text-align:center; width: 100%">온라인상담 답변작성란</th>
@@ -308,7 +308,7 @@ $('.onlineConsultingEdit').on('click', function() {
 	</c:if>
 	<c:if test="${result.RE_INS_ID != null}">
 	    <form id="onlineConsultingUpdateForm" style="width: 100%; text-align:center;" >
-	    <table style="width:100%; margin-right:auto; text-align:center;">
+	    <table style="border: none; width:100%; margin-right:auto; text-align:center;">
 	        <thead>
 	            <tr>
 	                <th scope="col" style="text-align:center; width: 100%;">온라인상담 답변작성란</th>

@@ -4,18 +4,14 @@
 <!-- 검색영역 css -->
 <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/project/admin/searchForm.css" />">
 <script>
-	//변수영역
-	var allBoardListUrl = "<c:url value='/admin/board/allBoardList' />";
-	var boardListUrl = "<c:url value='/admin/board/boardListBySeq' />";
-	var detailUrl = "<c:url value='/admin/board/boardDetail' />";
-	var boardUpdateUrl = "<c:url value='/admin/board/boardUpdate' />";
-	
 	$(function() {
-		// 컨텐츠 타이틀
-		$('.content_wraper').children('h3').eq(0).html($('title').text());
-	});
-	
-	/* 게시판 관리 페이지 이동 */
+		//변수영역
+		var allBoardListUrl = "<c:url value='/admin/board/allBoardList' />";
+		var boardListUrl = "<c:url value='/admin/board/boardListBySeq' />";
+		var detailUrl = "<c:url value='/admin/board/boardDetail' />";
+		var boardUpdateUrl = "<c:url value='/admin/board/boardUpdate' />";
+
+		/* 게시판 관리 페이지 이동 */
 		$('.allBoardList').on('click', function() {
 			var params = $('form[name="searchForm"]').serializeObject();
 			// ajax로 load
@@ -24,41 +20,31 @@
 		
 		/* 게시판 내용 페이지(목록으로) 이동 */
 		$(".dataListBody").on("click", function() {
-			var params = $('form[name="searchForm"]').serializeObject();
-			var board_nm = $("#board_nm").val();
-			params.board_nm = board_nm;
-			var board_seq = $("#board_seq").val();
-			params.board_seq = board_seq;
-			contentLoad(board_nm, boardListUrl, params);
+			var params = $("#boardMoveHidden").serializeObject(); 
+			contentLoad(params.board_nm, boardListUrl, params);
 		});
 		
 		/* 게시판 상세 페이지 이동 */
 		$(".boardDetailMove").on("click", function() {
-			var params = $('form[name="searchForm"]').serializeObject();
-			var board_nm = $("#board_nm").val();
-			params.board_nm = board_nm;
-			var board_seq = $("#board_seq").val();
-			params.board_seq = board_seq;
-			var board_content_seq = $("#board_content_seq").val()
-			params.board_content_seq = board_content_seq;
+			var params = $("#boardMoveHidden").serializeObject(); 
 			contentLoad("게시글 상세", detailUrl, params);
 		});
 		
 		//수정하기 버튼
 		$("#boardUpdateBtn").on("click", function() {
-			var params = $('form[name="searchForm"]').serializeObject();
-			var board_nm = $("#board_nm").val();
-			params.board_nm = board_nm;
-			var board_seq = $("#board_seq").val();
-			params.board_seq = board_seq;
-			var board_content_seq = $("#board_content_seq").val()
-			params.board_content_seq = board_content_seq;
-			contentLoad("게시글 수정", boardUpdateUrl, params);
+			var params = $("#boardMoveHidden").serializeObject();
+			contentLoad(params.board_nm, boardUpdateUrl, params);
+		});
+		
+		//목록으로 버튼
+		$("#boardManagerBtn").on("click", function() {
+			var params = $("#boardMoveHidden").serializeObject();
+			contentLoad(params.board_nm, boardListUrl, params);
 		});
 		
 		// 삭제하기 버튼
 		$("#boardDeleteBtn").on("click", function() {
-			var board_content_seq = $("#board_content_seq").val();
+			var board_content_seq = $("#bd_board_content_seq").val();
 			var board_file_seq_list = [];
 			var board_file_saved_list = []; 
 			
@@ -73,6 +59,8 @@
 			jQuery.ajaxSettings.traditional = true;
 			
 			if (confirm("삭제하시겠습니까?")) {
+				console.log(board_file_seq_list);
+				console.log(board_file_saved_list);
 				if(board_file_seq_list.length > 0){
 					$.ajax({
 							beforeSend: function(xhr) {
@@ -102,12 +90,9 @@
 					data 	: {"board_content_seq" : board_content_seq},
 					success	: function(result) {
 						if(result > 0){
-							var params = $('form[name="searchForm"]').serializeObject();
-							var board_nm = $("#board_nm").val();
-							params.board_nm = board_nm;
-							var board_seq = $("#board_seq").val();
-							params.board_seq = board_seq;
-							contentLoad(board_nm, boardListUrl, params);
+							var params = $('#boardMoveHidden').serializeObject();
+							// ajax로 load
+							contentLoad('${board_gb.board_nm}', boardListUrl, params);
 						}
 					},
 					error	: function(request, status, error) {
@@ -117,6 +102,10 @@
 			}
 			return false;
 		});
+		
+		// 컨텐츠 타이틀
+		$('.content_wraper').children('h3').eq(0).html($('title').text());
+	})
 </script>
 <div class="content_wraper">
 	<h3></h3>
@@ -128,6 +117,13 @@
 		<span class="detailTd boardDetailMove">게시글 상세</span>
 	</div>
 	<br>
+	<form name="searchForm">
+		<!-- 페이징 처리여부 -->
+       	<input type="hidden" name="pagingYn" value="Y" />
+       	<!-- pageNo -->
+       	<input type="hidden" name="pageNo" value='<c:out value="${search.pageNo}" default="1" />' />
+		<input type="hidden" name="board_seq" value="${search.board_seq}">
+	</form>
 	<div class="tab_body">
 		<table class="board_view">
 		<colgroup>
@@ -181,18 +177,20 @@
 	</table>
 		
 	<div class="boardManagerDiv">
+		<input type="hidden" name="bd_board_content_seq" id="bd_board_content_seq" value="${boardDetail.board_content_seq}">
 		<a class="btn btn-danger" id="boardDeleteBtn">삭제하기</a>
 		<a class="btn btn-primary" id="boardUpdateBtn">수정하기</a>
-		<a class="btn dataListBody" id="boardManagerBtn">목록으로</a>
+		<a class="btn" id="boardManagerBtn">목록으로</a>
 	</div>
-    <input type="hidden" id="board_seq" value="${search.board_seq}" />
-    <input type="hidden" id="board_nm" value="${search.board_nm}" />
-    <input type="hidden" id="board_content_seq" value="${search.board_content_seq}" />
-    <form name="searchForm">
+    
+    <form action="/data/board/boardDelete" id="boardMoveHidden" method="post">
 	    <input type="hidden" name="searchCondition" value="${search.searchCondition}" />
 	    <input type="hidden" name="searchKeyword" value="${search.searchKeyword}" />
 	    <input type="hidden" name="pagingYn" value="${search.pagingYn}" />
 	    <input type="hidden" name="pageNo" value="${search.pageNo}" />
+        <input type="hidden" name="board_seq" value="${search.board_seq}" />
+        <input type="hidden" name="board_nm" value="${search.board_nm}" />
+        <input type="hidden" name="board_content_seq" value="${search.board_content_seq}" />
     </form>
 	</div>
 </div>

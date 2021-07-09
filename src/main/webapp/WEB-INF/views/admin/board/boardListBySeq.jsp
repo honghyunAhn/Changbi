@@ -4,20 +4,50 @@
 <!-- 검색영역 css -->
 <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/project/admin/searchForm.css" />">
 <script type="text/javascript">
-	
-	/** 변수 영역 **/
-	// 여기에서 URL 변경 시켜서 사용
-	var allBoardListUrl = "<c:url value='/admin/board/allBoardList' />";
-	var listUrl	= "<c:url value='/data/board/boardListBySeq' />";
-	var boardListUrl = "<c:url value='/admin/board/boardListBySeq' />";
-	var detailUrl = "<c:url value='/admin/board/boardDetail' />";
-	var insertUrl = "<c:url value='/admin/board/boardInsert' />";
-	
-	// 최초 호출 시 페이징 네비게이션 세팅(해당 영역에 이벤트가 생성 된다)
-	var pagingNavigation = new PagingNavigation($(".pagination"));
-	
+
 	$(document).ready(function () {
 		
+		/** 변수 영역 **/
+		// 여기에서 URL 변경 시켜서 사용
+		var allBoardListUrl = "<c:url value='/admin/board/allBoardList' />";
+		var listUrl	= "<c:url value='/data/board/boardListBySeq' />";
+		var boardListUrl = "<c:url value='/admin/board/boardListBySeq' />";
+		var detailUrl = "<c:url value='/admin/board/boardDetail' />";
+		var insertUrl = "<c:url value='/admin/board/boardInsert' />";
+		
+		/* 게시판 관리 페이지 이동 */
+		$('.allBoardList').on('click', function() {
+			var params = $('form[name="searchForm"]').serializeObject();
+			// ajax로 load
+			contentLoad('게시글 상세', allBoardListUrl, params);
+		});
+		
+		/* 게시판 내용 페이지(목록으로) 이동 */
+		$(".dataListBody").on("click", function() {
+			var params = $('form[name="searchForm"]').serializeObject();
+			// ajax로 load
+			contentLoad(params.board_nm, boardListUrl, params);
+		});
+		
+		/* board_content_name 클릭 시 상세 페이지 이동 */
+		$("#dataListBody").on("click", ".board_title", function() {
+			var params = $('form[name="searchForm"]').serializeObject();
+			params.board_content_seq = $(this).closest('tr').find(':hidden[name=board_content_seq]').val();
+			// ajax로 load
+			contentLoad('게시글 상세', detailUrl, params);
+		});
+		
+		/* 등록버튼 클릭 시 등록 페이지 이동 */
+		$('#boardInsertBtn').on('click', function(){
+			var params = $('form[name="searchForm"]').serializeObject();
+			// ajax로 load
+			contentLoad('게시글 상세', insertUrl, params);
+		});
+		
+		// 최초 호출 시 페이징 네비게이션 세팅(해당 영역에 이벤트가 생성 된다)
+		var pagingNavigation = new PagingNavigation($(".pagination"));
+		
+		/** 함수 영역 **/
 		// 리스트 페이지 세팅(ajax 방식) 함수
 		function setContentList(pageNo) {
 			// pageNo를 넘기지 않는다면 hidden의 pageNo를 사용한다.
@@ -25,14 +55,8 @@
 			
 			// 변경 된 pageNo를 hidden의 pageNo에 저장한다.(검색용)
 			$(":hidden[name='pageNo']").val(pageNo);
-
+			
 			var params = $('form[name=searchForm]').serializeObject();
-			
-			var board_nm = $("#board_nm").val();
-			params.board_nm = board_nm;
-			
-			var board_seq = $("#board_seq").val();
-			params.board_seq = board_seq;
 			
 			// ajax 처리
 			$.ajax({
@@ -40,6 +64,7 @@
 				url		: listUrl,
 				data 	: params,
 				success	: function(result) {
+					console.log(result);
 					var content = '';
 					$.each(result.list, function(index,item) {
 						content += '<tr>';
@@ -69,79 +94,20 @@
 				}
 			});
 		}
-		
-		/** 페이지 시작 **/
-		// 최초 리스트 페이지 호출 한다.
-		setContentList();
-		
+		/** 이벤트 영역 **/
 		// 검색 버튼 클릭 시
 		$("#searchBtn").unbind("click").bind("click", function() {
 			// 1페이지로 이동 시키고 검색 조건에 해당하는 검색
 			setContentList(1);
 		});
 		
+		/** 페이지 시작 **/
+		// 최초 리스트 페이지 호출 한다.
+		setContentList();
+		
 		// 컨텐츠 타이틀
 		$('.content_wraper').children('h3').eq(0).html($('title').text());
-	});
-	
-	/** 이벤트 영역 **/
-	//검색어 치고 엔터 눌렀을 때
-	$("#searchKeyword").unbind("keyup").bind("keyup", function(event) {
-		if(event.keyCode === 13) {
-			$("#searchBtn").trigger("click");
-		}
-	});
 		
-	$('#searchBtn').on('click', function() {
-		var params = $('form[name=searchForm]').serializeObject();
-		var board_nm = $("#board_nm").val();
-		params.board_nm = board_nm;
-		var board_seq = $("#board_seq").val();
-		params.board_seq = board_seq;
-		contentLoad(board_nm, boardListUrl, params);
-	});
-	
-	
-	
-	/* 게시판 관리 페이지 이동 */
-	$('.allBoardList').on('click', function() {
-		var params = $('form[name="searchForm"]').serializeObject();
-		// ajax로 load
-		contentLoad('게시글 상세', allBoardListUrl, params);
-	});
-	
-	/* 게시판 내용 페이지(목록으로) 이동 */
-	$(".dataListBody").on("click", function() {
-		var params = $('form[name="searchForm"]').serializeObject();
-		var board_nm = $("#board_nm").val();
-		params.board_nm = board_nm;
-		var board_seq = $("#board_seq").val();
-		params.board_seq = board_seq;
-		// ajax로 load
-		contentLoad(board_nm, boardListUrl, params);
-	});
-	
-	/* board_content_name 클릭 시 상세 페이지 이동 */
-	$("#dataListBody").on("click", ".board_title", function() {
-		var params = $('form[name="searchForm"]').serializeObject();
-		params.board_content_seq = $(this).closest('tr').find(':hidden[name=board_content_seq]').val();
-		var board_seq = $("#board_seq").val();
-		params.board_seq = board_seq;
-		var board_nm = $("#board_nm").val();
-		params.board_nm = board_nm;
-		// ajax로 load
-		contentLoad('게시글 상세', detailUrl, params);
-	});
-	
-	/* 등록버튼 클릭 시 등록 페이지 이동 */
-	$('#boardInsertBtn').on('click', function(){
-		var params = $('form[name="searchForm"]').serializeObject();
-		var board_nm = $("#board_nm").val();
-		params.board_nm = board_nm;
-		var board_seq = $("#board_seq").val();
-		params.board_seq = board_seq;
-		// ajax로 load
-		contentLoad('게시글 등록', insertUrl, params);
 	});
 </script>
 
@@ -154,7 +120,7 @@
 	</div>
 	<div class="tab_body">
 		<!-- searchForm start -->
-       	<form name="searchForm" method="post" onsubmit="return false;">
+       	<form name="searchForm" method="post">
        		<div>
         		<table class="searchTable">
 	        		<tr>
@@ -164,7 +130,7 @@
 								<option value='title' <c:if test="${search.searchCondition eq 'title'}">selected</c:if>>제목</option>
 							</select>
 				
-							<input type="text" placeholder="검색어입력" id="searchKeyword" name="searchKeyword" value="<c:out value="${search.searchKeyword}" />">
+							<input type="text" placeholder="검색어입력" name="searchKeyword" value="<c:out value="${search.searchKeyword}" />">
 	        			</td>
 	        		</tr>
 		       		<tr>
@@ -174,10 +140,13 @@
 		        	</tr>
 	        	</table>
 	        </div>
-	        <!-- 페이징 처리여부 -->
+			<!-- 페이징 처리여부 -->
         	<input type="hidden" name="pagingYn" value="Y" />
         	<!-- pageNo -->
         	<input type="hidden" name="pageNo" value='<c:out value="${search.pageNo}" default="1" />' />
+        	<!-- board_seq -->
+        	<input type="hidden" name="board_seq" id="board_seq" value='<c:out value="${search.board_seq}"/>' />
+			<input type="hidden" name="board_nm" id="board_nm" value="${search.board_nm}" />
 		</form>
 		<!-- //searchForm end -->
 		
@@ -200,7 +169,5 @@
 		<div class="boardManagerDiv">
 			<a class="btn btn-primary" id="boardInsertBtn">등록하기</a>
 		</div>
-		<input type="hidden" id="board_seq" value='<c:out value="${search.board_seq}"/>' />
-		<input type="hidden" id="board_nm" value="<c:out value="${search.board_nm}"/>"/>
 	</div>
 </div>
