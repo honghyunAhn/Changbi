@@ -1876,9 +1876,9 @@
 			COM_BOARD_GROUP_TB
 		WHERE
 			1=1
-		<if test="searchKeyword != null and searchKeyword != ''">
+		<if test="searchKeywords != null and searchKeywords != ''">
 			AND
-				BOARD_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+				BOARD_NM LIKE CONCAT('%', #{searchKeywords}, '%')
 		</if>
 		ORDER BY BOARD_SEQ DESC
 		<if test='pagingYn=="Y"'>
@@ -1921,7 +1921,7 @@
 		</if>
 		<if test="searchKeyword != null and searchKeyword != ''">
 			AND
-				BOARD_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+				BOARD_CONTENT_TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
 		</if>
 		ORDER BY BOARD_CONTENT_INS_DT DESC
 		<if test='pagingYn=="Y"'>
@@ -1941,7 +1941,7 @@
 		</if>
 		<if test="searchKeyword != null and searchKeyword != ''">
 			AND
-				BOARD_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+				BOARD_CONTENT_TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
 		</if>
 	</select>
 	

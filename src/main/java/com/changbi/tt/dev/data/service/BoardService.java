@@ -23,9 +23,7 @@ import com.changbi.tt.dev.data.vo.SurveyVO;
 import com.changbi.tt.dev.util.FileService;
 
 import forFaith.dev.dao.AttachFileDAO;
-import forFaith.dev.util.LoginHelper;
 import forFaith.dev.vo.AttachFileVO;
-import forFaith.dev.vo.MemberVO;
 import forFaith.util.StringUtil;
 
 @Service(value="data.boardService")

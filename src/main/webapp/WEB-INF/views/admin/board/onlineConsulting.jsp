@@ -15,8 +15,6 @@
 }
 </style>
 <script type="text/javascript">
-	var params = $('form[name=searchForm]').serializeObject();
-	console.log(params);
 	//변수
 	var dataListUrl = "<c:url value='/data/board/onlineConsultingList' />";
 	var onlineadviceUrl = '<c:url value="/admin/board/onlineConsulting"/>';
@@ -92,7 +90,6 @@
 		// 컨텐츠 타이틀
 		$('.content_wraper').children('h3').eq(0).html($('title').text());
 		
-		/** 이벤트 영역 **/
 		// 검색 버튼 클릭 시
 		$("#searchBtn").unbind("click").bind("click", function() {
 			// 1페이지로 이동 시키고 검색 조건에 해당하는 검색
@@ -101,13 +98,15 @@
 		
 		//검색어 치고 엔터 눌렀을 때
 		$("#searchKeyword").unbind("keyup").bind("keyup", function(event) {
+			console.log(event);
 			if(event.keyCode === 13) {
 				$("#searchBtn").trigger("click");
 			}
 		});
 		
-		
 	});
+	
+	/** 이벤트 영역 **/
 	function onlineConsultingEdit(consulting_seq){
 		var params = $('form[name=searchForm]').serializeObject();
 		params.consulting_seq = consulting_seq;
@@ -146,9 +145,7 @@
 	        			<th>키워드검색</th>
 	        			<td>
 	        				<select id="searchCondition" name="searchCondition">
-								<option value='all'>전체</option>
 								<option value='title' <c:if test="${search.searchCondition eq 'title'}">selected</c:if>>제목</option>
-								<option value='content' <c:if test="${search.searchCondition eq 'content'}">selected</c:if>>내용</option>
 							</select>
 				
 							<input type="text" placeholder="검색어입력" id="searchKeyword" name="searchKeyword" value="<c:out value="${search.searchKeyword}" />">

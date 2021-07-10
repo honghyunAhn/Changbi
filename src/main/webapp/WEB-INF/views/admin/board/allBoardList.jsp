@@ -10,15 +10,15 @@
 }
 </style>
 <script type="text/javascript">
+	var listUrl	= "<c:url value='/data/board/allBoardList' />";
+	var boardListUrl = "<c:url value='/admin/board/boardListBySeq' />";
 	$(document).ready(function () {
 		/** 변수 영역 **/
 		// 여기에서 URL 변경 시켜서 사용
-		var listUrl	= "<c:url value='/data/board/allBoardList' />";
-		var boardListUrl = "<c:url value='/admin/board/boardListBySeq' />";
+		
 		// 최초 호출 시 페이징 네비게이션 세팅(해당 영역에 이벤트가 생성 된다)
 		var pagingNavigation = new PagingNavigation($(".pagination"));
 		
-		/** 함수 영역 **/
 		// 리스트 페이지 세팅(ajax 방식) 함수
 		function setContentList(pageNo) {
 			// pageNo를 넘기지 않는다면 hidden의 pageNo를 사용한다.
@@ -60,44 +60,55 @@
 				}
 			});
 		}
-		/** 이벤트 영역 **/
-		// 검색 버튼 클릭 시
-		$("#searchBtn").unbind("click").bind("click", function() {
-			// 1페이지로 이동 시키고 검색 조건에 해당하는 검색
-			setContentList(1);
-		});
-		// 클릭 시 상세 페이지 이동
-		$("#dataListBody").on("click", ".board_nm", function() {
-			var board_seq = $(this).closest('tr').find(':hidden[name=board_seq]').val();
-			var board_nm = $(this).text();
-			
-			var params = $('form[name=searchForm]').serializeObject();
-			params.board_seq = board_seq;
-			params.board_nm = board_nm;
-			
-			// ajax로 load
-			contentLoad(board_nm, boardListUrl, params);
-		});
+
 		/** 페이지 시작 **/
 		// 최초 리스트 페이지 호출 한다.
 		setContentList();
 		
 		// 컨텐츠 타이틀
 		$('.content_wraper').children('h3').eq(0).html($('title').text());
+		
+		// 검색 버튼 클릭 시
+		$("#searchBtn").unbind("click").bind("click", function() {
+			// 1페이지로 이동 시키고 검색 조건에 해당하는 검색
+			setContentList(1);
+		});
 	});
+	
+	/** 이벤트 영역 **/
+	//검색어 치고 엔터 눌렀을 때
+	$("#searchKeywords").unbind("keyup").bind("keyup", function(event) {
+		if(event.keyCode === 13) {
+			$("#searchBtn").trigger("click");
+		}
+	});
+	
+	// 클릭 시 상세 페이지 이동
+	$("#dataListBody").on("click", ".board_nm", function() {
+		var board_seq = $(this).closest('tr').find(':hidden[name=board_seq]').val();
+		var board_nm = $(this).text();
+		
+		var params = $('form[name=searchForm]').serializeObject();
+		params.board_seq = board_seq;
+		params.board_nm = board_nm;
+		
+		// ajax로 load
+		contentLoad(board_nm, boardListUrl, params);
+	});
+	
 </script>
 
 <div class="content_wraper">
 	<h3></h3>
 	<div class="tab_body">
 		<!-- searchForm start -->
-       	<form name="searchForm" method="post">
+       	<form name="searchForm" method="post" onsubmit="return false;">
        		<div>
         		<table class="searchTable">
 	        		<tr>
 	        			<th>키워드검색</th>
 	        			<td>
-							<input type="text" placeholder="검색어입력" name="searchKeyword" value="<c:out value="${search.searchKeyword}" />">
+							<input type="text" placeholder="검색어입력" id="searchKeywords" name="searchKeywords" value="<c:out value="${search.searchKeyword}" />">
 	        			</td>
 	        		</tr>
 		       		<tr>
@@ -107,7 +118,7 @@
 		        	</tr>
 	        	</table>
 	        </div>
-			<!-- 페이징 처리여부 -->
+	        <!-- 페이징 처리여부 -->
         	<input type="hidden" name="pagingYn" value="Y" />
         	<!-- pageNo -->
         	<input type="hidden" name="pageNo" value='<c:out value="${search.pageNo}" default="1" />' />

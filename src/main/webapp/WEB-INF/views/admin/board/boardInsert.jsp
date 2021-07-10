@@ -21,31 +21,8 @@
 			removePlugins: 'resize'
 		});
 		
-		/* 게시판 관리 페이지 이동 */
-		$('.allBoardList').on('click', function() {
-			var params = $('form[name="searchForm"]').serializeObject();
-			// ajax로 load
-			contentLoad('게시글 관리', allBoardListUrl, params);
-		});
-		
-		/* 게시판 내용 페이지(목록으로) 이동 */
-		$(".dataListBody").on("click", function() {
-			var params = $('#boardMoveHidden').serializeObject();
-			// ajax로 load
-			contentLoad(params.board_nm, boardListUrl, params);
-		});
-
-		/* 게시판 등록 페이지 이동 */
-		$('.boardInsertBtn').on('click', function(){
-			var params = $('#boardMoveHidden').serializeObject();
-			// ajax로 load
-			contentLoad('게시글 작성', insertUrl, params);
-		});
-		
-		$(".boardManagerBtn").on("click", function() {
-			var params = $("#boardMoveHidden").serializeObject(); 
-			contentLoad(params.board_nm, boardListUrl, params);
-		});
+		// 컨텐츠 타이틀
+		$('.content_wraper').children('h3').eq(0).html($('title').text());
 	});
 	
 	$("#file_add").on('click',function(){ $('#multi-add').click(); });
@@ -160,8 +137,13 @@
 	        success : function(result){
 	        	if(result > 0){
 	        		CKEDITOR.instances.board_content_ct.destroy();
-	        		var params = $("#boardMoveHidden").serializeObject();
-	         		contentLoad(params.board_nm, boardListUrl, params);
+	        		var params = $('form[name="searchForm"]').serializeObject();
+	        		var board_nm = $("#board_nm").val();
+	        		params.board_nm = board_nm;
+	        		var board_seq = $("#board_seq").val();
+	        		params.board_seq = board_seq;
+	        		// ajax로 load
+	        		contentLoad(board_nm, boardListUrl, params);
 	        	} else{
 	        		alert("등록실패했습니다.");
 	        	}
@@ -172,9 +154,38 @@
 		});
 		return true;
 	}
+	
+	/* 게시판 관리 페이지 이동 */
+	$('.allBoardList').on('click', function() {
+		var params = $('form[name="searchForm"]').serializeObject();
+		// ajax로 load
+		contentLoad('게시판 관리', allBoardListUrl, params);
+	});
+	
+	/* 게시판 내용 페이지(목록으로) 이동 */
+	$(".dataListBody").on("click", function() {
+		var params = $('form[name="searchForm"]').serializeObject();
+		var board_nm = $("#board_nm").val();
+		params.board_nm = board_nm;
+		var board_seq = $("#board_seq").val();
+		params.board_seq = board_seq;
+		// ajax로 load
+		contentLoad(board_nm, boardListUrl, params);
+	});
+
+	/* 게시판 등록 페이지 이동 */
+	$('.boardInsertBtn').on('click', function(){
+		var params = $('form[name="searchForm"]').serializeObject();
+		var board_nm = $("#board_nm").val();
+		params.board_nm = board_nm;
+		var board_seq = $("#board_seq").val();
+		params.board_seq = board_seq;
+		// ajax로 load
+		contentLoad('게시글 작성', insertUrl, params);
+	});
 </script>
 <div class="content_wraper">
-	<h3>게시글 작성</h3>
+	<h3></h3>
 	<div style="justify-content: center;">
 		<span class="detailTd allBoardList">게시판 관리</span>
 		<strong>></strong>
@@ -231,21 +242,17 @@
 		</table>
 		<div class="boardManagerDiv">
 			<input type="button" value="등록하기" class="btn btn-primary" onclick="formCheck(); return false;">
-			<a class="btn boardManagerBtn">목록으로</a>
+			<a class="btn boardManagerBtn dataListBody">목록으로</a>
 		</div>
-		<input type="hidden" name="board_seq" id="board_seq" value="${board_gb.board_seq}" />
-		<input type="hidden" name="board_nm" value="${board_gb.board_nm }" />
+		<input type="hidden" id="board_seq" name="board_seq" value="${board_gb.board_seq}" />
+        <input type="hidden" id="board_nm" name="board_nm" value="${board_gb.board_nm}" />
         <input type="hidden" name="board_gb" id="board_gb" value="${board_gb.board_gb}"/>
         <input type="hidden" name="board_tp" id="board_tp" value="${board_gb.board_tp}"/>
 	</form>
-	
-	<form action="/data/board/boardDelete" id="boardMoveHidden" method="post">
-	    <input type="hidden" name="searchCondition" value="${search.searchCondition}" />
-	    <input type="hidden" name="searchKeyword" value="${search.searchKeyword}" />
-	    <input type="hidden" name="pagingYn" value="${search.pagingYn}" />
-	    <input type="hidden" name="pageNo" value="${search.pageNo}" />
-        <input type="hidden" name="board_seq" value="${search.board_seq}" />
-        <input type="hidden" name="board_nm" value="${search.board_nm}" />
-        <input type="hidden" name="board_content_seq" value="${search.board_content_seq}" />
-    </form>
+	<form name="searchForm">
+		<input type="hidden" name="pageNo" value="${search.pageNo}">
+	    <input type="hidden" name="pageCount" value="${search.pagingYn}">
+	    <input type="hidden" name="searchCondition" value="${search.searchCondition}">
+	    <input type="hidden" name="searchKeyword" value="${search.searchKeyword}">
+	</form>
 </div>
