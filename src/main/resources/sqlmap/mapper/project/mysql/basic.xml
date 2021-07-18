@@ -651,6 +651,12 @@
 		WHERE ID = #{id}	
 	</delete>
 	
+	<!-- 배너 이름 리스트 -->
+	<select id="bannerNames" resultType="String">
+		select edu_ban_nm
+		from edu_admin_banner_tb
+		group by edu_ban_nm
+	</select>
 	<!-- 안내페이지 검색 조건 -->
 	<sql id="infoCondition">
 		WHERE 1=1

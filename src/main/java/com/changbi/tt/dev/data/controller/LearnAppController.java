@@ -59,6 +59,7 @@ public class LearnAppController {
     @RequestMapping(value = "/learnAppList", method = RequestMethod.POST)
     public @ResponseBody DataList<LearnAppVO> learnAppList(LearnAppVO learnApp) throws Exception {
     	DataList<LearnAppVO> result = new DataList<LearnAppVO>();
+    	
     	// 로그인 정보를 저장한다.
     	learnApp.setLoginUser((MemberVO)LoginHelper.getLoginInfo());
     	
@@ -71,7 +72,6 @@ public class LearnAppController {
 			result.setNumOfNums(learnApp.getNumOfNums());
 			result.setNumOfRows(learnApp.getNumOfRows());
 			result.setPageNo(learnApp.getPageNo());
-			logger.info("anh288-learnApp : " + learnApp);
 			result.setTotalCount(learnAppService.learnAppTotalCnt(learnApp));
 			logger.info("신청 총 수 " + learnAppService.learnAppTotalCnt(learnApp));
 		}

@@ -351,9 +351,10 @@ $(document).on('click', '.btn-delete', function(){
 		}); 
 	}
 });
-		
+
+var isRun = false;
+
 $(document).on('click', '#file-upload-btn', function(){
-			
 	$("#course-id").val($(":hidden[name='courseId']").val());
 	$("#cardinal-id").val($(":hidden[name='cardinalId']").val());
 	var file = $("#upload-file").val();
@@ -364,7 +365,11 @@ $(document).on('click', '#file-upload-btn', function(){
 	}
 	
 	var formData = new FormData($('#excelUpload')[0]);
-			
+	if(isRun == true) { 
+		return; 
+	} 
+	
+	isRun = true;
 	$.ajax({
 		url: '<c:url value="/data/attendance/fileUpload"/>',
 		type: "POST",
@@ -372,6 +377,7 @@ $(document).on('click', '#file-upload-btn', function(){
         processData: false,
         contentType: false,
 		success: function() {
+			isRun  = false;
 			createTable();
 			alert("저장에 성공하였습니다.");
 		},

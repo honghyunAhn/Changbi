@@ -159,7 +159,7 @@
 					<strong>${data.board_file_origin }</strong>
 				</a>
 				<img class="boardImage" alt="" src="${path }/${data.board_file_saved }"> <br/>
-				<input type="hidden" class="board_file_seq" name="board_file_seq" value="${data.board_file_seq}">
+				<input type="hidden" class="board_file_seq" name="board_file_seq" value="${data.board_file_seq }">
 				<input type="hidden" class="board_file_saved" name="board_file_saved" value="${data.board_file_saved }">
 			</c:forEach>
 		    </td>
@@ -179,7 +179,7 @@
 		</tr>
 		</tbody>
 	</table>
-	
+		
 	<div class="boardManagerDiv">
 		<a class="btn btn-danger" id="boardDeleteBtn">삭제하기</a>
 		<a class="btn btn-primary" id="boardUpdateBtn">수정하기</a>

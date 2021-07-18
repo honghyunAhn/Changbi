@@ -40,7 +40,7 @@ import forFaith.dev.vo.MemberVO;
 												// 존재하면 중복으로 인식
 @RequestMapping("/admin/board") // 해당 클래스를 호출 하기 위한 Mapping 기본 값 뒤에 붙는 값에 의해 필요한 함수가 호출 된다.
 public class BoardController {
-
+	// 서버확인
 	/**
 	 * log를 남기는 객체 생성
 	 * 
