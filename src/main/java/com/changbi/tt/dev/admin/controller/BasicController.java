@@ -8,9 +8,6 @@
 
 package com.changbi.tt.dev.admin.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +16,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.changbi.tt.dev.data.service.BasicService;
@@ -157,15 +153,6 @@ public class BasicController {
      * 배너 관리 페이지
      * @throws Exception 
      */
-    @RequestMapping(value="/bannerManagement")
-    public void bannerList(ModelMap model) throws Exception {
-    	logger.debug("배너 관리 이동 컨트롤러 시작");
-    	ArrayList<String> bannerNames = basicService.bannerNames();
-    	logger.debug("배너 이름" + bannerNames);
-    	model.addAttribute("bannerNames", bannerNames);
-		logger.debug("배너 상담 관리 이동 컨트롤러 종료");
-    }    
-    
     @RequestMapping(value="/bannerList")
     public void bannerList(@ModelAttribute("search") BannerVO banner, ModelMap model) throws Exception {
 

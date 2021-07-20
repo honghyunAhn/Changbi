@@ -126,6 +126,4 @@ public interface BasicDAO {
 
 	// 공통코드 추가
 	int insertComCode(ComCodeVO code);
-
-	ArrayList<String> bannerNames();
 }
