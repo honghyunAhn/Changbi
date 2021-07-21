@@ -247,4 +247,8 @@ public class BasicService {
 	public int insertComCode(ComCodeVO code) {
 		return basicDao.insertComCode(code);
 	}
+
+	public ArrayList<String> bannerNames() {
+		return basicDao.bannerNames();
+	}
 }

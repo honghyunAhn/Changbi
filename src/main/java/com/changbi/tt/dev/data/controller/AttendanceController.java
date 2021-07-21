@@ -261,10 +261,17 @@ public class AttendanceController {
     	List<HashMap<String, Object>> mapList = new ArrayList<>();
     	
     	String error = "";
+    	System.out.println("courseId : " + courseId);
+    	System.out.println("cardinalId : " + cardinalId);
     	
     	String fileName = file.getOriginalFilename();
+    	System.out.println("fileName : " + fileName);
+    	
     	String[] fileExtension = fileName.split("\\.");
+    	System.out.println("fileExtension : " + fileExtension);
+    	
     	int index = fileExtension.length - 1;
+    	System.out.println("index : " + index);
     	
     	if(fileExtension[index].equals("xlsx")) {
     		mapList = attendService.xlsxToCustomerVoList(file);
@@ -273,6 +280,7 @@ public class AttendanceController {
     	} else {
     		error = "XLSX 또는 XLS 파일을 사용해주세요.";
     	}
+    	System.out.println("mapList : " + mapList);
     	
     	mapList.remove(0);
     	for(int i=0; i<mapList.size(); i++) {
@@ -280,7 +288,7 @@ public class AttendanceController {
     		mapList.get(i).put("cardinal_id", cardinalId);
     		mapList.get(i).toString();
     	}
-    	
+    	System.out.println("anh288 - apList : " + mapList);
     	attendService.addSisu(mapList, courseId, cardinalId);
     	
     }

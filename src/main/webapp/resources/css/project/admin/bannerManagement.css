@@ -1,0 +1,96 @@
+.contentBox{
+	padding:0px 25px; 
+	width: 100%
+}
+
+.contentBox h3{
+	padding:26px 0; 
+	line-height: 40px; 
+	font-size: 24px;
+}
+
+.contentBox h4{ 
+	line-height: 30px; 
+	font-size: 20px; 
+}
+
+.contentBox h5 { 
+	line-height:24px; 
+	font-size: 18px; 
+}
+
+.banner {
+	width: 100%; 
+	text-align: center;
+	padding-top: 10px;
+	border: solid 2px #cfd8dc;
+	height: auto;
+}
+
+.contentBox table{
+	width: 97%; 
+	margin: auto; 
+}
+
+.contentBox table tr{
+	height: 30px;
+}
+
+.contentBox table th{
+	background-color: #cfd8dc; 
+	text-align: center;
+}
+
+.contentBox table td{
+	background-color: #eceff1;
+	text-align: center;
+}
+
+.contentBox table input, 
+.contentBox table select{
+	border: none;
+	width: 100%;
+	background-color: #eceff1;
+	text-align: center;
+}
+
+.trBorder{
+	border-bottom: solid 2px white;
+}
+
+.tdBorder{
+	border-right: solid 2px white;
+}
+
+.file{
+	margin-top: 5px;
+  	padding: 0px 25px;
+  	background-color:#90a4ae;
+  	border-radius: 4px;
+  	color: white;
+  	cursor: pointer;
+}
+
+.filename{
+  	font-size:18px; 
+}
+
+.banner button{
+  	padding: 0px 25px;
+  	margin-left: 20px;
+  	background-color:#90a4ae;
+  	border-radius: 4px;
+  	color: white;
+  	cursor: pointer;
+  	border: none;
+  	font-size:18px; 
+}
+
+.addButton{
+	width: 97%; 
+	height: 40px; 
+	line-height: 40px; 
+	background-color: #b0bec5; 
+	font-weight: bolder; 
+	vertical-align: middle;
+}
