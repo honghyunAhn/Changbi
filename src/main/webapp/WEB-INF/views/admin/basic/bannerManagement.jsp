@@ -48,7 +48,7 @@
 	<section class="banner use">
 		<h4>이름</h4>
 		<hr style="border-top: solid 1px #cfd8dc;">
-		<div>
+		<div st>
 			<h5 style="float: left;">&nbsp;&nbsp;사용중 배너</h5>
 			<div class="BannerUpdate">
 				<table>
@@ -90,37 +90,16 @@
 					</tr>
 				</table>
 				<br>
-				<button style="background-color: #90caf9;">수   정</button>
-				<button style="background-color: #ffab91;">삭   제</button>
-				<button style="background-color: #a5d6a7;">미사용</button>
-				<br>
-				<hr style="border-top: solid 1px #cfd8dc;">
+				<button>수정</button>
+				<button>삭제</button>
+				<button>미사용</button>
 			</div>
-		</div>
-		<div>
-			<button class="addButton" style="font-size: 35px; margin-left: 0">+</button>
-			<hr style="border-top: solid 1px #cfd8dc;">
-		</div>
-		<div>
-			<h5 style="float: left;">&nbsp;&nbsp;비 사용중 배너</h5>
-			<table style="width: 97%;">
-				<tr>
-					<td style="width: 20%; height: 40px" class="tdBorder"></td>
-					<td style="width: 60%;" class="tdBorder"></td>
-					<td style="width: 10%;" class="tdBorder"><button style="margin-left: 0; background-color: #a5d6a7;">사용</button></td>
-					<td style="width: 10%;"><button style="margin-left: 0; background-color: #ffab91;">삭제</button></td>
-				</tr>
-			</table>
-			<hr style="border-top: solid 1px #cfd8dc;">
-		</div>
-		<div>
-			<button class="addButton" style="font-size: 25px; background-color: #d1c4e9; margin-left: 0">배너 닫기</button>
 			<br>
 			<br>
+			<button style="width: 97%; height: 50px">배너 추가</button>
 		</div>
-		
 	</section>
 	
-	<!-- <section class="banner make">
-	</section> -->
+	<section class="banner useNot">
+	</section>
 </div>
