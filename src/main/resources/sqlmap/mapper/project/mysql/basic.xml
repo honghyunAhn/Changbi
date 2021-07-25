@@ -657,6 +657,7 @@
 		from edu_admin_banner_tb
 		group by edu_ban_nm
 	</select>
+	
 	<!-- 안내페이지 검색 조건 -->
 	<sql id="infoCondition">
 		WHERE 1=1
