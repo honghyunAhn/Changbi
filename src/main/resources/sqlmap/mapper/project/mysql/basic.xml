@@ -658,6 +658,31 @@
 		group by edu_ban_nm
 	</select>
 	
+	<!-- 배너 생성 -->
+	<insert id="bannerInsert" parameterType="map">
+		INSERT INTO edu_admin_banner_tb (
+			EDU_BAN_NM,
+			EDU_BAN_LINK,
+			EDU_BAN_ORIGIN_PC,
+			EDU_BAN_SAVED_PC,
+			EDU_BAN_INS_ID,
+			EDU_BAN_UDT_ID,
+			EDU_BAN_ALT,
+			EDU_BAN_ORIGIN_MO,
+			EDU_BAN_SAVED_MO
+		) VALUES (
+			#{edu_ban_nm},
+			#{edu_ban_link},
+			#{edu_ban_origin_pc},
+			#{edu_ban_saved_pc},
+			#{login_id},
+			#{login_id},
+			#{edu_ban_alt},
+			#{edu_ban_origin_mo},
+			#{edu_ban_saved_mo}
+		) 
+	</insert>
+	
 	<!-- 안내페이지 검색 조건 -->
 	<sql id="infoCondition">
 		WHERE 1=1

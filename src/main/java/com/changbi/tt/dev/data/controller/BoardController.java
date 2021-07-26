@@ -618,6 +618,7 @@ public class BoardController {
 		logger.debug("공지사항 게시판의 게시글 세부 내용 등록 컨트롤러 시작");
 		int result = boardService.boardInsert(param);
 		List<MultipartFile> fileList = multiRequest.getFiles("uploadFile");
+		System.out.println("anh288 - param : " + param);
 		// 업로드한 파일이 없으면 실행되지 않음
 		if (fileList != null) {
 			// 파일이 저장될 경로 설정
@@ -630,7 +631,8 @@ public class BoardController {
 					String board_file_origin = fileList.get(i).getOriginalFilename();
 					// 파일 저장
 					String board_file_saved = FileService.saveFile(fileList.get(i), path);
-
+					
+					System.out.println("anh288 - board_file_origin : " + fileList.get(i));
 					BoardFileVO boardFile = new BoardFileVO();
 					boardFile.setBoard_content_seq(Integer.parseInt(String.valueOf(param.get("board_content_seq"))));
 					boardFile.setBoard_file_saved(board_file_saved);

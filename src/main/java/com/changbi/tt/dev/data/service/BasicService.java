@@ -251,4 +251,8 @@ public class BasicService {
 	public ArrayList<String> bannerNames() {
 		return basicDao.bannerNames();
 	}
+
+	public int bannerInsert(HashMap<String, Object> param) {
+		return basicDao.bannerInsert(param);
+	}
 }

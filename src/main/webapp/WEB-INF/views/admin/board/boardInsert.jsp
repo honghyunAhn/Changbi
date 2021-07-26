@@ -114,7 +114,6 @@
 	    var formData = new FormData(form);
 	    var board_content_ct = CKEDITOR.instances.board_content_ct.getData();
 	    formData.set("board_content_ct", board_content_ct);
-	    
 		for(var i = 0; i < $fileListArr.length ; i++){
 			formData.append("uploadFile" , $fileListArr[i]);
 		}

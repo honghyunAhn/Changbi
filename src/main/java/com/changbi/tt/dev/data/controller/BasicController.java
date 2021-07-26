@@ -12,6 +12,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,10 +21,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.changbi.tt.dev.data.service.BasicService;
 import com.changbi.tt.dev.data.vo.BannerVO;
+import com.changbi.tt.dev.data.vo.BoardFileVO;
 import com.changbi.tt.dev.data.vo.ComCodeGroupVO;
 import com.changbi.tt.dev.data.vo.ComCodeVO;
 import com.changbi.tt.dev.data.vo.EventVO;
@@ -32,6 +36,7 @@ import com.changbi.tt.dev.data.vo.IpAddressVO;
 import com.changbi.tt.dev.data.vo.PolicyDelayCancelVO;
 import com.changbi.tt.dev.data.vo.PolicyPointVO;
 import com.changbi.tt.dev.data.vo.SchoolVO;
+import com.changbi.tt.dev.util.FileService;
 
 import forFaith.dev.util.LoginHelper;
 import forFaith.dev.vo.MemberVO;
@@ -207,6 +212,43 @@ public class BasicController {
     	return result;
     }
     
+    /**
+     * 배너 생성
+     */
+    @ResponseBody
+    @RequestMapping(value = "/bannerInsert", method = RequestMethod.POST)
+    public int bannerInsert(@RequestParam HashMap<String, Object> param, MultipartHttpServletRequest multiRequest) throws Exception {
+    	logger.debug("배너 등록 컨트롤러 시작");
+    	// 로그인 된 관리자 정보
+    	MemberVO loginUser = (MemberVO)LoginHelper.getLoginInfo();
+    	param.put("login_id", loginUser.getId());
+		List<MultipartFile> fileList = multiRequest.getFiles("file");
+		int result = 0;
+		// 업로드한 파일이 없으면 실행되지 않음
+		if (fileList != null) {
+			// 파일이 저장될 경로 설정
+			String path = "edu/ban/img";
+
+			if (!fileList.isEmpty()) {
+				// 넘어온 파일을 리스트로 저장
+				String edu_ban_origin_pc = fileList.get(0).getOriginalFilename();
+				String edu_ban_saved_pc = FileService.saveFile(fileList.get(0), path);
+				String edu_ban_origin_mo = fileList.get(1).getOriginalFilename();
+				String edu_ban_saved_mo = FileService.saveFile(fileList.get(1), path);
+				
+				param.put("edu_ban_origin_pc", edu_ban_origin_pc);
+				param.put("edu_ban_saved_pc", edu_ban_saved_pc);
+				param.put("edu_ban_origin_mo", edu_ban_origin_mo);
+				param.put("edu_ban_saved_mo", edu_ban_saved_mo);
+				
+				System.out.println("anh288 - param : " + param);
+				
+				result = basicService.bannerInsert(param);
+			}
+		}
+		logger.debug("배너 등록 컨트롤러 종료");
+		return result;
+    }
     /**
      * 배너 정보 리스트
      */

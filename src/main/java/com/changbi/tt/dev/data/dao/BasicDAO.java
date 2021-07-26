@@ -128,4 +128,7 @@ public interface BasicDAO {
 	int insertComCode(ComCodeVO code);
 
 	ArrayList<String> bannerNames();
+	
+	// 배너 추가
+	int bannerInsert(HashMap<String, Object> param);
 }

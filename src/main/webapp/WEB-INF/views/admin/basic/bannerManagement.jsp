@@ -126,7 +126,7 @@
 	
 	function bannerCreateForm(data){
 		var content = '';
-		content += '<form id="bannerCreateForm">'
+		content += '<form id="bannerCreateForm" enctype="multipart/form-data">'
 		content += '<table>';
 		content += '<tr>';
 		content += '<th>url</th>';
@@ -145,16 +145,16 @@
 		content += '<tr>';
 		content += '<td class="tdBorder" style="width: 50%;">';
 		content += '<label class="file" for="pcfile">업로드</label> ';
-		content += '<input type="file" id="pcfile" style="display: none;" accept=".bmp, .gif, .jpg, .png" onchange="getThumbnailPrivew(this, '+"avatar_info_image1"+', '+"pcfilename"+')"> ';
+		content += '<input type="file" multiple="multiple" name="file" id="pcfile" style="display: none;" accept=".bmp, .gif, .jpg, .png" onchange="getThumbnailPrivew(this, '+"avatar_info_image1"+', '+"pcfilename"+')"> ';
 		content += '</td>';
 		content += '<td>';
 		content += '<label class="file" for="mobilefile">업로드</label>';
-		content += '<input type="file" id="mobilefile" style="display: none;" accept=".bmp, .gif, .jpg, .png" onchange="getThumbnailPrivew(this, '+"avatar_info_image2"+', '+"mobilefilename"+')">';
+		content += '<input type="file" multiple="multiple" name="file" id="mobilefile" style="display: none;" accept=".bmp, .gif, .jpg, .png" onchange="getThumbnailPrivew(this, '+"avatar_info_image2"+', '+"mobilefilename"+')">';
 		content += '</td>';
 		content += '</tr>';
 		content += '<tr>';
-		content += '<td class="filename tdBorder"><input type="text" id="pcfilename" name="edu_ban_orgin_pc" readonly></input></td>';
-		content += '<td class="filename"><input type="text" id="mobilefilename" name="edu_ban_orgin_mo" readonly></input></td>';
+		content += '<td class="filename tdBorder"><input type="text" id="pcfilename" readonly></input></td>';
+		content += '<td class="filename"><input type="text" id="mobilefilename" readonly></input></td>';
 		content += '</tr>';
 		content += '<tr>';
 		content += '<td class="tdBorder" style="height: 200px;"><img alt="배너 등록 이미지 미리보기" id="avatar_info_image1"/></td>';
@@ -171,13 +171,15 @@
 	
 	//배너 생성 폼
 	function makeFormCheck(){
-		var form = $("#bannerCreateForm").serializeObject();
+		var form = $("#bannerCreateForm")[0];
+		var formData = new FormData(form);
+		
 		var edu_ban_nm = $("#edu_ban_nm").val();
-		var edu_ban_link = form.edu_ban_link;
-		var edu_ban_orgin_pc = form.edu_ban_orgin_pc;
-		form.edu_ban_nm = edu_ban_nm;
-	    console.log(form);
-	    
+		var edu_ban_link = formData.get("edu_ban_link");
+		var edu_ban_orgin_pc = $("#pcfilename").val();
+		var edu_ban_orgin_mo = $("#mobilefilename").val();
+		formData.set("edu_ban_nm", edu_ban_nm);
+		
 	    if (edu_ban_nm.length == 0) {
 			alert('이름 입력해 주시기 바랍니다.');
 			selectAndFocus($("#edu_ban_nm"));
@@ -192,6 +194,29 @@
 			alert("PC 이미지를 등록해 주세요.")
 			return false;
 		}
+		if (edu_ban_orgin_mo.length == 0) {
+			alert("모바일 이미지를 등록해 주세요.")
+			return false;
+		}
+		
+		$.ajax({
+	        url : "/data/basic/bannerInsert",
+	        processData: false,
+	        contentType: false,
+	        type : 'POST',
+	        data : formData,
+	        success : function(result){
+	        	if(result > 0){
+	        		console.log(edu_ban_nm);
+	        		alert(edu_ban_nm);
+	        		$('#bannerSelect').val(0);
+	        		bannerUpdate(edu_ban_nm);
+	        	}
+	        },
+			error	: function(request, status, error) {
+				alert("code : "+request.status+"\n\n"+"message : "+request.responseText+"\n\n"+"error : "+error);
+			}
+		});
 	}
 	
 	//엘리먼트를 선택한다
@@ -256,7 +281,7 @@
 	}
 </script>
 <div class="contentBox">
-	<h3></h3>
+	<h3>배너 관리</h3>
 	
 	<section>
 		<select id="bannerSelect">
