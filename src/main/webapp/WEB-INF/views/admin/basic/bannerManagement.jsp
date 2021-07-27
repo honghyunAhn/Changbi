@@ -3,11 +3,16 @@
 <link href="<c:url value="/resources/css/project/admin/bannerManagement.css"/>"
 	rel="stylesheet" type="text/css">
 <script type="text/javascript">
+	var bannerUrl = "<c:url value='/admin/basic/bannerManagement' />";
 	$(document).ready(function(){
-		//컨텐츠 타이틀
 		$('.contentBox').children('h3').eq(0).html($('title').text());
-		$('.banner').hide();
-		
+		var edu_ban_nm = "${search.edu_ban_nm}";
+		if(edu_ban_nm !== '0'){
+			$("#bannerSelect").val(edu_ban_nm);
+    		bannerUpdate(edu_ban_nm);
+		}else{
+			$('.banner').hide();
+		}
 	});
 	
 	$('#bannerSelect').on('change',function(){
@@ -19,18 +24,11 @@
 		}else{
 			bannerUpdate(bannername);
 			buttonAction();
-			
-			$("#bannerCreate").on('click',function(){
-				var content = ''
-				content += bannerCreateForm();
-				$(".bannerCreate").html(content);
-			});
 		}
 	});
 	
 	function bannerMake(data){
 		var content = '';
-		
 		content += '<h4><input type="text" id="edu_ban_nm" placeholder="배너의 이름을 입력하세요." style="border: none; width: 100%; height= 100%; text-align: center;"></h4>';
 		content += '<hr style="border-top: solid 1px #cfd8dc;">';
 		content += '<div>';
@@ -48,80 +46,91 @@
 	}
 	
 	function bannerUpdate(data){
-		var content = '';
-		content += '<h4>'+data+'</h4>';
-		content += '<hr style="border-top: solid 1px #cfd8dc;">';
-		content += '<div>';
-		content += '<h5 style="float: left;">&nbsp;&nbsp;사용중 배너</h5>';
-		content += '<div class="BannerUpdate">';
-		content += '<table>';
-		content += '<tr>';
-		content += '<th>순서</th>';
-		content += '<td style="margin-left: 1000px"><select></select></td>';
-		content += '</tr>';
-		content += '<tr>';
-		content += '<th>url</th>';
-		content += '<td><input type="text"></td>';
-		content += '</tr>';
-		content += '<tr class="trBorder">';
-		content += '<th>alt</th>';
-		content += '<td><input type="text"></td>';
-		content += '</tr>';
-		content += '</table>';
-		content += '<table>';
-		content += '<tr>';
-		content += '<th class="tdBorder">이미지 - PC</th>';
-		content += '<th>이미지 - 모바일</th>';
-		content += '</tr>';
-		content += '<tr>';
-		content += '<td class="tdBorder" style="width: 50%;">';
-		content += '<label class="file" for="pcfile">업로드</label> ';
-		content += '<input type="file" id="pcfile" style="display: none;" accept=".bmp, .gif, .jpg, .png"> ';
-		content += '</td>';
-		content += '<td>';
-		content += '<label class="file" for="mobilefile">업로드</label>';
-		content += '<input type="file" id="mobilefile" style="display: none;" accept=".bmp, .gif, .jpg, .png">';
-		content += '</td>';
-		content += '</tr>';
-		content += '<tr>';
-		content += '<td class="filename tdBorder" id="pcfilename"></td>';
-		content += '<td class="filename" id="mobilefilename"></td>';
-		content += '</tr>';
-		content += '<tr>';
-		content += '<td class="tdBorder" style="height: 100px;"></td>';
-		content += '<td></td>';
-		content += '</tr>';
-		content += '</table>';
-		content += '<br>';	
-		content += '<button style="background-color: #90caf9;">수   정</button>';	
-		content += '<button style="background-color: #ffab91;">삭   제</button>';
-		content += '<button style="background-color: #a5d6a7;">미사용</button>';
-		content += '<br>';
-		content += '<hr style="border-top: solid 1px #cfd8dc;">';	
-		content += '</div>';
-		content += '</div>';
-		content += '<div class="bannerCreate">';
-		content += '<button class="addButton" id="bannerCreate" style="font-size: 35px; margin-left: 0">+</button>';
-		content += '<hr style="border-top: solid 1px #cfd8dc;">';
-		content += '</div>';
-		content += '<div>';
-		content += '<h5 style="float: left;">&nbsp;&nbsp;비 사용중 배너</h5>';		
-		content += '<table style="width: 97%;">';
-		content += '<tr>';
-		content += '<td style="width: 20%; height: 40px" class="tdBorder"></td>';
-		content += '<td style="width: 60%;" class="tdBorder"></td>';
-		content += '<td style="width: 10%;" class="tdBorder"><button style="margin-left: 0; background-color: #a5d6a7;">사용</button></td>';
-		content += '<td style="width: 10%;"><button style="margin-left: 0; background-color: #ffab91;">삭제</button></td>';
-		content += '</tr>';
-		content += '</table>';
-		content += '<hr style="border-top: solid 1px #cfd8dc;">';
-		content += '</div>';
-		content += '<div>';
-		content += '<button class="addButton" id="closeBanner"style="font-size: 25px; background-color: #d1c4e9; margin-left: 0">배너 닫기</button>';
-		content += '<br>';
-		content += '<br>';
-		content += '</div>';
-		$(".banner").html(content);
+		$.ajax({
+	        url : "/data/basic/bannerSelect",
+	        type : 'POST',
+	        data : {"edu_ban_nm" : data},
+	        success : function(result){
+	        	var content = '';
+	    		content += '<h4>'+data+'</h4>';
+	    		content += '<hr style="border-top: solid 1px #cfd8dc;">';
+	    		content += '<div>';
+	    		content += '<h5 style="float: left;">&nbsp;&nbsp;사용중 배너</h5>';
+	    		content += '<div class="BannerUpdate">';
+	    		content += '<table>';
+	    		content += '<tr>';
+	    		content += '<th>순서</th>';
+	    		content += '<td style="margin-left: 1000px"><select></select></td>';
+	    		content += '</tr>';
+	    		content += '<tr>';
+	    		content += '<th>url</th>';
+	    		content += '<td><input type="text"></td>';
+	    		content += '</tr>';
+	    		content += '<tr class="trBorder">';
+	    		content += '<th>alt</th>';
+	    		content += '<td><input type="text"></td>';
+	    		content += '</tr>';
+	    		content += '</table>';
+	    		content += '<table>';
+	    		content += '<tr>';
+	    		content += '<th class="tdBorder">이미지 - PC</th>';
+	    		content += '<th>이미지 - 모바일</th>';
+	    		content += '</tr>';
+	    		content += '<tr>';
+	    		content += '<td class="tdBorder" style="width: 50%;">';
+	    		content += '<label class="file" for="pcfile">업로드</label> ';
+	    		content += '<input type="file" id="pcfile" style="display: none;" accept=".bmp, .gif, .jpg, .png"> ';
+	    		content += '</td>';
+	    		content += '<td>';
+	    		content += '<label class="file" for="mobilefile">업로드</label>';
+	    		content += '<input type="file" id="mobilefile" style="display: none;" accept=".bmp, .gif, .jpg, .png">';
+	    		content += '</td>';
+	    		content += '</tr>';
+	    		content += '<tr>';
+	    		content += '<td class="filename tdBorder" id="pcfilename"></td>';
+	    		content += '<td class="filename" id="mobilefilename"></td>';
+	    		content += '</tr>';
+	    		content += '<tr>';
+	    		content += '<td class="tdBorder" style="height: 100px;"></td>';
+	    		content += '<td></td>';
+	    		content += '</tr>';
+	    		content += '</table>';
+	    		content += '<br>';	
+	    		content += '<button style="background-color: #90caf9;">수   정</button>';	
+	    		content += '<button style="background-color: #ffab91;">삭   제</button>';
+	    		content += '<button style="background-color: #a5d6a7;">미사용</button>';
+	    		content += '<br>';
+	    		content += '<hr style="border-top: solid 1px #cfd8dc;">';	
+	    		content += '</div>';
+	    		content += '</div>';
+	    		content += '<div class="bannerCreate">';
+	    		content += '<button class="addButton" id="bannerCreate" style="font-size: 35px; margin-left: 0">+</button>';
+	    		content += '<hr style="border-top: solid 1px #cfd8dc;">';
+	    		content += '</div>';
+	    		content += '<div>';
+	    		content += '<h5 style="float: left;">&nbsp;&nbsp;비 사용중 배너</h5>';		
+	    		content += '<table style="width: 97%;">';
+	    		content += '<tr>';
+	    		content += '<td style="width: 20%; height: 40px" class="tdBorder"></td>';
+	    		content += '<td style="width: 60%;" class="tdBorder"></td>';
+	    		content += '<td style="width: 10%;" class="tdBorder"><button style="margin-left: 0; background-color: #a5d6a7;">사용</button></td>';
+	    		content += '<td style="width: 10%;"><button style="margin-left: 0; background-color: #ffab91;">삭제</button></td>';
+	    		content += '</tr>';
+	    		content += '</table>';
+	    		content += '<hr style="border-top: solid 1px #cfd8dc;">';
+	    		content += '</div>';
+	    		content += '<div>';
+	    		content += '<button class="addButton" id="closeBanner"style="font-size: 25px; background-color: #d1c4e9; margin-left: 0">배너 닫기</button>';
+	    		content += '<br>';
+	    		content += '<br>';
+	    		content += '</div>';
+	    		$(".banner").html(content);
+	        },
+			error	: function(request, status, error) {
+				alert("code : "+request.status+"\n\n"+"message : "+request.responseText+"\n\n"+"error : "+error);
+			}
+		});
+		
 	}
 	
 	function bannerCreateForm(data){
@@ -157,8 +166,8 @@
 		content += '<td class="filename"><input type="text" id="mobilefilename" readonly></input></td>';
 		content += '</tr>';
 		content += '<tr>';
-		content += '<td class="tdBorder" style="height: 200px;"><img alt="배너 등록 이미지 미리보기" id="avatar_info_image1"/></td>';
-		content += '<td style="height: 200px;"><img alt="배너 등록 이미지 미리보기" id="avatar_info_image2"/></td>';
+		content += '<td class="tdBorder" style="height: 200px;"><img src="/resources/images/project/admin/empty.jpg" alt="배너 등록 이미지 미리보기" id="avatar_info_image1"/></td>';
+		content += '<td style="height: 200px;"><img src="/resources/images/project/admin/empty.jpg" alt="배너 등록 이미지 미리보기" id="avatar_info_image2"/></td>';
 		content += '</tr>';
 		content += '</table>';
 		content += '<br>';	
@@ -180,6 +189,11 @@
 		var edu_ban_orgin_mo = $("#mobilefilename").val();
 		formData.set("edu_ban_nm", edu_ban_nm);
 		
+		if (edu_ban_nm == "0") {
+			alert('0은 배너명으로 사용 불가합니다.');
+			selectAndFocus($("#edu_ban_nm"));
+			return false;
+		}
 	    if (edu_ban_nm.length == 0) {
 			alert('이름 입력해 주시기 바랍니다.');
 			selectAndFocus($("#edu_ban_nm"));
@@ -194,11 +208,7 @@
 			alert("PC 이미지를 등록해 주세요.")
 			return false;
 		}
-		if (edu_ban_orgin_mo.length == 0) {
-			alert("모바일 이미지를 등록해 주세요.")
-			return false;
-		}
-		
+				
 		$.ajax({
 	        url : "/data/basic/bannerInsert",
 	        processData: false,
@@ -207,10 +217,8 @@
 	        data : formData,
 	        success : function(result){
 	        	if(result > 0){
-	        		console.log(edu_ban_nm);
 	        		alert(edu_ban_nm);
-	        		$('#bannerSelect').val(0);
-	        		bannerUpdate(edu_ban_nm);
+	        		contentLoad('배너관리', bannerUrl, {"edu_ban_nm" : edu_ban_nm});
 	        	}
 	        },
 			error	: function(request, status, error) {
@@ -277,6 +285,13 @@
 			$(".banner").html("");
 			$(".banner").hide();
 			$("#bannerSelect").val("0");
+		});
+		
+		$("#bannerCreate").on('click',function(){
+			var content = '';
+			var edu_ban_nm = $("h4").text();
+			content += bannerCreateForm(edu_ban_nm);
+			$(".bannerCreate").html(content);
 		});
 	}
 </script>

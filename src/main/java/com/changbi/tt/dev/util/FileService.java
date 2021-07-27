@@ -37,7 +37,6 @@ public class FileService {
 		if (mfile == null || mfile.isEmpty() || mfile.getSize() == 0) {
 			return null;
 		}
-		
 		//저장 폴더가 없으면 생성
 		//리눅스 용도
 		uploadPath = "/usr/local/"+uploadPath;

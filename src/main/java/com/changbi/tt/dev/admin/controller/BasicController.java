@@ -23,14 +23,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.changbi.tt.dev.data.service.BasicService;
-import com.changbi.tt.dev.data.vo.BannerVO;
+import com.changbi.tt.dev.data.vo.ComCodeGroupVO;
 import com.changbi.tt.dev.data.vo.EventVO;
 import com.changbi.tt.dev.data.vo.InfoVO;
 import com.changbi.tt.dev.data.vo.IpAddressVO;
 import com.changbi.tt.dev.data.vo.PolicyDelayCancelVO;
 import com.changbi.tt.dev.data.vo.PolicyPointVO;
 import com.changbi.tt.dev.data.vo.SchoolVO;
-import com.changbi.tt.dev.data.vo.ComCodeGroupVO;
 
 import forFaith.dev.service.BaseService;
 import forFaith.dev.vo.CodeVO;
@@ -158,33 +157,33 @@ public class BasicController {
      * @throws Exception 
      */
     @RequestMapping(value="/bannerManagement")
-    public void bannerList(ModelMap model) throws Exception {
+    public void bannerList(@RequestParam HashMap<String, Object> params, ModelMap model) throws Exception {
     	logger.debug("배너 관리 이동 컨트롤러 시작");
     	ArrayList<String> bannerNames = basicService.bannerNames();
-    	logger.debug("배너 이름" + bannerNames);
     	model.addAttribute("bannerNames", bannerNames);
+    	model.addAttribute("search", params);
 		logger.debug("배너 상담 관리 이동 컨트롤러 종료");
     }    
     
-    @RequestMapping(value="/bannerList")
-    public void bannerList(@ModelAttribute("search") BannerVO banner, ModelMap model) throws Exception {
-
-    }
+//    @RequestMapping(value="/bannerList")
+//    public void bannerList(@ModelAttribute("search") BannerVO banner, ModelMap model) throws Exception {
+//
+//    }
     
     /**
      * 배너 편집 페이지
      * @throws Exception
      */
-    @RequestMapping(value="/bannerEdit")
-    public void bannerEdit(BannerVO banner, ModelMap model) throws Exception {
-        if(banner != null && banner.getId() > 0) {
-            // 선택 된 ID가 없으면 바로 edit 화면으로 이동하고 선택 된 ID가 있으면 해당 정보를 가지고 간다.
-            model.addAttribute("banner", basicService.bannerInfo(banner));
-        }
-        
-        // 검색 조건 저장(리스트 페이지로 이동 시 검색 조건을 그대로 유지하기 위해)
-        model.addAttribute("search", banner);
-    }
+//    @RequestMapping(value="/bannerEdit")
+//    public void bannerEdit(BannerVO banner, ModelMap model) throws Exception {
+//        if(banner != null && banner.getId() > 0) {
+//            // 선택 된 ID가 없으면 바로 edit 화면으로 이동하고 선택 된 ID가 있으면 해당 정보를 가지고 간다.
+//            model.addAttribute("banner", basicService.bannerInfo(banner));
+//        }
+//        
+//        // 검색 조건 저장(리스트 페이지로 이동 시 검색 조건을 그대로 유지하기 위해)
+//        model.addAttribute("search", banner);
+//    }
     
     /**
      * 안내페이지 관리 페이지

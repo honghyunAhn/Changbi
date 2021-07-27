@@ -578,13 +578,13 @@
 									href="javascript:contentLoad('포인트정책','/admin/basic/policyPointEdit', {id : 1});">포인트정책</a></li>
 								<!-- <li><a href="javascript:contentLoad('수강연기/취소정책','/admin/basic/policyDelayCancelEdit', {id : 1});">수강연기/취소정책</a></li> -->
 								<!-- <li><a href="javascript:contentLoad('이벤트관리','/admin/basic/eventList');">이벤트관리</a></li> -->
-								<li><a
-									href="javascript:contentLoad('배너관리','/admin/basic/bannerList');">배너관리</a></li>
+								<!-- <li><a
+									href="javascript:contentLoad('배너관리','/admin/basic/bannerList');">배너관리</a></li> -->
 								<!--  <li><a href="javascript:contentLoad('안내페이지관리','/admin/basic/infoList');">안내페이지관리</a></li>-->
 								<li><a
 									href="javascript:contentLoad('공통코드관리','/admin/basic/comCode');">공통코드관리</a></li>
 								<li><a
-									href="javascript:contentLoad('배너관리','/admin/basic/bannerManagement');">배너관리</a></li>
+									href="javascript:contentLoad('배너관리','/admin/basic/bannerManagement', {'edu_ban_nm' : '0'});">배너관리</a></li>
 							</ul></li>
 						<li><a href="javascript:void(0);">출결관리</a>
 							<ul class="acc_content">

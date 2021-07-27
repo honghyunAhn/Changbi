@@ -669,7 +669,8 @@
 			EDU_BAN_UDT_ID,
 			EDU_BAN_ALT,
 			EDU_BAN_ORIGIN_MO,
-			EDU_BAN_SAVED_MO
+			EDU_BAN_SAVED_MO,
+			EDU_BAN_EPS
 		) VALUES (
 			#{edu_ban_nm},
 			#{edu_ban_link},
@@ -679,9 +680,16 @@
 			#{login_id},
 			#{edu_ban_alt},
 			#{edu_ban_origin_mo},
-			#{edu_ban_saved_mo}
+			#{edu_ban_saved_mo},
+			"B2400"
 		) 
 	</insert>
+	
+	<select id="bannerSelect" parameterType="String" resultType="map">
+		select *
+		from edu_admin_banner_tb
+		where EDU_BAN_NM = #{edu_ban_nm}
+	</select>
 	
 	<!-- 안내페이지 검색 조건 -->
 	<sql id="infoCondition">

@@ -131,4 +131,7 @@ public interface BasicDAO {
 	
 	// 배너 추가
 	int bannerInsert(HashMap<String, Object> param);
+	
+	// 배너 리스트
+	ArrayList<HashMap<String, Object>> bannerSelect(String edu_ban_nm);
 }

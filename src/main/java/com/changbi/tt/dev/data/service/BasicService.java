@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.changbi.tt.dev.data.dao.BasicDAO;
-import com.changbi.tt.dev.data.vo.BannerVO;
 import com.changbi.tt.dev.data.vo.ComCodeGroupVO;
 import com.changbi.tt.dev.data.vo.ComCodeVO;
 import com.changbi.tt.dev.data.vo.EventVO;
@@ -139,59 +138,59 @@ public class BasicService {
 	}
 	
 	// 배너 정보 리스트
-	public List<BannerVO> bannerList(BannerVO banner) throws Exception {
-		return basicDao.bannerList(banner);
-	}
+//	public List<BannerVO> bannerList(BannerVO banner) throws Exception {
+//		return basicDao.bannerList(banner);
+//	}
 	
 	// 배너 정보 리스트 총 갯수
-	public int bannerTotalCnt(BannerVO banner) {
-		return basicDao.bannerTotalCnt(banner);
-	}
+//	public int bannerTotalCnt(BannerVO banner) {
+//		return basicDao.bannerTotalCnt(banner);
+//	}
 	
 	// 메인 배너 순서 리스트
-	public ArrayList<Integer> bannerOdList() throws Exception {
-		return basicDao.bannerOdList();
-	}
+//	public ArrayList<Integer> bannerOdList() throws Exception {
+//		return basicDao.bannerOdList();
+//	}
 	
 	// 메인 배너 순서 변경
-	public void bannerOdUpdate(HashMap<String, Object> map){
-		basicDao.bannerOdUpdate(map);
-	}
+//	public void bannerOdUpdate(HashMap<String, Object> map){
+//		basicDao.bannerOdUpdate(map);
+//	}
 	
 	// 배너 사용여부, 순서 변경
-	public int bannerState(BannerVO banner) throws Exception{
-		return basicDao.bannerState(banner);
-	}
+//	public int bannerState(BannerVO banner) throws Exception{
+//		return basicDao.bannerState(banner);
+//	}
 	
 	// 배너 정보 상세
-	public BannerVO bannerInfo(BannerVO banner) throws Exception {
-		return basicDao.bannerInfo(banner);
-	}
+//	public BannerVO bannerInfo(BannerVO banner) throws Exception {
+//		return basicDao.bannerInfo(banner);
+//	}
 	
 	// 배너 정보 등록
-	public void bannerReg(BannerVO banner) throws Exception {
-		basicDao.bannerReg(banner);
-		
-		if(banner.getId() > 0) {
-        	// 파일 사용 가능 상태로 변경 처리
-            // useYn을 Y로 바꾼다.
-            List<AttachFileVO> attachFileList = new ArrayList<AttachFileVO>();
-            
- 			if(banner.getImg1() != null && !StringUtil.isEmpty(banner.getImg1().getFileId())) {
- 				attachFileList.add(banner.getImg1());
- 			}
-            
-			// 파일 사용 가능 상태로 변경
-			if(attachFileList.size() > 0) {
-				fileDao.attachFileUse(attachFileList);
-			}
-        }
-	}
+//	public void bannerReg(BannerVO banner) throws Exception {
+//		basicDao.bannerReg(banner);
+//		
+//		if(banner.getId() > 0) {
+//        	// 파일 사용 가능 상태로 변경 처리
+//            // useYn을 Y로 바꾼다.
+//            List<AttachFileVO> attachFileList = new ArrayList<AttachFileVO>();
+//            
+// 			if(banner.getImg1() != null && !StringUtil.isEmpty(banner.getImg1().getFileId())) {
+// 				attachFileList.add(banner.getImg1());
+// 			}
+//            
+//			// 파일 사용 가능 상태로 변경
+//			if(attachFileList.size() > 0) {
+//				fileDao.attachFileUse(attachFileList);
+//			}
+//        }
+//	}
 	
 	// 배너 정보 삭제
-	public int bannerDel(BannerVO banner) throws Exception {
-		return basicDao.bannerDel(banner);
-	}
+//	public int bannerDel(BannerVO banner) throws Exception {
+//		return basicDao.bannerDel(banner);
+//	}
 	
 	// 안내페이지 정보 리스트
 	public List<InfoVO> infoList(InfoVO info) throws Exception {
@@ -252,7 +251,13 @@ public class BasicService {
 		return basicDao.bannerNames();
 	}
 
+	// 배너 등록
 	public int bannerInsert(HashMap<String, Object> param) {
 		return basicDao.bannerInsert(param);
+	}
+	
+	// 배너 정보 리스트
+	public ArrayList<HashMap<String, Object>> bannerSelect(String edu_ban_nm) {
+		return basicDao.bannerSelect(edu_ban_nm);
 	}
 }
