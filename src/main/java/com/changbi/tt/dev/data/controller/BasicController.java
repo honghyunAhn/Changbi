@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.changbi.tt.dev.data.service.BasicService;
+import com.changbi.tt.dev.data.vo.BoardFileVO;
 import com.changbi.tt.dev.data.vo.ComCodeGroupVO;
 import com.changbi.tt.dev.data.vo.ComCodeVO;
 import com.changbi.tt.dev.data.vo.EventVO;
@@ -238,7 +239,6 @@ public class BasicController {
 				}
 				param.put("edu_ban_origin_pc", edu_ban_origin_pc);
 				param.put("edu_ban_saved_pc", edu_ban_saved_pc);
-				
 				result = basicService.bannerInsert(param);
 			}
 		}
@@ -253,7 +253,6 @@ public class BasicController {
     @RequestMapping(value = "/bannerSelect", method = RequestMethod.POST)
     public ArrayList<HashMap<String, Object>> bannerSelect(String edu_ban_nm) throws Exception {
     	logger.debug("배너 정보 리스트 컨트롤러 시작");
-    	System.out.println("anh288 - edu_ban_nm : " + edu_ban_nm);
     	ArrayList<HashMap<String, Object>> reuslt = basicService.bannerSelect(edu_ban_nm);
 		logger.debug("배너 정보 리스트 컨트롤러 종료");
 		return reuslt;

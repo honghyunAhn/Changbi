@@ -51,58 +51,62 @@
 	        type : 'POST',
 	        data : {"edu_ban_nm" : data},
 	        success : function(result){
+	        	console.log(result);
 	        	var content = '';
 	    		content += '<h4>'+data+'</h4>';
 	    		content += '<hr style="border-top: solid 1px #cfd8dc;">';
 	    		content += '<div>';
 	    		content += '<h5 style="float: left;">&nbsp;&nbsp;사용중 배너</h5>';
-	    		content += '<div class="BannerUpdate">';
-	    		content += '<table>';
-	    		content += '<tr>';
-	    		content += '<th>순서</th>';
-	    		content += '<td style="margin-left: 1000px"><select></select></td>';
-	    		content += '</tr>';
-	    		content += '<tr>';
-	    		content += '<th>url</th>';
-	    		content += '<td><input type="text"></td>';
-	    		content += '</tr>';
-	    		content += '<tr class="trBorder">';
-	    		content += '<th>alt</th>';
-	    		content += '<td><input type="text"></td>';
-	    		content += '</tr>';
-	    		content += '</table>';
-	    		content += '<table>';
-	    		content += '<tr>';
-	    		content += '<th class="tdBorder">이미지 - PC</th>';
-	    		content += '<th>이미지 - 모바일</th>';
-	    		content += '</tr>';
-	    		content += '<tr>';
-	    		content += '<td class="tdBorder" style="width: 50%;">';
-	    		content += '<label class="file" for="pcfile">업로드</label> ';
-	    		content += '<input type="file" id="pcfile" style="display: none;" accept=".bmp, .gif, .jpg, .png"> ';
-	    		content += '</td>';
-	    		content += '<td>';
-	    		content += '<label class="file" for="mobilefile">업로드</label>';
-	    		content += '<input type="file" id="mobilefile" style="display: none;" accept=".bmp, .gif, .jpg, .png">';
-	    		content += '</td>';
-	    		content += '</tr>';
-	    		content += '<tr>';
-	    		content += '<td class="filename tdBorder" id="pcfilename"></td>';
-	    		content += '<td class="filename" id="mobilefilename"></td>';
-	    		content += '</tr>';
-	    		content += '<tr>';
-	    		content += '<td class="tdBorder" style="height: 100px;"></td>';
-	    		content += '<td></td>';
-	    		content += '</tr>';
-	    		content += '</table>';
-	    		content += '<br>';	
-	    		content += '<button style="background-color: #90caf9;">수   정</button>';	
-	    		content += '<button style="background-color: #ffab91;">삭   제</button>';
-	    		content += '<button style="background-color: #a5d6a7;">미사용</button>';
-	    		content += '<br>';
-	    		content += '<hr style="border-top: solid 1px #cfd8dc;">';	
-	    		content += '</div>';
-	    		content += '</div>';
+	    		for(aaa of result){
+	    			console.log(aaa);
+	    			content += '<div class="BannerUpdate">';
+		    		content += '<table>';
+		    		content += '<tr>';
+		    		content += '<th>순서</th>';
+		    		content += '<td style="margin-left: 1000px"><select></select></td>';
+		    		content += '</tr>';
+		    		content += '<tr>';
+		    		content += '<th>url</th>';
+		    		content += '<td><input type="text"></td>';
+		    		content += '</tr>';
+		    		content += '<tr class="trBorder">';
+		    		content += '<th>alt</th>';
+		    		content += '<td><input type="text"></td>';
+		    		content += '</tr>';
+		    		content += '</table>';
+		    		content += '<table>';
+		    		content += '<tr>';
+		    		content += '<th class="tdBorder">이미지 - PC</th>';
+		    		content += '<th>이미지 - 모바일</th>';
+		    		content += '</tr>';
+		    		content += '<tr>';
+		    		content += '<td class="tdBorder" style="width: 50%;">';
+		    		content += '<label class="file" for="pcfile">업로드</label> ';
+		    		content += '<input type="file" multiple="multiple" name="file" id="pcfile" style="display: none;" accept=".bmp, .gif, .jpg, .png" onchange="getThumbnailPrivew(this, '+"avatar_info_image1"+', '+"pcfilename"+')"> ';
+		    		content += '</td>';
+		    		content += '<td>';
+		    		content += '<label class="file" for="mobilefile">업로드</label>';
+		    		content += '<input type="file" multiple="multiple" name="file" id="mobilefile" style="display: none;" accept=".bmp, .gif, .jpg, .png" onchange="getThumbnailPrivew(this, '+"avatar_info_image2"+', '+"mobilefilename"+')">';
+		    		content += '</td>';
+		    		content += '</tr>';
+		    		content += '<tr>';
+		    		content += '<td class="filename tdBorder"><input type="text" id="pcfilename" readonly></input></td>';
+		    		content += '<td class="filename"><input type="text" id="mobilefilename" readonly></input></td>';
+		    		content += '</tr>';
+		    		content += '<tr>';
+		    		content += '<td class="tdBorder" style="height: 100px;"></td>';
+		    		content += '<td></td>';
+		    		content += '</tr>';
+		    		content += '</table>';
+		    		content += '<br>';	
+		    		content += '<button style="background-color: #90caf9;">수   정</button>';	
+		    		content += '<button style="background-color: #ffab91;">삭   제</button>';
+		    		content += '<button style="background-color: #a5d6a7;">미사용</button>';
+		    		content += '<br>';
+		    		content += '<hr style="border-top: solid 1px #cfd8dc;">';	
+		    		content += '</div>';
+		    		content += '</div>';
+	    		}
 	    		content += '<div class="bannerCreate">';
 	    		content += '<button class="addButton" id="bannerCreate" style="font-size: 35px; margin-left: 0">+</button>';
 	    		content += '<hr style="border-top: solid 1px #cfd8dc;">';
@@ -125,6 +129,7 @@
 	    		content += '<br>';
 	    		content += '</div>';
 	    		$(".banner").html(content);
+	    		buttonAction();
 	        },
 			error	: function(request, status, error) {
 				alert("code : "+request.status+"\n\n"+"message : "+request.responseText+"\n\n"+"error : "+error);
@@ -154,11 +159,11 @@
 		content += '<tr>';
 		content += '<td class="tdBorder" style="width: 50%;">';
 		content += '<label class="file" for="pcfile">업로드</label> ';
-		content += '<input type="file" multiple="multiple" name="file" id="pcfile" style="display: none;" accept=".bmp, .gif, .jpg, .png" onchange="getThumbnailPrivew(this, '+"avatar_info_image1"+', '+"pcfilename"+')"> ';
+		content += '<input type="file" multiple="multiple" name="file" class="checkPcFile" id="pcfile" style="display: none;" accept=".bmp, .gif, .jpg, .png"> ';
 		content += '</td>';
 		content += '<td>';
 		content += '<label class="file" for="mobilefile">업로드</label>';
-		content += '<input type="file" multiple="multiple" name="file" id="mobilefile" style="display: none;" accept=".bmp, .gif, .jpg, .png" onchange="getThumbnailPrivew(this, '+"avatar_info_image2"+', '+"mobilefilename"+')">';
+		content += '<input type="file" multiple="multiple" name="file" class="checkMoFile" id="mobilefile" style="display: none;" accept=".bmp, .gif, .jpg, .png">';
 		content += '</td>';
 		content += '</tr>';
 		content += '<tr>';
@@ -175,6 +180,7 @@
 		content += '<br>';
 		content += '<hr style="border-top: solid 1px #cfd8dc;">';	
 		content += '</form>'
+		
 		return content;
 	}
 	
@@ -233,53 +239,81 @@
 		element.focus();
 	}
 	
-	//이미지 크기 확인, 이미지 미리보기, 이미지 이름 출력
-	function getThumbnailPrivew(input, targetId, inputID) {
-		targetId = targetId.id;
-		if(targetId == "avatar_info_image1"){
-			var width = "1920";
-			var height = "600";
-		}
-		if(targetId == "avatar_info_image2"){
-			var width = "760";
-			var height = "300";
-		}
-		// 필드 채워지면
-		if ($(input).val() != "") {
-			// 확장자 체크
-			var ext = $(input).val().split(".").pop().toLowerCase();
-			if ($.inArray(ext, [ "bmp", "gif", "jpg", "jpeg", "png" ]) == -1) {
-				alert("bmp, gif, jpg, jpeg, png 파일만 업로드 해주세요.");
-				$(input).val("");
-				return;
-		}
-			// 가로,세로 길이
-			var file = input.files[0];
-			var _URL = window.URL || window.webkitURL;
-			var img = new Image();
-			img.src = _URL.createObjectURL(file);
-			img.onload = function() {
-				if(img.width != width && img.height != height){
-					alert("이미지 크기가 "+width+" X "+height+" 이어야 합니다.");
-					return;
-				}
-				var fileName = $("#"+input.id).val();
-				$("#"+inputID.id).val(fileName);
-				if (input.files && input.files[0]) {
-					var reader = new FileReader();
-					reader.onload = function(e) {
-						var element = window.document.getElementById(targetId);
-						element.setAttribute("src", e.target.result);
-					}
-					reader.readAsDataURL(input.files[0]);
-				}
-			}
-		}
-	}
-	
 	function buttonAction(){
 		$('.banner').show();
-
+		$(".checkPcFile").on('change', function(){
+			var input = this;
+			var targetId = $(this).parent().parent().next().next().children().children().attr('id');
+			var inputID = $(this).parent().parent().next().children().children().attr('id');
+			// 필드 채워지면
+			if ($(input).val() != "") {
+				// 확장자 체크
+				var ext = $(input).val().split(".").pop().toLowerCase();
+				if ($.inArray(ext, [ "bmp", "gif", "jpg", "jpeg", "png" ]) == -1) {
+					alert("bmp, gif, jpg, jpeg, png 파일만 업로드 해주세요.");
+					$(input).val("");
+					return;
+			}
+				// 가로,세로 길이
+				var file = input.files[0];
+				var _URL = window.URL || window.webkitURL;
+				var img = new Image();
+				img.src = _URL.createObjectURL(file);
+				img.onload = function() {
+					if(img.width != width && img.height != height){
+						alert("이미지 크기가 1920 X 600 이어야 합니다.");
+						return;
+					}
+					var fileName = $("#"+input.id).val();
+					$("#"+inputID).val(fileName);
+					if (input.files && input.files[0]) {
+						var reader = new FileReader();
+						reader.onload = function(e) {
+							var element = window.document.getElementById(targetId);
+							element.setAttribute("src", e.target.result);
+						}
+						reader.readAsDataURL(input.files[0]);
+					}
+				}
+			}
+		});
+		
+		$(".checkMoFile").on('change', function(){
+			var input = this;
+			var targetId = $(this).parent().parent().next().next().children().next().children().attr('id');
+			var inputID = $(this).parent().parent().next().children().next().children().attr('id');
+			if ($(input).val() != "") {
+				// 확장자 체크
+				var ext = $(input).val().split(".").pop().toLowerCase();
+				if ($.inArray(ext, [ "bmp", "gif", "jpg", "jpeg", "png" ]) == -1) {
+					alert("bmp, gif, jpg, jpeg, png 파일만 업로드 해주세요.");
+					$(input).val("");
+					return;
+			}
+				// 가로,세로 길이
+				var file = input.files[0];
+				var _URL = window.URL || window.webkitURL;
+				var img = new Image();
+				img.src = _URL.createObjectURL(file);
+				img.onload = function() {
+					if(img.width != width && img.height != height){
+						alert("이미지 크기가 760 X 300 이어야 합니다.");
+						return;
+					}
+					var fileName = $("#"+input.id).val();
+					$("#"+inputID).val(fileName);
+					if (input.files && input.files[0]) {
+						var reader = new FileReader();
+						reader.onload = function(e) {
+							var element = window.document.getElementById(targetId);
+							element.setAttribute("src", e.target.result);
+						}
+						reader.readAsDataURL(input.files[0]);
+					}
+				}
+			}
+		});
+		
 		//배너 닫기
 		$("#closeBanner").on('click', function(){
 			$(".banner").html("");
@@ -292,6 +326,7 @@
 			var edu_ban_nm = $("h4").text();
 			content += bannerCreateForm(edu_ban_nm);
 			$(".bannerCreate").html(content);
+			
 		});
 	}
 </script>
